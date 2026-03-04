@@ -1,0 +1,32 @@
+# Environment & credentials
+.env
+.env.local
+venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build outputs (regenerated)
+site/public/qrcodes/
+
+# farmOS credentials & tokens
+farmos_token.json
+
+# Uploaded field sheets (not committed — data flows through pipeline)
+fieldsheets/*.xlsx
+
+# farmOS export data (large, regenerated)
+exports/
+
+# Archive (already extracted)
+*.tar.gz
+
+# Node (if ever needed)
+node_modules/

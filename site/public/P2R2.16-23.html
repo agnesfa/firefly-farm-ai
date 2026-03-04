@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>P2R2.16-23 — Firefly Corner Farm</title>
+<meta name="description" content="Syntropic polyculture section 16–23 at Firefly Corner Farm, Krambach NSW">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec; }
+.page { max-width: 430px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 60px rgba(0,0,0,0.06); }
+
+/* Header */
+.section-header { padding: 20px 20px 18px; color: #fff; }
+.breadcrumb { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; opacity: 0.75; margin-bottom: 6px; }
+.section-title-row { display: flex; align-items: baseline; gap: 10px; }
+.section-range { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; line-height: 1; }
+.section-type-badge { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.18); }
+.section-stats { display: flex; gap: 20px; margin-top: 14px; }
+.stat-value { font-size: 22px; font-weight: 700; }
+.stat-label { font-size: 10px; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Row bar */
+.row-bar { padding: 12px 16px; background: #f7f6f0; border-bottom: 1px solid #e5e5e0; }
+.row-bar-label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.row-bar-visual { display: flex; gap: 2px; border-radius: 6px; overflow: hidden; }
+.rowbar-section { height: 36px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 9px; transition: opacity 0.2s; }
+.row-bar-scale { display: flex; justify-content: space-between; margin-top: 3px; font-size: 10px; color: #bbb; }
+
+/* Section tabs */
+.section-tabs { display: flex; overflow-x: auto; background: #fff; border-bottom: 1px solid #e5e5e0; position: sticky; top: 0; z-index: 20; -webkit-overflow-scrolling: touch; }
+.section-tab { padding: 9px 12px; font-size: 11px; font-weight: 400; color: #bbb; text-decoration: none; white-space: nowrap; flex-shrink: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: 'DM Sans', sans-serif; }
+.section-tab.tab-active { font-weight: 700; color: #2d5016; border-bottom-color: #2d5016; }
+
+/* Strata groups */
+.strata-group { margin-bottom: 2px; }
+.strata-header { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 2px solid; }
+.strata-icon { font-size: 20px; }
+.strata-name { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+.strata-height { font-size: 11px; color: #aaa; margin-left: 8px; }
+.strata-count { margin-left: auto; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 10px; }
+.strata-plants { display: flex; flex-direction: column; gap: 1px; background: #f0f0ec; }
+
+/* Plant cards */
+.plant-card { padding: 14px 16px; background: #fff; cursor: pointer; border-left: 3px solid; transition: background 0.15s; }
+.plant-card.plant-dead { background: #fafafa; opacity: 0.55; }
+.plant-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.plant-info { flex: 1; min-width: 0; }
+.plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
+.dead-marker { font-size: 11px; color: #b0b0b0; margin-left: 8px; font-family: 'DM Sans', sans-serif; }
+.plant-botanical { font-style: italic; font-size: 13px; color: #8b8b8b; margin-top: 1px; }
+.plant-count { font-weight: 700; font-size: 15px; padding: 2px 10px; border-radius: 12px; min-width: 28px; text-align: center; flex-shrink: 0; margin-left: 8px; }
+.plant-notes { font-size: 12px; color: #aaa; margin-top: 4px; }
+.plant-tags-collapsed { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+.plant-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0ec; }
+.plant-card.expanded .plant-detail { display: block; }
+.plant-card.expanded .plant-tags-collapsed { display: none; }
+.plant-desc { font-size: 13px; color: #4b5563; line-height: 1.55; margin-bottom: 10px; }
+.plant-meta { font-size: 12px; color: #7b7b7b; margin-bottom: 10px; }
+.plant-tags-expanded { display: flex; flex-wrap: wrap; gap: 4px; }
+
+/* Function tags */
+.fn-tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.fn-more { font-size: 11px; color: #bbb; padding: 2px 4px; }
+
+/* Succession */
+.succession-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
+.succ-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Explainer */
+.explainer-toggle { margin: 16px; padding: 12px 16px; background: #f7f6f0; border-radius: 10px 10px 0 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5e0; border-bottom: none; }
+.explainer-title { font-family: 'Playfair Display', Georgia, serif; font-size: 15px; font-weight: 600; color: #1a1a1a; }
+.explainer-arrow { font-size: 18px; color: #999; transition: transform 0.2s; }
+.explainer-content { display: none; margin: 0 16px 16px; padding: 0 16px 16px; background: #f7f6f0; border-radius: 0 0 10px 10px; border: 1px solid #e5e5e0; border-top: none; }
+.explainer-content.open { display: block; }
+.explainer-content p { font-size: 13px; color: #555; line-height: 1.6; padding-top: 4px; }
+
+/* Footer */
+.footer { padding: 16px 16px 24px; text-align: center; font-size: 11px; color: #bbb; }
+.footer-sub { color: #d4d4cc; margin-top: 4px; }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #5a8c2a 0%, #7ab33e 60%, #8bb85a 100%)">
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 2</div>
+    <div class="section-title-row">
+      <h1 class="section-range">16–23</h1>
+      <span class="section-type-badge">☀️ Open Cultivation</span>
+    </div>
+    <div class="section-stats">
+      <div class="stat"><div class="stat-value">28</div><div class="stat-label">species</div></div>
+      <div class="stat"><div class="stat-value">183</div><div class="stat-label">plants counted</div></div>
+      <div class="stat"><div class="stat-value">7m</div><div class="stat-label">length</div></div>
+    </div>
+  </div>
+
+  
+    <div class="row-bar">
+      <div class="row-bar-label">Paddock 2 · Row 2 · 46m</div>
+      <div class="row-bar-visual"><a href="P2R2.0-3.html" class="rowbar-section" style="flex:0 0 6.5%;background:#2d5016;opacity:0.5;">🌳</a><a href="P2R2.3-7.html" class="rowbar-section" style="flex:0 0 8.7%;background:#8bb85a;opacity:0.5;">☀️</a><a href="P2R2.7-16.html" class="rowbar-section" style="flex:0 0 19.6%;background:#2d5016;opacity:0.5;">🌳</a><a href="P2R2.16-23.html" class="rowbar-section" style="flex:0 0 15.2%;background:#8bb85a;opacity:1;outline:2px solid #ff9933;outline-offset:-2px;border-radius:3px;">☀️</a><a href="P2R2.23-26.html" class="rowbar-section" style="flex:0 0 6.5%;background:#2d5016;opacity:0.5;">🌳</a><a href="P2R2.28-37.html" class="rowbar-section" style="flex:0 0 19.6%;background:#2d5016;opacity:0.5;">🌳</a><a href="P2R2.37-46.html" class="rowbar-section" style="flex:0 0 19.6%;background:#2d5016;opacity:0.5;">🌳</a></div>
+      <div class="row-bar-scale"><span>0m</span><span>46m</span></div>
+    </div>
+  <div class="section-tabs"><a href="P2R2.0-3.html" class="section-tab ">0–3</a><a href="P2R2.3-7.html" class="section-tab ">3–7</a><a href="P2R2.7-16.html" class="section-tab ">7–16</a><a href="P2R2.16-23.html" class="section-tab tab-active">16–23</a><a href="P2R2.23-26.html" class="section-tab ">23–26</a><a href="P2R2.28-37.html" class="section-tab ">28–37</a><a href="P2R2.37-46.html" class="section-tab ">37–46</a></div>
+
+  <div class="plant-inventory">
+    
+    <div class="strata-group">
+      <div class="strata-header" style="background:#e8f0e0;border-bottom-color:#2d5016">
+        <span class="strata-icon">🌳</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#2d5016">Emergent Canopy</span>
+          <span class="strata-height">20m+</span>
+        </div>
+        
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Forest Red Gum</div>
+          <div class="plant-botanical">Eucalyptus tereticornis</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#f5f0e6;color:#78350f">🪵 timber</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🦎 native_habitat</span><span class="fn-more">+1</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Tall Australian native eucalypt growing to 50m. Excellent honey producer and timber tree. Fast-growing emergent providing wildlife habitat and wind protection.</p>
+        <div class="plant-meta">Myrtaceae · Native to NSW · Lives 200-400</div>
+        <div class="succession-tag" style="background:#2d501618;color:#2d5016"><span class="succ-dot" style="background:#2d5016"></span>Climax — The permanent forest — long-lived trees that define the mature system</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#f5f0e6;color:#78350f">🪵 timber</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🦎 native_habitat</span><span class="fn-tag" style="background:#f1f5f9;color:#475569">🏔️ erosion_control</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Pear (Williams)</div>
+          <div class="plant-botanical">Pyrus communis</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Classic European pear variety also known as Bartlett. Sweet aromatic fruit excellent fresh or canned. Needs cross-pollination. Beautiful white spring blossoms.</p>
+        <div class="plant-meta">Rosaceae · Europe · Lives 50-100</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Cherry Guava</div>
+          <div class="plant-botanical"></div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"></div>
+      <div class="plant-detail">
+        <p class="plant-desc"></p>
+        <div class="plant-meta"></div>
+        
+        <div class="plant-tags-expanded"></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Silver Wattle</div>
+          <div class="plant-botanical">Acacia dealbata</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span><span class="fn-more">+1</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Fast-growing nitrogen-fixing pioneer reaching 30m. Excellent biomass producer for chop-and-drop mulching. Beautiful yellow flowers in late winter.</p>
+        <div class="plant-meta">Fabaceae · Native to NSW · Lives 30-50</div>
+        <div class="succession-tag" style="background:#f59e0b18;color:#f59e0b"><span class="succ-dot" style="background:#f59e0b"></span>Pioneer — Fast-growing, short-lived species that build soil and create conditions for others</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🦎 native_habitat</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Jacaranda</div>
+          <div class="plant-botanical">Jacaranda mimosifolia</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🌸 ornamental</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Ornamental tree with spectacular purple flowers in spring. Provides light dappled shade. Deciduous in winter.</p>
+        <div class="plant-meta">Bignoniaceae · South America (Argentina) · Lives 50-100</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🌸 ornamental</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span></div>
+      </div>
+    </div></div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#edf4e4;border-bottom-color:#4a7c29">
+        <span class="strata-icon">🌿</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#4a7c29">High Canopy</span>
+          <span class="strata-height">8–20m</span>
+        </div>
+        
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card" style="border-left-color:#4a7c29" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Macadamia</div>
+          <div class="plant-botanical">Macadamia integrifolia</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fef3c7;color:#92400e">🥜 edible_nut</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🦎 native_habitat</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Australian native rainforest tree producing premium edible nuts. World&#x27;s most valuable commercial nut crop originated from NSW. Grows 10-15m. Needs well-drained acid soil. Beautiful cream flower racemes.</p>
+        <div class="plant-meta">Proteaceae · Native to NSW/QLD · Lives 100-200</div>
+        <div class="succession-tag" style="background:#2d501618;color:#2d5016"><span class="succ-dot" style="background:#2d5016"></span>Climax — The permanent forest — long-lived trees that define the mature system</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fef3c7;color:#92400e">🥜 edible_nut</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🦎 native_habitat</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#4a7c29" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Rose Apple</div>
+          <div class="plant-botanical">Syzygium jambos</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical evergreen tree to 12m with rose-scented pear-shaped fruit. Beautiful cream pom-pom flowers. Fruits have rose water fragrance. Tolerates light frost once established.</p>
+        <div class="plant-meta">Myrtaceae · Southeast Asia · Lives 50-100</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#4a7c29" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Apple</div>
+          <div class="plant-botanical">Malus domestica</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Deciduous fruit tree. Seedlings variable - may take 5-10 years to fruit. Good for wildlife and biomass in syntropic systems.</p>
+        <div class="plant-meta">Rosaceae · Central Asia (Kazakhstan) · Lives 50-100</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#4a7c29" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Pigeon Pea</div>
+          <div class="plant-botanical">Cajanus cajan</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#fef9c3;color:#854d0e">🌾 edible_seed</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Fast-growing nitrogen-fixing shrub to 4m. Edible protein-rich peas and excellent biomass for chop-and-drop. Drought tolerant pioneer.</p>
+        <div class="plant-meta">Fabaceae · South Asia (India) · Lives 3-5</div>
+        <div class="succession-tag" style="background:#f59e0b18;color:#f59e0b"><span class="succ-dot" style="background:#f59e0b"></span>Pioneer — Fast-growing, short-lived species that build soil and create conditions for others</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#fef9c3;color:#854d0e">🌾 edible_seed</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span></div>
+      </div>
+    </div></div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#f0f6e7;border-bottom-color:#6b9e3c">
+        <span class="strata-icon">🫑</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#6b9e3c">Medium Layer</span>
+          <span class="strata-height">2–8m</span>
+        </div>
+        
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card" style="border-left-color:#6b9e3c" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Chilli (Jalapeño)</div>
+          <div class="plant-botanical">Capsicum annuum</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Medium-hot jalapeño pepper. Thick-walled fruits good fresh, pickled or smoked (chipotle). Heavy producer.</p>
+        <div class="plant-meta">Solanaceae · Central/South America · Lives 1-3</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#6b9e3c" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Chilli (Bird Eye)</div>
+          <div class="plant-botanical">Capsicum annuum</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🤝 companion_plant</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Compact, prolific chilli variety producing small, intensely hot fruits. Also known as Thai chilli. Plants are bushy and productive over multiple seasons in frost-free areas. Excellent companion plant attracting beneficial insects when flowering. Fruits ripen from green to red.</p>
+        <div class="plant-meta">Solanaceae · Central/South America · Lives 1-3</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🤝 companion_plant</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#6b9e3c" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Plum</div>
+          <div class="plant-botanical">Prunus domestica</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Deciduous stone fruit tree. Many varieties available for different climates. Some need chill hours for fruit set. Beautiful spring blossoms. Prune after fruiting.</p>
+        <div class="plant-meta">Rosaceae · Europe/Western Asia · Lives 20-40</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#6b9e3c" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Raspberry</div>
+          <div class="plant-botanical">Rubus idaeus</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Perennial berry bramble producing red (or gold/black) fruit. Canes need support. Summer and autumn fruiting varieties available. Fruits on different aged canes depending on type.</p>
+        <div class="plant-meta">Rosaceae · Europe/North Asia · Lives 15-25</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#6b9e3c" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Lemon</div>
+          <div class="plant-botanical">Citrus limon</div>
+        </div>
+        
+      </div>
+      <div class="plant-notes">FFC cuttings</div>
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
+        <div class="plant-meta">Rutaceae · South Asia · Lives 50-100</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fce7f3;color:#9d174d">🍎 edible_fruit</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#6b9e3c" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Ginger</div>
+          <div class="plant-botanical">Zingiber officinale</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#ffe4e6;color:#9f1239">🥕 edible_root</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical rhizome crop. Plant in spring, harvest when leaves yellow in autumn. Needs warmth, moisture and rich soil.</p>
+        <div class="plant-meta">Zingiberaceae · South Asia · Lives 2-3</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#ffe4e6;color:#9f1239">🥕 edible_root</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span></div>
+      </div>
+    </div></div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#f4f8ec;border-bottom-color:#8bb85a">
+        <span class="strata-icon">🌱</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#8bb85a">Ground Layer</span>
+          <span class="strata-height">0–2m</span>
+        </div>
+        <span class="strata-count" style="background:#8bb85a">183</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Comfrey</div>
+          <div class="plant-botanical">Symphytum officinale</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">6</span>
+      </div>
+      <div class="plant-notes">1 lost</div>
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#e0e7ff;color:#3730a3">⬇️ nutrient_accumulator</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Deep-rooted nutrient accumulator bringing minerals from subsoil. Excellent for chop-and-drop mulching - produces massive biomass. Cut 4-5 times per season.</p>
+        <div class="plant-meta">Boraginaceae · Europe · Lives 20-40</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#e0e7ff;color:#3730a3">⬇️ nutrient_accumulator</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Turmeric</div>
+          <div class="plant-botanical">Curcuma longa</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#ffe4e6;color:#9f1239">🥕 edible_root</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical rhizome with vibrant orange flesh. Anti-inflammatory medicinal uses. Needs warmth and moisture. Harvest when leaves die down.</p>
+        <div class="plant-meta">Zingiberaceae · South Asia (India) · Lives 2-3</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#ffe4e6;color:#9f1239">🥕 edible_root</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Sweet Potato</div>
+          <div class="plant-botanical">Ipomoea batatas</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">4</span>
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#ffe4e6;color:#9f1239">🥕 edible_root</span><span class="fn-tag" style="background:#ecfdf5;color:#047857">🍃 living_mulch</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical tuber with edible leaves. Excellent living mulch groundcover suppressing weeds. Plant slips in warm soil.</p>
+        <div class="plant-meta">Convolvulaceae · Central/South America · Lives 1</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#ffe4e6;color:#9f1239">🥕 edible_root</span><span class="fn-tag" style="background:#ecfdf5;color:#047857">🍃 living_mulch</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Tansy</div>
+          <div class="plant-botanical">Tanacetum vulgare</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">3</span>
+      </div>
+      <div class="plant-notes">1 planted Oct/Nov</div>
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#ede9fe;color:#5b21b6">🛡️ pest_management</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🤝 companion_plant</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Aromatic perennial herb with yellow button flowers. Strong scent repels insects - plant near fruit trees. CAUTION: Toxic if eaten. Attracts beneficial insects.</p>
+        <div class="plant-meta">Asteraceae · Europe/Asia · Lives 5-10</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#ede9fe;color:#5b21b6">🛡️ pest_management</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span><span class="fn-tag" style="background:#f0fdf4;color:#166534">🤝 companion_plant</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Basil (Sweet)</div>
+          <div class="plant-botanical">Ocimum basilicum</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Classic sweet Genovese-type basil. Essential for pesto and Italian cooking. Pinch flowers to prolong harvest.</p>
+        <div class="plant-meta">Lamiaceae · South Asia/Africa · Lives 1</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card plant-dead" style="border-left-color:#d1d5db" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Sage <span class="dead-marker">✝ lost</span></div>
+          <div class="plant-botanical">Salvia officinalis</div>
+        </div>
+        
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Culinary and medicinal herb with grey-green velvety leaves. Drought tolerant. Blue-purple flowers attract pollinators.</p>
+        <div class="plant-meta">Lamiaceae · Mediterranean · Lives 5-10</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#f0fdf4;color:#166534">🌿 aromatic</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">💚 medicinal</span><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Pak Choi</div>
+          <div class="plant-botanical">Brassica rapa var. chinensis</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">11</span>
+      </div>
+      <div class="plant-notes">planted Oct/Nov</div>
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Asian leafy green with mild flavor. Fast growing - ready in 6-7 weeks. Bolt resistant varieties available for warm weather.</p>
+        <div class="plant-meta">Brassicaceae · China · Lives 1</div>
+        <div class="succession-tag" style="background:#3b82f618;color:#3b82f6"><span class="succ-dot" style="background:#3b82f6"></span>Secondary — Medium-term species that fill the canopy as pioneers decline</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#d1fae5;color:#065f46">🥬 edible_greens</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Pumpkin</div>
+          <div class="plant-botanical"></div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">5</span>
+      </div>
+      <div class="plant-notes">planted Oct/Nov</div>
+      <div class="plant-tags-collapsed"></div>
+      <div class="plant-detail">
+        <p class="plant-desc"></p>
+        <div class="plant-meta"></div>
+        
+        <div class="plant-tags-expanded"></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Species</div>
+          <div class="plant-botanical"></div>
+        </div>
+        
+      </div>
+      <div class="plant-notes">Notes</div>
+      <div class="plant-tags-collapsed"></div>
+      <div class="plant-detail">
+        <p class="plant-desc"></p>
+        <div class="plant-meta"></div>
+        
+        <div class="plant-tags-expanded"></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Millet</div>
+          <div class="plant-botanical"></div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">42</span>
+      </div>
+      
+      <div class="plant-tags-collapsed"></div>
+      <div class="plant-detail">
+        <p class="plant-desc"></p>
+        <div class="plant-meta"></div>
+        
+        <div class="plant-tags-expanded"></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Sunn Hemp</div>
+          <div class="plant-botanical">Crotalaria juncea</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">21</span>
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span><span class="fn-tag" style="background:#f3f4f6;color:#374151">• green_manure</span><span class="fn-more">+1</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Fast-growing tropical nitrogen-fixer reaching 2m in 60 days. Excellent green manure suppressing nematodes. Yellow flowers attract bees. Not edible.</p>
+        <div class="plant-meta">Fabaceae · South Asia (India) · Lives 1</div>
+        <div class="succession-tag" style="background:#f59e0b18;color:#f59e0b"><span class="succ-dot" style="background:#f59e0b"></span>Pioneer — Fast-growing, short-lived species that build soil and create conditions for others</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#dbeafe;color:#1e40af">♻️ biomass_producer</span><span class="fn-tag" style="background:#f3f4f6;color:#374151">• green_manure</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Cowpea</div>
+          <div class="plant-botanical">Vigna unguiculata</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">49</span>
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#f3f4f6;color:#374151">• green_manure</span><span class="fn-tag" style="background:#fef9c3;color:#854d0e">🌾 edible_seed</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical nitrogen-fixing legume. Excellent summer green manure. Drought tolerant. Edible pods and dried peas. Varieties include Black-Eyed Pea.</p>
+        <div class="plant-meta">Fabaceae · Africa · Lives 1</div>
+        <div class="succession-tag" style="background:#f59e0b18;color:#f59e0b"><span class="succ-dot" style="background:#f59e0b"></span>Pioneer — Fast-growing, short-lived species that build soil and create conditions for others</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#fef3c7;color:#92400e">⚡ nitrogen_fixer</span><span class="fn-tag" style="background:#f3f4f6;color:#374151">• green_manure</span><span class="fn-tag" style="background:#fef9c3;color:#854d0e">🌾 edible_seed</span></div>
+      </div>
+    </div>
+
+    <div class="plant-card" style="border-left-color:#8bb85a" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Buckwheat</div>
+          <div class="plant-botanical">Fagopyrum esculentum</div>
+        </div>
+        <span class="plant-count" style="background:#f4f8ec;color:#8bb85a">42</span>
+      </div>
+      
+      <div class="plant-tags-collapsed"><span class="fn-tag" style="background:#f3f4f6;color:#374151">• green_manure</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span><span class="fn-more">+1</span></div>
+      <div class="plant-detail">
+        <p class="plant-desc">Fast-growing green manure ready to slash in 6-8 weeks. Excellent bee forage with white flowers. Accumulates phosphorus. Seeds edible. Not a true wheat - gluten free.</p>
+        <div class="plant-meta">Polygonaceae · Central Asia · Lives 1</div>
+        <div class="succession-tag" style="background:#f59e0b18;color:#f59e0b"><span class="succ-dot" style="background:#f59e0b"></span>Pioneer — Fast-growing, short-lived species that build soil and create conditions for others</div>
+        <div class="plant-tags-expanded"><span class="fn-tag" style="background:#f3f4f6;color:#374151">• green_manure</span><span class="fn-tag" style="background:#fef3c7;color:#92400e">🐝 nectar_source</span><span class="fn-tag" style="background:#fdf4ff;color:#86198f">🦋 beneficial_insects</span><span class="fn-tag" style="background:#fef9c3;color:#854d0e">🌾 edible_seed</span></div>
+      </div>
+    </div></div>
+    </div>
+  </div>
+
+  <div class="explainer-toggle" onclick="document.getElementById('explainer').classList.toggle('open')">
+    <span class="explainer-title">🌿 What is Syntropic Agriculture?</span>
+    <span class="explainer-arrow">▾</span>
+  </div>
+  <div id="explainer" class="explainer-content">
+    <p>Syntropic agriculture mimics natural forest ecosystems by layering plants at different heights. Instead of clearing land for monocultures, we build <strong>stacked polycultures</strong> where every species has a role — fixing nitrogen, producing biomass, attracting pollinators, or feeding people.</p>
+  </div>
+
+  <div class="footer">
+    <div>Last inventory: 2025-11-11 · First planted: April 2025</div>
+    <div class="footer-sub">Firefly Corner Farm · Krambach, NSW · Syntropic Agroforestry</div>
+  </div>
+
+</div>
+</body>
+</html>

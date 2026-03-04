@@ -1,0 +1,10 @@
+# Data pipeline
+openpyxl>=3.1.0
+pandas>=2.0.0
+jinja2>=3.1.0
+qrcode[pil]>=7.4.0
+python-dotenv>=1.0.0
+
+# farmOS API
+farmOS>=1.0.0
+requests>=2.31.0
