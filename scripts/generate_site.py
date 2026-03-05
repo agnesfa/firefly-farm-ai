@@ -103,6 +103,39 @@ STRATA_CONFIG = {
 }
 
 
+def is_green_manure(species, plant_db):
+    """Check if a species is tagged as green_manure in the plant database."""
+    plant = plant_db.get(species, {})
+    if not plant:
+        # Fuzzy match: handles "Millet" matching "Millet (White French)" etc.
+        for name, info in plant_db.items():
+            if name.startswith(species + " ") or name.startswith(species + "("):
+                plant = info
+                break
+    return "green_manure" in plant.get("functions", [])
+
+
+def render_green_manure_box(green_manure_plants):
+    """Render a lightweight green manure info section."""
+    if not green_manure_plants:
+        return ""
+
+    species_names = sorted(set(p["species"] for p in green_manure_plants))
+    species_list = ", ".join(esc(name) for name in species_names)
+
+    return f"""
+    <div class="green-manure-box">
+      <div class="gm-header">
+        <span class="gm-icon">🌱</span>
+        <span class="gm-title">Green Manure Cover Crop</span>
+      </div>
+      <div class="gm-body">
+        <div class="gm-species">{species_list}</div>
+        <div class="gm-desc">Temporary cover crops planted for soil building and nitrogen fixation. Slashed and mulched every 2–3 months.</div>
+      </div>
+    </div>"""
+
+
 def render_function_tag(fn):
     fn_key = fn.strip().lower()
     emoji, bg, fg = FUNCTION_STYLES.get(fn_key, ("•", "#f3f4f6", "#374151"))
@@ -119,7 +152,6 @@ def render_plant_card(planting, plant_db):
     plant = plant_db.get(species, {})
     st = STRATA_CONFIG.get(strata, STRATA_CONFIG["medium"])
     
-    dead = "all dead" in (notes or "").lower() or count == 0
     botanical = plant.get("botanical", "")
     desc = plant.get("description", "")
     family = plant.get("family", "")
@@ -127,14 +159,12 @@ def render_plant_card(planting, plant_db):
     lifespan = plant.get("lifespan", "")
     succession = plant.get("succession", "")
     functions = plant.get("functions", [])
-    
+
     count_html = ""
     if count is not None and count > 0:
         count_html = f'<span class="plant-count" style="background:{st["light"]};color:{st["color"]}">{count}</span>'
-    
-    dead_class = " plant-dead" if dead else ""
-    dead_marker = ' <span class="dead-marker">✝ lost</span>' if dead else ""
-    notes_html = f'<div class="plant-notes">{esc(notes)}</div>' if notes and not dead else ""
+
+    notes_html = f'<div class="plant-notes">{esc(notes)}</div>' if notes else ""
     
     # Function tags (collapsed: show 3)
     tags_html = "".join(render_function_tag(fn) for fn in functions[:3])
@@ -161,10 +191,10 @@ def render_plant_card(planting, plant_db):
         succession_html = f'<div class="succession-tag" style="background:{sc}18;color:{sc}"><span class="succ-dot" style="background:{sc}"></span>{succession.title()} — {succ_labels.get(succession, "")}</div>'
     
     return f"""
-    <div class="plant-card{dead_class}" style="border-left-color:{st['color'] if not dead else '#d1d5db'}" onclick="this.classList.toggle('expanded')">
+    <div class="plant-card" style="border-left-color:{st['color']}" onclick="this.classList.toggle('expanded')">
       <div class="plant-header">
         <div class="plant-info">
-          <div class="plant-name">{esc(species)}{dead_marker}</div>
+          <div class="plant-name">{esc(species)}</div>
           <div class="plant-botanical">{esc(botanical)}</div>
         </div>
         {count_html}
@@ -186,7 +216,7 @@ def render_strata_group(strata_key, plants, plant_db):
     if not st:
         return ""
     
-    alive_count = sum(p.get("count", 0) or 0 for p in plants if (p.get("count") or 0) > 0)
+    alive_count = sum(p.get("count", 0) for p in plants)
     count_badge = f'<span class="strata-count" style="background:{st["color"]}">{alive_count}</span>' if alive_count > 0 else ""
     
     cards = "\n".join(render_plant_card(p, plant_db) for p in plants)
@@ -255,25 +285,33 @@ def render_section_tabs(row_info, sections_data, active_section_id, base_url="")
 def render_section_page(section_id, section, row_info, sections_data, plant_db, base_url=""):
     """Render a complete section landing page."""
     
-    plants = section.get("plants", [])
+    all_plants = section.get("plants", [])
     has_trees = section.get("has_trees", False)
-    
-    # Group by strata
+
+    # Only show plants with positive inventory counts
+    plants_with_count = [p for p in all_plants if (p.get("count") or 0) > 0]
+
+    # Separate green manure (temporary cover crops) from regular plants
+    regular_plants = [p for p in plants_with_count if not is_green_manure(p["species"], plant_db)]
+    green_manure_plants = [p for p in plants_with_count if is_green_manure(p["species"], plant_db)]
+
+    # Group regular plants by strata
     grouped = {}
     for sk in ["emergent", "high", "medium", "low"]:
-        matching = [p for p in plants if p.get("strata") == sk]
+        matching = [p for p in regular_plants if p.get("strata") == sk]
         if matching:
             grouped[sk] = matching
-    
-    # Stats
-    alive_species = len([p for p in plants if p.get("count") is None or p.get("count", 0) > 0])
-    total_plants = sum(p.get("count", 0) or 0 for p in plants if (p.get("count") or 0) > 0)
+
+    # Stats (exclude green manure from counts)
+    alive_species = len(regular_plants)
+    total_plants = sum(p.get("count", 0) for p in regular_plants)
     
     # Header gradient
     grad = "linear-gradient(145deg, #1a3a0a 0%, #2d5016 60%, #3d6a20 100%)" if has_trees else "linear-gradient(145deg, #5a8c2a 0%, #7ab33e 60%, #8bb85a 100%)"
     section_type = "🌳 Tree Section" if has_trees else "☀️ Open Cultivation"
     
     strata_html = "\n".join(render_strata_group(sk, ps, plant_db) for sk, ps in grouped.items())
+    green_manure_html = render_green_manure_box(green_manure_plants)
     row_bar_html = render_row_bar(row_info, sections_data, section_id, base_url)
     tabs_html = render_section_tabs(row_info, sections_data, section_id, base_url)
     
@@ -286,9 +324,7 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
 <meta name="description" content="Syntropic polyculture section {esc(section.get('range',''))} at Firefly Corner Farm, Krambach NSW">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-{get_css()}
-</style>
+<link rel="stylesheet" href="{base_url}styles.css">
 </head>
 <body>
 <div class="page">
@@ -312,6 +348,8 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
   <div class="plant-inventory">
     {strata_html}
   </div>
+
+  {green_manure_html}
 
   <div class="explainer-toggle" onclick="document.getElementById('explainer').classList.toggle('open')">
     <span class="explainer-title">🌿 What is Syntropic Agriculture?</span>
@@ -371,11 +409,9 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 
 /* Plant cards */
 .plant-card { padding: 14px 16px; background: #fff; cursor: pointer; border-left: 3px solid; transition: background 0.15s; }
-.plant-card.plant-dead { background: #fafafa; opacity: 0.55; }
 .plant-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .plant-info { flex: 1; min-width: 0; }
 .plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
-.dead-marker { font-size: 11px; color: #b0b0b0; margin-left: 8px; font-family: 'DM Sans', sans-serif; }
 .plant-botanical { font-style: italic; font-size: 13px; color: #8b8b8b; margin-top: 1px; }
 .plant-count { font-weight: 700; font-size: 15px; padding: 2px 10px; border-radius: 12px; min-width: 28px; text-align: center; flex-shrink: 0; margin-left: 8px; }
 .plant-notes { font-size: 12px; color: #aaa; margin-top: 4px; }
@@ -403,9 +439,30 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .explainer-content.open { display: block; }
 .explainer-content p { font-size: 13px; color: #555; line-height: 1.6; padding-top: 4px; }
 
+/* Green manure */
+.green-manure-box { margin: 12px 16px; padding: 14px 16px; background: #f0f7e8; border: 1px solid #d4e6c3; border-radius: 10px; }
+.gm-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.gm-icon { font-size: 18px; }
+.gm-title { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 600; color: #3d6a20; }
+.gm-species { font-size: 13px; color: #2d5016; font-weight: 500; line-height: 1.5; }
+.gm-desc { font-size: 11px; color: #6b8f5a; margin-top: 6px; line-height: 1.5; }
+
 /* Footer */
 .footer { padding: 16px 16px 24px; text-align: center; font-size: 11px; color: #bbb; }
 .footer-sub { color: #d4d4cc; margin-top: 4px; }
+
+/* Index page */
+.idx-header { background: linear-gradient(145deg, #1a3a0a 0%, #2d5016 60%, #3d6a20 100%); padding: 28px 20px 24px; color: #fff; }
+.idx-header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; }
+.idx-header p { font-size: 13px; opacity: 0.8; margin-top: 6px; line-height: 1.5; }
+.idx-row { padding: 20px 16px; border-bottom: 1px solid #e5e5e0; }
+.idx-row-title { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 600; color: #1a1a1a; }
+.idx-row-meta { font-size: 12px; color: #999; margin-top: 2px; }
+.idx-sections { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.idx-section { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f7f6f0; border-radius: 8px; text-decoration: none; color: #1a1a1a; font-size: 14px; font-weight: 500; transition: background 0.15s; }
+.idx-section:hover { background: #eeeddf; }
+.idx-count { margin-left: auto; font-size: 11px; color: #999; font-weight: 400; }
+.idx-footer { padding: 20px 16px; text-align: center; font-size: 11px; color: #bbb; }
 """
 
 
@@ -428,6 +485,12 @@ def main():
     sections, rows = load_sections(args.data)
     print(f"  {len(sections)} sections across {len(rows)} rows")
     
+    # Write shared CSS file
+    css_path = output_dir / "styles.css"
+    with open(css_path, "w", encoding="utf-8") as f:
+        f.write(get_css())
+    print(f"  Generated: styles.css")
+
     # Generate a page per section
     for section_id, section in sections.items():
         row_id = f"P{section['paddock']}R{section['row']}"
@@ -439,11 +502,13 @@ def main():
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(page_html)
         
-        plant_count = len(section.get("plants", []))
-        print(f"  Generated: {section_id}.html ({plant_count} species)")
+        visible = [p for p in section.get("plants", [])
+                   if (p.get("count") or 0) > 0
+                   and not is_green_manure(p["species"], plant_db)]
+        print(f"  Generated: {section_id}.html ({len(visible)} species)")
     
     # Generate index page
-    index_html = render_index(rows, sections, args.base_url)
+    index_html = render_index(rows, sections, plant_db, args.base_url)
     with open(output_dir / "index.html", "w", encoding="utf-8") as f:
         f.write(index_html)
     print(f"  Generated: index.html")
@@ -451,7 +516,7 @@ def main():
     print(f"\nDone! {len(sections) + 1} pages in {output_dir}")
 
 
-def render_index(rows, sections, base_url=""):
+def render_index(rows, sections, plant_db, base_url=""):
     """Simple index page listing all rows and their sections."""
     rows_html = ""
     for row_id in sorted(rows.keys()):
@@ -460,7 +525,10 @@ def render_index(rows, sections, base_url=""):
         for sid in row.get("sections", []):
             sec = sections.get(sid, {})
             icon = "🌳" if sec.get("has_trees") else "☀️"
-            n_species = len(sec.get("plants", []))
+            visible = [p for p in sec.get("plants", [])
+                       if (p.get("count") or 0) > 0
+                       and not is_green_manure(p["species"], plant_db)]
+            n_species = len(visible)
             secs_html += f'<a href="{base_url}{sid}.html" class="idx-section">{icon} {esc(sec.get("range", sid))}<span class="idx-count">{n_species} species</span></a>'
         rows_html += f"""
         <div class="idx-row">
@@ -476,22 +544,7 @@ def render_index(rows, sections, base_url=""):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Firefly Corner Farm — Paddock Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-* {{ margin:0; padding:0; box-sizing:border-box; }}
-body {{ font-family:'DM Sans',sans-serif; background:#f0f0ec; }}
-.page {{ max-width:430px; margin:0 auto; background:#fff; min-height:100vh; box-shadow:0 0 60px rgba(0,0,0,0.06); }}
-.idx-header {{ background:linear-gradient(145deg,#1a3a0a 0%,#2d5016 60%,#3d6a20 100%); padding:28px 20px 24px; color:#fff; }}
-.idx-header h1 {{ font-family:'Playfair Display',Georgia,serif; font-size:26px; font-weight:700; }}
-.idx-header p {{ font-size:13px; opacity:0.8; margin-top:6px; line-height:1.5; }}
-.idx-row {{ padding:20px 16px; border-bottom:1px solid #e5e5e0; }}
-.idx-row-title {{ font-family:'Playfair Display',Georgia,serif; font-size:20px; font-weight:600; color:#1a1a1a; }}
-.idx-row-meta {{ font-size:12px; color:#999; margin-top:2px; }}
-.idx-sections {{ display:flex; flex-direction:column; gap:6px; margin-top:12px; }}
-.idx-section {{ display:flex; align-items:center; gap:8px; padding:10px 14px; background:#f7f6f0; border-radius:8px; text-decoration:none; color:#1a1a1a; font-size:14px; font-weight:500; transition:background 0.15s; }}
-.idx-section:hover {{ background:#eeeddf; }}
-.idx-count {{ margin-left:auto; font-size:11px; color:#999; font-weight:400; }}
-.idx-footer {{ padding:20px 16px; text-align:center; font-size:11px; color:#bbb; }}
-</style>
+<link rel="stylesheet" href="{base_url}styles.css">
 </head>
 <body>
 <div class="page">
