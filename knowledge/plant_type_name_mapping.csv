@@ -1,0 +1,238 @@
+farmos_name,common_name,variety,v6_name,action
+Acerola,Acerola,,Acerola,CREATE
+Achiote,Achiote,,Achiote,CREATE
+Amaranth,Amaranth,,Amaranth,CREATE
+Amla,Amla,,Amla,CREATE
+Apple,Apple,,Apple,EXISTS
+Apricot,Apricot,,Apricot,CREATE
+Arrowroot,Arrowroot,,Arrowroot,CREATE
+Australian Climbing Bluebell,Australian Climbing Bluebell,,Australian Climbing Bluebell,CREATE
+Avocado,Avocado,,Avocado,EXISTS
+Ball Honey Myrtle,Ball Honey Myrtle,,Ball Honey Myrtle,CREATE
+Banagrass,Banagrass,,Banagrass,EXISTS
+Banana,Banana,,,CREATE
+Banana (Cavendish),Banana,Cavendish,Banana (Cavendish),CREATE
+Basil (Thai Siam Queen),,,Basil (Thai Siam Queen),ARCHIVE
+Basil - Perennial,Basil - Perennial,,,CREATE
+Basil - Perennial (Greek),Basil - Perennial,Greek,Basil (Greek),CREATE
+Basil - Perennial (Thai),Basil - Perennial,Thai,Basil (Thai),CREATE
+Basil - Sweet (Classic),Basil - Sweet,Sweet - Classic,Basil (Sweet),"RENAME: ""Basil (Sweet)"" → ""Basil - Sweet (Classic)"""
+Basil - Sweet (Gourmet Mix),Basil - Sweet,Sweet - Gourmet Mix,Basil (Gourmet Mix),"RENAME: ""Basil (Gourmet Mix)"" → ""Basil - Sweet (Gourmet Mix)"""
+Bean - Climbing,Bean - Climbing,,Bean (Climbing),CREATE
+Bean - Dwarf,Bean - Dwarf,,Bean (Dwarf),CREATE
+Bee & Butterfly Mix,Bee & Butterfly Mix,,Bee & Butterfly Mix,CREATE
+Beetroot,Beetroot,,Beetroot,CREATE
+Black Coral Pea,Black Coral Pea,,Black Coral Pea,CREATE
+Black She-oak,Black She-oak,,Black She-oak,CREATE
+Blackberry,Blackberry,,Blackberry,CREATE
+Blueberry,Blueberry,,Blueberry,EXISTS
+Borage,Borage,,Borage,CREATE
+Broccoli,Broccoli,,Broccoli,CREATE
+Broccoli (Summer Green),,,Broccoli (Summer Green),ARCHIVE
+Brussels Sprout,Brussels Sprout,,Brussels Sprout,CREATE
+Buckwheat,Buckwheat,,Buckwheat,CREATE
+Butternut Pumpkin,Butternut Pumpkin,,Butternut Pumpkin,CREATE
+Cabbage,Cabbage,,,CREATE
+Cabbage (Golden Acre),Cabbage,Golden Acre,Cabbage (Golden Acre),EXISTS
+Cabbage (Red),Cabbage,Red,Cabbage (Red),EXISTS
+Cabbage (Savoy Vertu),,,Cabbage (Savoy Vertu),ARCHIVE
+Cabbage (Savoy),Cabbage,Savoy,Cabbage (Savoy),CREATE
+Calendula,Calendula,,Calendula,EXISTS
+Cape Gooseberry,Cape Gooseberry,,Cape Gooseberry,EXISTS
+Capsicum,Capsicum,,,CREATE
+Capsicum (Giant Bell),,,Capsicum (Giant Bell),ARCHIVE
+Capsicum (Red),Capsicum,Red,Capsicum (Red),CREATE
+Carob,Carob,,Carob,EXISTS
+Carrot,Carrot,,Carrot,CREATE
+Castor Bean,Castor Bean,,Castor Bean,CREATE
+Cauliflower,Cauliflower,,Cauliflower,CREATE
+Celery,Celery,,Celery,EXISTS
+Celery (Golden Self Blanching),Celery,Golden Self Blanching,Celery (Golden Self Blanching),CREATE
+Celery (Golden Self Blanching),Celery,Golden Self Blanching,Celery (Golden Self Branching),"RENAME: ""Celery (Golden Self Branching)"" -> ""Celery (Golden Self Blanching)"""
+Celery (Tendercrisp),Celery,Tendercrisp,Celery (Tendercrisp),EXISTS
+Chamomile,Chamomile,,Chamomile,CREATE
+Chilli,Chilli,,,CREATE
+Chilli (Big Jim),,,Chilli (Big Jim),ARCHIVE
+Chilli (Bird Eye),Chilli,Bird Eye,Chilli (Bird Eye),CREATE
+Chilli (Bird Eye),Chilli,Bird Eye,Chilli (Bird's Eye),"RENAME: ""Chilli (Bird's Eye)"" -> ""Chilli (Bird Eye)"""
+Chilli (Cayenne),Chilli,Cayenne,Chilli (Cayenne),EXISTS
+Chilli (Devil's Brew),Chilli,Devil's Brew,,CREATE
+Chilli (Jalapeño),Chilli,Jalapeño,Chilli (Jalapeño),EXISTS
+Chives,Chives,,Chives,EXISTS
+Choko,Choko,,Choko,CREATE
+Clover,Clover,,,CREATE
+Clover (Red),Clover,Red,Red Clover,CREATE
+Clover (White),Clover,White,White Clover,CREATE
+Coffee,Coffee,,Coffee,CREATE
+Comfrey,Comfrey,,Comfrey,EXISTS
+Coriander,Coriander,,Coriander,CREATE
+Corn,Corn,,,CREATE
+Corn (Manning Pride),Corn,Manning Pride,,CREATE
+Corn (Sweet),Corn,Sweet,Corn (Sweet),CREATE
+Cottage Garden Mix,Cottage Garden Mix,,Cottage Garden Mix,CREATE
+Cowpea,Cowpea,,Cowpea,CREATE
+Cucumber,Cucumber,,,CREATE
+Cucumber (Burpless),Cucumber,Burpless,Cucumber (Burpless),CREATE
+Cucumber (Burpless),Cucumber,Burpless,Cucumber (Burpless F1),"RENAME: ""Cucumber (Burpless F1)"" -> ""Cucumber (Burpless)"""
+Cucumber (Lebanese),Cucumber,Lebanese,Cucumber (Lebanese),EXISTS
+Curry Leaf,Curry Leaf,,Curry Leaf,CREATE
+Dill,Dill,,Dill,EXISTS
+Eggplant,Eggplant,,Eggplant,CREATE
+Eggplant (Long Purple),,,Eggplant (Long Purple),ARCHIVE
+Eucalypt-Gum (Generic),Eucalypt-Gum (Generic),,,CREATE
+Everlastings,Everlastings,,Everlastings,CREATE
+Fennel,Fennel,,Fennel,CREATE
+Fig,Fig,,Fig,EXISTS
+Finger Lime,Finger Lime,,Finger Lime,CREATE
+Forest Red Gum,Forest Red Gum,,Forest Red Gum,EXISTS
+Forget-Me-Not,Forget-Me-Not,,Forget-Me-Not,CREATE
+Galangal,Galangal,,Galangal,EXISTS
+Garlic,Garlic,,Garlic,CREATE
+Garlic Chives,Garlic Chives,,Garlic Chives,CREATE
+Geranium,Geranium,,Geranium,CREATE
+Geranium (Scented),,,Geranium (Scented),ARCHIVE
+Ginger,Ginger,,Ginger,EXISTS
+Grape Vine,Grape Vine,,,CREATE
+Grape Vine (Chambourcin),Grape Vine,Chambourcin,Grape (Chambourcin),CREATE
+Grapefruit,Grapefruit,,Grapefruit,CREATE
+Green Manure Mix,Green Manure Mix,,Green Manure Mix,CREATE
+Guava,Guava,,,CREATE
+Guava (Hawaiian),Guava,Hawaiian,,CREATE
+Guava (Purple),Guava,Purple,,CREATE
+Guava (Strawberry),Guava,Strawberry,Cherry Guava (Gold),"RENAME: ""Cherry Guava (Gold)"" → ""Guava (Strawberry)"""
+Guava (Strawberry),Guava,Strawberry,Cherry Guava (Strawberry),"RENAME: ""Cherry Guava (Strawberry)"" -> ""Guava (Strawberry)"""
+Guava (Thai White),Guava,Thai White,,CREATE
+Gum (Peppermint),Gum,Peppermint,Peppermint Gum,"RENAME: ""Peppermint Gum"" → ""Gum (Peppermint)"""
+Ice Cream Bean,Ice Cream Bean,,Ice Cream Bean,EXISTS
+Jaboticaba,Jaboticaba,,Jaboticaba,CREATE
+Jacaranda,Jacaranda,,Jacaranda,EXISTS
+Jackfruit,Jackfruit,,Jackfruit,CREATE
+Kale (Tuscan),Kale,Tuscan,Kale (Tuscan),CREATE
+Kangaroo Paw,Kangaroo Paw,,Kangaroo Paw,CREATE
+Kumquat,Kumquat,,Kumquat,CREATE
+Lavender,Lavender,,Lavender,EXISTS
+Lavender - French,Lavender - French,French,Lavender,"RENAME: ""Lavender"" → ""Lavender - French"""
+Lavender - True,Lavender - True,True,Lavender,CREATE
+Leek,Leek,,Leek,CREATE
+Leek (Carpentan 2),,,Leek (Carpentan 2),ARCHIVE
+Lemon,Lemon,,Lemon,EXISTS
+Lemon Balm,Lemon Balm,,Lemon Balm,CREATE
+Lemon Myrtle,Lemon Myrtle,,Lemon Myrtle,EXISTS
+Lemongrass,Lemongrass,,Lemongrass,CREATE
+Lettuce,Lettuce,,,CREATE
+Lettuce (Cos),Lettuce,Cos,Lettuce (Cos),CREATE
+Lettuce (Cos),Lettuce,Cos,Lettuce (Cos Romaine),"RENAME: ""Lettuce (Cos Romaine)"" -> ""Lettuce (Cos)"""
+Lettuce (Mix),Lettuce,Mix,Lettuce (Mixed),CREATE
+Lettuce (Red and Green Salad),,,Lettuce (Red and Green Salad),ARCHIVE
+Lilly Pilly,Lilly Pilly,,Lilly Pilly (Generic),CREATE
+Linseed,Linseed,,Linseed,CREATE
+Liquidambar,Liquidambar,,Liquidambar,CREATE
+Longan,Longan,,Longan,CREATE
+Luffa,Luffa,,Luffa,CREATE
+Lupin,Lupin,,Lupin,CREATE
+Macadamia,Macadamia,,Macadamia,CREATE
+Malabar Chestnut,Malabar Chestnut,,Malabar Chestnut,CREATE
+Mango,Mango,,Mango,EXISTS
+Marigold,Marigold,,,CREATE
+Marigold (French),Marigold,French,Marigold (French),CREATE
+Melaleuca (Generic),Melaleuca (Generic),,Melaleuca (Generic),CREATE
+Melaleuca-White Feather Honey Myrtle (Decora),Melaleuca-White Feather Honey Myrtle,Decora,White Feather Honey Myrtle,CREATE
+Melon,Melon,,Melon,CREATE
+Melon (White Round),,,Melon (White Round),ARCHIVE
+Millet,Millet,,,CREATE
+Millet (White French),Millet,White French,Millet (White French),CREATE
+Mint,Mint,,Mint,CREATE
+Mint (Peppermint),,,Mint (Peppermint),ARCHIVE
+Mulberry,Mulberry,,,CREATE
+Mulberry (Beenleigh Black),Mulberry,Beenleigh Black,Mulberry (Beenleigh Black),CREATE
+Mulberry (White),Mulberry,White,White Mulberry,EXISTS
+Mung Bean,Mung Bean,,Mung Bean,CREATE
+Nasturtium,Nasturtium,,Nasturtium,CREATE
+Native Sarsaparilla,Native Sarsaparilla,,Native Sarsaparilla,CREATE
+Nettle,Nettle,,Nettle,CREATE
+Oat,Oat,,Oat,CREATE
+Okra,Okra,,Okra,CREATE
+Olive,Olive,,,CREATE
+Olive (Kalamata),Olive,Kalamata,Olive (Kalamata),CREATE
+Onion,Onion,,Onion,CREATE
+Onion (Long Tropea Red),,,Onion (Long Tropea Red),ARCHIVE
+Onion (Red),Onion,Red,Onion (Red),CREATE
+Orach,Orach,,Orach,CREATE
+Orange,Orange,,Orange,CREATE
+Oregano,Oregano,,Oregano,EXISTS
+Pak Choi,Pak Choi,,Pak Choi,EXISTS
+Papaya,Papaya,,Papaya,EXISTS
+Parsley (Giant of Italy),,,Parsley (Giant of Italy),ARCHIVE
+Parsley (Italian),Parsley,Italian,Parsley (Italian),CREATE
+Parsley (Moss Curled),Parsley,Moss Curled,Parsley (Moss Curled),EXISTS
+Parsnip,Parsnip,,Parsnip,CREATE
+Passionfruit,Passionfruit,,,CREATE
+Passionfruit (Panama Gold),Passionfruit,Panama Gold,Passionfruit (Panama Gold),EXISTS
+Pea,Pea,,,CREATE
+Pea-Snow,Pea-Snow,Snow,Pea (Snow/Sugar Snap),CREATE
+Pea-Snow (Yakumo),Pea-Snow,Snow-Yakumo,Snowpea (Yakumo),CREATE
+Pea-Sugar Snap,Pea-Sugar Snap,Sugar snap,Pea (Snow/Sugar Snap),CREATE
+Peach,Peach,,Peach,CREATE
+Pear,Pear,,,CREATE
+Pear (Williams),Pear,Williams,Pear (Williams),CREATE
+Pepino plant,Pepino plant,,,CREATE
+Phacelia,Phacelia,,Phacelia,CREATE
+Pigeon Pea,Pigeon Pea,,Pigeon Pea,EXISTS
+Plum (Generic),Plum (Generic),,Plum,CREATE
+Prickly-leaved Paperbark,Prickly-leaved Paperbark,,Prickly-leaved Paperbark,CREATE
+Pumpkin (Generic),Pumpkin (Generic),,,CREATE
+Pumpkin (Queensland Blue),Pumpkin,Queensland Blue,Pumpkin (Queensland Blue),EXISTS
+Pyrethrum,Pyrethrum,,Pyrethrum,EXISTS
+Quince,Quince,,Quince,EXISTS
+Radish (Generic),Radish (Generic),,Radish,CREATE
+Radish (Tillage),Radish,Tillage,,CREATE
+Raspberry,Raspberry,,Raspberry,CREATE
+Rocket,Rocket,,Rocket,CREATE
+Rose Apple,Rose Apple,,Rose Apple,CREATE
+Rosemary,Rosemary,,Rosemary,EXISTS
+Rough Barked Apple,Rough Barked Apple,,Rough Barked Apple,CREATE
+Sage,Sage,,Sage,EXISTS
+Sage (Pineapple),Sage,Pineapple,Sage (Pineapple),CREATE
+Silver Dollar Gum,Silver Dollar Gum,,Silver Dollar Gum,EXISTS
+Silver Wattle (Dealbata),Silver Wattle,Dealbata,Silver Wattle,"RENAME: ""Silver Wattle"" → ""Silver Wattle (Dealbata)"""
+Silverbeet,Silverbeet,,Silverbeet,CREATE
+Silverbeet,Silverbeet,,Silverbeet/Chard,"RENAME: ""Silverbeet/Chard"" -> ""Silverbeet"""
+Snow in Summer (Melaleuca) (Linariifolia),Snow in Summer (Melaleuca),Linariifolia,Snow in Summer,CREATE
+Sorghum,Sorghum,,Sorghum,CREATE
+Spinach (Generic),Spinach (Generic),,,CREATE
+Spinach-Perennial (Okinawa Spinach),Spinach-Perennial,Okinawa Spinach,,CREATE
+Spinach-Perpetual,Spinach-Perpetual,Perpetual,Spinach (Perpetual),CREATE
+Spring Onion,Spring Onion,,Spring Onion,CREATE
+Squash (Yellow Scallop),Squash (Yellow Scallop),,Squash (Yellow Scallop),CREATE
+Strawberry,Strawberry,,Strawberry,CREATE
+Sturt Desert Pea,Sturt Desert Pea,,Sturt Desert Pea,CREATE
+Sunflower,Sunflower,,Sunflower,CREATE
+Sunn Hemp,Sunn Hemp,,Sunn Hemp,CREATE
+Surinam Cherry,Surinam Cherry,,Surinam Cherry,CREATE
+Sweet Potato,Sweet Potato,,Sweet Potato,EXISTS
+Tagasaste - Tree Lucerne,Tagasaste - Tree Lucerne,,Tagasaste,CREATE
+Tagasaste - Tree Lucerne,Tagasaste - Tree Lucerne,,Tagasaste (Tree Lucerne),"RENAME: ""Tagasaste (Tree Lucerne)"" -> ""Tagasaste - Tree Lucerne"""
+Tallowood (Gum),Tallowood (Gum),,Tallowood,"RENAME: ""Tallowood"" → ""Tallowood (Gum)"""
+Tansy,Tansy,,Tansy,CREATE
+Tarragon,Tarragon,,Tarragon,CREATE
+Tarragon (Russian),,,Tarragon (Russian),ARCHIVE
+Tea Tree Oil (Melaleuca) (Alternifolia),Tea Tree Oil (Melaleuca),Alternifolia,Tea Tree,CREATE
+Tea Tree Oil (Melaleuca) (Alternifolia),Tea Tree Oil (Melaleuca),Alternifolia,Tea Tree (Melaleuca),"RENAME: ""Tea Tree (Melaleuca)"" -> ""Tea Tree Oil (Melaleuca) (Alternifolia)"""
+Thyme,Thyme,,Thyme,EXISTS
+Tomato,Tomato,,,CREATE
+Tomato (Marmande),Tomato,Marmande,Tomato (Marmande),CREATE
+Tomato (Marmande),Tomato,Marmande,Tomato (Rouge de Marmande),"RENAME: ""Tomato (Rouge de Marmande)"" -> ""Tomato (Marmande)"""
+Tomato (Moneymaker),Tomato,Moneymaker,Tomato (Moneymaker),EXISTS
+Tomato (Mortgage Lifter),Tomato,Mortgage Lifter,Tomato (Mortgage Lifter),EXISTS
+Tomato (Oxheart),Tomato,Oxheart,Tomato (Oxheart),EXISTS
+Turmeric,Turmeric,,Turmeric,EXISTS
+Vetch,Vetch,,Vetch,CREATE
+Water plantains and allies (Alismatales),,,Water plantains and allies (Alismatales),ARCHIVE
+Watercress,Watercress,,Watercress,CREATE
+Watermelon,Watermelon,,Watermelon,CREATE
+Wattle (Generic),Wattle (Generic),,Acacia (Generic),CREATE
+Wattle - Cootamundra (Baileyana),Wattle - Cootamundra,Baileyana,Cootamundra Wattle,"RENAME: ""Cootamundra Wattle"" → ""Wattle - Cootamundra (Baileyana)"""
+Yarrow (White),Yarrow (White),,Yarrow (White),CREATE
+Zucchini,Zucchini,,,EXISTS
+Zucchini (Blackjack),Zucchini,Blackjack,Zucchini (Blackjack),CREATE
+Zucchini (Lebanese),Zucchini,Lebanese,Zucchini (Lebanese),EXISTS

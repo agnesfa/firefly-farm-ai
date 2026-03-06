@@ -24,19 +24,22 @@ from pathlib import Path
 
 
 def load_plant_db(csv_path):
-    """Load plant types CSV into a lookup dict keyed by common_name."""
+    """Load plant types CSV into a lookup dict keyed by farmos_name (v7+) or common_name (v6)."""
     plants = {}
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            name = row.get("common_name", "").strip()
-            if name:
-                plants[name] = {
+            # v7 uses farmos_name as the unique key; fall back to common_name for v6 compat
+            key = row.get("farmos_name", "").strip() or row.get("common_name", "").strip()
+            if key:
+                plants[key] = {
+                    "common_name": row.get("common_name", ""),
+                    "variety": row.get("variety", ""),
                     "botanical": row.get("botanical_name", ""),
                     "family": row.get("crop_family", ""),
                     "origin": row.get("origin", ""),
                     "description": row.get("description", ""),
-                    "lifespan": row.get("lifespan", ""),
+                    "lifespan": row.get("lifespan_years", "") or row.get("lifespan", ""),
                     "strata": row.get("strata", ""),
                     "succession": row.get("succession_stage", ""),
                     "functions": [f.strip() for f in row.get("plant_functions", "").split(",") if f.strip()],

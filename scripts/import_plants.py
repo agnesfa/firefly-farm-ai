@@ -121,8 +121,9 @@ class PlantTypeImporter:
         metadata = []
         if plant.get("botanical_name"):
             metadata.append(f"**Botanical Name:** {plant['botanical_name']}")
-        if plant.get("lifecycle"):
-            metadata.append(f"**Life Cycle:** {plant['lifecycle'].title()}")
+        if plant.get("lifecycle_years") or plant.get("lifecycle"):
+            lifecycle_val = plant.get("lifecycle_years") or plant.get("lifecycle")
+            metadata.append(f"**Life Cycle:** {lifecycle_val} years")
         if plant.get("strata"):
             metadata.append(f"**Strata:** {plant['strata'].title()}")
         if plant.get("succession_stage"):
@@ -132,8 +133,9 @@ class PlantTypeImporter:
             metadata.append(f"**Functions:** {functions.title()}")
         if plant.get("crop_family"):
             metadata.append(f"**Family:** {plant['crop_family']}")
-        if plant.get("lifespan"):
-            metadata.append(f"**Lifespan:** {plant['lifespan']} years")
+        if plant.get("lifespan_years") or plant.get("lifespan"):
+            lifespan_val = plant.get("lifespan_years") or plant.get("lifespan")
+            metadata.append(f"**Lifespan:** {lifespan_val} years")
         if plant.get("source"):
             metadata.append(f"**Source:** {plant['source']}")
 
@@ -144,7 +146,8 @@ class PlantTypeImporter:
 
     def create_plant_type(self, plant: dict) -> bool:
         """Create a single plant type in farmOS."""
-        name = plant.get("common_name", "").strip()
+        # v7: use farmos_name as the taxonomy term name; fall back to common_name for v6
+        name = plant.get("farmos_name", "").strip() or plant.get("common_name", "").strip()
         if not name:
             return False
 

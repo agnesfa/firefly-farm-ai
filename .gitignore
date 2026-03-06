@@ -13,6 +13,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Claude Code
+.claude/
+
 # Build outputs (regenerated)
 site/public/qrcodes/
 

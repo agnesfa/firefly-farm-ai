@@ -43,7 +43,9 @@ Farm (~25 hectares)
 - **farmOS instance:** https://margregen.farmos.net/
 - **WWOOF profile:** https://wwoof.com.au/members/fireflycorner/
 - **Hipcamp listing:** https://www.hipcamp.com/en-AU/land/new-south-wales-firefly-corner-88lhv5p7
-- **GitHub repo:** firefly-farm-ai (this repository)
+- **GitHub repo:** firefly-farm-ai (this repository) — https://github.com/agnesfa/firefly-farm-ai
+- **GitHub Pages:** https://agnesfa.github.io/firefly-farm-ai/ (QR code landing pages)
+- **Drone tiles repo:** farm-tiles — https://github.com/agnesfa/farm-tiles (orthophoto raster tiles for farmOS)
 
 ---
 
@@ -180,16 +182,18 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 - **Auth:** OAuth2 (credentials in .env, never in repo)
 - **API base:** https://margregen.farmos.net/api
 
-### Current State (as of March 2026)
+### Current State (as of March 6, 2026 — post v7 migration)
 
 | Entity | Count | Notes |
 |--------|-------|-------|
+| **Total assets** | **156** | All types combined |
 | Land assets | 93 | Paddocks and rows fully mapped, including sections (P2R3.0-3, etc.) |
 | Structure assets | 17 | Including nursery and sub-locations |
-| Plant type taxonomy | ~80 | Imported Jan 2026; ~100 more in CSV to add |
+| Plant type taxonomy | **215** | **v7 migration complete** — 213 v7 entries + 1 system term (Cattail) + 1 archived |
 | Plant assets | 2 | Minimal — most planting data still in Claire's spreadsheets |
 | Seed assets | 0 | Not yet created |
-| Activity logs | 55 | Various |
+| **Total logs** | **126** | All types combined |
+| Activity logs | 59 | Various |
 | Observation logs | 40 | Various |
 | Seeding logs | 8 | Not using proper Seed→Plant workflow |
 | Transplanting logs | 7 | Existing |
@@ -197,8 +201,14 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 | Equipment assets | 3 | |
 | Compost assets | 5 | |
 
-**Critical gaps:**
-- ~100 plant types from the v6 masterfile still need importing
+**Plant type taxonomy status (v7 — completed March 6, 2026):**
+- All 213 v7 plant types present in farmOS with v7 `farmos_name` as term name
+- All terms have enriched descriptions with syntropic agriculture metadata
+- 16 v6 names renamed to v7 conventions
+- 15 obsolete v6 entries archived (prefixed `[ARCHIVED]`)
+- Google Sheet shared with Claire: "Firefly Corner - Plant Types v7"
+
+**Remaining gaps:**
 - No Seed assets exist (244 records in CSV ready)
 - Plant assets barely started (2 total — the actual plantings are documented in spreadsheets, not farmOS)
 - Seeding/transplanting logs don't use the native Seed→Plant workflow
@@ -254,13 +264,26 @@ client.log.send("activity", log_data)
 
 ### Plant Types Master Database
 
-**File:** `knowledge/plant_types.csv` (v6, 180 records)
-**Columns:** common_name, botanical_name, crop_family, origin, description, lifespan, lifecycle, maturity_days, strata, succession_stage, plant_functions, harvest_days, germination_time, transplant_days, source
+**File:** `knowledge/plant_types.csv` (v7, 213 records)
+**Columns:** common_name, variety, farmos_name, botanical_name, crop_family, origin, description, lifespan_years, lifecycle_years, maturity_days, strata, succession_stage, plant_functions, harvest_days, germination_time, transplant_days, source
 
-This is the farm's plant knowledge base. It grows as new species are introduced. Key stats:
-- 8 emergent, 24+ high, 41+ medium, 67+ low strata species
-- 16 Australian natives (eucalypts, wattles, melaleucas, finger lime, macadamia)
-- Sources: EDEN Seeds, Daleys Fruit Nursery, Greenpatch Organic Seeds, FFC (farm-saved)
+This is the farm's plant knowledge base. It grows as new species are introduced.
+
+**Key design decisions (v7, March 2026):**
+- `common_name` is the base species name (e.g., "Tomato", "Basil - Sweet")
+- `variety` is the cultivar when applicable (e.g., "Marmande", "Classic")
+- `farmos_name` is the derived canonical name used as the farmOS plant_type taxonomy term name: `Common Name (Variety)` when variety exists, else just `Common Name`
+- Dash convention for sub-types: `Basil - Sweet`, `Lavender - French`, `Wattle - Cootamundra`
+- 7 entries retain `(Generic)` for catch-all species: Eucalypt-Gum, Melaleuca, Plum, Pumpkin, Radish, Spinach, Wattle
+- Source/provenance is tracked per plant type but belongs on Seed assets in farmOS, not on the taxonomy
+- `lifespan_years` and `lifecycle_years` columns use numeric ranges (e.g., "5-10", "0.5", "20+")
+
+**Key stats:**
+- 13 emergent, 38 high, 58 medium, 104 low strata species
+- 18 standardized seed sources
+- Sources: EDEN Seeds, Daleys Fruit Nursery, Greenpatch Organic Seeds, FFC (farm-saved), Mr Fothergill's, and others
+
+**Supporting file:** `knowledge/plant_type_name_mapping.csv` — maps v6 names and farmOS existing names to v7 farmos_names with migration actions (CREATE/EXISTS/RENAME/ARCHIVE)
 
 ### Seed Bank Inventory
 
@@ -329,13 +352,18 @@ firefly-farm-ai/
 ├── scripts/                   ← Python data pipeline
 │   ├── export_farmos.py       ← FOUNDATION: Export from farmOS → sections.json (Phase 1)
 │   ├── import_fieldsheets.py  ← FOUNDATION: Import spreadsheets → farmOS (Phase 1)
-│   ├── import_plants.py       ← Import plant types CSV → farmOS taxonomy (Phase 1)
+│   ├── import_plants.py       ← Import plant types CSV → farmOS taxonomy
+│   ├── migrate_plant_types.py ← v6→v7 taxonomy migration (completed, kept for reference)
+│   ├── fix_taxonomy.py        ← Verify/repair plant_type taxonomy (reliable pagination)
+│   ├── clean_plant_types_v7.py ← Data transformation: v6 CSV → v7 CSV (completed)
 │   ├── parse_fieldsheets.py   ← DEMO SHORTCUT: spreadsheets → sections.json (Phase 0 only)
 │   ├── generate_site.py       ← sections.json + plant_types.csv → HTML pages
 │   └── generate_qrcodes.py    ← Generate QR images from sections.json
 │
 ├── knowledge/                 ← Farm knowledge base
-│   ├── plant_types.csv        ← Master plant database (v6, 180 species)
+│   ├── plant_types.csv        ← Master plant database (v7, 213 species)
+│   ├── plant_types_v6_archive.csv ← Previous v6 reference (180 species, archived)
+│   ├── plant_type_name_mapping.csv ← farmOS migration plan (v6→v7 name mapping)
 │   └── seed_bank.csv          ← Seed inventory (to be added)
 │
 ├── mcp-server/                ← farmOS MCP server (Phase 1, to be built)
@@ -343,6 +371,9 @@ firefly-farm-ai/
 ├── skills/                    ← Claude Skills (to be developed)
 │
 ├── docs/                      ← Architecture decisions, specs
+│   └── farmos/                ← farmOS API reference, data snapshots
+│
+├── claude-docs/               ← Design documents, roadmap, session notes
 │
 └── .github/
     └── workflows/
@@ -490,7 +521,7 @@ Each plant function gets a colored pill with emoji:
 
 These decisions have been made through extensive discussion. Don't revisit them unless Agnes explicitly asks.
 
-1. **Single agent, not multi-agent.** Following Anthropic's principle: start with the simplest thing that works. One well-tooled Claude agent with the farmOS MCP server.
+1. **Single agent, not multi-agent orchestration.** Following Anthropic's principle: start with the simplest thing that works. One well-tooled Claude agent with the farmOS MCP server. Sub-agents within a session (for parallel research, audits, validation) are fine — they're delegation, not orchestration. Agent Teams available for complex parallel development (e.g., Phase 1 MCP server build).
 
 2. **farmOS MCP server in Python.** farmOS.py is the mature Python client. Python MCP SDK is official. No reason to use another language.
 
@@ -518,11 +549,25 @@ These decisions have been made through extensive discussion. Don't revisit them 
 - ✅ Parse P2R2 and P2R3 field sheets into sections.json
 - ✅ Generate 14 section HTML pages + index
 - ✅ Pipeline tested end-to-end
+- ✅ Push to GitHub, enable GitHub Pages (live at https://agnesfa.github.io/firefly-farm-ai/)
+- ✅ Fresh farmOS export (March 4, 2026: 156 assets, 126 logs, 104 taxonomy)
+- ✅ Generate 32 QR codes from live farmOS data
+- ⬜ Resolve P2R2 section boundaries with Claire (farmOS vs fieldsheet mismatch)
 - ⬜ Upload and parse remaining P2 rows (R1, R4, R5)
-- ⬜ Fresh farmOS export to verify/sync location assets
-- ⬜ Push to GitHub, enable GitHub Pages
-- ⬜ Generate QR codes, print for poles
+- ⬜ Regenerate pages with aligned section IDs
+- ⬜ Print QR codes for poles (minimum 3cm × 3cm)
 - ⬜ Test visitor experience on phone
+
+### Phase 0.5: Plant Types Foundation (COMPLETED — March 6, 2026)
+**Goal:** Complete the plant_type taxonomy in farmOS (80 → 213 entries). ✅
+- ✅ Redesigned plant_types.csv from v6 to v7 (180 → 213 records, 17 columns)
+- ✅ Created `farmos_name` as canonical key: `Common Name (Variety)` convention
+- ✅ Built plant_type_name_mapping.csv (237 rows: CREATE/EXISTS/RENAME/ARCHIVE actions)
+- ✅ Built and executed migrate_plant_types.py (RENAME 16, ARCHIVE 15, EXISTS/UPDATE 48, CREATE 157)
+- ✅ Cleaned up duplicate entries caused by farmOS.py pagination issues
+- ✅ Verified: 213/213 v7 plant types present in farmOS, 0 missing, 0 duplicates
+- ✅ Updated import_plants.py and generate_site.py for v7 column names
+- ✅ Created Google Sheet for Claire ("Firefly Corner - Plant Types v7")
 
 ### Phase 1: farmOS MCP Server (Weeks 2–3)
 Core tools to implement:
@@ -571,10 +616,13 @@ Examples: `P2R3.0-3`, `P2R3.14-21`, `P1R1.0-10`
 The dot separates the row from the section. The dash separates the start and end metre marks.
 
 ### Plant Type Names
-- Common name is the primary key (must match farmOS taxonomy exactly)
-- Varieties in parentheses: `Tomato (Marmande)`, `Chilli (Jalapeño)`, `Cherry Guava (Strawberry)`
-- Generic cultivars: `Capsicum (Red)`, `Cabbage (Golden Acre)`
+- `farmos_name` is the primary key (must match farmOS plant_type taxonomy exactly)
+- Built from: `common_name` + `(variety)` when variety exists, else just `common_name`
+- Varieties in parentheses: `Tomato (Marmande)`, `Chilli (Jalapeño)`, `Guava (Strawberry)`
+- Dash convention for sub-types: `Basil - Sweet`, `Lavender - French`, `Wattle - Cootamundra`
+- Sub-type + variety: `Basil - Sweet (Classic)`, `Wattle - Cootamundra (Baileyana)`
 - No parentheses for single-variety types: `Pigeon Pea`, `Comfrey`, `Macadamia`
+- 7 species retain `(Generic)` suffix: Eucalypt-Gum, Melaleuca, Plum, Pumpkin, Radish, Spinach, Wattle
 
 ### File Naming
 - Field sheets: `P{paddock}R{row}_Field_Sheets_v{version}.xlsx`
@@ -591,9 +639,14 @@ The dot separates the row from the section. The dash separates the start and end
 ## 13. ENVIRONMENT SETUP
 
 ```bash
+# IMPORTANT: Use Python 3.13, NOT 3.14
+# farmOS library uses pydantic v1 which is incompatible with Python 3.14
+python3.13 -m venv venv
+source venv/bin/activate
+
 # Python dependencies
 pip install -r requirements.txt
-# (requests, openpyxl, pandas, jinja2, qrcode[pil], python-dotenv)
+# (requests, openpyxl, pandas, jinja2, qrcode[pil], python-dotenv, farmOS)
 
 # farmOS credentials (create .env from .env.example, never commit .env)
 FARMOS_URL=https://margregen.farmos.net
@@ -611,12 +664,12 @@ FARMOS_PASSWORD=...
 
 ### Foundation Pipeline Scripts
 
-**export_farmos.py** (TO BE BUILT — Phase 1 priority)
-Exports planting data from farmOS into sections.json format for site generation.
+**export_farmos.py** (EXISTS — raw exporter; needs sections.json output format for Phase 1)
+Exports all farmOS data (assets, logs, taxonomy) as raw JSON files. Currently used for auditing and QR code generation. Phase 1 will add sections.json output format for site generation.
 ```bash
-python scripts/export_farmos.py --output site/src/data/sections.json
+python scripts/export_farmos.py  # exports to exports/farmos_export_YYYYMMDD/
 ```
-This is the script that makes farmOS the source of truth for the site. It queries farmOS for assets, logs, and inventory by location, then structures the data the same way parse_fieldsheets.py does — so generate_site.py doesn't care where the data came from.
+Phase 1 addition: `--output site/src/data/sections.json` for sections.json format.
 
 **import_fieldsheets.py** (TO BE BUILT — Phase 1)
 Imports Claire's spreadsheet data INTO farmOS as proper logs and assets.
@@ -626,11 +679,25 @@ python scripts/import_fieldsheets.py --input fieldsheets/
 ```
 This is how spreadsheet data enters farmOS. Once data is in farmOS, the spreadsheets are no longer needed for that data.
 
-**import_plants.py** (TO BE BUILT — Phase 1)
-Imports plant types from the master CSV into farmOS taxonomy.
+**import_plants.py** (EXISTS — updated for v7)
+Imports plant types from the master CSV into farmOS taxonomy. Has dry-run mode and duplicate detection. Updated to use `farmos_name` as the term name and v7 column names.
 ```bash
 python scripts/import_plants.py --csv knowledge/plant_types.csv --dry-run
 python scripts/import_plants.py --csv knowledge/plant_types.csv
+```
+
+**migrate_plant_types.py** (COMPLETED — v6→v7 migration, March 6, 2026)
+Full taxonomy migration: reads mapping CSV and executes RENAME/ARCHIVE/EXISTS/CREATE in order. Handles edge cases like duplicate rename targets. Kept for reference.
+```bash
+python scripts/migrate_plant_types.py --dry-run       # Preview (default)
+python scripts/migrate_plant_types.py --execute        # Apply changes
+```
+
+**fix_taxonomy.py** (EXISTS — verification/repair tool)
+Uses raw HTTP pagination (not farmOS.py iterate) to reliably fetch ALL terms, then deletes duplicates and creates missing entries. Use this to verify taxonomy health.
+```bash
+python scripts/fix_taxonomy.py --dry-run   # Verify state
+python scripts/fix_taxonomy.py --execute   # Fix issues
 ```
 
 ### Demo Shortcut Scripts (Phase 0)
@@ -715,4 +782,38 @@ These species appear across almost every row and are central to understanding th
 
 ---
 
-*Last updated: March 2026. This file should be updated as the project evolves.*
+---
+
+## 19. SESSION LOG
+
+### March 4, 2026 — Repo Bootstrap & Foundation
+- Consolidated repo from 3 sources (archive, old FireflyAgents dir, farm-tiles reference)
+- Created GitHub repo, enabled GitHub Pages, deployed site
+- Migrated export_farmos.py and import_plants.py with credential cleanup (hardcoded → .env)
+- Fresh farmOS export: 156 assets, 126 logs, 104 taxonomy terms
+- Generated 32 QR codes from live farmOS data
+- Discovered: Jan 5 farmOS document had stale section IDs for P2R3
+- Discovered: P2R2 section mismatch between farmOS and fieldsheets (Agnes reviewing with Claire)
+- Discovered: 126 plant types still need importing (23 name mismatches)
+- Added Phase 0.5 (Plant Types Foundation) to roadmap
+- Created claude-docs/ with design-and-roadmap.md
+
+### March 5–6, 2026 — Plant Types v7 Migration (Phase 0.5 Complete)
+- Redesigned plant_types.csv: v6 (180 records) → v7 (213 records, 17 columns)
+- Introduced `farmos_name` as canonical key: `Common Name (Variety)` convention
+- Built plant_type_name_mapping.csv: 237 rows mapping v6 → v7 with actions
+- Created clean_plant_types_v7.py for the v6→v7 CSV transformation
+- Built migrate_plant_types.py for farmOS taxonomy migration
+- Executed migration: 16 renames, 15 archives, 48 description updates, 157 creates
+- Fixed: `harvest_days` is not a valid farmOS plant_type field; zero values rejected
+- Hit farmOS.py `iterate()` pagination bug: unreliable with 200+ terms
+- Built fix_taxonomy.py with raw HTTP pagination to reliably verify/repair
+- Final state: 213/213 v7 plant types verified in farmOS, 0 duplicates
+- Created Google Sheet "Firefly Corner - Plant Types v7" for Claire
+- Updated generate_site.py and import_plants.py for v7 column names
+
+**Key learning:** farmOS.py's `client.term.iterate()` has unreliable pagination with 200+ terms. Use raw HTTP with `page[limit]=50` and follow `links.next` for complete results. Pattern captured in fix_taxonomy.py's `fetch_all_terms()`.
+
+---
+
+*Last updated: March 6, 2026. This file should be updated as the project evolves.*
