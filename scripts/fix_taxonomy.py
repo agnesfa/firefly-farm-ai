@@ -43,11 +43,15 @@ def get_farmos_config():
 
 
 def fetch_all_terms(client):
-    """Fetch ALL plant_type terms using raw HTTP with explicit pagination."""
+    """Fetch ALL plant_type terms using raw HTTP with explicit pagination.
+
+    NOTE: farmOS JSON:API pagination caps at ~250 entries (5 pages of 50).
+    This is unreliable for complete enumeration. Use fetch_terms_by_name()
+    for guaranteed complete results.
+    """
     all_terms = []
     seen_ids = set()
 
-    # Use the client's session for auth, but do manual pagination
     session = client.session
     hostname = client.session.hostname
     url = "/api/taxonomy_term/plant_type?page[limit]=50"
@@ -69,7 +73,6 @@ def fetch_all_terms(client):
                 seen_ids.add(tid)
                 all_terms.append(term)
 
-        # Get next page URL — strip hostname since http_request prepends it
         next_url = data.get("links", {}).get("next", {})
         if isinstance(next_url, dict):
             full_url = next_url.get("href", "")
@@ -79,7 +82,6 @@ def fetch_all_terms(client):
             full_url = ""
 
         if full_url:
-            # Strip hostname prefix if present
             if full_url.startswith(hostname):
                 url = full_url[len(hostname):]
             else:
@@ -88,6 +90,18 @@ def fetch_all_terms(client):
             url = None
 
     return all_terms
+
+
+def fetch_terms_by_name(client, name):
+    """Fetch ALL terms with a specific name. Reliable — not affected by pagination limits."""
+    import urllib.parse
+    session = client.session
+    encoded = urllib.parse.quote(name)
+    url = f"/api/taxonomy_term/plant_type?filter[name]={encoded}&page[limit]=50"
+    resp = session.http_request(url)
+    if resp.status_code != 200:
+        return []
+    return resp.json().get("data", [])
 
 
 def build_description(plant: dict) -> str:
@@ -139,27 +153,7 @@ def main():
     client.authorize(username=config["username"], password=config["password"])
     print("  Connected.\n")
 
-    # Step 1: Fetch ALL terms with reliable pagination
-    print("Fetching ALL plant_type terms (paginated)...")
-    all_terms = fetch_all_terms(client)
-    print(f"  Total terms (unique UUIDs): {len(all_terms)}")
-
-    # Group by name
-    by_name = defaultdict(list)
-    for term in all_terms:
-        name = term.get("attributes", {}).get("name", "")
-        by_name[name.lower()].append(term)
-
-    duplicates = {n: ts for n, ts in by_name.items() if len(ts) > 1}
-    all_names = {term.get("attributes", {}).get("name", "") for term in all_terms}
-    archived = sum(1 for n in all_names if n.startswith("[ARCHIVED]"))
-
-    print(f"  Unique names: {len(by_name)}")
-    print(f"  Active: {len(by_name) - archived}")
-    print(f"  Archived: {archived}")
-    print(f"  Duplicate groups: {len(duplicates)}")
-
-    # Step 2: Load v7 plant data
+    # Step 1: Load v7 plant data
     plant_data = {}
     with open(args.plants, "r", encoding="utf-8") as f:
         for row in csv.DictReader(f):
@@ -167,15 +161,53 @@ def main():
             if farmos_name:
                 plant_data[farmos_name] = row
 
+    # Step 2: Query each v7 name individually (reliable — not affected by pagination caps)
+    print(f"Querying {len(plant_data)} v7 plant names individually...")
+    total_terms = 0
+    total_dupes = 0
+    duplicate_groups = {}  # name -> list of terms
+    missing_names = []
+    found_names = set()
+
+    for farmos_name in sorted(plant_data.keys()):
+        terms = fetch_terms_by_name(client, farmos_name)
+        count = len(terms)
+        total_terms += count
+
+        if count == 0:
+            missing_names.append(farmos_name)
+        elif count == 1:
+            found_names.add(farmos_name)
+        else:
+            found_names.add(farmos_name)
+            duplicate_groups[farmos_name] = terms
+            total_dupes += count - 1
+
+    # Also check for [ARCHIVED] terms
+    archived_terms = fetch_terms_by_name(client, "[ARCHIVED]")
+    # That won't work with exact match, let's use pagination for archived
+    archived_count = 0
+    for term in fetch_all_terms(client):
+        name = term.get("attributes", {}).get("name", "")
+        if name.startswith("[ARCHIVED]"):
+            archived_count += 1
+
+    print(f"  Total v7 terms found: {total_terms}")
+    print(f"  V7 names present: {len(found_names)}/{len(plant_data)}")
+    print(f"  V7 names missing: {len(missing_names)}")
+    print(f"  Duplicate groups: {len(duplicate_groups)}")
+    print(f"  Extra entries to delete: {total_dupes}")
+    print(f"  Archived terms: {archived_count}")
+
     # Step 3: Delete duplicates
     deleted = 0
     delete_failed = 0
-    if duplicates:
+    if duplicate_groups:
         print(f"\n{'='*60}")
-        print(f"{'DRY RUN — ' if dry_run else ''}DELETING DUPLICATES ({len(duplicates)} groups)")
+        print(f"{'DRY RUN — ' if dry_run else ''}DELETING DUPLICATES ({len(duplicate_groups)} groups, {total_dupes} entries)")
         print(f"{'='*60}\n")
 
-        for name, terms in sorted(duplicates.items()):
+        for name, terms in sorted(duplicate_groups.items()):
             def score(t):
                 desc = t.get("attributes", {}).get("description", {})
                 desc_value = desc.get("value", "") if isinstance(desc, dict) else ""
@@ -185,48 +217,31 @@ def main():
             terms_scored = sorted(terms, key=score, reverse=True)
             keep = terms_scored[0]
             to_delete = terms_scored[1:]
-            keep_name = keep.get("attributes", {}).get("name", "")
+
+            print(f"  {name} ({len(terms)}x → keep 1, delete {len(to_delete)})")
 
             for dup in to_delete:
                 dup_id = dup.get("id", "")
                 if dry_run:
-                    print(f"  Would delete duplicate: {keep_name} ({dup_id[:8]}...)")
                     deleted += 1
-                    # Remove from by_name for accurate missing check later
-                    by_name[name].remove(dup)
                 else:
                     try:
                         client.term.delete("plant_type", dup_id)
-                        print(f"  Deleted duplicate: {keep_name} ({dup_id[:8]}...)")
+                        print(f"    Deleted {dup_id[:12]}...")
                         deleted += 1
-                        by_name[name].remove(dup)
                     except Exception as e:
-                        print(f"  FAILED: {keep_name} ({dup_id[:8]}...) — {e}")
+                        print(f"    FAILED {dup_id[:12]}... — {e}")
                         delete_failed += 1
 
-    # Step 4: Find and create missing v7 entries
-    existing_lower = {n.lower() for n in all_names}
-    # Remove names of deleted entries... actually just use by_name keys
-    # since we cleaned it above
-    remaining_names = set()
-    for name_lower, terms in by_name.items():
-        if terms:  # still has at least one entry
-            for t in terms:
-                remaining_names.add(t.get("attributes", {}).get("name", ""))
-
-    missing = []
-    for farmos_name in sorted(plant_data.keys()):
-        if farmos_name not in remaining_names and farmos_name.lower() not in {n.lower() for n in remaining_names}:
-            missing.append(farmos_name)
-
+    # Step 4: Create missing v7 entries
     created = 0
     create_failed = 0
-    if missing:
+    if missing_names:
         print(f"\n{'='*60}")
-        print(f"{'DRY RUN — ' if dry_run else ''}CREATING MISSING ENTRIES ({len(missing)})")
+        print(f"{'DRY RUN — ' if dry_run else ''}CREATING MISSING ENTRIES ({len(missing_names)})")
         print(f"{'='*60}\n")
 
-        for farmos_name in missing:
+        for farmos_name in missing_names:
             plant = plant_data[farmos_name]
             description = build_description(plant)
             term_data = {
@@ -262,20 +277,22 @@ def main():
     print(f"\n{'='*60}")
     print("SUMMARY")
     print(f"{'='*60}")
+    print(f"  V7 names checked:  {len(plant_data)}")
+    print(f"  Already present:   {len(found_names)}")
     print(f"  {'Would delete' if dry_run else 'Deleted'} duplicates: {deleted}")
     if delete_failed:
-        print(f"  Delete failures: {delete_failed}")
-    print(f"  {'Would create' if dry_run else 'Created'} missing: {created}")
+        print(f"  Delete failures:   {delete_failed}")
+    print(f"  {'Would create' if dry_run else 'Created'} missing:    {created}")
     if create_failed:
-        print(f"  Create failures: {create_failed}")
+        print(f"  Create failures:   {create_failed}")
 
-    expected_total = len(all_terms) - deleted + created
-    print(f"  Expected total after fix: {expected_total}")
+    expected = len(found_names) + created
+    print(f"  Expected v7 terms after fix: {expected}")
 
     if dry_run:
         print(f"\n  ** DRY RUN — run with --execute to apply fixes **")
     else:
-        print(f"\n  Fix complete. Run again to verify.")
+        print(f"\n  Fix complete. Run again to verify (should show 0 duplicates, 0 missing).")
 
 
 if __name__ == "__main__":
