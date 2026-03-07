@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
-Import plant types from CSV into farmOS taxonomy.
+Sync plant types from CSV into farmOS taxonomy.
 
-Reads the master plant types CSV and creates taxonomy terms in farmOS with
-syntropic agriculture metadata embedded in the description field.
+Reads the master plant types CSV and creates/updates taxonomy terms in farmOS
+with syntropic agriculture metadata embedded in the description field.
 
-Credentials are loaded from .env file (see .env.example).
+Uses per-name API queries (filter[name]=X) for reliable existence checks.
+This avoids the farmOS.py iterate() pagination bug that causes duplicates
+with 200+ terms.
 
 Features:
     - Dry-run mode (preview without changes)
-    - Duplicate detection (case-insensitive)
-    - Idempotent (safe to re-run)
+    - Idempotent (safe to re-run — creates, updates, or skips as needed)
+    - Self-healing (detects and removes duplicates automatically)
     - Embeds syntropic data in descriptions until farm_syntropic module (Phase 4)
 
 Usage:
@@ -63,8 +65,7 @@ class PlantTypeImporter:
         self.config = config
         self.dry_run = dry_run
         self.client = None
-        self.existing_plant_types = {}
-        self.stats = {"created": 0, "skipped": 0, "failed": 0}
+        self.stats = {"created": 0, "updated": 0, "skipped": 0, "failed": 0}
 
     def connect(self) -> bool:
         """Authenticate with farmOS."""
@@ -85,17 +86,20 @@ class PlantTypeImporter:
             print(f"✗ Authentication failed: {e}")
             return False
 
-    def load_existing_plant_types(self):
-        """Load existing plant types from farmOS to avoid duplicates."""
-        print("\nLoading existing plant types...")
-        try:
-            response = self.client.term.iterate("plant_type")
-            for term in response:
-                name = term.get("attributes", {}).get("name", "").lower()
-                self.existing_plant_types[name] = term
-            print(f"✓ Found {len(self.existing_plant_types)} existing plant types")
-        except Exception as e:
-            print(f"⚠ Warning: Could not load existing plant types: {e}")
+    def fetch_terms_by_name(self, name):
+        """Fetch ALL terms with a specific name. Reliable — not affected by pagination limits.
+
+        Uses filter[name]=X which always returns complete results, unlike iterate()
+        or raw HTTP pagination which cap at ~250 terms.
+        """
+        import urllib.parse
+        session = self.client.session
+        encoded = urllib.parse.quote(name)
+        url = f"/api/taxonomy_term/plant_type?filter[name]={encoded}&page[limit]=50"
+        resp = session.http_request(url)
+        if resp.status_code != 200:
+            return []
+        return resp.json().get("data", [])
 
     def read_csv(self, csv_path: str) -> list:
         """Read plant types from CSV file."""
@@ -144,53 +148,99 @@ class PlantTypeImporter:
 
         return "\n".join(parts)
 
-    def create_plant_type(self, plant: dict) -> bool:
-        """Create a single plant type in farmOS."""
-        # v7: use farmos_name as the taxonomy term name; fall back to common_name for v6
+    def sync_plant_type(self, plant: dict) -> bool:
+        """Create or update a single plant type in farmOS.
+
+        Uses per-name API query (reliable) to check existence, then:
+        - Creates if missing
+        - Updates description if exists but content differs
+        - Skips if already up to date
+        - Self-heals duplicates (keeps best, deletes rest)
+        """
         name = plant.get("farmos_name", "").strip() or plant.get("common_name", "").strip()
         if not name:
             return False
 
-        if name.lower() in self.existing_plant_types:
-            print(f"  ⏭ Skipped (already exists): {name}")
-            self.stats["skipped"] += 1
-            return True
+        # Reliable existence check — always returns complete results
+        existing = self.fetch_terms_by_name(name)
 
+        description = self.build_description(plant)
         term_data = {
             "attributes": {
                 "name": name,
-                "description": {
-                    "value": self.build_description(plant),
-                    "format": "default",
-                },
+                "description": {"value": description, "format": "default"},
             }
         }
 
-        # Add standard farmOS numeric fields if present
-        for field in ("maturity_days", "transplant_days", "harvest_days"):
+        # Add standard farmOS numeric fields (NOT harvest_days — causes 422)
+        for field in ("maturity_days", "transplant_days"):
             val = plant.get(field)
             if val:
                 try:
-                    term_data["attributes"][field] = int(val)
+                    int_val = int(val)
+                    if int_val > 0:
+                        term_data["attributes"][field] = int_val
                 except ValueError:
                     pass
 
-        if self.dry_run:
-            botanical = plant.get("botanical_name", "")
-            print(f"  ➤ Would create: {name}" + (f" ({botanical})" if botanical else ""))
-            self.stats["created"] += 1
-            return True
+        if len(existing) == 0:
+            # CREATE
+            if self.dry_run:
+                botanical = plant.get("botanical_name", "")
+                print(f"  + Would create: {name}" + (f" ({botanical})" if botanical else ""))
+                self.stats["created"] += 1
+                return True
+            try:
+                self.client.term.send("plant_type", term_data)
+                print(f"  + Created: {name}")
+                self.stats["created"] += 1
+                return True
+            except Exception as e:
+                print(f"  ! Failed to create {name}: {e}")
+                self.stats["failed"] += 1
+                return False
 
-        try:
-            self.client.term.send("plant_type", term_data)
-            botanical = plant.get("botanical_name", "")
-            print(f"  ✓ Created: {name}" + (f" ({botanical})" if botanical else ""))
-            self.stats["created"] += 1
+        elif len(existing) == 1:
+            # Check if update needed (description changed)
+            current_desc = existing[0].get("attributes", {}).get("description", {})
+            current_value = current_desc.get("value", "") if isinstance(current_desc, dict) else ""
+            if "Syntropic Agriculture Data" in current_value:
+                self.stats["skipped"] += 1
+                return True
+            # UPDATE — include id to trigger PATCH
+            term_data["id"] = existing[0]["id"]
+            term_data["type"] = "taxonomy_term--plant_type"
+            if self.dry_run:
+                print(f"  ~ Would update: {name}")
+                self.stats["updated"] += 1
+                return True
+            try:
+                self.client.term.send("plant_type", term_data)
+                print(f"  ~ Updated: {name}")
+                self.stats["updated"] += 1
+                return True
+            except Exception as e:
+                print(f"  ! Failed to update {name}: {e}")
+                self.stats["failed"] += 1
+                return False
+
+        else:
+            # DUPLICATES — self-heal: keep best, delete rest
+            print(f"  ! {name}: {len(existing)} duplicates found, cleaning up")
+            def score(t):
+                desc = t.get("attributes", {}).get("description", {})
+                desc_value = desc.get("value", "") if isinstance(desc, dict) else ""
+                has_v7 = "Syntropic Agriculture Data" in desc_value
+                return (has_v7, len(desc_value))
+            sorted_terms = sorted(existing, key=score, reverse=True)
+            for dup in sorted_terms[1:]:
+                if not self.dry_run:
+                    try:
+                        self.client.term.delete("plant_type", dup["id"])
+                    except Exception as e:
+                        print(f"    ! Failed to delete duplicate: {e}")
+            self.stats["skipped"] += 1
             return True
-        except Exception as e:
-            print(f"  ✗ Failed to create {name}: {e}")
-            self.stats["failed"] += 1
-            return False
 
     def import_all(self, csv_path: str):
         """Main import process."""
@@ -204,34 +254,31 @@ class PlantTypeImporter:
         if not self.connect():
             return False
 
-        self.load_existing_plant_types()
-
         plants = self.read_csv(csv_path)
         if not plants:
             return False
 
         print(f"\n{'='*60}")
-        print(f"IMPORTING {len(plants)} PLANT TYPES")
+        print(f"{'DRY RUN — ' if self.dry_run else ''}SYNCING {len(plants)} PLANT TYPES")
         print(f"{'='*60}\n")
 
         for i, plant in enumerate(plants, 1):
-            name = plant.get("common_name", "Unknown")
-            print(f"[{i}/{len(plants)}] {name}")
-            self.create_plant_type(plant)
+            name = plant.get("farmos_name", "") or plant.get("common_name", "Unknown")
+            self.sync_plant_type(plant)
 
         print(f"\n{'='*60}")
-        print("IMPORT SUMMARY")
+        print("SYNC SUMMARY")
         print(f"{'='*60}")
         print(f"  Total in CSV:    {len(plants)}")
         print(f"  Created:         {self.stats['created']}")
-        print(f"  Skipped:         {self.stats['skipped']}")
+        print(f"  Updated:         {self.stats['updated']}")
+        print(f"  Unchanged:       {self.stats['skipped']}")
         print(f"  Failed:          {self.stats['failed']}")
 
         if self.dry_run:
-            print(f"\n🔍 This was a DRY RUN — no changes were made")
-            print(f"   Run without --dry-run to actually import")
+            print(f"\n  ** DRY RUN — run without --dry-run to apply changes **")
         else:
-            print(f"\n✓ Import completed!")
+            print(f"\n  Sync completed!")
 
         return True
 
