@@ -50,7 +50,7 @@
     <div class="obs-form-section">
       <div class="obs-field-group">
         <label class="obs-label" for="quick-species">Plant species</label>
-        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Lavender">Lavender (4)</option><option value="Rosemary">Rosemary (3)</option><option value="Sage">Sage (3)</option><option value="Comfrey">Comfrey (1)</option><option value="Oregano">Oregano (1)</option><option value="Coriander">Coriander (10)</option><option value="Parsley (Italian)">Parsley (Italian) (10)</option></select>
+        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Lavender">Lavender (4)</option><option value="Rosemary">Rosemary (3)</option><option value="Sage">Sage (3)</option><option value="Comfrey">Comfrey (1)</option><option value="Oregano">Oregano (1)</option><option value="Sweet Potato">Sweet Potato (None)</option><option value="Coriander">Coriander (10)</option><option value="Parsley (Italian)">Parsley (Italian) (10)</option></select>
       </div>
 
       <div id="quick-plant-info" class="quick-plant-info"></div>
@@ -188,7 +188,7 @@
           <div class="inv-strata-header" style="background:#f4f8ec;border-left:3px solid #8bb85a">
             <span>🌱</span>
             <span class="inv-strata-name" style="color:#8bb85a">Ground Layer</span>
-            <span class="inv-strata-count">4</span>
+            <span class="inv-strata-count">5</span>
           </div>
           
             <div class="inv-plant-row" data-species="Comfrey" data-strata="low" data-current="1">
@@ -236,6 +236,29 @@
                 </select>
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Oregano">
+            </div>
+            <div class="inv-plant-row" data-species="Sweet Potato" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Sweet Potato</div>
+                <div class="inv-plant-botanical">Ipomoea batatas</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Sweet Potato">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Sweet Potato">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Sweet Potato">
             </div>
             <div class="inv-plant-row" data-species="Coriander" data-strata="low" data-current="10">
               <div class="inv-plant-info">
@@ -324,7 +347,7 @@ const SECTION_DATA = {
   range: "9–13",
   paddock: 2,
   row: 1,
-  plants: [{"species": "Lavender", "strata": "high", "count": 4}, {"species": "Rosemary", "strata": "medium", "count": 3}, {"species": "Sage", "strata": "medium", "count": 3}, {"species": "Comfrey", "strata": "low", "count": 1}, {"species": "Oregano", "strata": "low", "count": 1}, {"species": "Coriander", "strata": "low", "count": 10}, {"species": "Parsley (Italian)", "strata": "low", "count": 10}]
+  plants: [{"species": "Lavender", "strata": "high", "count": 4}, {"species": "Rosemary", "strata": "medium", "count": 3}, {"species": "Sage", "strata": "medium", "count": 3}, {"species": "Comfrey", "strata": "low", "count": 1}, {"species": "Oregano", "strata": "low", "count": 1}, {"species": "Sweet Potato", "strata": "low", "count": null}, {"species": "Coriander", "strata": "low", "count": 10}, {"species": "Parsley (Italian)", "strata": "low", "count": 10}]
 };
 const OBSERVE_ENDPOINT = "";
 </script>

@@ -166,6 +166,8 @@ def render_plant_card(planting, plant_db):
     count_html = ""
     if count is not None and count > 0:
         count_html = f'<span class="plant-count" style="background:{st["light"]};color:{st["color"]}">{count}</span>'
+    elif count is None:
+        count_html = f'<span class="plant-count" style="background:#f0ece4;color:#999">—</span>'
 
     notes_html = f'<div class="plant-notes">{esc(notes)}</div>' if notes else ""
     
@@ -219,8 +221,14 @@ def render_strata_group(strata_key, plants, plant_db):
     if not st:
         return ""
     
-    alive_count = sum(p.get("count", 0) for p in plants)
-    count_badge = f'<span class="strata-count" style="background:{st["color"]}">{alive_count}</span>' if alive_count > 0 else ""
+    alive_count = sum(p.get("count") or 0 for p in plants)
+    has_uninventoried = any(p.get("count") is None for p in plants)
+    if alive_count > 0:
+        count_badge = f'<span class="strata-count" style="background:{st["color"]}">{alive_count}</span>'
+    elif has_uninventoried:
+        count_badge = f'<span class="strata-count" style="background:#999">{len(plants)}</span>'
+    else:
+        count_badge = ""
     
     cards = "\n".join(render_plant_card(p, plant_db) for p in plants)
     
@@ -291,12 +299,18 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     all_plants = section.get("plants", [])
     has_trees = section.get("has_trees", False)
 
-    # Only show plants with positive inventory counts
-    plants_with_count = [p for p in all_plants if (p.get("count") or 0) > 0]
+    # Show plants with positive counts OR not-yet-inventoried (count=None)
+    # Exclude only confirmed dead (count=0)
+    plants_to_show = [p for p in all_plants if p.get("count") is None or (p.get("count") or 0) > 0]
+
+    # Fill in missing strata from plant_db
+    for p in plants_to_show:
+        if not p.get("strata") and p["species"] in plant_db:
+            p["strata"] = plant_db[p["species"]].get("strata", "low")
 
     # Separate green manure (temporary cover crops) from regular plants
-    regular_plants = [p for p in plants_with_count if not is_green_manure(p["species"], plant_db)]
-    green_manure_plants = [p for p in plants_with_count if is_green_manure(p["species"], plant_db)]
+    regular_plants = [p for p in plants_to_show if not is_green_manure(p["species"], plant_db)]
+    green_manure_plants = [p for p in plants_to_show if is_green_manure(p["species"], plant_db)]
 
     # Group regular plants by strata
     grouped = {}
@@ -307,7 +321,7 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
 
     # Stats (exclude green manure from counts)
     alive_species = len(regular_plants)
-    total_plants = sum(p.get("count", 0) for p in regular_plants)
+    total_plants = sum(p.get("count") or 0 for p in regular_plants)
     
     # Header gradient
     grad = "linear-gradient(145deg, #1a3a0a 0%, #2d5016 60%, #3d6a20 100%)" if has_trees else "linear-gradient(145deg, #5a8c2a 0%, #7ab33e 60%, #8bb85a 100%)"
@@ -486,9 +500,13 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
     section_type = "🌳 Tree Section" if has_trees else "☀️ Open Cultivation"
 
     all_plants = section.get("plants", [])
-    # Include all plants with counts for the form
-    plants_with_count = [p for p in all_plants if (p.get("count") or 0) > 0]
-    regular_plants = [p for p in plants_with_count if not is_green_manure(p["species"], plant_db)]
+    # Include plants with counts OR not-yet-inventoried for the form
+    plants_to_show = [p for p in all_plants if p.get("count") is None or (p.get("count") or 0) > 0]
+    # Fill in missing strata from plant_db
+    for p in plants_to_show:
+        if not p.get("strata") and p["species"] in plant_db:
+            p["strata"] = plant_db[p["species"]].get("strata", "low")
+    regular_plants = [p for p in plants_to_show if not is_green_manure(p["species"], plant_db)]
 
     # Build species options for quick mode dropdown
     species_seen = set()
@@ -510,8 +528,10 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
             species = p["species"]
             count = p.get("count", 0)
             botanical = plant_db.get(species, {}).get("botanical", "")
+            display_count = count if count is not None else "—"
+            data_count = count if count is not None else ""
             rows_html += f"""
-            <div class="inv-plant-row" data-species="{esc(species)}" data-strata="{esc(strata_key)}" data-current="{count}">
+            <div class="inv-plant-row" data-species="{esc(species)}" data-strata="{esc(strata_key)}" data-current="{data_count}">
               <div class="inv-plant-info">
                 <div class="inv-plant-name">{esc(species)}</div>
                 <div class="inv-plant-botanical">{esc(botanical)}</div>
@@ -519,7 +539,7 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
               <div class="inv-fields">
                 <div class="inv-was">
                   <label>Was</label>
-                  <span class="inv-prev-count">{count}</span>
+                  <span class="inv-prev-count">{display_count}</span>
                 </div>
                 <div class="inv-now">
                   <label>Now</label>
@@ -832,7 +852,7 @@ def main():
             f.write(page_html)
 
         visible = [p for p in section.get("plants", [])
-                   if (p.get("count") or 0) > 0
+                   if (p.get("count") is None or (p.get("count") or 0) > 0)
                    and not is_green_manure(p["species"], plant_db)]
         print(f"  Generated: {section_id}.html ({len(visible)} species)")
 
@@ -863,7 +883,7 @@ def render_index(rows, sections, plant_db, base_url=""):
             sec = sections.get(sid, {})
             icon = "🌳" if sec.get("has_trees") else "☀️"
             visible = [p for p in sec.get("plants", [])
-                       if (p.get("count") or 0) > 0
+                       if (p.get("count") is None or (p.get("count") or 0) > 0)
                        and not is_green_manure(p["species"], plant_db)]
             n_species = len(visible)
             secs_html += f'<a href="{base_url}{sid}.html" class="idx-section">{icon} {esc(sec.get("range", sid))}<span class="idx-count">{n_species} species</span></a>'

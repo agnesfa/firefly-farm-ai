@@ -50,7 +50,7 @@
     <div class="obs-form-section">
       <div class="obs-field-group">
         <label class="obs-label" for="quick-species">Plant species</label>
-        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Forest Red Gum">Forest Red Gum (1)</option><option value="Ice Cream Bean">Ice Cream Bean (2)</option><option value="Malabar Chestnut">Malabar Chestnut (2)</option><option value="Macadamia">Macadamia (5)</option><option value="Tagasaste - Tree Lucerne">Tagasaste - Tree Lucerne (3)</option><option value="Pigeon Pea">Pigeon Pea (2)</option><option value="Mulberry (White)">Mulberry (White) (1)</option><option value="Tomato (Marmande)">Tomato (Marmande) (16)</option><option value="Amaranth">Amaranth (1)</option><option value="Tea Tree Oil (Melaleuca) (Alternifolia)">Tea Tree Oil (Melaleuca) (Alternifolia) (4)</option><option value="Pak Choi">Pak Choi (14)</option><option value="Zucchini (Blackjack)">Zucchini (Blackjack) (10)</option><option value="Peach">Peach (3)</option><option value="Apricot">Apricot (1)</option><option value="Lemon">Lemon (2)</option><option value="Acerola">Acerola (1)</option><option value="Chilli (Jalapeño)">Chilli (Jalapeño) (3)</option><option value="Curry Leaf">Curry Leaf (1)</option><option value="Eggplant">Eggplant (3)</option><option value="Galangal">Galangal (2)</option><option value="Cape Gooseberry">Cape Gooseberry (3)</option><option value="Comfrey">Comfrey (8)</option><option value="Turmeric">Turmeric (1)</option><option value="Tansy">Tansy (3)</option><option value="Garlic">Garlic (0.5)</option></select>
+        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Forest Red Gum">Forest Red Gum (1)</option><option value="Ice Cream Bean">Ice Cream Bean (2)</option><option value="Malabar Chestnut">Malabar Chestnut (2)</option><option value="Macadamia">Macadamia (5)</option><option value="Tagasaste - Tree Lucerne">Tagasaste - Tree Lucerne (3)</option><option value="Apple">Apple (None)</option><option value="Longan">Longan (None)</option><option value="Pigeon Pea">Pigeon Pea (2)</option><option value="Mulberry (White)">Mulberry (White) (1)</option><option value="Tomato (Marmande)">Tomato (Marmande) (16)</option><option value="Amaranth">Amaranth (1)</option><option value="Tea Tree Oil (Melaleuca) (Alternifolia)">Tea Tree Oil (Melaleuca) (Alternifolia) (4)</option><option value="Pak Choi">Pak Choi (14)</option><option value="Zucchini (Blackjack)">Zucchini (Blackjack) (10)</option><option value="Peach">Peach (3)</option><option value="Apricot">Apricot (1)</option><option value="Lemon">Lemon (2)</option><option value="Acerola">Acerola (1)</option><option value="Chilli (Jalapeño)">Chilli (Jalapeño) (3)</option><option value="Curry Leaf">Curry Leaf (1)</option><option value="Eggplant">Eggplant (3)</option><option value="Lavender">Lavender (None)</option><option value="Galangal">Galangal (2)</option><option value="Cape Gooseberry">Cape Gooseberry (3)</option><option value="Comfrey">Comfrey (8)</option><option value="Turmeric">Turmeric (1)</option><option value="Sweet Potato">Sweet Potato (None)</option><option value="Tansy">Tansy (3)</option><option value="Garlic">Garlic (0.5)</option><option value="Yarrow (White)">Yarrow (White) (None)</option><option value="Garlic Chives">Garlic Chives (None)</option><option value="Strawberry">Strawberry (None)</option></select>
       </div>
 
       <div id="quick-plant-info" class="quick-plant-info"></div>
@@ -180,7 +180,7 @@
           <div class="inv-strata-header" style="background:#edf4e4;border-left:3px solid #4a7c29">
             <span>🌿</span>
             <span class="inv-strata-name" style="color:#4a7c29">High Canopy</span>
-            <span class="inv-strata-count">6</span>
+            <span class="inv-strata-count">8</span>
           </div>
           
             <div class="inv-plant-row" data-species="Macadamia" data-strata="high" data-current="5">
@@ -228,6 +228,52 @@
                 </select>
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Tagasaste - Tree Lucerne">
+            </div>
+            <div class="inv-plant-row" data-species="Apple" data-strata="high" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Apple</div>
+                <div class="inv-plant-botanical">Malus domestica</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Apple">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Apple">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Apple">
+            </div>
+            <div class="inv-plant-row" data-species="Longan" data-strata="high" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Longan</div>
+                <div class="inv-plant-botanical">Dimocarpus longan</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Longan">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Longan">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Longan">
             </div>
             <div class="inv-plant-row" data-species="Pigeon Pea" data-strata="high" data-current="2">
               <div class="inv-plant-info">
@@ -326,7 +372,7 @@
           <div class="inv-strata-header" style="background:#f0f6e7;border-left:3px solid #6b9e3c">
             <span>🫑</span>
             <span class="inv-strata-name" style="color:#6b9e3c">Medium Layer</span>
-            <span class="inv-strata-count">12</span>
+            <span class="inv-strata-count">13</span>
           </div>
           
             <div class="inv-plant-row" data-species="Tea Tree Oil (Melaleuca) (Alternifolia)" data-strata="medium" data-current="4">
@@ -559,6 +605,29 @@
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Eggplant">
             </div>
+            <div class="inv-plant-row" data-species="Lavender" data-strata="medium" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Lavender</div>
+                <div class="inv-plant-botanical">Lavandula</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Lavender">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Lavender">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Lavender">
+            </div>
             <div class="inv-plant-row" data-species="Galangal" data-strata="medium" data-current="2">
               <div class="inv-plant-info">
                 <div class="inv-plant-name">Galangal</div>
@@ -610,7 +679,7 @@
           <div class="inv-strata-header" style="background:#f4f8ec;border-left:3px solid #8bb85a">
             <span>🌱</span>
             <span class="inv-strata-name" style="color:#8bb85a">Ground Layer</span>
-            <span class="inv-strata-count">4</span>
+            <span class="inv-strata-count">8</span>
           </div>
           
             <div class="inv-plant-row" data-species="Comfrey" data-strata="low" data-current="8">
@@ -659,6 +728,29 @@
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Turmeric">
             </div>
+            <div class="inv-plant-row" data-species="Sweet Potato" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Sweet Potato</div>
+                <div class="inv-plant-botanical">Ipomoea batatas</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Sweet Potato">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Sweet Potato">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Sweet Potato">
+            </div>
             <div class="inv-plant-row" data-species="Tansy" data-strata="low" data-current="3">
               <div class="inv-plant-info">
                 <div class="inv-plant-name">Tansy</div>
@@ -705,6 +797,75 @@
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Garlic">
             </div>
+            <div class="inv-plant-row" data-species="Yarrow (White)" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Yarrow (White)</div>
+                <div class="inv-plant-botanical">Achillea millefolium</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Yarrow (White)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Yarrow (White)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Yarrow (White)">
+            </div>
+            <div class="inv-plant-row" data-species="Garlic Chives" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Garlic Chives</div>
+                <div class="inv-plant-botanical">Allium tuberosum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Garlic Chives">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Garlic Chives">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Garlic Chives">
+            </div>
+            <div class="inv-plant-row" data-species="Strawberry" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Strawberry</div>
+                <div class="inv-plant-botanical">Fragaria × ananassa</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Strawberry">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Strawberry">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Strawberry">
+            </div>
         </div>
 
       <!-- Photo capture -->
@@ -746,7 +907,7 @@ const SECTION_DATA = {
   range: "40–50",
   paddock: 2,
   row: 3,
-  plants: [{"species": "Forest Red Gum", "strata": "emergent", "count": 1}, {"species": "Ice Cream Bean", "strata": "emergent", "count": 2}, {"species": "Malabar Chestnut", "strata": "emergent", "count": 2}, {"species": "Macadamia", "strata": "high", "count": 5}, {"species": "Tagasaste - Tree Lucerne", "strata": "high", "count": 3}, {"species": "Pigeon Pea", "strata": "high", "count": 2}, {"species": "Mulberry (White)", "strata": "high", "count": 1}, {"species": "Tomato (Marmande)", "strata": "high", "count": 16}, {"species": "Amaranth", "strata": "high", "count": 1}, {"species": "Tea Tree Oil (Melaleuca) (Alternifolia)", "strata": "medium", "count": 4}, {"species": "Pak Choi", "strata": "medium", "count": 14}, {"species": "Zucchini (Blackjack)", "strata": "medium", "count": 10}, {"species": "Peach", "strata": "medium", "count": 3}, {"species": "Apricot", "strata": "medium", "count": 1}, {"species": "Lemon", "strata": "medium", "count": 2}, {"species": "Acerola", "strata": "medium", "count": 1}, {"species": "Chilli (Jalape\u00f1o)", "strata": "medium", "count": 3}, {"species": "Curry Leaf", "strata": "medium", "count": 1}, {"species": "Eggplant", "strata": "medium", "count": 3}, {"species": "Galangal", "strata": "medium", "count": 2}, {"species": "Cape Gooseberry", "strata": "medium", "count": 3}, {"species": "Comfrey", "strata": "low", "count": 8}, {"species": "Turmeric", "strata": "low", "count": 1}, {"species": "Tansy", "strata": "low", "count": 3}, {"species": "Garlic", "strata": "low", "count": 0.5}]
+  plants: [{"species": "Forest Red Gum", "strata": "emergent", "count": 1}, {"species": "Ice Cream Bean", "strata": "emergent", "count": 2}, {"species": "Malabar Chestnut", "strata": "emergent", "count": 2}, {"species": "Macadamia", "strata": "high", "count": 5}, {"species": "Tagasaste - Tree Lucerne", "strata": "high", "count": 3}, {"species": "Apple", "strata": "high", "count": null}, {"species": "Longan", "strata": "high", "count": null}, {"species": "Pigeon Pea", "strata": "high", "count": 2}, {"species": "Mulberry (White)", "strata": "high", "count": 1}, {"species": "Tomato (Marmande)", "strata": "high", "count": 16}, {"species": "Amaranth", "strata": "high", "count": 1}, {"species": "Tea Tree Oil (Melaleuca) (Alternifolia)", "strata": "medium", "count": 4}, {"species": "Pak Choi", "strata": "medium", "count": 14}, {"species": "Zucchini (Blackjack)", "strata": "medium", "count": 10}, {"species": "Peach", "strata": "medium", "count": 3}, {"species": "Apricot", "strata": "medium", "count": 1}, {"species": "Lemon", "strata": "medium", "count": 2}, {"species": "Acerola", "strata": "medium", "count": 1}, {"species": "Chilli (Jalape\u00f1o)", "strata": "medium", "count": 3}, {"species": "Curry Leaf", "strata": "medium", "count": 1}, {"species": "Eggplant", "strata": "medium", "count": 3}, {"species": "Lavender", "strata": "medium", "count": null}, {"species": "Galangal", "strata": "medium", "count": 2}, {"species": "Cape Gooseberry", "strata": "medium", "count": 3}, {"species": "Comfrey", "strata": "low", "count": 8}, {"species": "Turmeric", "strata": "low", "count": 1}, {"species": "Sweet Potato", "strata": "low", "count": null}, {"species": "Tansy", "strata": "low", "count": 3}, {"species": "Garlic", "strata": "low", "count": 0.5}, {"species": "Yarrow (White)", "strata": "low", "count": null}, {"species": "Garlic Chives", "strata": "low", "count": null}, {"species": "Strawberry", "strata": "low", "count": null}]
 };
 const OBSERVE_ENDPOINT = "";
 </script>

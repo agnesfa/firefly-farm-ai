@@ -2019,6 +2019,1332 @@
         }
       ]
     },
+    "P2R4.0-2": {
+      "id": "P2R4.0-2",
+      "paddock": 2,
+      "row": 4,
+      "range": "0–2",
+      "length": "2m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-03-06",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "ADD 1 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "ADD 1 ICE CREAM BEAN"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tomato",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 1,
+          "notes": "ADD 3 CHILLI WHEN READY"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 2 LAVENDER"
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 2 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 1 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R4.6-14": {
+      "id": "P2R4.6-14",
+      "paddock": 2,
+      "row": 4,
+      "range": "6–14",
+      "length": "8m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-03-06",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 5,
+          "notes": "ADD 2 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 1 ICE CREAM BEAN"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 3,
+          "notes": "REPLACE AVOCADO IF BAD STATE"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 14,
+          "notes": ""
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tomato",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 1,
+          "notes": "ADD 2 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 5,
+          "notes": "ADD 2 LEMON WHEN READY"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 5,
+          "notes": "ADD 3 CHILLI / REPLACE IF BAD STATE"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 5,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 2,
+          "notes": "ADD 2 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 1 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 SWEET POTATO WHEN READY"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 7,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        }
+      ]
+    },
+    "P2R4.20-30": {
+      "id": "P2R4.20-30",
+      "paddock": 2,
+      "row": 4,
+      "range": "20–30",
+      "length": "10m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-03-06",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "ADD 2 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 5 ICE CREAM BEAN WHEN READY"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 4,
+          "notes": "REPLACE AVOCADO IF BAD STATE"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Mango",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 6,
+          "notes": "ADD 10 PIGEON PEA WHEN READY"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 2,
+          "notes": "ADD 6 BANAGRASS"
+        },
+        {
+          "species": "Tomato",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 1,
+          "notes": "ADD 3 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 5,
+          "notes": "ADD 2 LEMON WHEN READY"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 5,
+          "notes": "ADD 3 CHILLI / REPLACE IF BAD STATE"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Pepino plant",
+          "strata": "medium",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 2 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 6,
+          "notes": "ADD 2 COMFREY WHEN READY"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 2,
+          "notes": "ADD 1 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 SWEET POTATO WHEN READY"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Passionfruit",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 6,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        },
+        {
+          "species": "Nasturtium",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R4.30-40": {
+      "id": "P2R4.30-40",
+      "paddock": 2,
+      "row": 4,
+      "range": "30–40",
+      "length": "10m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-03-06",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "ADD 7 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 5 ICE CREAM BEAN WHEN READY"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 5,
+          "notes": "1 AVOCADO HASS BOUGHT 02/2026 DALEYS"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Mango",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 5,
+          "notes": "ADD 10 PIGEON PEA WHEN READY"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 5,
+          "notes": "ADD 4 BANAGRASS"
+        },
+        {
+          "species": "Tomato",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 3 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 3,
+          "notes": "ADD 2 LEMON WHEN READY"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 3 CHILLI / REPLACE IF BAD STATE"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Pepino plant",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 5,
+          "notes": ""
+        },
+        {
+          "species": "Nettle",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 5,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 2 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": "ADD 4 COMFREY WHEN READY"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 4,
+          "notes": "ADD 3 SWEET POTATO WHEN READY"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 2,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        }
+      ]
+    },
+    "P2R4.40-49": {
+      "id": "P2R4.40-49",
+      "paddock": 2,
+      "row": 4,
+      "range": "40–49",
+      "length": "9m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-03-06",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "ADD 7 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "ADD 5 ICE CREAM BEAN WHEN READY"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 3,
+          "notes": "REPLACE AVOCADO IF BAD STATE last 1 planted bad shape"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 1,
+          "notes": "ADD MORE BANANA"
+        },
+        {
+          "species": "Mango",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 3 MANGO TREES"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 1,
+          "notes": "ADD 4 LUCERNE TREE WHEN READY"
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 2,
+          "notes": "ADD 10 PIGEON PEA WHEN READY"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 5,
+          "notes": "ADD 4 BANAGRASS when ready"
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 1,
+          "notes": "ADD WATTLE/JACARANDA if availability"
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 3 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 2,
+          "notes": "ADD 6 LEMON TREE when ready"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 10 CHILLI when ready"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ARROWROOT when ready to multiply"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ACHIOTE WHEN READY TO MULTIPLY"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 10,
+          "notes": "don't forget to harvest"
+        },
+        {
+          "species": "Sage",
+          "strata": "medium",
+          "count": 1,
+          "notes": "ADD SAGE if availability"
+        },
+        {
+          "species": "Nettle",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 4 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 4 COMFREY WHEN READY"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 4,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        }
+      ]
+    },
+    "P2R4.52-62": {
+      "id": "P2R4.52-62",
+      "paddock": 2,
+      "row": 4,
+      "range": "52–62",
+      "length": "10m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-12-19",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "ADD 7 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 5 ICE CREAM BEAN WHEN READY"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 4,
+          "notes": "REPLACE AVOCADO IF BAD STATE last 1 planted bad shape"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD MORE BANANA"
+        },
+        {
+          "species": "Mango",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 3 MANGO TREE WHEN READY"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 4 LUCERNE TREE WHEN READY"
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 4,
+          "notes": "ADD 10 PIGEON PEA WHEN READY"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 4,
+          "notes": "ADD 4 BANAGRASS when ready"
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 2,
+          "notes": "ADD WATTLE/JACARANDA if availability"
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 3 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 8 LEMON TREE when ready"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 10 CHILLI when ready"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ARROWROOT when ready to multiply"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ACHIOTE WHEN READY TO MULTIPLY"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 0,
+          "notes": "don't forget to harvest"
+        },
+        {
+          "species": "Sage",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD SAGE if availability"
+        },
+        {
+          "species": "Nettle",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 5,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 4 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 3,
+          "notes": "ADD 4 COMFREY WHEN READY"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Cabbage (Red)",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        }
+      ]
+    },
+    "P2R4.62-72": {
+      "id": "P2R4.62-72",
+      "paddock": 2,
+      "row": 4,
+      "range": "62–72",
+      "length": "10m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-12-19",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "ADD 7 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 5 ICE CREAM BEAN WHEN READY"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 0,
+          "notes": "REPLACE AVOCADO IF BAD STATE last 1 planted bad shape"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD MORE BANANA"
+        },
+        {
+          "species": "Mango",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 3 MANGO TREE WHEN READY"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 4 LUCERNE TREE WHEN READY"
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 10 PIGEON PEA WHEN READY"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 4 BANAGRASS when ready"
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD WATTLE/JACARANDA if availability"
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 3 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 8 LEMON TREE when ready"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 10 CHILLI when ready"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ARROWROOT when ready to multiply"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ACHIOTE WHEN READY TO MULTIPLY"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 0,
+          "notes": "don't forget to harvest"
+        },
+        {
+          "species": "Sage",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD SAGE if availability"
+        },
+        {
+          "species": "Nettle",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 5,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 4 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 4 COMFREY WHEN READY"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Cabbage (Red)",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        }
+      ]
+    },
+    "P2R4.72-77": {
+      "id": "P2R4.72-77",
+      "paddock": 2,
+      "row": 4,
+      "range": "72–77",
+      "length": "10m",
+      "has_trees": true,
+      "first_planted": "2025-10-01",
+      "inventory_date": "2026-12-19",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 7 PAPAYA WHEN READY"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "ADD 5 ICE CREAM BEAN WHEN READY"
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 0,
+          "notes": "REPLACE AVOCADO IF BAD STATE last 1 planted bad shape"
+        },
+        {
+          "species": "Banana",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD MORE BANANA"
+        },
+        {
+          "species": "Mango",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 3 MANGO TREE WHEN READY"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 4 LUCERNE TREE WHEN READY"
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 10 PIGEON PEA WHEN READY"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 0,
+          "notes": "ADD 4 BANAGRASS when ready"
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD WATTLE/JACARANDA if availability"
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 3 OREGANO WHEN READY"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 8 LEMON TREE when ready"
+        },
+        {
+          "species": "Chilli",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 10 CHILLI when ready"
+        },
+        {
+          "species": "Arrowroot",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ARROWROOT when ready to multiply"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD 5 LAVENDER WHEN READY"
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD ACHIOTE WHEN READY TO MULTIPLY"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 0,
+          "notes": "don't forget to harvest"
+        },
+        {
+          "species": "Sage",
+          "strata": "medium",
+          "count": 0,
+          "notes": "ADD SAGE if availability"
+        },
+        {
+          "species": "Nettle",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 4 GERANIUM"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 1,
+          "notes": "ADD 4 COMFREY WHEN READY"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "ADD 3 TANSY WHEN READY"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Cabbage (Red)",
+          "strata": "emergent",
+          "count": 3,
+          "notes": "CHOP N DROP greenmanure when senescent"
+        }
+      ]
+    },
     "P2R2.0-3": {
       "id": "P2R2.0-3",
       "paddock": 2,
@@ -3250,6 +4576,714 @@
           "quantity_grams": null
         }
       ]
+    },
+    "P2R5.0-8": {
+      "id": "P2R5.0-8",
+      "paddock": 2,
+      "row": 5,
+      "range": "0–8",
+      "length": "8m",
+      "has_trees": true,
+      "first_planted": "2025-05-01",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 12,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Rough Barked Apple",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Prickly-leaved Paperbark",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Black She-oak",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Snow in Summer (Melaleuca) (Linariifolia)",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Ball Honey Myrtle",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Melaleuca-White Feather Honey Myrtle (Decora)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R5.14-22": {
+      "id": "P2R5.14-22",
+      "paddock": 2,
+      "row": 5,
+      "range": "14–22",
+      "length": "8m",
+      "has_trees": true,
+      "first_planted": "2025-12-30",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 10,
+          "notes": ""
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Avocado",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Parsley (Italian)",
+          "strata": null,
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Parsley (Moss Curled)",
+          "strata": null,
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Butternut Pumpkin",
+          "strata": null,
+          "count": 5,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R5.29-38": {
+      "id": "P2R5.29-38",
+      "paddock": 2,
+      "row": 5,
+      "range": "29–38",
+      "length": "9m",
+      "has_trees": true,
+      "first_planted": "2025-12-30",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 10,
+          "notes": ""
+        },
+        {
+          "species": "Parsley (Italian)",
+          "strata": null,
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Parsley (Moss Curled)",
+          "strata": null,
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 1,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R5.38-44": {
+      "id": "P2R5.38-44",
+      "paddock": 2,
+      "row": 5,
+      "range": "38–44",
+      "length": "6m",
+      "has_trees": true,
+      "first_planted": "2025-12-30",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R5.44-53": {
+      "id": "P2R5.44-53",
+      "paddock": 2,
+      "row": 5,
+      "range": "44–53",
+      "length": "9m",
+      "has_trees": true,
+      "first_planted": "2025-12-30",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 5,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R5.55-66": {
+      "id": "P2R5.55-66",
+      "paddock": 2,
+      "row": 5,
+      "range": "55–66",
+      "length": "11m",
+      "has_trees": true,
+      "first_planted": "2025-12-30",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Dianella",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R5.66-77": {
+      "id": "P2R5.66-77",
+      "paddock": 2,
+      "row": 5,
+      "range": "66–77",
+      "length": "11m",
+      "has_trees": true,
+      "first_planted": "2025-12-30",
+      "inventory_date": "2026-01-13",
+      "plants": [
+        {
+          "species": "Papaya",
+          "strata": "emergent",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Tallowood (Gum)",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Wattle - Cootamundra (Baileyana)",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Dianella",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": null,
+          "count": null,
+          "notes": ""
+        }
+      ]
     }
   },
   "rows": {
@@ -3282,6 +5316,23 @@
       "first_planted": "2025-04-25",
       "total_length": "62m"
     },
+    "P2R4": {
+      "id": "P2R4",
+      "paddock": "Paddock 2",
+      "row": "Row 4",
+      "sections": [
+        "P2R4.0-2",
+        "P2R4.6-14",
+        "P2R4.20-30",
+        "P2R4.30-40",
+        "P2R4.40-49",
+        "P2R4.52-62",
+        "P2R4.62-72",
+        "P2R4.72-77"
+      ],
+      "first_planted": "2025-10-01",
+      "total_length": "77m"
+    },
     "P2R2": {
       "id": "P2R2",
       "paddock": "Paddock 2",
@@ -3297,6 +5348,22 @@
       ],
       "first_planted": "2025-04-25",
       "total_length": "46m"
+    },
+    "P2R5": {
+      "id": "P2R5",
+      "paddock": "Paddock 2",
+      "row": "Row 5",
+      "sections": [
+        "P2R5.0-8",
+        "P2R5.14-22",
+        "P2R5.29-38",
+        "P2R5.38-44",
+        "P2R5.44-53",
+        "P2R5.55-66",
+        "P2R5.66-77"
+      ],
+      "first_planted": "2025-05-01",
+      "total_length": "77m"
     }
   }
 }

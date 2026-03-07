@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>P2R4.72-77 — Field Observation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)">
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 4 · Field Observation</div>
+    <div class="section-title-row">
+      <h1 class="section-range">72–77</h1>
+      <span class="section-type-badge">🌳 Tree Section</span>
+    </div>
+    <div class="obs-subtitle">Recording observation for section P2R4.72-77</div>
+  </div>
+
+  <!-- Offline queue banner -->
+  <div id="queue-banner" class="queue-banner" style="display:none">
+    <span class="queue-count"></span>
+    <button onclick="syncPendingQueue()" class="queue-sync-btn">Sync Now</button>
+  </div>
+
+  <!-- Observer info -->
+  <div class="obs-form-section">
+    <div class="obs-field-group">
+      <label class="obs-label" for="observer-name">Your name</label>
+      <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James, WWOOFer name" autocomplete="name">
+    </div>
+    <div class="obs-field-group">
+      <label class="obs-label" for="obs-datetime">Date & time</label>
+      <input type="datetime-local" id="obs-datetime" class="obs-input">
+    </div>
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="mode-toggle">
+    <button class="mode-tab active" data-mode="quick">⚡ Quick Report</button>
+    <button class="mode-tab" data-mode="inventory">📋 Full Inventory</button>
+  </div>
+
+  <!-- QUICK MODE -->
+  <div id="mode-quick" class="obs-mode-panel">
+    <div class="obs-form-section">
+      <div class="obs-field-group">
+        <label class="obs-label" for="quick-species">Plant species</label>
+        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Papaya">Papaya (1)</option><option value="Ice Cream Bean">Ice Cream Bean (1)</option><option value="Basil - Sweet (Classic)">Basil - Sweet (Classic) (3)</option><option value="Geranium">Geranium (1)</option><option value="Comfrey">Comfrey (1)</option><option value="Pumpkin (Generic)">Pumpkin (Generic) (1)</option><option value="Cabbage (Red)">Cabbage (Red) (3)</option></select>
+      </div>
+
+      <div id="quick-plant-info" class="quick-plant-info"></div>
+
+      <div class="obs-field-row">
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="quick-count">New count</label>
+          <input type="number" id="quick-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+        </div>
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="quick-condition">Condition</label>
+          <select id="quick-condition" class="obs-select">
+            <option value="alive">Alive ✓</option>
+            <option value="damaged">Damaged ⚠️</option>
+            <option value="dead">Dead ✝</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="quick-notes">Notes</label>
+        <input type="text" id="quick-notes" class="obs-input" placeholder="What did you observe?">
+      </div>
+
+      <!-- Photo capture -->
+      <div class="obs-media-area">
+        <label class="obs-media-btn">
+          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
+          <span>📷 Add Photo</span>
+        </label>
+        <div class="obs-photo-previews"></div>
+      </div>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="section-notes-quick">Section notes (optional)</label>
+        <textarea id="section-notes-quick" class="obs-textarea" rows="2" placeholder="General observations about this section..."></textarea>
+      </div>
+
+      <button id="quick-submit" class="obs-submit-btn">Save Observation</button>
+    </div>
+  </div>
+
+  <!-- FULL INVENTORY MODE -->
+  <div id="mode-inventory" class="obs-mode-panel" style="display:none">
+    <div class="obs-form-section">
+      <p class="obs-hint">Walk the section and update counts. Only changed plants will be recorded.</p>
+
+      
+        <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:#e8f0e0;border-left:3px solid #2d5016">
+            <span>🌳</span>
+            <span class="inv-strata-name" style="color:#2d5016">Emergent Canopy</span>
+            <span class="inv-strata-count">3</span>
+          </div>
+          
+            <div class="inv-plant-row" data-species="Papaya" data-strata="emergent" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Papaya</div>
+                <div class="inv-plant-botanical">Carica papaya</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Papaya">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Papaya">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Papaya">
+            </div>
+            <div class="inv-plant-row" data-species="Ice Cream Bean" data-strata="emergent" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Ice Cream Bean</div>
+                <div class="inv-plant-botanical">Inga edulis</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Ice Cream Bean">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Ice Cream Bean">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Ice Cream Bean">
+            </div>
+            <div class="inv-plant-row" data-species="Cabbage (Red)" data-strata="emergent" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Cabbage (Red)</div>
+                <div class="inv-plant-botanical">Brassica oleracea var. capitata</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Cabbage (Red)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Cabbage (Red)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Cabbage (Red)">
+            </div>
+        </div>
+        <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:#f4f8ec;border-left:3px solid #8bb85a">
+            <span>🌱</span>
+            <span class="inv-strata-name" style="color:#8bb85a">Ground Layer</span>
+            <span class="inv-strata-count">4</span>
+          </div>
+          
+            <div class="inv-plant-row" data-species="Basil - Sweet (Classic)" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Basil - Sweet (Classic)</div>
+                <div class="inv-plant-botanical">Ocimum basilicum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Basil - Sweet (Classic)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Basil - Sweet (Classic)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Basil - Sweet (Classic)">
+            </div>
+            <div class="inv-plant-row" data-species="Geranium" data-strata="low" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Geranium</div>
+                <div class="inv-plant-botanical">Pelargonium graveolens</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Geranium">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Geranium">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Geranium">
+            </div>
+            <div class="inv-plant-row" data-species="Comfrey" data-strata="low" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Comfrey</div>
+                <div class="inv-plant-botanical">Symphytum officinale</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Comfrey">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Comfrey">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Comfrey">
+            </div>
+            <div class="inv-plant-row" data-species="Pumpkin (Generic)" data-strata="low" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Pumpkin (Generic)</div>
+                <div class="inv-plant-botanical">Cucurbita maxima</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Pumpkin (Generic)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Pumpkin (Generic)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Pumpkin (Generic)">
+            </div>
+        </div>
+
+      <!-- Photo capture -->
+      <div class="obs-media-area">
+        <label class="obs-media-btn">
+          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
+          <span>📷 Add Section Photo</span>
+        </label>
+        <div class="obs-photo-previews"></div>
+      </div>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="section-notes-inventory">Section notes</label>
+        <textarea id="section-notes-inventory" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions..."></textarea>
+      </div>
+
+      <button id="inventory-submit" class="obs-submit-btn">Save Full Inventory</button>
+    </div>
+  </div>
+
+  <!-- Status messages -->
+  <div id="obs-status" class="obs-status" style="display:none"></div>
+
+  <!-- Navigation -->
+  <div class="obs-nav">
+    <a href="P2R4.72-77.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div>Last inventory: 2026-12-19</div>
+    <div class="footer-sub">Firefly Corner Farm · Field Observation System</div>
+  </div>
+
+</div>
+
+<script>
+const SECTION_DATA = {
+  id: "P2R4.72-77",
+  range: "72–77",
+  paddock: 2,
+  row: 4,
+  plants: [{"species": "Papaya", "strata": "emergent", "count": 1}, {"species": "Ice Cream Bean", "strata": "emergent", "count": 1}, {"species": "Basil - Sweet (Classic)", "strata": "low", "count": 3}, {"species": "Geranium", "strata": "low", "count": 1}, {"species": "Comfrey", "strata": "low", "count": 1}, {"species": "Pumpkin (Generic)", "strata": "low", "count": 1}, {"species": "Cabbage (Red)", "strata": "emergent", "count": 3}]
+};
+const OBSERVE_ENDPOINT = "";
+</script>
+<script src="observe.js"></script>
+</body>
+</html>

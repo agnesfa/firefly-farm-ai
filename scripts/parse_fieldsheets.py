@@ -2,12 +2,14 @@
 """
 Parse Claire's field sheet Excel files into structured JSON.
 
-Handles two spreadsheet formats:
+Handles four spreadsheet formats:
 - v2 format (P2R2, P2R3): 10-column inventory layout with farmos_name species
 - P2R1 format: Old renovation layout with lifecycle columns, species in Col C
+- P2R4 format: v2-like but with multiple inventory dates, two count column modes
+- P2R5 format: Registration format with Plant/Seed distinction, per-plant dates
 
 Species names are normalized to match the farmos_name convention in plant_types.csv.
-Section IDs are extracted from sheet content (not tab names) to handle boundary updates.
+Section IDs are extracted from sheet content or tab names depending on format.
 
 Usage:
     python scripts/parse_fieldsheets.py --input fieldsheets/ --output site/src/data/
@@ -95,17 +97,47 @@ SPECIES_NAME_OVERRIDES = {
     "Corn": "Corn",
     "Spring Onion": "Spring Onion",
     "Sunflower": "Sunflower",
+    # P2R4 species names
+    "Basil - Sweet": "Basil - Sweet (Classic)",
+    "Tumeric": "Turmeric",
+    "Macuya": "Passionfruit",
+    "Red Cabbage": "Cabbage (Red)",
+    "red cabbage": "Cabbage (Red)",
+    "Radish": "Radish (Generic)",
+    "radish": "Radish (Generic)",
+    "Pepino": "Pepino plant",
+    # P2R5 species names (registration format)
+    "Ice ream bean": "Ice Cream Bean",
+    "Mulberry white": "Mulberry (White)",
+    "Thai basil": "Basil - Perennial (Thai)",
+    "Cootamundra wattle": "Wattle - Cootamundra (Baileyana)",
+    "Parsley Giant Italian": "Parsley (Italian)",
+    "Parsley Italian": "Parsley (Italian)",
+    "Parsley curled moss": "Parsley (Moss Curled)",
+    "Parsley Moss Curled": "Parsley (Moss Curled)",
+    "Apple tree seedling": "Apple",
+    "Avocado tree seedling": "Avocado",
+    "Butternut Pumpkin": "Butternut Pumpkin",
+    "Dianella - australian flax": "Dianella",
+    "Prickly-leaved paperbark or prickly tea-tree": "Prickly-leaved Paperbark",
+    "Prickly-leaved paperbark, prickly tea-tree": "Ball Honey Myrtle",
+    "Flax-leaved paperbark, snow in summer": "Snow in Summer (Melaleuca) (Linariifolia)",
+    "White Feather, Honey Myrtle": "Melaleuca-White Feather Honey Myrtle (Decora)",
+    "Black she-oak": "Black She-oak",
+    "Pigeon pea seeds": "Pigeon Pea",
+    "Tallowood tree": "Tallowood (Gum)",
 }
 
 # Suffixes to strip during normalization
-STRIP_SUFFIXES = [" FFC", " ffc", " tree", " Tree", " vine", " cuttings", " cutting", " seedl"]
+STRIP_SUFFIXES = [" FFC", " ffc", " tree", " Tree", " vine", " cuttings", " cutting", " seedl",
+                  " tree seedling", " seedling", " plant"]
 
 # Non-plant rows to skip
 SKIP_SPECIES = {
     "LIME g/m2", "lime g/m2", "LIME", "lime", "TOTALS", "totals",
     "GM TOTAL", "gm total", "GREEN MANURE", "green manure",
     "None", "", "SUMMER GREEN MANURE", "WINTER GREEN MANURE",
-    "1 lm= 1sqm",
+    "1 lm= 1sqm", "What", "what",
 }
 
 
@@ -454,6 +486,287 @@ def parse_r1_section(ws, farmos_names):
     }
 
 
+# ─── P2R4 format parser ────────────────────────────────────────────────
+
+def parse_r4_section(ws, sheet_name, farmos_names):
+    """Parse a P2R4 inventory format section sheet.
+
+    Similar to v2 but with key differences:
+    - Section ID derived from tab name (A1 can have copy-paste bugs)
+    - Multiple inventory dates in row 3 (use latest)
+    - Two count column modes: tabs use Col E or Col F for current count
+    - GREENMANURE and COMPANION PLANT strata types
+    - Col I (New TOTAL) has the most up-to-date count
+    """
+    # Section ID from tab name (authoritative — A1 can have bugs)
+    tab_m = re.match(r'(P2R4\.\d+-\d+)', sheet_name)
+    if not tab_m:
+        return None
+    section_id = tab_m.group(1)
+
+    m = re.match(r'P(\d+)R(\d+)\.([\d]+-[\d]+)', section_id)
+    if not m:
+        return None
+    paddock = int(m.group(1))
+    row = int(m.group(2))
+    section_range = m.group(3)
+
+    # Metadata from Row 2
+    meta = str(ws.cell(2, 1).value or "")
+    has_trees = "WITH TREES" in meta.upper()
+    first_planted_m = re.search(r'First planted:\s*([^|]+)', meta, re.IGNORECASE)
+    first_planted = ""
+    if first_planted_m:
+        fp_text = first_planted_m.group(1).strip()
+        # Parse "October 2025" → "2025-10-01"
+        month_names = {
+            "january": 1, "february": 2, "march": 3, "april": 4,
+            "may": 5, "june": 6, "july": 7, "august": 8,
+            "september": 9, "october": 10, "november": 11, "december": 12,
+        }
+        fp_m = re.match(r'(\w+)\s+(\d{4})', fp_text)
+        if fp_m:
+            month_num = month_names.get(fp_m.group(1).lower(), 0)
+            if month_num:
+                first_planted = f"{fp_m.group(2)}-{month_num:02d}-01"
+            else:
+                first_planted = fp_text
+        else:
+            first_planted = fp_text
+
+    # Section length from B3
+    length_val = ws.cell(3, 2).value
+    length = f"{int(length_val)}m" if length_val else ""
+
+    # Find latest inventory date in row 3 (dates span columns D through I+)
+    inventory_date = ""
+    latest_date = None
+    for col in range(4, min(ws.max_column + 1, 15)):
+        val = ws.cell(3, col).value
+        if isinstance(val, datetime):
+            if latest_date is None or val > latest_date:
+                latest_date = val
+    if latest_date:
+        inventory_date = latest_date.strftime("%Y-%m-%d")
+
+    # Parse plant data from Row 5+
+    plants = []
+    green_manure = []
+    current_strata = None
+    in_green_manure = False
+    in_placenta = False
+    unmapped = []
+
+    for row_idx in range(5, ws.max_row + 1):
+        a_val = str(ws.cell(row_idx, 1).value or "").strip()
+        b_val = str(ws.cell(row_idx, 2).value or "").strip()
+
+        # Detect end markers
+        if a_val.upper().startswith("TOTALS") or "Firefly Corner Farm" in a_val:
+            in_green_manure = False
+            in_placenta = True  # After TOTALS, Placenta section follows
+            continue
+        if in_placenta:
+            # Skip Placenta (historical green manure) section
+            if a_val.upper().startswith("PLACENTA") or b_val:
+                continue
+            continue
+
+        if not b_val:
+            continue
+
+        # Update strata / detect green manure section
+        if a_val:
+            a_lower = a_val.lower().strip()
+            if a_lower in ("emergent", "high", "medium", "low"):
+                current_strata = a_lower
+                in_green_manure = False
+            elif a_lower in ("greenmanure", "green manure"):
+                in_green_manure = True
+                continue
+            elif a_lower in ("companion plant", "companion"):
+                in_green_manure = True  # Treat companion plants as green manure
+                continue
+
+        if in_green_manure:
+            gm_name = normalize_species(b_val, farmos_names)
+            if gm_name:
+                gm_qty = parse_count(ws.cell(row_idx, 8).value)  # Col H = seeds (g)
+                green_manure.append({
+                    "species": gm_name,
+                    "quantity_grams": gm_qty,
+                })
+            continue
+
+        if not current_strata:
+            continue
+
+        # Normalize species name
+        species = normalize_species(b_val, farmos_names)
+        if not species:
+            continue
+
+        if species not in farmos_names and species == b_val:
+            unmapped.append(b_val)
+
+        # Count: try Col I (New TOTAL) first, then Col F (new inventory), then Col E
+        count = parse_count(ws.cell(row_idx, 9).value)   # Col I = New TOTAL
+        if count is None:
+            count = parse_count(ws.cell(row_idx, 6).value)  # Col F = New inventory
+        if count is None:
+            count = parse_count(ws.cell(row_idx, 5).value)  # Col E = Last inventory
+
+        notes = str(ws.cell(row_idx, 10).value or "").strip()  # Col J = Comments
+
+        plants.append({
+            "species": species,
+            "strata": current_strata,
+            "count": count,
+            "notes": notes if notes and notes != "None" else "",
+        })
+
+    if unmapped:
+        for name in unmapped:
+            print(f"    ⚠ Unmapped species: '{name}'")
+
+    result = {
+        "id": section_id,
+        "paddock": paddock,
+        "row": row,
+        "range": section_range.replace("-", "\u2013"),
+        "length": length,
+        "has_trees": has_trees,
+        "first_planted": first_planted,
+        "inventory_date": inventory_date,
+        "plants": plants,
+    }
+    if green_manure:
+        result["green_manure"] = green_manure
+    return result
+
+
+# ─── P2R5 format parser (registration format) ─────────────────────────
+
+def parse_r5_section(ws, sheet_name, farmos_names):
+    """Parse a P2R5 registration format section sheet.
+
+    Tab names: P2R5.{range}.JANV.2026
+    Row 1: Headers with inventory date in Col I
+    Row 2: Section range in Col B, length in Col C, trees in Col D
+    Row 3: Column headers
+    Row 4+: Data (Col A=species, Col C=strata, Col E=P/S, Col I=count)
+    """
+    # Section ID from tab name
+    tab_m = re.match(r'(P2R5)\.([\d]+-[\d]+)', sheet_name)
+    if not tab_m:
+        return None
+
+    section_range = tab_m.group(2)
+    section_id = f"P2R5.{section_range}"
+
+    # Remap if needed
+    section_id = SECTION_ID_MAP.get(section_id, section_id)
+
+    m = re.match(r'P(\d+)R(\d+)\.([\d]+-[\d]+)', section_id)
+    if not m:
+        return None
+    paddock = int(m.group(1))
+    row = int(m.group(2))
+    section_range = m.group(3)
+
+    # Section length from C2
+    length_val = ws.cell(2, 3).value
+    length = f"{int(length_val)}m" if length_val else ""
+
+    # Has trees from D2 (all R5 sections say "with")
+    trees_val = str(ws.cell(2, 4).value or "").strip().lower()
+    has_trees = trees_val in ("with", "trees", "with trees")
+
+    # Inventory date from I1
+    inv_date_val = ws.cell(1, 9).value
+    inventory_date = format_date(inv_date_val) if inv_date_val else ""
+
+    # Parse plant data from Row 4+
+    plants = []
+    unmapped = []
+    earliest_planted = None
+
+    for row_idx in range(4, ws.max_row + 1):
+        a_val = str(ws.cell(row_idx, 1).value or "").strip()  # Species name
+        c_val = str(ws.cell(row_idx, 3).value or "").strip()  # Strata
+        e_val = str(ws.cell(row_idx, 5).value or "").strip()  # P or S
+        i_val = ws.cell(row_idx, 9).value  # Inventory count
+
+        if not a_val or a_val in SKIP_SPECIES:
+            continue
+
+        # Skip seed entries — only include plants (P) for landing pages
+        if e_val.upper() == "S":
+            continue
+
+        # Skip non-plant rows (check for header-like content)
+        if a_val.lower() in ("what", "species"):
+            continue
+
+        # Normalize strata
+        strata = None
+        if c_val:
+            c_lower = c_val.lower().strip()
+            if c_lower == "emergent":
+                strata = "emergent"
+            elif c_lower == "high":
+                strata = "high"
+            elif c_lower in ("medium-high", "medium high"):
+                strata = "high"  # Map medium-high → high
+            elif c_lower == "medium":
+                strata = "medium"
+            elif c_lower == "low":
+                strata = "low"
+
+        # Normalize species name
+        species = normalize_species(a_val, farmos_names)
+        if not species:
+            continue
+
+        if species not in farmos_names and species == a_val:
+            unmapped.append(a_val)
+
+        count = parse_count(i_val)  # Col I = inventory count
+
+        # Track earliest planting date for first_planted
+        h_val = ws.cell(row_idx, 8).value  # Col H = planting date
+        if isinstance(h_val, datetime):
+            if earliest_planted is None or h_val < earliest_planted:
+                earliest_planted = h_val
+
+        plants.append({
+            "species": species,
+            "strata": strata,
+            "count": count,
+            "notes": "",
+        })
+
+    if unmapped:
+        for name in unmapped:
+            print(f"    ⚠ Unmapped species: '{name}'")
+
+    first_planted = ""
+    if earliest_planted:
+        first_planted = earliest_planted.strftime("%Y-%m-%d")
+
+    return {
+        "id": section_id,
+        "paddock": paddock,
+        "row": row,
+        "range": section_range.replace("-", "\u2013"),
+        "length": length,
+        "has_trees": has_trees,
+        "first_planted": first_planted,
+        "inventory_date": inventory_date,
+        "plants": plants,
+    }
+
+
 # ─── File-level parsing ─────────────────────────────────────────────────
 
 def is_r1_section_tab(name):
@@ -464,6 +777,16 @@ def is_r1_section_tab(name):
 def is_v2_section_tab(name):
     """Check if tab name matches v2 section pattern (P2R2.x-y or P2R3.x-y)."""
     return bool(re.match(r'P2R[23]\.\d+-\d+', name))
+
+
+def is_r4_section_tab(name):
+    """Check if tab name matches P2R4 section pattern."""
+    return bool(re.match(r'P2R4\.\d+-\d+', name))
+
+
+def is_r5_section_tab(name):
+    """Check if tab name matches P2R5 section pattern."""
+    return bool(re.match(r'P2R5\.\d+-\d+', name))
 
 
 def parse_fieldsheet_file(filepath, farmos_names):
@@ -491,6 +814,24 @@ def parse_fieldsheet_file(filepath, farmos_names):
                 print(f"  Parsed: {section['id']} — {len(section['plants'])} species ({plant_count} with count)")
             else:
                 print(f"  Skipped: {sheet_name} (could not parse v2 format)")
+
+        elif is_r4_section_tab(sheet_name):
+            section = parse_r4_section(ws, sheet_name, farmos_names)
+            if section:
+                sections.append(section)
+                plant_count = sum(1 for p in section["plants"] if p.get("count") and p["count"] > 0)
+                print(f"  Parsed: {section['id']} — {len(section['plants'])} species ({plant_count} with count)")
+            else:
+                print(f"  Skipped: {sheet_name} (could not parse P2R4 format)")
+
+        elif is_r5_section_tab(sheet_name):
+            section = parse_r5_section(ws, sheet_name, farmos_names)
+            if section:
+                sections.append(section)
+                plant_count = sum(1 for p in section["plants"] if p.get("count") and p["count"] > 0)
+                print(f"  Parsed: {section['id']} — {len(section['plants'])} species ({plant_count} with count)")
+            else:
+                print(f"  Skipped: {sheet_name} (could not parse P2R5 format)")
 
         else:
             # Skip non-section tabs (mapping, recap, planning, etc.)

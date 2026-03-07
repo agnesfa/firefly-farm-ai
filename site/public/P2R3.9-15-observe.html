@@ -50,7 +50,7 @@
     <div class="obs-form-section">
       <div class="obs-field-group">
         <label class="obs-label" for="quick-species">Plant species</label>
-        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Cabbage (Red)">Cabbage (Red) (25)</option><option value="Tomato (Marmande)">Tomato (Marmande) (10)</option><option value="Amaranth">Amaranth (1)</option><option value="Comfrey">Comfrey (6)</option><option value="Sweet Potato">Sweet Potato (6)</option><option value="Tansy">Tansy (4)</option><option value="Basil - Sweet (Classic)">Basil - Sweet (Classic) (5)</option></select>
+        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Cabbage (Red)">Cabbage (Red) (25)</option><option value="Tomato (Marmande)">Tomato (Marmande) (10)</option><option value="Amaranth">Amaranth (1)</option><option value="Zucchini (Blackjack)">Zucchini (Blackjack) (None)</option><option value="Basil - Perennial (Thai)">Basil - Perennial (Thai) (None)</option><option value="Comfrey">Comfrey (6)</option><option value="Turmeric">Turmeric (None)</option><option value="Sweet Potato">Sweet Potato (6)</option><option value="Tansy">Tansy (4)</option><option value="Garlic">Garlic (None)</option><option value="Yarrow (White)">Yarrow (White) (None)</option><option value="Basil - Sweet (Classic)">Basil - Sweet (Classic) (5)</option><option value="Strawberry">Strawberry (None)</option></select>
       </div>
 
       <div id="quick-plant-info" class="quick-plant-info"></div>
@@ -177,10 +177,64 @@
             </div>
         </div>
         <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:#f0f6e7;border-left:3px solid #6b9e3c">
+            <span>🫑</span>
+            <span class="inv-strata-name" style="color:#6b9e3c">Medium Layer</span>
+            <span class="inv-strata-count">2</span>
+          </div>
+          
+            <div class="inv-plant-row" data-species="Zucchini (Blackjack)" data-strata="medium" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Zucchini (Blackjack)</div>
+                <div class="inv-plant-botanical">Cucurbita pepo</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Zucchini (Blackjack)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Zucchini (Blackjack)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Zucchini (Blackjack)">
+            </div>
+            <div class="inv-plant-row" data-species="Basil - Perennial (Thai)" data-strata="medium" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Basil - Perennial (Thai)</div>
+                <div class="inv-plant-botanical">Ocimum basilicum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Basil - Perennial (Thai)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Basil - Perennial (Thai)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Basil - Perennial (Thai)">
+            </div>
+        </div>
+        <div class="inv-strata-group">
           <div class="inv-strata-header" style="background:#f4f8ec;border-left:3px solid #8bb85a">
             <span>🌱</span>
             <span class="inv-strata-name" style="color:#8bb85a">Ground Layer</span>
-            <span class="inv-strata-count">4</span>
+            <span class="inv-strata-count">8</span>
           </div>
           
             <div class="inv-plant-row" data-species="Comfrey" data-strata="low" data-current="6">
@@ -205,6 +259,29 @@
                 </select>
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Comfrey">
+            </div>
+            <div class="inv-plant-row" data-species="Turmeric" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Turmeric</div>
+                <div class="inv-plant-botanical">Curcuma longa</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Turmeric">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Turmeric">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Turmeric">
             </div>
             <div class="inv-plant-row" data-species="Sweet Potato" data-strata="low" data-current="6">
               <div class="inv-plant-info">
@@ -252,6 +329,52 @@
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Tansy">
             </div>
+            <div class="inv-plant-row" data-species="Garlic" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Garlic</div>
+                <div class="inv-plant-botanical">Allium sativum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Garlic">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Garlic">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Garlic">
+            </div>
+            <div class="inv-plant-row" data-species="Yarrow (White)" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Yarrow (White)</div>
+                <div class="inv-plant-botanical">Achillea millefolium</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Yarrow (White)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Yarrow (White)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Yarrow (White)">
+            </div>
             <div class="inv-plant-row" data-species="Basil - Sweet (Classic)" data-strata="low" data-current="5">
               <div class="inv-plant-info">
                 <div class="inv-plant-name">Basil - Sweet (Classic)</div>
@@ -274,6 +397,29 @@
                 </select>
               </div>
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Basil - Sweet (Classic)">
+            </div>
+            <div class="inv-plant-row" data-species="Strawberry" data-strata="low" data-current="">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Strawberry</div>
+                <div class="inv-plant-botanical">Fragaria × ananassa</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">—</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for Strawberry">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Strawberry">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Strawberry">
             </div>
         </div>
 
@@ -316,7 +462,7 @@ const SECTION_DATA = {
   range: "9–15",
   paddock: 2,
   row: 3,
-  plants: [{"species": "Cabbage (Red)", "strata": "high", "count": 25}, {"species": "Tomato (Marmande)", "strata": "high", "count": 10}, {"species": "Amaranth", "strata": "high", "count": 1}, {"species": "Comfrey", "strata": "low", "count": 6}, {"species": "Sweet Potato", "strata": "low", "count": 6}, {"species": "Tansy", "strata": "low", "count": 4}, {"species": "Basil - Sweet (Classic)", "strata": "low", "count": 5}]
+  plants: [{"species": "Cabbage (Red)", "strata": "high", "count": 25}, {"species": "Tomato (Marmande)", "strata": "high", "count": 10}, {"species": "Amaranth", "strata": "high", "count": 1}, {"species": "Zucchini (Blackjack)", "strata": "medium", "count": null}, {"species": "Basil - Perennial (Thai)", "strata": "medium", "count": null}, {"species": "Comfrey", "strata": "low", "count": 6}, {"species": "Turmeric", "strata": "low", "count": null}, {"species": "Sweet Potato", "strata": "low", "count": 6}, {"species": "Tansy", "strata": "low", "count": 4}, {"species": "Garlic", "strata": "low", "count": null}, {"species": "Yarrow (White)", "strata": "low", "count": null}, {"species": "Basil - Sweet (Classic)", "strata": "low", "count": 5}, {"species": "Strawberry", "strata": "low", "count": null}]
 };
 const OBSERVE_ENDPOINT = "";
 </script>
