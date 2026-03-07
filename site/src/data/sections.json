@@ -1,1356 +1,666 @@
 {
   "generated": true,
   "sections": {
-    "P2R2.0-3": {
-      "id": "P2R2.0-3",
+    "P2R1.0-3": {
+      "id": "P2R1.0-3",
       "paddock": 2,
-      "row": 2,
-      "range": "0\u20133",
+      "row": 1,
+      "range": "0–3",
       "length": "3m",
-      "has_trees": true,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-10",
-      "plants": [
-        {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pear (Williams)",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": 1,
-          "notes": ""
-        },
-        {
-          "species": "Macadamia",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Rose Apple",
-          "strata": "high",
-          "count": 1,
-          "notes": ""
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": 2,
-          "notes": ""
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "high",
-          "count": 2,
-          "notes": "planted Oct/Nov 2025"
-        },
-        {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": 7,
-          "notes": "planted Oct/Nov; originals dead"
-        },
-        {
-          "species": "Chilli (Bird Eye)",
-          "strata": "medium",
-          "count": null,
-          "notes": "dead"
-        },
-        {
-          "species": "Plum",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": 1,
-          "notes": "FFC seedling"
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": null,
-          "notes": "FFC cuttings \u2014 all dead"
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": null,
-          "notes": "dead"
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 3,
-          "notes": "1 planted Oct/Nov"
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": null,
-          "notes": "dead"
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": 2,
-          "notes": ""
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": 1,
-          "notes": ""
-        },
-        {
-          "species": "Cape Gooseberry",
-          "strata": "low",
-          "count": 1,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Calendula",
-          "strata": "low",
-          "count": 3,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Pumpkin",
-          "strata": "low",
-          "count": 10,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Geranium",
-          "strata": "low",
-          "count": 1,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
-        {
-          "species": "Millet",
-          "strata": "low",
-          "count": 25,
-          "notes": ""
-        },
-        {
-          "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 12.5,
-          "notes": ""
-        },
-        {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 30,
-          "notes": ""
-        },
-        {
-          "species": "Buckwheat",
-          "strata": "low",
-          "count": 25,
-          "notes": ""
-        }
-      ]
-    },
-    "P2R2.3-7": {
-      "id": "P2R2.3-7",
-      "paddock": 2,
-      "row": 2,
-      "range": "3\u20137",
-      "length": "4m",
       "has_trees": false,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-11",
+      "first_planted": "2025-MARCH-20 to 24TH",
+      "inventory_date": "2025-10-09",
       "plants": [
         {
-          "species": "Forest Red Gum",
+          "species": "Guava",
           "strata": "emergent",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Pear (Williams)",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Silver Wattle",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Jacaranda",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Macadamia",
+          "species": "Grape Vine",
           "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Rose Apple",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Chilli (Bird Eye)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Plum",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Raspberry",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": null,
-          "notes": "FFC cuttings"
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 2,
-          "notes": "4 lost since April"
-        },
-        {
-          "species": "Pumpkin",
-          "strata": "low",
-          "count": 2,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": 4,
-          "notes": "2 planted Oct/Nov"
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": 2,
-          "notes": ""
-        },
-        {
-          "species": "Calendula",
-          "strata": "low",
-          "count": 3,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Pak Choi",
-          "strata": "low",
-          "count": 1,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
-        {
-          "species": "Millet",
-          "strata": "low",
-          "count": 25,
-          "notes": ""
-        },
-        {
-          "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 12.5,
-          "notes": ""
-        },
-        {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 30,
-          "notes": ""
-        },
-        {
-          "species": "Buckwheat",
-          "strata": "low",
-          "count": 25,
-          "notes": ""
-        }
-      ]
-    },
-    "P2R2.7-16": {
-      "id": "P2R2.7-16",
-      "paddock": 2,
-      "row": 2,
-      "range": "7\u201316",
-      "length": "9m",
-      "has_trees": true,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-11",
-      "plants": [
-        {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
-          "count": 2,
-          "notes": "planted Oct/Nov, FFC nursery"
-        },
-        {
-          "species": "Pear (Williams)",
-          "strata": "emergent",
-          "count": 3,
-          "notes": "1 Williams ok, 1 Flordahome eaten, 1 cut under graft"
-        },
-        {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Macadamia",
+          "species": "Olive",
           "strata": "high",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Quince",
+          "species": "Fig",
           "strata": "high",
-          "count": 4,
-          "notes": "FFC cuttings, planted Oct/Nov"
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": 2,
-          "notes": "1 Red Delicious ok, 1 Pink Lady under graft"
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": 5,
-          "notes": "2 survived original, 3 planted Oct/Nov"
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "high",
-          "count": 2,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": 6,
-          "notes": "originals dead, replanted Oct/Nov"
-        },
-        {
-          "species": "Chilli (Bird Eye)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Plum",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": 2,
-          "notes": "FFC seedlings"
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": 3,
-          "notes": "FFC cuttings \u2014 3 of 6 survived"
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": 1,
-          "notes": "5 lost"
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 4,
-          "notes": "1 survived + 3 planted Oct/Nov"
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": 1,
-          "notes": "5 lost"
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": 4,
-          "notes": "1 lost"
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": 3,
-          "notes": "1 planted Oct/Nov"
-        },
-        {
-          "species": "Cape Gooseberry",
-          "strata": "low",
-          "count": 1,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Strawberry",
-          "strata": "low",
-          "count": 3,
-          "notes": "4 lost"
-        },
-        {
-          "species": "Yarrow (White)",
-          "strata": "low",
-          "count": 2,
-          "notes": "expanded to 2 patches"
-        },
-        {
-          "species": "Sage",
-          "strata": "low",
-          "count": null,
-          "notes": "all dead"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
-        {
-          "species": "Millet",
-          "strata": "low",
-          "count": 50,
-          "notes": ""
-        },
-        {
-          "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 25,
-          "notes": ""
-        },
-        {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 60,
-          "notes": ""
-        },
-        {
-          "species": "Buckwheat",
-          "strata": "low",
-          "count": 50,
-          "notes": ""
-        }
-      ]
-    },
-    "P2R2.16-23": {
-      "id": "P2R2.16-23",
-      "paddock": 2,
-      "row": 2,
-      "range": "16\u201323",
-      "length": "7m",
-      "has_trees": false,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-11",
-      "plants": [
-        {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pear (Williams)",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Silver Wattle",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Jacaranda",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Macadamia",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Rose Apple",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Chilli (Bird Eye)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Plum",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Raspberry",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": null,
-          "notes": "FFC cuttings"
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 6,
-          "notes": "1 lost"
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": 4,
-          "notes": ""
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": 3,
-          "notes": "1 planted Oct/Nov"
-        },
-        {
-          "species": "Basil (Sweet)",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Sage",
-          "strata": "low",
-          "count": null,
-          "notes": "all dead"
-        },
-        {
-          "species": "Pak Choi",
-          "strata": "low",
-          "count": 11,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Pumpkin",
-          "strata": "low",
-          "count": 5,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
-        {
-          "species": "Millet",
-          "strata": "low",
-          "count": 42,
-          "notes": ""
-        },
-        {
-          "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 21,
-          "notes": ""
-        },
-        {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 49,
-          "notes": ""
-        },
-        {
-          "species": "Buckwheat",
-          "strata": "low",
-          "count": 42,
-          "notes": ""
-        }
-      ]
-    },
-    "P2R2.23-26": {
-      "id": "P2R2.23-26",
-      "paddock": 2,
-      "row": 2,
-      "range": "23\u201326",
-      "length": "3m",
-      "has_trees": true,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-11",
-      "plants": [
-        {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Ice Cream Bean",
-          "strata": "emergent",
-          "count": 1,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Pear (Williams)",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": 2,
-          "notes": "1 Purple ok, 1 Thai White eaten"
-        },
-        {
-          "species": "Macadamia",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Quince",
-          "strata": "high",
-          "count": 1,
-          "notes": "FFC cutting, planted Oct/Nov"
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": 2,
-          "notes": "1 lost"
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "high",
-          "count": 2,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": 5,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Chilli (Bird Eye)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Plum",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Raspberry",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": null,
-          "notes": "FFC cuttings & seedlings \u2014 all dead"
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Basil (Sweet)",
-          "strata": "low",
-          "count": 4,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 2,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": null,
-          "notes": "all dead"
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": 1,
-          "notes": "3 lost"
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": null,
-          "notes": "dead"
-        },
-        {
-          "species": "Pumpkin",
-          "strata": "low",
-          "count": 1,
-          "notes": "planted Oct/Nov"
-        },
-        {
-          "species": "Sage",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Strawberry",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
-        {
-          "species": "Millet",
-          "strata": "low",
-          "count": 18,
-          "notes": ""
-        },
-        {
-          "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 9,
-          "notes": ""
-        },
-        {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 21,
-          "notes": ""
-        },
-        {
-          "species": "Buckwheat",
-          "strata": "low",
-          "count": 18,
-          "notes": ""
-        }
-      ]
-    },
-    "P2R2.28-37": {
-      "id": "P2R2.28-37",
-      "paddock": 2,
-      "row": 2,
-      "range": "28\u201337",
-      "length": "9m",
-      "has_trees": true,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-17",
-      "plants": [
-        {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
-          "count": 1,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Carob",
-          "strata": "emergent",
-          "count": 1,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": 2,
-          "notes": "1 Purple ok, 1 Strawberry Guava good"
-        },
-        {
-          "species": "Ice Cream Bean",
-          "strata": "emergent",
-          "count": 2,
-          "notes": "planted Nov, FFC nursery + garden"
-        },
-        {
-          "species": "Tagasaste",
-          "strata": "emergent",
-          "count": 2,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Jacaranda",
-          "strata": "high",
-          "count": 2,
-          "notes": "seeds from Gloucester Rd 2024; 1 lost"
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "high",
-          "count": 13,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": 4,
-          "notes": "FFC seedlings; 1\u00d712/11, 3\u00d716/11"
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": 1,
-          "notes": "7 lost"
-        },
-        {
-          "species": "White Mulberry",
-          "strata": "high",
-          "count": 1,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": 9,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Capsicum (Red)",
-          "strata": "medium",
-          "count": 2,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Eggplant",
-          "strata": "medium",
-          "count": 2,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Raspberry",
-          "strata": "medium",
-          "count": 4,
-          "notes": "to multiply"
-        },
-        {
-          "species": "Blackberry",
-          "strata": "medium",
-          "count": 1,
-          "notes": "to multiply"
-        },
-        {
-          "species": "Basil (Thai)",
-          "strata": "medium",
-          "count": 1,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Basil (Sweet)",
-          "strata": "medium",
-          "count": 3,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": 2,
-          "notes": "Minimbah permaculture farm 22/09/2025"
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 5,
-          "notes": "4 lost; 5 replanted from P1"
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": 4,
-          "notes": ""
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": 2,
-          "notes": ""
-        },
-        {
-          "species": "Ginger",
-          "strata": "low",
-          "count": 2,
-          "notes": "planted Nov, FFC nursery"
-        },
-        {
-          "species": "Blueberry",
-          "strata": "low",
-          "count": null,
-          "notes": "to multiply"
-        },
-        {
-          "species": "Strawberry",
-          "strata": "low",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
           "species": "Lavender",
-          "strata": "low",
-          "count": null,
+          "strata": "high",
+          "count": 5,
           "notes": ""
         },
         {
-          "species": "Pak Choi",
-          "strata": "low",
-          "count": 7,
-          "notes": "planted Nov"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
-        {
-          "species": "Millet",
-          "strata": "low",
-          "count": 63,
+          "species": "Rosemary",
+          "strata": "medium",
+          "count": 4,
           "notes": ""
         },
         {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 60,
+          "species": "Sage",
+          "strata": "medium",
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 22,
+          "species": "Finger Lime",
+          "strata": "medium",
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Buckwheat",
-          "strata": "low",
-          "count": 63,
+          "species": "Citrus (Yuzu)",
+          "strata": "medium",
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Corn (Manning Pride)",
-          "strata": "low",
-          "count": 43,
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Bean (Climbing) Epicure",
-          "strata": "low",
-          "count": 12.5,
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Pea (Snow/Sugar Snap)",
-          "strata": "low",
-          "count": 9,
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Bean (Dwarf) Borlotti",
+          "species": "Comfrey",
           "strata": "low",
-          "count": 11,
+          "count": 4,
           "notes": ""
         },
         {
-          "species": "Pigeon Pea (seeds)",
+          "species": "Thyme",
           "strata": "low",
-          "count": null,
+          "count": 2,
           "notes": ""
         },
         {
-          "species": "Spring Onion",
+          "species": "Oregano",
           "strata": "low",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Sunflower",
+          "species": "Lemon Balm",
           "strata": "low",
-          "count": null,
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 1,
           "notes": ""
         }
       ]
     },
-    "P2R2.37-46": {
-      "id": "P2R2.37-46",
+    "P2R1.3-9": {
+      "id": "P2R1.3-9",
       "paddock": 2,
-      "row": 2,
-      "range": "37\u201346",
-      "length": "9m",
+      "row": 1,
+      "range": "3–9",
+      "length": "6m",
       "has_trees": true,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-17",
+      "first_planted": "2025-MARCH-20 to 24TH",
+      "inventory_date": "2025-10-20",
       "plants": [
         {
-          "species": "Forest Red Gum",
+          "species": "Eucalypt-Gum (Generic)",
           "strata": "emergent",
-          "count": null,
+          "count": 0,
           "notes": ""
         },
         {
-          "species": "Pear (Williams)",
+          "species": "Guava",
           "strata": "emergent",
-          "count": null,
+          "count": 2,
           "notes": ""
         },
         {
-          "species": "Cherry Guava",
-          "strata": "emergent",
-          "count": 3,
-          "notes": "1 Purple ok, 1 Hawaiian ok, 1 Thai White ok"
-        },
-        {
-          "species": "Tagasaste",
-          "strata": "emergent",
-          "count": 1,
-          "notes": "FFC seedling, planted Nov"
-        },
-        {
-          "species": "Macadamia",
+          "species": "Grape Vine",
           "strata": "high",
-          "count": 3,
-          "notes": ""
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "high",
-          "count": 7,
-          "notes": "planted Nov"
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": null,
+          "count": 5,
           "notes": ""
         },
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": 1.5,
-          "notes": "~7.5 lost"
+          "count": 6,
+          "notes": ""
         },
         {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
+          "species": "Olive",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Fig",
+          "strata": "high",
           "count": 5,
-          "notes": "planted Nov"
+          "notes": ""
         },
         {
-          "species": "Capsicum (Red)",
-          "strata": "medium",
-          "count": 1,
-          "notes": "planted Nov"
-        },
-        {
-          "species": "Plum",
-          "strata": "medium",
-          "count": 4,
-          "notes": "bad state"
-        },
-        {
-          "species": "Raspberry",
-          "strata": "medium",
+          "species": "Lavender",
+          "strata": "high",
           "count": null,
-          "notes": "transfer from P1DE1"
+          "notes": ""
         },
         {
-          "species": "Blackberry",
+          "species": "Rosemary",
           "strata": "medium",
           "count": null,
           "notes": ""
         },
         {
-          "species": "Basil (Sweet)",
+          "species": "Sage",
           "strata": "medium",
-          "count": 3,
-          "notes": "planted Nov"
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Finger Lime",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Citrus (Yuzu)",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
         },
         {
           "species": "Lemon",
           "strata": "medium",
+          "count": 6,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
+          "strata": "medium",
           "count": 1,
-          "notes": "FFC seedling, planted Nov"
+          "notes": ""
         },
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 2,
-          "notes": "3 lost; transplant more"
+          "count": 7,
+          "notes": ""
         },
         {
-          "species": "Turmeric",
+          "species": "Thyme",
           "strata": "low",
-          "count": null,
-          "notes": "all dead"
+          "count": 0,
+          "notes": ""
         },
         {
-          "species": "Sweet Potato",
+          "species": "Oregano",
           "strata": "low",
-          "count": null,
-          "notes": "all dead"
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Hyssop",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 3,
+          "notes": ""
         },
         {
           "species": "Tansy",
           "strata": "low",
           "count": 2,
-          "notes": "1 planted Nov; transplant more"
+          "notes": ""
         },
         {
-          "species": "Ginger",
+          "species": "Sweet Potato",
           "strata": "low",
           "count": null,
-          "notes": "all dead"
+          "notes": ""
         },
         {
-          "species": "Blueberry",
+          "species": "Coriander",
           "strata": "low",
-          "count": 9,
-          "notes": "7 survived + 2 FFC cuttings"
+          "count": 0,
+          "notes": ""
         },
         {
-          "species": "Strawberry",
+          "species": "Oat",
           "strata": "low",
-          "count": null,
-          "notes": "all dead"
-        },
-        {
-          "species": "Pak Choi",
-          "strata": "low",
-          "count": 7,
-          "notes": "planted Nov"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
+          "count": 0,
+          "notes": ""
         },
         {
           "species": "Millet",
           "strata": "low",
-          "count": 63,
-          "notes": ""
-        },
-        {
-          "species": "Cowpea",
-          "strata": "low",
-          "count": 60,
+          "count": 0,
           "notes": ""
         },
         {
           "species": "Sunn Hemp",
           "strata": "low",
-          "count": 22,
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Cowpea",
+          "strata": "low",
+          "count": null,
           "notes": ""
         },
         {
           "species": "Buckwheat",
           "strata": "low",
-          "count": 63,
+          "count": null,
           "notes": ""
         },
         {
-          "species": "Corn (Manning Pride)",
-          "strata": "low",
-          "count": 43,
-          "notes": ""
-        },
-        {
-          "species": "Bean (Climbing) Epicure",
-          "strata": "low",
-          "count": 12.5,
-          "notes": ""
-        },
-        {
-          "species": "Pea (Snow/Sugar Snap)",
-          "strata": "low",
-          "count": 9,
-          "notes": ""
-        },
-        {
-          "species": "Bean (Dwarf) Borlotti",
-          "strata": "low",
-          "count": 11,
-          "notes": ""
-        },
-        {
-          "species": "Pigeon Pea (seeds)",
+          "species": "Coriander",
           "strata": "low",
           "count": null,
           "notes": ""
         },
         {
-          "species": "Spring Onion",
+          "species": "Nasturtium",
           "strata": "low",
           "count": null,
           "notes": ""
         },
         {
-          "species": "Sunflower",
+          "species": "Borage",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Marigold",
           "strata": "low",
           "count": null,
           "notes": ""
         }
       ]
     },
-    "P2R3.0-3": {
-      "id": "P2R3.0-3",
+    "P2R1.9-13": {
+      "id": "P2R1.9-13",
+      "paddock": 2,
+      "row": 1,
+      "range": "9–13",
+      "length": "4m",
+      "has_trees": false,
+      "first_planted": "2025-MARCH-20 to 24TH",
+      "inventory_date": "2025-11-10",
+      "plants": [
+        {
+          "species": "Eucalypt-Gum (Generic)",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Guava",
+          "strata": "emergent",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Grape Vine",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Olive",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Fig",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "high",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Rosemary",
+          "strata": "medium",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Sage",
+          "strata": "medium",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Finger Lime",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Citrus (Yuzu)",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Thyme",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Coriander",
+          "strata": "low",
+          "count": 10,
+          "notes": ""
+        },
+        {
+          "species": "Parsley (Italian)",
+          "strata": "low",
+          "count": 10,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R1.16-25": {
+      "id": "P2R1.16-25",
+      "paddock": 2,
+      "row": 1,
+      "range": "16–25",
+      "length": "9m",
+      "has_trees": true,
+      "first_planted": "2025-MARCH-20 to 24TH",
+      "inventory_date": "2025-10-20",
+      "plants": [
+        {
+          "species": "Eucalypt-Gum (Generic)",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Guava",
+          "strata": "emergent",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Grape Vine",
+          "strata": "high",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Olive",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Fig",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "high",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Rosemary",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Sage",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Finger Lime",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Citrus (Yuzu)",
+          "strata": "medium",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 7,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 12,
+          "notes": ""
+        },
+        {
+          "species": "Thyme",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Oregano",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": ""
+        }
+      ]
+    },
+    "P2R3.0-2": {
+      "id": "P2R3.0-2",
       "paddock": 2,
       "row": 3,
-      "range": "0\u20133",
-      "length": "2.6m",
+      "range": "0–2",
+      "length": "2m",
       "has_trees": false,
       "first_planted": "April 2025",
       "inventory_date": "2025-10-25",
@@ -1374,7 +684,7 @@
           "notes": "seeded Nov 2025, 10g"
         },
         {
-          "species": "Basil (Thai)",
+          "species": "Basil - Perennial (Thai)",
           "strata": "medium",
           "count": 1,
           "notes": "perennial; planted Nov 2025"
@@ -1416,7 +726,7 @@
           "notes": ""
         },
         {
-          "species": "Basil (Sweet)",
+          "species": "Basil - Sweet (Classic)",
           "strata": "low",
           "count": 1,
           "notes": "planted Nov 2025"
@@ -1426,45 +736,35 @@
           "strata": "low",
           "count": null,
           "notes": ""
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
+        }
+      ],
+      "green_manure": [
         {
           "species": "Millet",
-          "strata": "low",
-          "count": 100,
-          "notes": ""
+          "quantity_grams": 100
         },
         {
           "species": "Zucchini (Blackjack)",
-          "strata": "low",
-          "count": null,
-          "notes": ""
+          "quantity_grams": null
         },
         {
           "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 20,
-          "notes": ""
+          "quantity_grams": 20
         }
       ]
     },
-    "P2R3.3-9": {
-      "id": "P2R3.3-9",
+    "P2R3.2-9": {
+      "id": "P2R3.2-9",
       "paddock": 2,
       "row": 3,
-      "range": "3\u20139",
-      "length": "6m",
+      "range": "2–9",
+      "length": "7m",
       "has_trees": true,
       "first_planted": "April 2025",
       "inventory_date": "2025-11-13",
       "plants": [
         {
-          "species": "Cherry Guava (Strawberry)",
+          "species": "Guava (Strawberry)",
           "strata": "emergent",
           "count": 1,
           "notes": "good state"
@@ -1500,7 +800,7 @@
           "notes": "good state"
         },
         {
-          "species": "White Mulberry",
+          "species": "Mulberry (White)",
           "strata": "high",
           "count": 1,
           "notes": "from Beck & Dan, planted Nov 2025"
@@ -1518,7 +818,7 @@
           "notes": ""
         },
         {
-          "species": "Tea Tree",
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
           "strata": "medium",
           "count": null,
           "notes": ""
@@ -1533,7 +833,7 @@
           "species": "Lemon",
           "strata": "medium",
           "count": null,
-          "notes": "FFC cuttings \u2014 all dead"
+          "notes": "FFC cuttings — all dead"
         },
         {
           "species": "Acerola",
@@ -1542,10 +842,10 @@
           "notes": ""
         },
         {
-          "species": "Chilli (Jalape\u00f1o)",
+          "species": "Chilli (Jalapeño)",
           "strata": "medium",
           "count": 7,
-          "notes": "1 Thai + 1 Jalape\u00f1o survived; 5 Jalape\u00f1o planted Nov"
+          "notes": "1 Thai + 1 Jalapeño survived; 5 Jalapeño planted Nov"
         },
         {
           "species": "Ginger",
@@ -1560,7 +860,7 @@
           "notes": "planted Oct 2025"
         },
         {
-          "species": "Basil (Thai)",
+          "species": "Basil - Perennial (Thai)",
           "strata": "medium",
           "count": 3,
           "notes": "planted Nov 2025"
@@ -1578,7 +878,7 @@
           "notes": "1 survived + 3 planted Nov 2025"
         },
         {
-          "species": "Basil (Sweet)",
+          "species": "Basil - Sweet (Classic)",
           "strata": "low",
           "count": 1,
           "notes": "planted Nov 2025"
@@ -1624,57 +924,41 @@
           "strata": "low",
           "count": 3,
           "notes": "cuttings"
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
+        }
+      ],
+      "green_manure": [
         {
           "species": "Millet",
-          "strata": "low",
-          "count": 34,
-          "notes": ""
+          "quantity_grams": 34
         },
         {
           "species": "Cowpea",
-          "strata": "low",
-          "count": 30,
-          "notes": ""
+          "quantity_grams": 30
         },
         {
           "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 12,
-          "notes": ""
+          "quantity_grams": 12
         },
         {
           "species": "Buckwheat",
-          "strata": "low",
-          "count": 36,
-          "notes": ""
+          "quantity_grams": 36
         },
         {
           "species": "Corn (Sweet)",
-          "strata": "low",
-          "count": 10,
-          "notes": ""
+          "quantity_grams": 10
         },
         {
           "species": "Bean (Climbing)",
-          "strata": "low",
-          "count": 5,
-          "notes": ""
+          "quantity_grams": 5
         }
       ]
     },
-    "P2R3.9-14": {
-      "id": "P2R3.9-14",
+    "P2R3.9-15": {
+      "id": "P2R3.9-15",
       "paddock": 2,
       "row": 3,
-      "range": "9\u201314",
-      "length": "5m",
+      "range": "9–15",
+      "length": "6m",
       "has_trees": false,
       "first_planted": "April 2025",
       "inventory_date": "2025-11-13",
@@ -1704,7 +988,7 @@
           "notes": ""
         },
         {
-          "species": "Basil (Thai)",
+          "species": "Basil - Perennial (Thai)",
           "strata": "medium",
           "count": null,
           "notes": "perennial"
@@ -1746,7 +1030,7 @@
           "notes": ""
         },
         {
-          "species": "Basil (Sweet)",
+          "species": "Basil - Sweet (Classic)",
           "strata": "low",
           "count": 5,
           "notes": "planted Nov 2025"
@@ -1756,60 +1040,44 @@
           "strata": "low",
           "count": null,
           "notes": ""
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
+        }
+      ],
+      "green_manure": [
         {
           "species": "Millet",
-          "strata": "low",
-          "count": 28.3,
-          "notes": ""
+          "quantity_grams": 28.3
         },
         {
           "species": "Cowpea",
-          "strata": "low",
-          "count": 30,
-          "notes": ""
+          "quantity_grams": 30
         },
         {
           "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 10,
-          "notes": ""
+          "quantity_grams": 10
         },
         {
           "species": "Buckwheat",
-          "strata": "low",
-          "count": 30,
-          "notes": ""
+          "quantity_grams": 30
         },
         {
           "species": "Corn (Sweet)",
-          "strata": "low",
-          "count": 10,
-          "notes": ""
+          "quantity_grams": 10
         },
         {
           "species": "Bean (Climbing)",
-          "strata": "low",
-          "count": 5,
-          "notes": ""
+          "quantity_grams": 5
         }
       ]
     },
-    "P2R3.14-21": {
-      "id": "P2R3.14-21",
+    "P2R3.15-21": {
+      "id": "P2R3.15-21",
       "paddock": 2,
       "row": 3,
-      "range": "14\u201321",
-      "length": "7m",
+      "range": "15–21",
+      "length": "6m",
       "has_trees": true,
       "first_planted": "April 2025",
-      "inventory_date": "2025-11-12",
+      "inventory_date": "2025-11-13",
       "plants": [
         {
           "species": "Jacaranda",
@@ -1854,7 +1122,7 @@
           "notes": "all dead"
         },
         {
-          "species": "White Mulberry",
+          "species": "Mulberry (White)",
           "strata": "high",
           "count": 1,
           "notes": "from Beck & Dan, planted Nov 2025"
@@ -1872,7 +1140,7 @@
           "notes": ""
         },
         {
-          "species": "Tea Tree",
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
           "strata": "medium",
           "count": null,
           "notes": ""
@@ -1887,7 +1155,7 @@
           "species": "Lemon",
           "strata": "medium",
           "count": null,
-          "notes": "FFC cuttings \u2014 all dead"
+          "notes": "FFC cuttings — all dead"
         },
         {
           "species": "Lemon",
@@ -1896,10 +1164,10 @@
           "notes": "FFC seedlings, planted Nov 2025"
         },
         {
-          "species": "Chilli (Jalape\u00f1o)",
+          "species": "Chilli (Jalapeño)",
           "strata": "medium",
           "count": 5,
-          "notes": "Jalape\u00f1o + others, planted Nov 2025"
+          "notes": "Jalapeño + others, planted Nov 2025"
         },
         {
           "species": "Ginger",
@@ -1956,7 +1224,7 @@
           "notes": "all dead"
         },
         {
-          "species": "Basil (Sweet)",
+          "species": "Basil - Sweet (Classic)",
           "strata": "low",
           "count": 1,
           "notes": "planted Nov 2025"
@@ -1978,249 +1246,47 @@
           "strata": "low",
           "count": 10,
           "notes": ""
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
+        }
+      ],
+      "green_manure": [
         {
           "species": "Millet",
-          "strata": "low",
-          "count": 39.7,
-          "notes": ""
+          "quantity_grams": 39.7
         },
         {
           "species": "Cowpea",
-          "strata": "low",
-          "count": 30,
-          "notes": ""
+          "quantity_grams": 30
         },
         {
           "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 14,
-          "notes": ""
+          "quantity_grams": 14
         },
         {
           "species": "Buckwheat",
-          "strata": "low",
-          "count": 42,
-          "notes": ""
+          "quantity_grams": 42
         },
         {
           "species": "Corn (Sweet)",
-          "strata": "low",
-          "count": 10,
-          "notes": ""
+          "quantity_grams": 10
         },
         {
           "species": "Bean (Climbing)",
-          "strata": "low",
-          "count": 5,
-          "notes": ""
+          "quantity_grams": 5
         }
       ]
     },
-    "P2R3.21-26": {
-      "id": "P2R3.21-26",
+    "P2R3.26-38": {
+      "id": "P2R3.26-38",
       "paddock": 2,
       "row": 3,
-      "range": "21\u201326",
-      "length": "5m",
-      "has_trees": false,
-      "first_planted": "April 2025",
-      "inventory_date": "2025-11-13",
-      "plants": [
-        {
-          "species": "Jacaranda",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pear (Williams)",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Banagrass",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Malabar Chestnut",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Amla",
-          "strata": "emergent",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Macadamia",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Quince",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Apple",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Longan",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Jaboticaba",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Tea Tree",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Orange",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": null,
-          "notes": "FFC cuttings"
-        },
-        {
-          "species": "Acerola",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Chilli (Jalape\u00f1o)",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Ginger",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Cape Gooseberry",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Basil (Greek)",
-          "strata": "medium",
-          "count": null,
-          "notes": "perennial"
-        },
-        {
-          "species": "Lavender",
-          "strata": "medium",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Sweet Potato",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Tansy",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Garlic",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Yarrow (White)",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        },
-        {
-          "species": "Garlic Chives",
-          "strata": "low",
-          "count": null,
-          "notes": "perennial"
-        },
-        {
-          "species": "Strawberry",
-          "strata": "low",
-          "count": null,
-          "notes": ""
-        }
-      ]
-    },
-    "P2R3.26-37": {
-      "id": "P2R3.26-37",
-      "paddock": 2,
-      "row": 3,
-      "range": "26\u201337",
-      "length": "11m",
+      "range": "26–38",
+      "length": "12m",
       "has_trees": true,
       "first_planted": "April 2025",
       "inventory_date": "2025-11-13",
       "plants": [
         {
-          "species": "Tallowood",
+          "species": "Tallowood (Gum)",
           "strata": "emergent",
           "count": 2,
           "notes": "FFC nursery, 2 planted Nov 2025"
@@ -2262,7 +1328,7 @@
           "notes": "all dead"
         },
         {
-          "species": "Cootamundra Wattle",
+          "species": "Wattle - Cootamundra (Baileyana)",
           "strata": "high",
           "count": 1,
           "notes": "FFC nursery, planted Nov 2025"
@@ -2292,13 +1358,13 @@
           "notes": "bad shape"
         },
         {
-          "species": "Tea Tree",
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
           "strata": "medium",
           "count": null,
           "notes": ""
         },
         {
-          "species": "White Mulberry",
+          "species": "Mulberry (White)",
           "strata": "medium",
           "count": 1,
           "notes": "FFC seedling, planted Nov 2025"
@@ -2325,7 +1391,7 @@
           "species": "Lemon",
           "strata": "medium",
           "count": null,
-          "notes": "FFC cuttings \u2014 all dead"
+          "notes": "FFC cuttings — all dead"
         },
         {
           "species": "Acerola",
@@ -2334,10 +1400,10 @@
           "notes": "dead"
         },
         {
-          "species": "Chilli (Jalape\u00f1o)",
+          "species": "Chilli (Jalapeño)",
           "strata": "medium",
           "count": 12,
-          "notes": "FFC nursery, 12 Jalape\u00f1o planted Nov 2025"
+          "notes": "FFC nursery, 12 Jalapeño planted Nov 2025"
         },
         {
           "species": "Ginger",
@@ -2352,7 +1418,7 @@
           "notes": "all dead"
         },
         {
-          "species": "Basil (Greek)",
+          "species": "Basil - Perennial (Greek)",
           "strata": "medium",
           "count": null,
           "notes": "perennial; dead"
@@ -2412,7 +1478,7 @@
           "notes": ""
         },
         {
-          "species": "Basil (Sweet)",
+          "species": "Basil - Sweet (Classic)",
           "strata": "low",
           "count": 14,
           "notes": "planted Nov 2025"
@@ -2428,63 +1494,45 @@
           "strata": "medium",
           "count": 1,
           "notes": "from GP Taree Oct 2025"
-        },
-        {
-          "species": "Species",
-          "strata": "medium",
-          "count": null,
-          "notes": "Notes"
-        },
+        }
+      ],
+      "green_manure": [
         {
           "species": "Millet",
-          "strata": "medium",
-          "count": 65,
-          "notes": ""
+          "quantity_grams": 65
         },
         {
           "species": "Cowpea",
-          "strata": "medium",
-          "count": 60,
-          "notes": ""
+          "quantity_grams": 60
         },
         {
           "species": "Sunn Hemp",
-          "strata": "medium",
-          "count": 31,
-          "notes": ""
+          "quantity_grams": 31
         },
         {
           "species": "Buckwheat",
-          "strata": "medium",
-          "count": 65,
-          "notes": ""
+          "quantity_grams": 65
         },
         {
           "species": "Corn (Sweet)",
-          "strata": "medium",
-          "count": 50,
-          "notes": ""
+          "quantity_grams": 50
         },
         {
           "species": "Bean (Climbing)",
-          "strata": "medium",
-          "count": 5,
-          "notes": ""
+          "quantity_grams": 5
         },
         {
-          "species": "Pea (Snow/Sugar Snap)",
-          "strata": "medium",
-          "count": 25,
-          "notes": ""
+          "species": "Pea-Snow",
+          "quantity_grams": 25
         }
       ]
     },
-    "P2R3.41-63": {
-      "id": "P2R3.41-63",
+    "P2R3.40-50": {
+      "id": "P2R3.40-50",
       "paddock": 2,
       "row": 3,
-      "range": "41\u201363",
-      "length": "22m",
+      "range": "40–50",
+      "length": "10m",
       "has_trees": true,
       "first_planted": "April 2025",
       "inventory_date": "2025-11-17",
@@ -2514,7 +1562,7 @@
           "notes": "1 Gouros + 4 common"
         },
         {
-          "species": "Tagasaste",
+          "species": "Tagasaste - Tree Lucerne",
           "strata": "high",
           "count": 3,
           "notes": "3 planted Nov 2025"
@@ -2538,7 +1586,7 @@
           "notes": "8 lost; seeded 70 seeds"
         },
         {
-          "species": "White Mulberry",
+          "species": "Mulberry (White)",
           "strata": "high",
           "count": 1,
           "notes": "FFC nursery, planted Nov 2025"
@@ -2556,7 +1604,7 @@
           "notes": "FFC nursery, apparition"
         },
         {
-          "species": "Tea Tree",
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
           "strata": "medium",
           "count": 4,
           "notes": "oil variety; healthy"
@@ -2598,7 +1646,7 @@
           "notes": "state ok"
         },
         {
-          "species": "Chilli (Jalape\u00f1o)",
+          "species": "Chilli (Jalapeño)",
           "strata": "medium",
           "count": 3,
           "notes": "3 planted Nov 2025"
@@ -2680,108 +1728,1575 @@
           "strata": "low",
           "count": null,
           "notes": ""
-        },
-        {
-          "species": "Species",
-          "strata": "low",
-          "count": null,
-          "notes": "Notes"
-        },
+        }
+      ],
+      "green_manure": [
         {
           "species": "Millet",
-          "strata": "low",
-          "count": 140,
-          "notes": ""
+          "quantity_grams": 140
         },
         {
           "species": "Cowpea",
-          "strata": "low",
-          "count": 120,
-          "notes": ""
+          "quantity_grams": 120
         },
         {
           "species": "Sunn Hemp",
-          "strata": "low",
-          "count": 62,
-          "notes": ""
+          "quantity_grams": 62
         },
         {
           "species": "Buckwheat",
-          "strata": "low",
-          "count": 150,
-          "notes": ""
+          "quantity_grams": 150
         },
         {
-          "species": "White Clover",
-          "strata": "low",
-          "count": 65,
-          "notes": ""
+          "species": "Clover (White)",
+          "quantity_grams": 65
         },
         {
           "species": "Coriander",
-          "strata": "low",
-          "count": 10,
-          "notes": ""
+          "quantity_grams": 10
         },
         {
           "species": "Corn (Sweet)",
-          "strata": "low",
+          "quantity_grams": null
+        },
+        {
+          "species": "Bean (Dwarf)",
+          "quantity_grams": 25
+        },
+        {
+          "species": "Bean (Climbing)",
+          "quantity_grams": 12
+        },
+        {
+          "species": "Pigeon Pea",
+          "quantity_grams": null
+        }
+      ]
+    },
+    "P2R3.50-62": {
+      "id": "P2R3.50-62",
+      "paddock": 2,
+      "row": 3,
+      "range": "50–62",
+      "length": "12m",
+      "has_trees": true,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-17",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "FFC nursery, 1 planted Nov 2025; 2 original"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "2 planted Nov 2025"
+        },
+        {
+          "species": "Malabar Chestnut",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "1 dead, 2 just alive"
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": 5,
+          "notes": "1 Gouros + 4 common"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "high",
+          "count": 3,
+          "notes": "3 planted Nov 2025"
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
           "count": null,
           "notes": ""
         },
         {
-          "species": "Bean (Dwarf)",
-          "strata": "low",
-          "count": 25,
-          "notes": ""
-        },
-        {
-          "species": "Bean (Climbing)",
-          "strata": "low",
-          "count": 12,
+          "species": "Longan",
+          "strata": "high",
+          "count": null,
           "notes": ""
         },
         {
           "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 2,
+          "notes": "8 lost; seeded 70 seeds"
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 1,
+          "notes": "FFC nursery, planted Nov 2025"
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "high",
+          "count": 16,
+          "notes": "FFC nursery, 16 planted Nov 2025"
+        },
+        {
+          "species": "Amaranth",
+          "strata": "high",
+          "count": 1,
+          "notes": "FFC nursery, apparition"
+        },
+        {
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "oil variety; healthy"
+        },
+        {
+          "species": "Pak Choi",
+          "strata": "medium",
+          "count": 14,
+          "notes": "11 pak choi + 3 red cabbage planted; eaten by caterpillars"
+        },
+        {
+          "species": "Zucchini (Blackjack)",
+          "strata": "medium",
+          "count": 10,
+          "notes": "FFC nursery"
+        },
+        {
+          "species": "Peach",
+          "strata": "medium",
+          "count": 3,
+          "notes": "2 Okinawa + 1 Aztec Gold"
+        },
+        {
+          "species": "Apricot",
+          "strata": "medium",
+          "count": 1,
+          "notes": "1 Bentley"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 2,
+          "notes": "FFC cuttings; 2 survivors at row end"
+        },
+        {
+          "species": "Acerola",
+          "strata": "medium",
+          "count": 1,
+          "notes": "state ok"
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "3 planted Nov 2025"
+        },
+        {
+          "species": "Curry Leaf",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Indian Curry tree"
+        },
+        {
+          "species": "Eggplant",
+          "strata": "medium",
+          "count": 3,
+          "notes": "3 planted Nov 2025"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Galangal",
+          "strata": "medium",
+          "count": 2,
+          "notes": "1 lost"
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 3,
+          "notes": "3 planted Nov 2025"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 8,
+          "notes": "4 lost; plant more"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 1,
+          "notes": "status uncertain"
+        },
+        {
+          "species": "Sweet Potato",
           "strata": "low",
           "count": null,
           "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 3,
+          "notes": "3 planted Nov 2025; plant more"
+        },
+        {
+          "species": "Garlic",
+          "strata": "low",
+          "count": 0.5,
+          "notes": "7.5 lost"
+        },
+        {
+          "species": "Yarrow (White)",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead; add some"
+        },
+        {
+          "species": "Garlic Chives",
+          "strata": "low",
+          "count": null,
+          "notes": "perennial; all dead; add some seeds"
+        },
+        {
+          "species": "Strawberry",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 140
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 120
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 62
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 150
+        },
+        {
+          "species": "Clover (White)",
+          "quantity_grams": 65
+        },
+        {
+          "species": "Coriander",
+          "quantity_grams": 10
+        },
+        {
+          "species": "Corn (Sweet)",
+          "quantity_grams": null
+        },
+        {
+          "species": "Bean (Dwarf)",
+          "quantity_grams": 25
+        },
+        {
+          "species": "Bean (Climbing)",
+          "quantity_grams": 12
+        },
+        {
+          "species": "Pigeon Pea",
+          "quantity_grams": null
+        }
+      ]
+    },
+    "P2R2.0-3": {
+      "id": "P2R2.0-3",
+      "paddock": 2,
+      "row": 2,
+      "range": "0–3",
+      "length": "3m",
+      "has_trees": true,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-10",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Rose Apple",
+          "strata": "high",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "high",
+          "count": 2,
+          "notes": "planted Oct/Nov 2025"
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 7,
+          "notes": "planted Oct/Nov; originals dead"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": null,
+          "notes": "dead"
+        },
+        {
+          "species": "Plum (Generic)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 1,
+          "notes": "FFC seedling"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": null,
+          "notes": "FFC cuttings — all dead"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": null,
+          "notes": "dead"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 3,
+          "notes": "1 planted Oct/Nov"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": null,
+          "notes": "dead"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 1,
+          "notes": ""
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "low",
+          "count": 1,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Calendula",
+          "strata": "low",
+          "count": 3,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 10,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "planted Oct/Nov"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 25
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 12.5
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 30
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 25
+        }
+      ]
+    },
+    "P2R2.3-9": {
+      "id": "P2R2.3-9",
+      "paddock": 2,
+      "row": 2,
+      "range": "3–9",
+      "length": "6m",
+      "has_trees": false,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-11",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Silver Wattle (Dealbata)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Rose Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Plum (Generic)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Raspberry",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": null,
+          "notes": "FFC cuttings"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": "4 lost since April"
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 2,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 4,
+          "notes": "2 planted Oct/Nov"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Calendula",
+          "strata": "low",
+          "count": 3,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Pak Choi",
+          "strata": "low",
+          "count": 1,
+          "notes": "planted Oct/Nov"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 25
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 12.5
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 30
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 25
+        }
+      ]
+    },
+    "P2R2.9-16": {
+      "id": "P2R2.9-16",
+      "paddock": 2,
+      "row": 2,
+      "range": "9–16",
+      "length": "7m",
+      "has_trees": true,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-11",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "planted Oct/Nov, FFC nursery"
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "emergent",
+          "count": 3,
+          "notes": "1 Williams ok, 1 Flordahome eaten, 1 cut under graft"
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Quince",
+          "strata": "high",
+          "count": 4,
+          "notes": "FFC cuttings, planted Oct/Nov"
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": 2,
+          "notes": "1 Red Delicious ok, 1 Pink Lady under graft"
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 5,
+          "notes": "2 survived original, 3 planted Oct/Nov"
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "high",
+          "count": 2,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 6,
+          "notes": "originals dead, replanted Oct/Nov"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Plum (Generic)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 2,
+          "notes": "FFC seedlings"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 3,
+          "notes": "FFC cuttings — 3 of 6 survived"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 1,
+          "notes": "5 lost"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 4,
+          "notes": "1 survived + 3 planted Oct/Nov"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 1,
+          "notes": "5 lost"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 4,
+          "notes": "1 lost"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 3,
+          "notes": "1 planted Oct/Nov"
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "low",
+          "count": 1,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Strawberry",
+          "strata": "low",
+          "count": 3,
+          "notes": "4 lost"
+        },
+        {
+          "species": "Yarrow (White)",
+          "strata": "low",
+          "count": 2,
+          "notes": "expanded to 2 patches"
+        },
+        {
+          "species": "Sage",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 50
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 25
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 60
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 50
+        }
+      ]
+    },
+    "P2R2.16-23": {
+      "id": "P2R2.16-23",
+      "paddock": 2,
+      "row": 2,
+      "range": "16–23",
+      "length": "7m",
+      "has_trees": false,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-11",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Silver Wattle (Dealbata)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Rose Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Plum (Generic)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Raspberry",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": null,
+          "notes": "FFC cuttings"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 6,
+          "notes": "1 lost"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 3,
+          "notes": "1 planted Oct/Nov"
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Sage",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        },
+        {
+          "species": "Pak Choi",
+          "strata": "low",
+          "count": 11,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 5,
+          "notes": "planted Oct/Nov"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 42
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 21
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 49
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 42
+        }
+      ]
+    },
+    "P2R2.23-26": {
+      "id": "P2R2.23-26",
+      "paddock": 2,
+      "row": 2,
+      "range": "23–26",
+      "length": "3m",
+      "has_trees": true,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-11",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "1 Purple ok, 1 Thai White eaten"
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Quince",
+          "strata": "high",
+          "count": 1,
+          "notes": "FFC cutting, planted Oct/Nov"
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 2,
+          "notes": "1 lost"
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "high",
+          "count": 2,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 5,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Plum (Generic)",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Raspberry",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": null,
+          "notes": "FFC cuttings & seedlings — all dead"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 4,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 1,
+          "notes": "3 lost"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": null,
+          "notes": "dead"
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "strata": "low",
+          "count": 1,
+          "notes": "planted Oct/Nov"
+        },
+        {
+          "species": "Sage",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Strawberry",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 18
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 9
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 21
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 18
+        }
+      ]
+    },
+    "P2R2.28-38": {
+      "id": "P2R2.28-38",
+      "paddock": 2,
+      "row": 2,
+      "range": "28–38",
+      "length": "10m",
+      "has_trees": true,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-17",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Carob",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "1 Purple ok, 1 Strawberry Guava good"
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "planted Nov, FFC nursery + garden"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "emergent",
+          "count": 2,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "high",
+          "count": 2,
+          "notes": "seeds from Gloucester Rd 2024; 1 lost"
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "high",
+          "count": 13,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": 4,
+          "notes": "FFC seedlings; 1×12/11, 3×16/11"
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 1,
+          "notes": "7 lost"
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 1,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 9,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Capsicum (Red)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Eggplant",
+          "strata": "medium",
+          "count": 2,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Raspberry",
+          "strata": "medium",
+          "count": 4,
+          "notes": "to multiply"
+        },
+        {
+          "species": "Blackberry",
+          "strata": "medium",
+          "count": 1,
+          "notes": "to multiply"
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Ginger",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Minimbah permaculture farm 22/09/2025"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 5,
+          "notes": "4 lost; 5 replanted from P1"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 4,
+          "notes": ""
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 2,
+          "notes": ""
+        },
+        {
+          "species": "Ginger",
+          "strata": "low",
+          "count": 2,
+          "notes": "planted Nov, FFC nursery"
+        },
+        {
+          "species": "Blueberry",
+          "strata": "low",
+          "count": null,
+          "notes": "to multiply"
+        },
+        {
+          "species": "Strawberry",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Lavender",
+          "strata": "low",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pak Choi",
+          "strata": "low",
+          "count": 7,
+          "notes": "planted Nov"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 63
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 60
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 22
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 63
+        },
+        {
+          "species": "Corn (Manning Pride)",
+          "quantity_grams": 43
+        },
+        {
+          "species": "Bean - Climbing",
+          "quantity_grams": 12.5
+        },
+        {
+          "species": "Pea-Snow",
+          "quantity_grams": 9
+        },
+        {
+          "species": "Bean - Dwarf",
+          "quantity_grams": 11
+        },
+        {
+          "species": "Pigeon Pea",
+          "quantity_grams": null
+        },
+        {
+          "species": "Spring Onion",
+          "quantity_grams": null
+        },
+        {
+          "species": "Sunflower",
+          "quantity_grams": null
+        }
+      ]
+    },
+    "P2R2.38-46": {
+      "id": "P2R2.38-46",
+      "paddock": 2,
+      "row": 2,
+      "range": "38–46",
+      "length": "8m",
+      "has_trees": true,
+      "first_planted": "April 2025",
+      "inventory_date": "2025-11-17",
+      "plants": [
+        {
+          "species": "Forest Red Gum",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "emergent",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Guava (Strawberry)",
+          "strata": "emergent",
+          "count": 3,
+          "notes": "1 Purple ok, 1 Hawaiian ok, 1 Thai White ok"
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "FFC seedling, planted Nov"
+        },
+        {
+          "species": "Macadamia",
+          "strata": "high",
+          "count": 3,
+          "notes": ""
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "high",
+          "count": 7,
+          "notes": "planted Nov"
+        },
+        {
+          "species": "Apple",
+          "strata": "high",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 1.5,
+          "notes": "~7.5 lost"
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 5,
+          "notes": "planted Nov"
+        },
+        {
+          "species": "Capsicum (Red)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "planted Nov"
+        },
+        {
+          "species": "Plum (Generic)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "bad state"
+        },
+        {
+          "species": "Raspberry",
+          "strata": "medium",
+          "count": null,
+          "notes": "transfer from P1DE1"
+        },
+        {
+          "species": "Blackberry",
+          "strata": "medium",
+          "count": null,
+          "notes": ""
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "planted Nov"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 1,
+          "notes": "FFC seedling, planted Nov"
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": "3 lost; transplant more"
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 2,
+          "notes": "1 planted Nov; transplant more"
+        },
+        {
+          "species": "Ginger",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        },
+        {
+          "species": "Blueberry",
+          "strata": "low",
+          "count": 9,
+          "notes": "7 survived + 2 FFC cuttings"
+        },
+        {
+          "species": "Strawberry",
+          "strata": "low",
+          "count": null,
+          "notes": "all dead"
+        },
+        {
+          "species": "Pak Choi",
+          "strata": "low",
+          "count": 7,
+          "notes": "planted Nov"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Millet",
+          "quantity_grams": 63
+        },
+        {
+          "species": "Cowpea",
+          "quantity_grams": 60
+        },
+        {
+          "species": "Sunn Hemp",
+          "quantity_grams": 22
+        },
+        {
+          "species": "Buckwheat",
+          "quantity_grams": 63
+        },
+        {
+          "species": "Corn (Manning Pride)",
+          "quantity_grams": 43
+        },
+        {
+          "species": "Bean - Climbing",
+          "quantity_grams": 12.5
+        },
+        {
+          "species": "Pea-Snow",
+          "quantity_grams": 9
+        },
+        {
+          "species": "Bean - Dwarf",
+          "quantity_grams": 11
+        },
+        {
+          "species": "Pigeon Pea",
+          "quantity_grams": null
+        },
+        {
+          "species": "Spring Onion",
+          "quantity_grams": null
+        },
+        {
+          "species": "Sunflower",
+          "quantity_grams": null
         }
       ]
     }
   },
   "rows": {
-    "P2R2": {
-      "id": "P2R2",
+    "P2R1": {
+      "id": "P2R1",
       "paddock": "Paddock 2",
-      "row": "Row 2",
+      "row": "Row 1",
       "sections": [
-        "P2R2.0-3",
-        "P2R2.3-7",
-        "P2R2.7-16",
-        "P2R2.16-23",
-        "P2R2.23-26",
-        "P2R2.28-37",
-        "P2R2.37-46"
+        "P2R1.0-3",
+        "P2R1.3-9",
+        "P2R1.9-13",
+        "P2R1.16-25"
       ],
-      "first_planted": "April 2025",
-      "total_length": "46m"
+      "first_planted": "2025-MARCH-20 to 24TH",
+      "total_length": "25m"
     },
     "P2R3": {
       "id": "P2R3",
       "paddock": "Paddock 2",
       "row": "Row 3",
       "sections": [
-        "P2R3.0-3",
-        "P2R3.3-9",
-        "P2R3.9-14",
-        "P2R3.14-21",
-        "P2R3.21-26",
-        "P2R3.26-37",
-        "P2R3.41-63"
+        "P2R3.0-2",
+        "P2R3.2-9",
+        "P2R3.9-15",
+        "P2R3.15-21",
+        "P2R3.26-38",
+        "P2R3.40-50",
+        "P2R3.50-62"
       ],
       "first_planted": "April 2025",
-      "total_length": "63m"
+      "total_length": "62m"
+    },
+    "P2R2": {
+      "id": "P2R2",
+      "paddock": "Paddock 2",
+      "row": "Row 2",
+      "sections": [
+        "P2R2.0-3",
+        "P2R2.3-9",
+        "P2R2.9-16",
+        "P2R2.16-23",
+        "P2R2.23-26",
+        "P2R2.28-38",
+        "P2R2.38-46"
+      ],
+      "first_planted": "April 2025",
+      "total_length": "46m"
     }
   }
 }
