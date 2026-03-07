@@ -1,0 +1,78 @@
+
+/* Observation page styles — extends base styles.css */
+
+.obs-subtitle { font-size: 13px; opacity: 0.8; margin-top: 8px; }
+
+/* Queue banner */
+.queue-banner { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #fef3c7; border-bottom: 1px solid #fcd34d; font-size: 13px; color: #92400e; }
+.queue-sync-btn { background: #f59e0b; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+/* Form sections */
+.obs-form-section { padding: 16px; }
+.obs-field-group { margin-bottom: 14px; }
+.obs-field-row { display: flex; gap: 12px; }
+.obs-field-small { flex: 1; }
+.obs-label { display: block; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.obs-input, .obs-select, .obs-textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; font-family: 'DM Sans', sans-serif; background: #fff; color: #1a1a1a; -webkit-appearance: none; appearance: none; }
+.obs-input:focus, .obs-select:focus, .obs-textarea:focus { outline: none; border-color: #e67e22; box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15); }
+.obs-input-number { width: 80px; text-align: center; font-weight: 600; font-size: 18px; }
+.obs-textarea { resize: vertical; min-height: 48px; }
+.obs-hint { font-size: 13px; color: #9ca3af; margin-bottom: 16px; line-height: 1.5; }
+
+/* Mode toggle */
+.mode-toggle { display: flex; border-bottom: 1px solid #e5e5e0; }
+.mode-tab { flex: 1; padding: 12px; font-size: 13px; font-weight: 600; text-align: center; background: #f7f6f0; border: none; cursor: pointer; color: #9ca3af; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.mode-tab.active { background: #fff; color: #e67e22; box-shadow: inset 0 -2px 0 #e67e22; }
+
+/* Quick mode plant info */
+.quick-plant-info { padding: 10px 14px; background: #f7f6f0; border-radius: 8px; margin-bottom: 14px; }
+.quick-info-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; }
+.quick-info-label { color: #9ca3af; }
+.quick-info-value { font-weight: 600; }
+
+/* Full inventory rows */
+.inv-strata-group { margin-bottom: 2px; }
+.inv-strata-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; }
+.inv-strata-name { text-transform: uppercase; letter-spacing: 0.04em; }
+.inv-strata-count { margin-left: auto; font-size: 11px; color: #9ca3af; }
+
+.inv-plant-row { padding: 10px 14px; background: #fff; border-bottom: 1px solid #f0f0ec; }
+.inv-plant-info { margin-bottom: 6px; }
+.inv-plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.inv-plant-botanical { font-style: italic; font-size: 11px; color: #9ca3af; }
+.inv-fields { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.inv-was { display: flex; flex-direction: column; align-items: center; min-width: 44px; }
+.inv-was label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.04em; }
+.inv-prev-count { font-size: 18px; font-weight: 700; color: #6b7280; }
+.inv-now { display: flex; flex-direction: column; align-items: center; min-width: 52px; }
+.inv-now label { font-size: 9px; color: #e67e22; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+.inv-count-input { width: 52px; padding: 6px; border: 2px solid #e5e5e0; border-radius: 8px; font-size: 18px; font-weight: 700; text-align: center; font-family: 'DM Sans', sans-serif; color: #1a1a1a; background: #fff; }
+.inv-count-input:focus { border-color: #e67e22; outline: none; box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15); }
+.inv-condition { width: 48px; padding: 6px 2px; border: 1px solid #e5e5e0; border-radius: 6px; font-size: 14px; text-align: center; background: #fff; -webkit-appearance: none; }
+.inv-note-input { width: 100%; padding: 6px 10px; border: 1px solid #f0f0ec; border-radius: 6px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: #555; }
+.inv-note-input:focus { border-color: #e67e22; outline: none; }
+
+/* Media capture */
+.obs-media-area { margin-bottom: 14px; }
+.obs-media-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: #f7f6f0; border: 1px dashed #d1d5db; border-radius: 8px; font-size: 13px; font-weight: 500; color: #555; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.obs-media-btn:active { background: #eeeddf; }
+.obs-photo-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.obs-photo-preview { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e5e0; }
+.obs-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.obs-photo-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* Submit button */
+.obs-submit-btn { width: 100%; padding: 14px; background: #e67e22; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.obs-submit-btn:active { background: #d35400; }
+.obs-submit-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+
+/* Status messages */
+.obs-status { margin: 0 16px 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+.obs-status-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.obs-status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.obs-status-offline { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+.obs-status-sending { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+/* Navigation */
+.obs-nav { padding: 16px; text-align: center; }
+.obs-back-link { color: #e67e22; text-decoration: none; font-size: 14px; font-weight: 500; }

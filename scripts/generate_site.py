@@ -367,6 +367,11 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     <div class="footer-sub">Firefly Corner Farm · Krambach, NSW · Syntropic Agroforestry</div>
   </div>
 
+  <a href="{base_url}{section_id}-observe.html" class="observe-fab">
+    <span class="observe-fab-icon">📋</span>
+    <span>Record Observation</span>
+  </a>
+
 </div>
 </body>
 </html>"""
@@ -466,6 +471,318 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .idx-section:hover { background: #eeeddf; }
 .idx-count { margin-left: auto; font-size: 11px; color: #999; font-weight: 400; }
 .idx-footer { padding: 20px 16px; text-align: center; font-size: 11px; color: #bbb; }
+
+/* Observe FAB */
+.observe-fab { position: fixed; bottom: 24px; right: max(24px, calc((100vw - 430px)/2 + 16px)); background: #e67e22; color: #fff; padding: 12px 20px; border-radius: 28px; text-decoration: none; font-weight: 600; font-size: 13px; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 8px; z-index: 100; transition: transform 0.15s, box-shadow 0.15s; }
+.observe-fab:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.observe-fab-icon { font-size: 16px; }
+"""
+
+
+def render_observe_page(section_id, section, row_info, plant_db, observe_endpoint="", base_url=""):
+    """Render the observation form page for a section."""
+    has_trees = section.get("has_trees", False)
+    grad = "linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)" if has_trees else "linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)"
+    section_type = "🌳 Tree Section" if has_trees else "☀️ Open Cultivation"
+
+    all_plants = section.get("plants", [])
+    # Include all plants with counts for the form
+    plants_with_count = [p for p in all_plants if (p.get("count") or 0) > 0]
+    regular_plants = [p for p in plants_with_count if not is_green_manure(p["species"], plant_db)]
+
+    # Build species options for quick mode dropdown
+    species_seen = set()
+    species_options = '<option value="">— Select species —</option>'
+    for p in regular_plants:
+        if p["species"] not in species_seen:
+            species_seen.add(p["species"])
+            species_options += f'<option value="{esc(p["species"])}">{esc(p["species"])} ({p.get("count", 0)})</option>'
+
+    # Build full inventory rows grouped by strata
+    inventory_html = ""
+    for strata_key in ["emergent", "high", "medium", "low"]:
+        matching = [p for p in regular_plants if p.get("strata") == strata_key]
+        if not matching:
+            continue
+        st = STRATA_CONFIG.get(strata_key, STRATA_CONFIG["medium"])
+        rows_html = ""
+        for p in matching:
+            species = p["species"]
+            count = p.get("count", 0)
+            botanical = plant_db.get(species, {}).get("botanical", "")
+            rows_html += f"""
+            <div class="inv-plant-row" data-species="{esc(species)}" data-strata="{esc(strata_key)}" data-current="{count}">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">{esc(species)}</div>
+                <div class="inv-plant-botanical">{esc(botanical)}</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">{count}</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" aria-label="New count for {esc(species)}">
+                </div>
+                <select class="inv-condition" aria-label="Condition of {esc(species)}">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for {esc(species)}">
+            </div>"""
+
+        inventory_html += f"""
+        <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:{st['light']};border-left:3px solid {st['color']}">
+            <span>{st['icon']}</span>
+            <span class="inv-strata-name" style="color:{st['color']}">{st['label']}</span>
+            <span class="inv-strata-count">{len(matching)}</span>
+          </div>
+          {rows_html}
+        </div>"""
+
+    # Build embedded section data as JSON for JS
+    section_plants_json = json.dumps([
+        {"species": p["species"], "strata": p.get("strata", ""), "count": p.get("count", 0)}
+        for p in regular_plants
+    ])
+
+    endpoint_js = f'const OBSERVE_ENDPOINT = "{observe_endpoint}";' if observe_endpoint else 'const OBSERVE_ENDPOINT = "";'
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{esc(section_id)} — Field Observation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{base_url}styles.css">
+<link rel="stylesheet" href="{base_url}styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:{grad}">
+    <div class="breadcrumb">Firefly Corner · {esc(row_info.get('paddock',''))} · {esc(row_info.get('row',''))} · Field Observation</div>
+    <div class="section-title-row">
+      <h1 class="section-range">{esc(section.get('range', ''))}</h1>
+      <span class="section-type-badge">{section_type}</span>
+    </div>
+    <div class="obs-subtitle">Recording observation for section {esc(section_id)}</div>
+  </div>
+
+  <!-- Offline queue banner -->
+  <div id="queue-banner" class="queue-banner" style="display:none">
+    <span class="queue-count"></span>
+    <button onclick="syncPendingQueue()" class="queue-sync-btn">Sync Now</button>
+  </div>
+
+  <!-- Observer info -->
+  <div class="obs-form-section">
+    <div class="obs-field-group">
+      <label class="obs-label" for="observer-name">Your name</label>
+      <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James, WWOOFer name" autocomplete="name">
+    </div>
+    <div class="obs-field-group">
+      <label class="obs-label" for="obs-datetime">Date & time</label>
+      <input type="datetime-local" id="obs-datetime" class="obs-input">
+    </div>
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="mode-toggle">
+    <button class="mode-tab active" data-mode="quick">⚡ Quick Report</button>
+    <button class="mode-tab" data-mode="inventory">📋 Full Inventory</button>
+  </div>
+
+  <!-- QUICK MODE -->
+  <div id="mode-quick" class="obs-mode-panel">
+    <div class="obs-form-section">
+      <div class="obs-field-group">
+        <label class="obs-label" for="quick-species">Plant species</label>
+        <select id="quick-species" class="obs-select">{species_options}</select>
+      </div>
+
+      <div id="quick-plant-info" class="quick-plant-info"></div>
+
+      <div class="obs-field-row">
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="quick-count">New count</label>
+          <input type="number" id="quick-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+        </div>
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="quick-condition">Condition</label>
+          <select id="quick-condition" class="obs-select">
+            <option value="alive">Alive ✓</option>
+            <option value="damaged">Damaged ⚠️</option>
+            <option value="dead">Dead ✝</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="quick-notes">Notes</label>
+        <input type="text" id="quick-notes" class="obs-input" placeholder="What did you observe?">
+      </div>
+
+      <!-- Photo capture -->
+      <div class="obs-media-area">
+        <label class="obs-media-btn">
+          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
+          <span>📷 Add Photo</span>
+        </label>
+        <div class="obs-photo-previews"></div>
+      </div>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="section-notes-quick">Section notes (optional)</label>
+        <textarea id="section-notes-quick" class="obs-textarea" rows="2" placeholder="General observations about this section..."></textarea>
+      </div>
+
+      <button id="quick-submit" class="obs-submit-btn">Save Observation</button>
+    </div>
+  </div>
+
+  <!-- FULL INVENTORY MODE -->
+  <div id="mode-inventory" class="obs-mode-panel" style="display:none">
+    <div class="obs-form-section">
+      <p class="obs-hint">Walk the section and update counts. Only changed plants will be recorded.</p>
+
+      {inventory_html}
+
+      <!-- Photo capture -->
+      <div class="obs-media-area">
+        <label class="obs-media-btn">
+          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
+          <span>📷 Add Section Photo</span>
+        </label>
+        <div class="obs-photo-previews"></div>
+      </div>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="section-notes-inventory">Section notes</label>
+        <textarea id="section-notes-inventory" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions..."></textarea>
+      </div>
+
+      <button id="inventory-submit" class="obs-submit-btn">Save Full Inventory</button>
+    </div>
+  </div>
+
+  <!-- Status messages -->
+  <div id="obs-status" class="obs-status" style="display:none"></div>
+
+  <!-- Navigation -->
+  <div class="obs-nav">
+    <a href="{base_url}{section_id}.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div>Last inventory: {esc(section.get('inventory_date', 'N/A'))}</div>
+    <div class="footer-sub">Firefly Corner Farm · Field Observation System</div>
+  </div>
+
+</div>
+
+<script>
+const SECTION_DATA = {{
+  id: "{section_id}",
+  range: "{esc(section.get('range', ''))}",
+  paddock: {section.get('paddock', 0)},
+  row: {section.get('row', 0)},
+  plants: {section_plants_json}
+}};
+{endpoint_js}
+</script>
+<script src="{base_url}observe.js"></script>
+</body>
+</html>"""
+
+
+def get_observe_css():
+    """Return CSS for observation pages."""
+    return """
+/* Observation page styles — extends base styles.css */
+
+.obs-subtitle { font-size: 13px; opacity: 0.8; margin-top: 8px; }
+
+/* Queue banner */
+.queue-banner { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #fef3c7; border-bottom: 1px solid #fcd34d; font-size: 13px; color: #92400e; }
+.queue-sync-btn { background: #f59e0b; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+/* Form sections */
+.obs-form-section { padding: 16px; }
+.obs-field-group { margin-bottom: 14px; }
+.obs-field-row { display: flex; gap: 12px; }
+.obs-field-small { flex: 1; }
+.obs-label { display: block; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.obs-input, .obs-select, .obs-textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; font-family: 'DM Sans', sans-serif; background: #fff; color: #1a1a1a; -webkit-appearance: none; appearance: none; }
+.obs-input:focus, .obs-select:focus, .obs-textarea:focus { outline: none; border-color: #e67e22; box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15); }
+.obs-input-number { width: 80px; text-align: center; font-weight: 600; font-size: 18px; }
+.obs-textarea { resize: vertical; min-height: 48px; }
+.obs-hint { font-size: 13px; color: #9ca3af; margin-bottom: 16px; line-height: 1.5; }
+
+/* Mode toggle */
+.mode-toggle { display: flex; border-bottom: 1px solid #e5e5e0; }
+.mode-tab { flex: 1; padding: 12px; font-size: 13px; font-weight: 600; text-align: center; background: #f7f6f0; border: none; cursor: pointer; color: #9ca3af; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.mode-tab.active { background: #fff; color: #e67e22; box-shadow: inset 0 -2px 0 #e67e22; }
+
+/* Quick mode plant info */
+.quick-plant-info { padding: 10px 14px; background: #f7f6f0; border-radius: 8px; margin-bottom: 14px; }
+.quick-info-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; }
+.quick-info-label { color: #9ca3af; }
+.quick-info-value { font-weight: 600; }
+
+/* Full inventory rows */
+.inv-strata-group { margin-bottom: 2px; }
+.inv-strata-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; }
+.inv-strata-name { text-transform: uppercase; letter-spacing: 0.04em; }
+.inv-strata-count { margin-left: auto; font-size: 11px; color: #9ca3af; }
+
+.inv-plant-row { padding: 10px 14px; background: #fff; border-bottom: 1px solid #f0f0ec; }
+.inv-plant-info { margin-bottom: 6px; }
+.inv-plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.inv-plant-botanical { font-style: italic; font-size: 11px; color: #9ca3af; }
+.inv-fields { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.inv-was { display: flex; flex-direction: column; align-items: center; min-width: 44px; }
+.inv-was label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.04em; }
+.inv-prev-count { font-size: 18px; font-weight: 700; color: #6b7280; }
+.inv-now { display: flex; flex-direction: column; align-items: center; min-width: 52px; }
+.inv-now label { font-size: 9px; color: #e67e22; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+.inv-count-input { width: 52px; padding: 6px; border: 2px solid #e5e5e0; border-radius: 8px; font-size: 18px; font-weight: 700; text-align: center; font-family: 'DM Sans', sans-serif; color: #1a1a1a; background: #fff; }
+.inv-count-input:focus { border-color: #e67e22; outline: none; box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15); }
+.inv-condition { width: 48px; padding: 6px 2px; border: 1px solid #e5e5e0; border-radius: 6px; font-size: 14px; text-align: center; background: #fff; -webkit-appearance: none; }
+.inv-note-input { width: 100%; padding: 6px 10px; border: 1px solid #f0f0ec; border-radius: 6px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: #555; }
+.inv-note-input:focus { border-color: #e67e22; outline: none; }
+
+/* Media capture */
+.obs-media-area { margin-bottom: 14px; }
+.obs-media-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: #f7f6f0; border: 1px dashed #d1d5db; border-radius: 8px; font-size: 13px; font-weight: 500; color: #555; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.obs-media-btn:active { background: #eeeddf; }
+.obs-photo-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.obs-photo-preview { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e5e0; }
+.obs-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.obs-photo-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* Submit button */
+.obs-submit-btn { width: 100%; padding: 14px; background: #e67e22; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.obs-submit-btn:active { background: #d35400; }
+.obs-submit-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+
+/* Status messages */
+.obs-status { margin: 0 16px 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+.obs-status-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.obs-status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.obs-status-offline { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+.obs-status-sending { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+/* Navigation */
+.obs-nav { padding: 16px; text-align: center; }
+.obs-back-link { color: #e67e22; text-decoration: none; font-size: 14px; font-weight: 500; }
 """
 
 
@@ -475,6 +792,7 @@ def main():
     parser.add_argument("--plants", default="knowledge/plant_types.csv", help="Path to plant_types.csv")
     parser.add_argument("--output", default="site/public/", help="Output directory")
     parser.add_argument("--base-url", default="", help="Base URL prefix for links")
+    parser.add_argument("--observe-endpoint", default="", help="Google Apps Script URL for observations")
     args = parser.parse_args()
     
     output_dir = Path(args.output)
@@ -488,35 +806,51 @@ def main():
     sections, rows = load_sections(args.data)
     print(f"  {len(sections)} sections across {len(rows)} rows")
     
-    # Write shared CSS file
+    # Write shared CSS files
     css_path = output_dir / "styles.css"
     with open(css_path, "w", encoding="utf-8") as f:
         f.write(get_css())
     print(f"  Generated: styles.css")
 
-    # Generate a page per section
+    obs_css_path = output_dir / "styles-observe.css"
+    with open(obs_css_path, "w", encoding="utf-8") as f:
+        f.write(get_observe_css())
+    print(f"  Generated: styles-observe.css")
+
+    observe_endpoint = args.observe_endpoint
+
+    # Generate a page per section (view + observe)
     for section_id, section in sections.items():
         row_id = f"P{section['paddock']}R{section['row']}"
         row_info = rows.get(row_id, {})
-        
+
+        # View page (existing — now with observe FAB)
         page_html = render_section_page(section_id, section, row_info, sections, plant_db, args.base_url)
-        
+
         output_path = output_dir / f"{section_id}.html"
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(page_html)
-        
+
         visible = [p for p in section.get("plants", [])
                    if (p.get("count") or 0) > 0
                    and not is_green_manure(p["species"], plant_db)]
         print(f"  Generated: {section_id}.html ({len(visible)} species)")
-    
+
+        # Observe page (new)
+        observe_html = render_observe_page(section_id, section, row_info, plant_db, observe_endpoint, args.base_url)
+        obs_path = output_dir / f"{section_id}-observe.html"
+        with open(obs_path, "w", encoding="utf-8") as f:
+            f.write(observe_html)
+        print(f"  Generated: {section_id}-observe.html")
+
     # Generate index page
     index_html = render_index(rows, sections, plant_db, args.base_url)
     with open(output_dir / "index.html", "w", encoding="utf-8") as f:
         f.write(index_html)
     print(f"  Generated: index.html")
-    
-    print(f"\nDone! {len(sections) + 1} pages in {output_dir}")
+
+    total = len(sections) * 2 + 1  # view + observe + index
+    print(f"\nDone! {total} pages in {output_dir} ({len(sections)} view + {len(sections)} observe + index)")
 
 
 def render_index(rows, sections, plant_db, base_url=""):
