@@ -8,7 +8,7 @@
       "range": "0–3",
       "length": "3m",
       "has_trees": false,
-      "first_planted": "2025-MARCH-20 to 24TH",
+      "first_planted": "2025-03-20",
       "inventory_date": "2025-10-09",
       "plants": [
         {
@@ -134,7 +134,7 @@
       "range": "3–9",
       "length": "6m",
       "has_trees": true,
-      "first_planted": "2025-MARCH-20 to 24TH",
+      "first_planted": "2025-03-20",
       "inventory_date": "2025-10-20",
       "plants": [
         {
@@ -344,7 +344,7 @@
       "range": "9–13",
       "length": "4m",
       "has_trees": false,
-      "first_planted": "2025-MARCH-20 to 24TH",
+      "first_planted": "2025-03-20",
       "inventory_date": "2025-11-10",
       "plants": [
         {
@@ -506,7 +506,7 @@
       "range": "16–25",
       "length": "9m",
       "has_trees": true,
-      "first_planted": "2025-MARCH-20 to 24TH",
+      "first_planted": "2025-03-20",
       "inventory_date": "2025-10-20",
       "plants": [
         {
@@ -662,7 +662,7 @@
       "range": "0–2",
       "length": "2m",
       "has_trees": false,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-10-25",
       "plants": [
         {
@@ -760,7 +760,7 @@
       "range": "2–9",
       "length": "7m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-13",
       "plants": [
         {
@@ -960,7 +960,7 @@
       "range": "9–15",
       "length": "6m",
       "has_trees": false,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-13",
       "plants": [
         {
@@ -1076,7 +1076,7 @@
       "range": "15–21",
       "length": "6m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-13",
       "plants": [
         {
@@ -1282,7 +1282,7 @@
       "range": "26–38",
       "length": "12m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-13",
       "plants": [
         {
@@ -1534,7 +1534,7 @@
       "range": "40–50",
       "length": "10m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-17",
       "plants": [
         {
@@ -1780,7 +1780,7 @@
       "range": "50–62",
       "length": "12m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-17",
       "plants": [
         {
@@ -2026,7 +2026,7 @@
       "range": "0–3",
       "length": "3m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-10",
       "plants": [
         {
@@ -2188,7 +2188,7 @@
       "range": "3–9",
       "length": "6m",
       "has_trees": false,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-11",
       "plants": [
         {
@@ -2344,7 +2344,7 @@
       "range": "9–16",
       "length": "7m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-11",
       "plants": [
         {
@@ -2506,7 +2506,7 @@
       "range": "16–23",
       "length": "7m",
       "has_trees": false,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-11",
       "plants": [
         {
@@ -2674,7 +2674,7 @@
       "range": "23–26",
       "length": "3m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-11",
       "plants": [
         {
@@ -2842,7 +2842,7 @@
       "range": "28–38",
       "length": "10m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-17",
       "plants": [
         {
@@ -3062,7 +3062,7 @@
       "range": "38–46",
       "length": "8m",
       "has_trees": true,
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "inventory_date": "2025-11-17",
       "plants": [
         {
@@ -3263,7 +3263,7 @@
         "P2R1.9-13",
         "P2R1.16-25"
       ],
-      "first_planted": "2025-MARCH-20 to 24TH",
+      "first_planted": "2025-03-20",
       "total_length": "25m"
     },
     "P2R3": {
@@ -3279,7 +3279,7 @@
         "P2R3.40-50",
         "P2R3.50-62"
       ],
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "total_length": "62m"
     },
     "P2R2": {
@@ -3295,7 +3295,7 @@
         "P2R2.28-38",
         "P2R2.38-46"
       ],
-      "first_planted": "April 2025",
+      "first_planted": "2025-04-25",
       "total_length": "46m"
     }
   }

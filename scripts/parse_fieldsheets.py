@@ -238,9 +238,9 @@ def parse_v2_section(ws, farmos_names):
     length_val = ws.cell(3, 2).value  # B3
     length = f"{int(length_val)}m" if length_val else ""
     inventory_date = format_date(ws.cell(3, 5).value)  # E3
-    first_planted_date = format_date(ws.cell(3, 4).value)  # D3
-    if first_planted_date and not first_planted:
-        first_planted = first_planted_date
+    first_planted_date = format_date(ws.cell(3, 4).value)  # D3 — exact date
+    if first_planted_date:
+        first_planted = first_planted_date  # Prefer exact date over text
 
     # Parse plant data from Row 5+
     plants = []
@@ -364,12 +364,27 @@ def parse_r1_section(ws, farmos_names):
     inventory_date = format_date(ws.cell(2, 10).value)  # J2
     has_trees = str(ws.cell(4, 9).value or "").strip().upper() == "TREES"  # I4
 
-    # First planted from A1 text
+    # First planted from A1 text — extract and normalize to ISO date
     a1 = str(ws.cell(1, 1).value or "")
     first_planted = ""
     fp_m = re.search(r'PLANTATION/SOWING DATE\s*:\s*(.+)', a1, re.IGNORECASE)
     if fp_m:
-        first_planted = fp_m.group(1).strip()
+        raw_date = fp_m.group(1).strip()
+        # Parse "2025-MARCH-20 to 24TH" → "2025-03-20"
+        date_m = re.match(r'(\d{4})[/-](\w+)[/-](\d+)', raw_date)
+        if date_m:
+            month_names = {
+                "JANUARY": 1, "FEBRUARY": 2, "MARCH": 3, "APRIL": 4,
+                "MAY": 5, "JUNE": 6, "JULY": 7, "AUGUST": 8,
+                "SEPTEMBER": 9, "OCTOBER": 10, "NOVEMBER": 11, "DECEMBER": 12,
+            }
+            month_num = month_names.get(date_m.group(2).upper(), 0)
+            if month_num:
+                first_planted = f"{date_m.group(1)}-{month_num:02d}-{int(date_m.group(3)):02d}"
+            else:
+                first_planted = raw_date
+        else:
+            first_planted = raw_date
 
     # Parse plant data from Row 6+
     plants = []

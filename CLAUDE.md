@@ -201,17 +201,19 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 | Equipment assets | 3 | |
 | Compost assets | 5 | |
 
-**Plant type taxonomy status (v7 — completed March 6, 2026):**
-- All 213 v7 plant types present in farmOS with v7 `farmos_name` as term name
+**Plant type taxonomy status (v7 — updated March 7, 2026):**
+- **215 plant types** in farmOS (213 v7 + Citrus (Yuzu) + Hyssop added March 7)
 - All terms have enriched descriptions with syntropic agriculture metadata
 - 16 v6 names renamed to v7 conventions
 - 15 obsolete v6 entries archived (prefixed `[ARCHIVED]`)
 - Google Sheet shared with Claire: "Firefly Corner - Plant Types v7"
 
-**Remaining gaps:**
-- No Seed assets exist (244 records in CSV ready)
-- Plant assets barely started (2 total — the actual plantings are documented in spreadsheets, not farmOS)
-- Seeding/transplanting logs don't use the native Seed→Plant workflow
+**Import readiness (March 7, 2026):**
+- `import_fieldsheets.py` built and dry-run tested: 245 plant assets across 18 sections, 77 unique species
+- Awaiting live run against farmOS (Agnes to approve)
+- No Seed assets exist yet (244 records in CSV ready)
+- Current plant assets: 2 (will grow to ~247 after import)
+- Seeding/transplanting logs don't use the native Seed→Plant workflow yet
 
 ### farmOS Data Model (Key Concepts)
 
@@ -264,7 +266,7 @@ client.log.send("activity", log_data)
 
 ### Plant Types Master Database
 
-**File:** `knowledge/plant_types.csv` (v7, 213 records)
+**File:** `knowledge/plant_types.csv` (v7, 215 records)
 **Columns:** common_name, variety, farmos_name, botanical_name, crop_family, origin, description, lifespan_years, lifecycle_years, maturity_days, strata, succession_stage, plant_functions, harvest_days, germination_time, transplant_days, source
 
 This is the farm's plant knowledge base. It grows as new species are introduced.
@@ -299,7 +301,7 @@ This is the farm's plant knowledge base. It grows as new species are introduced.
 **Format:** Excel files per row, tabs per section
 **Processing:** `scripts/parse_fieldsheets.py` → `site/src/data/sections.json`
 
-Currently have P2R2 and P2R3 field sheets. Agnes will upload all P2 rows.
+Have P2R1, P2R2, and P2R3 field sheets (all parsed). P2R4 and P2R5 pending from Claire.
 
 ### Sections JSON (Generated)
 
@@ -546,15 +548,16 @@ These decisions have been made through extensive discussion. Don't revisit them 
 ## 11. IMPLEMENTATION PHASES
 
 ### Phase 0: Landcare Demo (Current — by March 10, 2026)
-- ✅ Parse P2R2 and P2R3 field sheets into sections.json
-- ✅ Generate 14 section HTML pages + index
+- ✅ Parse P2R1, P2R2 and P2R3 field sheets into sections.json (18 sections: 4+7+7)
+- ✅ Generate 18 section HTML pages + index (all 3 rows)
 - ✅ Pipeline tested end-to-end
 - ✅ Push to GitHub, enable GitHub Pages (live at https://agnesfa.github.io/firefly-farm-ai/)
 - ✅ Fresh farmOS export (March 4, 2026: 156 assets, 126 logs, 104 taxonomy)
-- ✅ Generate 32 QR codes from live farmOS data
-- ⬜ Resolve P2R2 section boundaries with Claire (farmOS vs fieldsheet mismatch)
-- ⬜ Upload and parse remaining P2 rows (R1, R4, R5)
-- ⬜ Regenerate pages with aligned section IDs
+- ✅ Generate QR codes for all 18 sections
+- ✅ Built import_fieldsheets.py — dry-run tested (245 plants, 77 species, 0 failures)
+- ✅ Added 2 missing plant types: Citrus (Yuzu), Hyssop (total: 215)
+- ✅ Species name normalization: 90/90 species matched to plant_types.csv
+- ⬜ Live farmOS import (pending Agnes approval)
 - ⬜ Print QR codes for poles (minimum 3cm × 3cm)
 - ⬜ Test visitor experience on phone
 
@@ -630,9 +633,10 @@ The dot separates the row from the section. The dash separates the start and end
 - Data files: descriptive, underscored, versioned: `firefly_plant_types_COMPLETE_v6.csv`
 
 ### farmOS Conventions
-- Asset names for plants: `{Year} {Season} {Species} {Location or Batch}` — e.g., "2025 Spring Tomato Marmande P2R3"
+- Asset names for plants: `{planted_date} - {farmos_name} - {section_id}` — e.g., "25 APR 2025 - Pigeon Pea - P2R2.0-3", "20 MAR 2025 - Comfrey - P2R1.3-9"
+- Date label format: exact date "25 APR 2025", month "APR 2025", or fallback "SPRING 2025"
 - Seed asset names: `{Species} Seeds` — e.g., "Pigeon Pea Seeds"
-- Log names: descriptive of the action — "Pruning pigeon pea in P2R3.14-21"
+- Log names: descriptive of the action — "Inventory P2R3.14-21 — Pigeon Pea"
 
 ---
 
@@ -671,13 +675,15 @@ python scripts/export_farmos.py  # exports to exports/farmos_export_YYYYMMDD/
 ```
 Phase 1 addition: `--output site/src/data/sections.json` for sections.json format.
 
-**import_fieldsheets.py** (TO BE BUILT — Phase 1)
-Imports Claire's spreadsheet data INTO farmOS as proper logs and assets.
+**import_fieldsheets.py** (BUILT — March 7, 2026; dry-run tested, live run pending)
+Imports sections.json data into farmOS: creates Plant assets, Quantity entities (inventory counts), and Observation logs (with movement to set location). Uses per-name API queries for idempotent existence checks.
 ```bash
-python scripts/import_fieldsheets.py --input fieldsheets/ --dry-run
-python scripts/import_fieldsheets.py --input fieldsheets/
+python scripts/import_fieldsheets.py --dry-run                    # Preview all sections
+python scripts/import_fieldsheets.py --row P2R1 --dry-run         # Preview specific row
+python scripts/import_fieldsheets.py                              # Live import all
+python scripts/import_fieldsheets.py --data path/to/sections.json # Custom data file
 ```
-This is how spreadsheet data enters farmOS. Once data is in farmOS, the spreadsheets are no longer needed for that data.
+Features: `--dry-run`, `--row` filter, idempotent (skips existing plants), pre-validates all plant types and sections exist in farmOS before creating anything.
 
 **import_plants.py** (EXISTS — updated for v7)
 Imports plant types from the master CSV into farmOS taxonomy. Has dry-run mode and duplicate detection. Updated to use `farmos_name` as the term name and v7 column names.
@@ -745,7 +751,84 @@ Output: site/public/qrcodes/*.png (one per section + index)
 
 ---
 
-## 16. WHAT'S NOT BUILT YET (And Shouldn't Be Built Prematurely)
+## 16. OPERATIONAL WORKFLOWS
+
+These are the day-to-day processes that connect Claire's field work to the digital systems.
+
+### Workflow 1: Inventory a Row (Field Sheet → farmOS)
+
+**When:** Claire does a field walk and updates her spreadsheet with current plant counts.
+
+**Steps:**
+1. **Claire** updates her Excel field sheet with latest inventory counts
+   - v2 format: species in Col B, count in Col E ("Last Inventory"), notes in Col C
+   - Each tab = one section, section ID in Row 1
+
+2. **Agnes** copies the updated spreadsheet to `fieldsheets/`
+
+3. **Parse spreadsheets** → sections.json:
+   ```bash
+   source venv/bin/activate
+   python scripts/parse_fieldsheets.py
+   ```
+   This reads all `.xlsx` files in `fieldsheets/`, normalizes species names to `farmos_name`, and writes `site/src/data/sections.json`.
+
+4. **Import to farmOS** (creates Plant assets + Observation logs with inventory):
+   ```bash
+   python scripts/import_fieldsheets.py --dry-run          # Preview first
+   python scripts/import_fieldsheets.py --row P2R2         # Import specific row
+   python scripts/import_fieldsheets.py                    # Import all
+   ```
+   Idempotent — skips plants that already exist in farmOS.
+
+5. **Regenerate site pages** (optional — updates QR landing pages):
+   ```bash
+   python scripts/generate_site.py
+   ```
+
+**Species name normalization:** The parser strips suffixes (FFC, tree, cuttings, seedl, vine), normalizes case, and uses an explicit mapping dict for known mismatches (e.g., "Cherry Guava" → "Guava (Strawberry)"). Unmapped names are flagged in output.
+
+### Workflow 2: Add a New Plant Type
+
+**When:** Claire identifies a new species to plant that isn't in the plant database.
+
+**Steps:**
+1. **Add to CSV**: Edit `knowledge/plant_types.csv` — add a row with:
+   - `common_name`, `variety` (if applicable), `farmos_name` (derived)
+   - `botanical_name`, `crop_family`, `strata`, `succession_stage`
+   - `plant_functions` (comma-separated tags)
+   - `source` (nursery or FFC)
+
+2. **Import to farmOS taxonomy**:
+   ```bash
+   python scripts/import_plants.py --dry-run   # Preview
+   python scripts/import_plants.py             # Create in farmOS
+   ```
+
+3. **Update parse_fieldsheets.py** if the species appears with a non-standard name in Claire's spreadsheets — add an entry to the `SPECIES_NAME_MAPPING` dict.
+
+4. **Regenerate pages** if the species is already planted somewhere:
+   ```bash
+   python scripts/parse_fieldsheets.py && python scripts/generate_site.py
+   ```
+
+### Workflow 3: Update Inventory in farmOS
+
+**When:** Re-counting a section that's already been imported.
+
+**Current approach (until MCP server is built):**
+- Re-import with updated spreadsheet data. The import script is idempotent — existing plants are skipped.
+- For count updates on existing plants: update the observation log in farmOS UI, or create a new observation log with `inventory_adjustment: "reset"` via the API.
+- Future: Claire will use Claude natural language → MCP server → farmOS API to log inventory changes directly.
+
+**Future approach (Phase 2+):**
+- Claire tells Claude: "P2R3.14-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
+- Claude creates an observation log in farmOS with updated count
+- Site pages regenerate automatically
+
+---
+
+## 17. WHAT'S NOT BUILT YET (And Shouldn't Be Built Prematurely)
 
 - Multi-agent systems (one good agent first)
 - Custom farmOS views/dashboards (use the API, not the UI)
@@ -758,13 +841,13 @@ Output: site/public/qrcodes/*.png (one per section + index)
 
 ---
 
-## 17. HARVEST DATA (Future Work)
+## 18. HARVEST DATA (Future Work)
 
 The farm started recording harvests in summer 2025/2026 via the WhatsApp group. Format: produce name, weight, location (e.g., "3kg tomatoes from P1R1"). This chat history (2-3 months) needs to be parsed into farmOS harvest logs. Not urgent for Phase 0, but on the roadmap.
 
 ---
 
-## 18. QUICK REFERENCE: Plants You'll See Most
+## 19. QUICK REFERENCE: Plants You'll See Most
 
 These species appear across almost every row and are central to understanding the farm:
 
@@ -784,7 +867,7 @@ These species appear across almost every row and are central to understanding th
 
 ---
 
-## 19. SESSION LOG
+## 20. SESSION LOG
 
 ### March 4, 2026 — Repo Bootstrap & Foundation
 - Consolidated repo from 3 sources (archive, old FireflyAgents dir, farm-tiles reference)
@@ -814,6 +897,28 @@ These species appear across almost every row and are central to understanding th
 
 **Key learning:** farmOS.py's `client.term.iterate()` has unreliable pagination with 200+ terms. Use raw HTTP with `page[limit]=50` and follow `links.next` for complete results. Pattern captured in fix_taxonomy.py's `fetch_all_terms()`.
 
+### March 7, 2026 — Spreadsheet Parsing + farmOS Import Script (All 3 Rows)
+- Rewrote parse_fieldsheets.py to handle both v2 format (P2R2, P2R3) and P2R1 format
+- Parsed all 3 field sheets: 18 sections (4 R1 + 7 R2 + 7 R3), 245 plant entries, 90 unique species
+- Built species name normalization with explicit mapping dict + suffix stripping
+- Added 2 missing plant types to CSV and farmOS: Citrus (Yuzu), Hyssop → total 215
+- Updated date extraction: v2 uses D3 exact date, P2R1 parses "2025-MARCH-20" from merged A1
+- Generated 18 HTML pages + index with all plant data
+- Built complete import_fieldsheets.py script for farmOS import:
+  - Creates Plant assets, Quantity entities (inventory counts), Observation logs (movement)
+  - Uses per-name API queries for reliable idempotent existence checks
+  - Features: `--dry-run`, `--row` filter, pre-validates plant types + sections
+  - Plant naming: `{planted_date_label} - {farmos_name} - {section_id}`
+- Dry-run success: 245 plants, 77 species, 18 sections, 0 failures
+- Ran import_plants.py: created Citrus (Yuzu) + Hyssop in farmOS (2 created, 213 unchanged)
+- Agnes printing QR codes and testing pages for Landcare demo
+
+**Key learnings:**
+- farmOS.py quantities: no `client.quantity.send()` method. Must use raw HTTP POST to `/api/quantity/standard`.
+- farmOS.py `send()` auto-wraps in `{"data": ...}`. Raw HTTP `http_request(method="POST")` does NOT — must include wrapper.
+- Plant unit UUID: `2371b79e-a87b-4152-b6e4-ea6a9ed37fd0`
+- `inventory_adjustment: "reset"` sets absolute count on a plant asset.
+
 ---
 
-*Last updated: March 6, 2026. This file should be updated as the project evolves.*
+*Last updated: March 7, 2026. This file should be updated as the project evolves.*
