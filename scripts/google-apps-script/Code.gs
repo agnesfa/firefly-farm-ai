@@ -7,24 +7,22 @@
  * Deployment:
  *   1. Create a new Google Apps Script project at script.google.com
  *   2. Paste this code into Code.gs
- *   3. Update SHEET_ID and DRIVE_FOLDER_ID below
- *   4. Deploy → New deployment → Web app
+ *   3. Deploy → New deployment → Web app
  *      - Execute as: Me (your account)
  *      - Who has access: Anyone
- *   5. Copy the deployment URL → use as OBSERVE_ENDPOINT
+ *   4. Copy the deployment URL → use as OBSERVE_ENDPOINT
  *
  * The deployed URL looks like:
  *   https://script.google.com/macros/s/AKfycb.../exec
  */
 
 // ─── CONFIGURATION ──────────────────────────────────────────
-// Replace these with your actual IDs after creating the Sheet and Drive folder
 
 /** ID of the "Firefly Corner - Field Observations" Google Sheet */
-const SHEET_ID = "YOUR_SHEET_ID_HERE";
+const SHEET_ID = "1wLAIxcSE_DNWjZdhlmPtQacvxg1VxHkA70hvX6nGqRs";
 
-/** ID of the "Firefly Corner Observations" Google Drive folder */
-const DRIVE_FOLDER_ID = "YOUR_DRIVE_FOLDER_ID_HERE";
+/** ID of the "Firefly Corner AI Observations" Google Drive folder */
+const DRIVE_FOLDER_ID = "1WE1eMNEn--xW6RT7lAGnh0MFfJh4WCPX";
 
 /** Sheet tab name for observation data */
 const SHEET_NAME = "Observations";
