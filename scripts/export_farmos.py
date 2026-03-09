@@ -443,12 +443,23 @@ class SectionsExporter:
                 # Strip HTML tags from notes
                 notes = re.sub(r"<[^>]+>", "", notes).strip()
 
+                # Determine first_planted from earliest transplanting log
+                # (more accurate than asset name date for renovation plants)
+                transplanting_dates = [
+                    l["date"] for l in plant_logs
+                    if l["type"] == "transplanting" and l["date"]
+                ]
+                if transplanting_dates:
+                    first_planted_actual = min(transplanting_dates)
+                else:
+                    first_planted_actual = first_planted  # fallback to asset name date
+
                 enriched_plants.append({
                     "species": species,
                     "strata": strata,
                     "count": inventory,
                     "notes": notes,
-                    "first_planted": first_planted,
+                    "first_planted": first_planted_actual,
                     "asset_name": name,
                     "logs": plant_logs,
                 })

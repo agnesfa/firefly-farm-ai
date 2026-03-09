@@ -226,7 +226,7 @@ def render_plant_card(planting, plant_db):
 
     # First planted date (shown in collapsed view)
     planted_display = format_planted_date_display(first_planted)
-    planted_html = f'<div class="plant-planted">Planted {esc(planted_display)}</div>' if planted_display else ""
+    planted_html = f'<div class="plant-planted">First planted {esc(planted_display)}</div>' if planted_display else ""
 
     # Function tags (collapsed: show 3)
     tags_html = "".join(render_function_tag(fn) for fn in functions[:3])
