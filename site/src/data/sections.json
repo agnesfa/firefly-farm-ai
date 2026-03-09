@@ -4577,6 +4577,112 @@
         }
       ]
     },
+    "P2R4.2-6": {
+      "id": "P2R4.2-6",
+      "paddock": 2,
+      "row": 4,
+      "range": "2–6",
+      "length": "4m",
+      "has_trees": false,
+      "first_planted": "2025-06-01",
+      "inventory_date": "",
+      "plants": [],
+      "green_manure": [
+        {
+          "species": "Barley",
+          "quantity_grams": 12.0
+        },
+        {
+          "species": "Coriander",
+          "quantity_grams": 80.0
+        },
+        {
+          "species": "Radish (Generic)",
+          "quantity_grams": 60.0
+        },
+        {
+          "species": "Cabbage (Red)",
+          "quantity_grams": 40.0
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "quantity_grams": 12.0
+        },
+        {
+          "species": "Butternut Pumpkin",
+          "quantity_grams": 12.0
+        },
+        {
+          "species": "Broad Bean",
+          "quantity_grams": 40.0
+        },
+        {
+          "species": "Pea-Sugar Snap",
+          "quantity_grams": 80.0
+        },
+        {
+          "species": "Pea-Snow (Yakumo)",
+          "quantity_grams": 40.0
+        },
+        {
+          "species": "Vetch",
+          "quantity_grams": 60.0
+        }
+      ]
+    },
+    "P2R4.14-20": {
+      "id": "P2R4.14-20",
+      "paddock": 2,
+      "row": 4,
+      "range": "14–20",
+      "length": "6m",
+      "has_trees": false,
+      "first_planted": "2025-06-01",
+      "inventory_date": "",
+      "plants": [],
+      "green_manure": [
+        {
+          "species": "Barley",
+          "quantity_grams": 18.0
+        },
+        {
+          "species": "Coriander",
+          "quantity_grams": 120.0
+        },
+        {
+          "species": "Radish (Generic)",
+          "quantity_grams": 90.0
+        },
+        {
+          "species": "Cabbage (Red)",
+          "quantity_grams": 60.0
+        },
+        {
+          "species": "Pumpkin (Generic)",
+          "quantity_grams": 18.0
+        },
+        {
+          "species": "Butternut Pumpkin",
+          "quantity_grams": 18.0
+        },
+        {
+          "species": "Broad Bean",
+          "quantity_grams": 60.0
+        },
+        {
+          "species": "Pea-Sugar Snap",
+          "quantity_grams": 120.0
+        },
+        {
+          "species": "Pea-Snow (Yakumo)",
+          "quantity_grams": 60.0
+        },
+        {
+          "species": "Vetch",
+          "quantity_grams": 90.0
+        }
+      ]
+    },
     "P2R5.0-8": {
       "id": "P2R5.0-8",
       "paddock": 2,
@@ -5284,6 +5390,87 @@
           "notes": ""
         }
       ]
+    },
+    "P2R5.8-14": {
+      "id": "P2R5.8-14",
+      "paddock": 2,
+      "row": 5,
+      "range": "8–14",
+      "length": "6m",
+      "has_trees": false,
+      "first_planted": "2025-05-28",
+      "inventory_date": "",
+      "plants": [
+        {
+          "species": "Choko",
+          "strata": "medium",
+          "count": 7,
+          "notes": "Sowed May-June 2025"
+        }
+      ],
+      "green_manure": [
+        {
+          "species": "Barley",
+          "quantity_grams": 21
+        },
+        {
+          "species": "Coriander",
+          "quantity_grams": 140
+        },
+        {
+          "species": "Radish (Generic)",
+          "quantity_grams": 105
+        },
+        {
+          "species": "Butternut Pumpkin",
+          "quantity_grams": 21
+        },
+        {
+          "species": "Broad Bean",
+          "quantity_grams": 70
+        }
+      ]
+    },
+    "P2R5.22-29": {
+      "id": "P2R5.22-29",
+      "paddock": 2,
+      "row": 5,
+      "range": "22–29",
+      "length": "7m",
+      "has_trees": false,
+      "first_planted": "2025-05-28",
+      "inventory_date": "",
+      "plants": [],
+      "green_manure": [
+        {
+          "species": "Barley",
+          "quantity_grams": 24
+        },
+        {
+          "species": "Coriander",
+          "quantity_grams": 160
+        },
+        {
+          "species": "Radish (Generic)",
+          "quantity_grams": 120
+        },
+        {
+          "species": "Cabbage (Red)",
+          "quantity_grams": 80
+        },
+        {
+          "species": "Butternut Pumpkin",
+          "quantity_grams": 24
+        },
+        {
+          "species": "Broad Bean",
+          "quantity_grams": 80
+        },
+        {
+          "species": "Vetch",
+          "quantity_grams": 120
+        }
+      ]
     }
   },
   "rows": {
@@ -5322,7 +5509,9 @@
       "row": "Row 4",
       "sections": [
         "P2R4.0-2",
+        "P2R4.2-6",
         "P2R4.6-14",
+        "P2R4.14-20",
         "P2R4.20-30",
         "P2R4.30-40",
         "P2R4.40-49",
@@ -5355,7 +5544,9 @@
       "row": "Row 5",
       "sections": [
         "P2R5.0-8",
+        "P2R5.8-14",
         "P2R5.14-22",
+        "P2R5.22-29",
         "P2R5.29-38",
         "P2R5.38-44",
         "P2R5.44-53",

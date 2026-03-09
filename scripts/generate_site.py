@@ -312,6 +312,16 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     regular_plants = [p for p in plants_to_show if not is_green_manure(p["species"], plant_db)]
     green_manure_plants = [p for p in plants_to_show if is_green_manure(p["species"], plant_db)]
 
+    # Also include green manure from the dedicated green_manure array in sections.json
+    gm_array = section.get("green_manure", [])
+    if gm_array:
+        # Add species not already in the green_manure_plants list
+        existing_gm_species = {p["species"] for p in green_manure_plants}
+        for gm in gm_array:
+            if gm["species"] not in existing_gm_species:
+                green_manure_plants.append({"species": gm["species"], "count": None})
+                existing_gm_species.add(gm["species"])
+
     # Group regular plants by strata
     grouped = {}
     for sk in ["emergent", "high", "medium", "low"]:

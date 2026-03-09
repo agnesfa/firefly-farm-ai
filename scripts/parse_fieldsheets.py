@@ -126,6 +126,22 @@ SPECIES_NAME_OVERRIDES = {
     "Black she-oak": "Black She-oak",
     "Pigeon pea seeds": "Pigeon Pea",
     "Tallowood tree": "Tallowood (Gum)",
+    # Green manure species from P2R4 pres / P2R5 autumn overview tabs
+    "broad-bean": "Broad Bean",
+    "Broad-bean": "Broad Bean",
+    "broad bean": "Broad Bean",
+    "pea bush Sugar Snap Bon": "Pea-Sugar Snap",
+    "snowpea Yakumo": "Pea-Snow (Yakumo)",
+    "pumkin jap": "Pumpkin (Generic)",
+    "pumpkin jap": "Pumpkin (Generic)",
+    "butternut": "Butternut Pumpkin",
+    "RED cabbage": "Cabbage (Red)",
+    "vetch - inoculated": "Vetch",
+    "choko": "Choko",
+    "barley": "Barley",
+    "coriander": "Coriander",
+    "Ice-cream bean": "Ice Cream Bean",
+    "Ice ream bean": "Ice Cream Bean",
 }
 
 # Suffixes to strip during normalization
@@ -767,6 +783,261 @@ def parse_r5_section(ws, sheet_name, farmos_names):
     }
 
 
+# ─── Gap section parsers (overview/autumn tabs) ────────────────────────
+
+def parse_r5_autumn_sections(ws, farmos_names, existing_section_ids):
+    """Parse the P2R5 autumn seeds&plants tab for gap (no-tree) sections.
+
+    This tab has a matrix format:
+    - Row 4: Section ranges in columns C-J (0-7, 7-14, 14-21, 21-29, 29-37, 37-44, 44-53, 53-80)
+    - Row 3: Tree info per column (trees, under 2 m high)
+    - Row 5: Label row (Green manure may-june 2025)
+    - Rows 6+: Species name in Col A, quantities per section in columns C-J
+
+    Only creates sections for gaps NOT already in existing_section_ids.
+    Gap sections are identified by "under 2 m high" in Row 3.
+    """
+    # Map column index to section info from Row 4 (ranges) and Row 3 (tree info)
+    col_sections = {}
+    for col in range(3, 11):  # C=3 through J=10
+        range_val = str(ws.cell(4, col).value or "").strip()
+        tree_val = str(ws.cell(3, col).value or "").strip().lower()
+        if not range_val:
+            continue
+        # Normalize range: " 7-14" → "7-14"
+        range_val = range_val.strip()
+        is_no_tree = "under" in tree_val or "2 m" in tree_val
+        col_sections[col] = {
+            "range": range_val,
+            "has_trees": not is_no_tree,
+        }
+
+    sections = []
+    for col, sec_info in col_sections.items():
+        # Build the section ID using OUR boundary convention
+        # The autumn tab uses original boundaries (0-7, 7-14, etc.)
+        # Our sections use adjusted boundaries based on existing sections
+        orig_range = sec_info["range"]
+        parts = orig_range.split("-")
+        if len(parts) != 2:
+            continue
+        orig_start, orig_end = int(parts[0]), int(parts[1])
+
+        # Only process no-tree gap sections
+        if sec_info["has_trees"]:
+            continue
+
+        # Find our section boundary by looking at adjacent existing sections
+        # E.g., if 0-8 exists, gap section 7-14 becomes 8-14
+        our_start = orig_start
+        our_end = orig_end
+        for sid in existing_section_ids:
+            if not sid.startswith("P2R5."):
+                continue
+            sid_parts = sid.split(".")[1].split("-")
+            sid_end = int(sid_parts[1])
+            sid_start = int(sid_parts[0])
+            # Adjust start if an existing section's end falls within our range
+            if sid_end > our_start and sid_end <= our_end:
+                our_start = sid_end
+            # Adjust end if an existing section's start falls within our range
+            if sid_start >= our_start and sid_start < our_end:
+                our_end = sid_start
+
+        section_id = f"P2R5.{our_start}-{our_end}"
+        if section_id in existing_section_ids:
+            continue  # Already parsed from registration tabs
+
+        length = our_end - our_start
+        if length < 4:
+            continue  # Skip tiny gaps or non-cultivable row ends
+
+        # Parse green manure species from this column
+        green_manure = []
+        plants = []
+        for row_idx in range(6, ws.max_row + 1):
+            a_val = str(ws.cell(row_idx, 1).value or "").strip()
+            qty_val = ws.cell(row_idx, col).value
+
+            if not a_val:
+                continue
+
+            species = normalize_species(a_val, farmos_names)
+            if not species:
+                continue
+
+            qty = parse_count(qty_val)
+            if qty is None or qty == 0:
+                continue
+
+            # Choko is a plant (vine), not a green manure seed
+            if species == "Choko":
+                plants.append({
+                    "species": species,
+                    "strata": "medium",
+                    "count": int(qty),
+                    "notes": "Sowed May-June 2025",
+                })
+            else:
+                green_manure.append({
+                    "species": species,
+                    "quantity_grams": qty,
+                })
+
+        if not green_manure and not plants:
+            continue
+
+        section = {
+            "id": section_id,
+            "paddock": 2,
+            "row": 5,
+            "range": f"{our_start}\u2013{our_end}",
+            "length": f"{length}m",
+            "has_trees": False,
+            "first_planted": "2025-05-28",  # "sowed + lime from MAY 28TH to JUNE 5TH"
+            "inventory_date": "",  # No inventory done for these sections
+            "plants": plants,
+        }
+        if green_manure:
+            section["green_manure"] = green_manure
+        sections.append(section)
+        print(f"  Parsed gap: {section_id} — {len(plants)} plants, {len(green_manure)} green manure species")
+
+    return sections
+
+
+def parse_r4_pres_sections(ws, farmos_names, existing_section_ids):
+    """Parse the P2R4 pres/BEFORE tab for gap (no-tree) sections.
+
+    This tab has a matrix format:
+    - Row 3: Section ranges in columns C-M (0-1, 1-6, 6-13, 13-20, ...)
+    - Row 2: Section lengths
+    - Rows 5-14: Green manure species (merged cell C5:H14 = "GO TO FARM-OS")
+    - Col B: Seed density per m² (used to calculate quantities for gap sections)
+
+    Gap sections L6 (1-6) and L8 (13-20) don't have explicit quantities.
+    We calculate them from seed density × section length.
+    """
+    # Map column index to section info from Row 3 (ranges)
+    col_sections = {}
+    for col in range(3, 14):  # C=3 through M=13
+        range_val = str(ws.cell(3, col).value or "").strip()
+        if not range_val or range_val == "PATH":
+            continue
+        range_val = range_val.strip()
+        parts = range_val.split("-")
+        if len(parts) != 2:
+            continue
+        try:
+            start, end = int(parts[0]), int(parts[1])
+        except ValueError:
+            continue
+        length_val = ws.cell(2, col).value
+        length = int(float(length_val)) if length_val else (end - start)
+        col_sections[col] = {
+            "range": range_val,
+            "start": start,
+            "end": end,
+            "length": length,
+        }
+
+    # Identify gap sections: columns with no explicit green manure quantities
+    # These are in the merged cell region (C5:H14 → cols 3-8)
+    # We need to identify which of these correspond to "no tree" gap sections
+    # P2R4 original: L5(0-1) L6(1-6) L7(6-13) L8(13-20) L9(20-27) ...
+    # L6 and L8 are the open sections between tree sections
+
+    # Parse seed densities from Col B
+    seed_densities = {}
+    for row_idx in range(5, 15):
+        a_val = str(ws.cell(row_idx, 1).value or "").strip()
+        b_val = ws.cell(row_idx, 2).value
+        if not a_val:
+            continue
+
+        species = normalize_species(a_val, farmos_names)
+        if not species:
+            continue
+
+        # Parse density: "60s or 3g" → use seed count, or "20.0" → seeds/m²
+        density = None
+        if isinstance(b_val, (int, float)):
+            density = float(b_val)
+        elif isinstance(b_val, str):
+            # "60s or 3g" → 3 (use grams)
+            gm = re.search(r'(\d+)\s*g', str(b_val))
+            if gm:
+                density = float(gm.group(1))
+            else:
+                sm = re.search(r'(\d+)', str(b_val))
+                if sm:
+                    density = float(sm.group(1))
+
+        if density:
+            seed_densities[species] = density
+
+    sections = []
+
+    # Define R4 gap sections (no-tree open cultivation sections)
+    # These are between existing sections
+    r4_gaps = [
+        {"orig_range": "1-6", "orig_start": 1, "orig_end": 6},
+        {"orig_range": "13-20", "orig_start": 13, "orig_end": 20},
+    ]
+
+    for gap in r4_gaps:
+        # Adjust boundaries based on existing sections
+        our_start = gap["orig_start"]
+        our_end = gap["orig_end"]
+        for sid in existing_section_ids:
+            if not sid.startswith("P2R4."):
+                continue
+            sid_parts = sid.split(".")[1].split("-")
+            sid_end = int(sid_parts[1])
+            sid_start = int(sid_parts[0])
+            if sid_end > our_start and sid_end <= our_end:
+                our_start = sid_end
+            if sid_start >= our_start and sid_start < our_end:
+                our_end = sid_start
+
+        section_id = f"P2R4.{our_start}-{our_end}"
+        if section_id in existing_section_ids:
+            continue
+
+        length = our_end - our_start
+
+        # Calculate green manure quantities from seed density × length
+        green_manure = []
+        for species, density in seed_densities.items():
+            qty = round(density * length, 1)
+            if qty > 0:
+                green_manure.append({
+                    "species": species,
+                    "quantity_grams": qty,
+                })
+
+        if not green_manure:
+            continue
+
+        section = {
+            "id": section_id,
+            "paddock": 2,
+            "row": 4,
+            "range": f"{our_start}\u2013{our_end}",
+            "length": f"{length}m",
+            "has_trees": False,
+            "first_planted": "2025-06-01",  # Green manure sowed June 2024, re-sowed summer 2025
+            "inventory_date": "",
+            "plants": [],
+        }
+        if green_manure:
+            section["green_manure"] = green_manure
+        sections.append(section)
+        print(f"  Parsed gap: {section_id} — {len(green_manure)} green manure species")
+
+    return sections
+
+
 # ─── File-level parsing ─────────────────────────────────────────────────
 
 def is_r1_section_tab(name):
@@ -780,8 +1051,8 @@ def is_v2_section_tab(name):
 
 
 def is_r4_section_tab(name):
-    """Check if tab name matches P2R4 section pattern."""
-    return bool(re.match(r'P2R4\.\d+-\d+', name))
+    """Check if tab name matches P2R4 inventory section pattern (exactly P2R4.X-Y)."""
+    return bool(re.fullmatch(r'P2R4\.\d+-\d+', name))
 
 
 def is_r5_section_tab(name):
@@ -789,8 +1060,23 @@ def is_r5_section_tab(name):
     return bool(re.match(r'P2R5\.\d+-\d+', name))
 
 
-def parse_fieldsheet_file(filepath, farmos_names):
-    """Parse all section sheets from a single field sheet Excel file."""
+def is_r5_autumn_tab(name):
+    """Check if tab name matches P2R5 autumn seeds & plants tab."""
+    return "automn" in name.lower() or "autumn" in name.lower()
+
+
+def is_r4_pres_tab(name):
+    """Check if tab name is the P2R4 pres/BEFORE overview tab."""
+    return name in ("P2R4pres", "P2R4.BEFORE")
+
+
+def parse_fieldsheet_file(filepath, farmos_names, all_existing_ids=None):
+    """Parse all section sheets from a single field sheet Excel file.
+
+    Args:
+        all_existing_ids: Set of section IDs already parsed from other files.
+                          Used by gap parsers to calculate correct boundaries.
+    """
     wb = openpyxl.load_workbook(filepath, data_only=True)
     sections = []
 
@@ -836,6 +1122,27 @@ def parse_fieldsheet_file(filepath, farmos_names):
         else:
             # Skip non-section tabs (mapping, recap, planning, etc.)
             pass
+
+    # Second pass: parse overview/autumn tabs for gap sections
+    # Combine IDs from this file AND all previously parsed files
+    existing_ids = {s["id"] for s in sections}
+    if all_existing_ids:
+        existing_ids |= all_existing_ids
+
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+
+        if is_r5_autumn_tab(sheet_name):
+            gap_sections = parse_r5_autumn_sections(ws, farmos_names, existing_ids)
+            for sec in gap_sections:
+                sections.append(sec)
+                existing_ids.add(sec["id"])
+
+        elif is_r4_pres_tab(sheet_name):
+            gap_sections = parse_r4_pres_sections(ws, farmos_names, existing_ids)
+            for sec in gap_sections:
+                sections.append(sec)
+                existing_ids.add(sec["id"])
 
     return sections
 
@@ -884,6 +1191,7 @@ def main():
     print(f"Loaded {len(farmos_names)} plant type names for matching")
 
     all_sections = []
+    all_existing_ids = set()
 
     # Find and parse all field sheet files
     xlsx_files = sorted(input_dir.glob("*.xlsx"))
@@ -893,8 +1201,9 @@ def main():
 
     for filepath in xlsx_files:
         print(f"\nParsing: {filepath.name}")
-        sections = parse_fieldsheet_file(filepath, farmos_names)
+        sections = parse_fieldsheet_file(filepath, farmos_names, all_existing_ids)
         all_sections.extend(sections)
+        all_existing_ids |= {s["id"] for s in sections}
 
     if not all_sections:
         print("\nNo sections parsed!")
