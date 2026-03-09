@@ -2,6 +2,7 @@
 .env
 .env.local
 venv/
+**/venv/
 __pycache__/
 *.pyc
 
@@ -27,6 +28,9 @@ fieldsheets/*.xlsx
 
 # farmOS export data (large, regenerated)
 exports/
+
+# Downloaded observation data (from Google Sheet analysis)
+observations_*.csv
 
 # Archive (already extracted)
 *.tar.gz

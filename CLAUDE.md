@@ -20,11 +20,11 @@ The farm is at an early stage (planted from April 2025). It has two main cultiva
 Farm (~25 hectares)
 ├── Paddock 1 (P1) — 5 cultivated rows (R1–R5), mainly annuals and pioneer species
 ├── Paddock 2 (P2) — 5 cultivated rows (R1–R5), syntropic tree rows with perennials
-│   ├── P2R1 — ~22m, under renovation
+│   ├── P2R1 — ~22m, 4 sections (0-3, 3-9, 9-16, 16-22), spring 2025 renovation
 │   ├── P2R2 — ~46m, 7 sections (0-3, 3-7, 7-16, 16-23, 23-26, 28-37, 37-46)
 │   ├── P2R3 — ~63m, 7 sections (0-3, 3-9, 9-14, 14-21, 21-26, 26-37, 41-63)
-│   ├── P2R4 — ~44m
-│   └── P2R5 — being established
+│   ├── P2R4 — ~77m, 8 sections (0-2, 6-14, 20-30, 30-40, 40-49, 52-62, 62-72, 72-77)
+│   └── P2R5 — ~77m, 7 sections (0-8, 14-22, 29-38, 38-44, 44-53, 55-66, 66-77)
 ├── Plant Nursery — shelves, ground areas, seed bank (fridge)
 ├── Water Infrastructure — 2+ dams, keyline trenches, irrigation
 ├── Campground — 3 registered Hipcamp sites for guests
@@ -182,37 +182,40 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 - **Auth:** OAuth2 (credentials in .env, never in repo)
 - **API base:** https://margregen.farmos.net/api
 
-### Current State (as of March 6, 2026 — post v7 migration)
+### Current State (as of March 9, 2026 — all 5 rows imported + historical logs)
 
 | Entity | Count | Notes |
 |--------|-------|-------|
-| **Total assets** | **156** | All types combined |
-| Land assets | 93 | Paddocks and rows fully mapped, including sections (P2R3.0-3, etc.) |
+| Plant type taxonomy | **219** | 218 in CSV + 1 extra in farmOS |
+| Plant assets | **404** | All 5 rows imported (245 R1-R3 + 109 R4 + 50 R5) |
+| Observation logs | **~580** | 442 inventory + ~137 historical inventory |
+| Transplanting logs | **~238** | 7 original + ~230 historical (planted + renovation) |
+| Activity logs | **63** | Various |
+| Land assets | 93 | Paddocks and rows fully mapped, including 37 sections (33 + 4 gap) |
 | Structure assets | 17 | Including nursery and sub-locations |
-| Plant type taxonomy | **215** | **v7 migration complete** — 213 v7 entries + 1 system term (Cattail) + 1 archived |
-| Plant assets | 2 | Minimal — most planting data still in Claire's spreadsheets |
 | Seed assets | 0 | Not yet created |
-| **Total logs** | **126** | All types combined |
-| Activity logs | 59 | Various |
-| Observation logs | 40 | Various |
 | Seeding logs | 8 | Not using proper Seed→Plant workflow |
-| Transplanting logs | 7 | Existing |
 | Water assets | 11 | Dams, trenches |
 | Equipment assets | 3 | |
 | Compost assets | 5 | |
 
-**Plant type taxonomy status (v7 — updated March 7, 2026):**
-- **215 plant types** in farmOS (213 v7 + Citrus (Yuzu) + Hyssop added March 7)
+**Note:** farmOS API pagination caps at ~250 entries per collection, so exact counts from API queries can undercount. The numbers above are derived from import script output.
+
+**Plant type taxonomy status (v7 — updated March 9, 2026):**
+- **219 plant types** in farmOS (218 in CSV: 213 v7 + Citrus (Yuzu) + Hyssop + Barley + Dianella + Broad Bean)
 - All terms have enriched descriptions with syntropic agriculture metadata
 - 16 v6 names renamed to v7 conventions
 - 15 obsolete v6 entries archived (prefixed `[ARCHIVED]`)
 - Google Sheet shared with Claire: "Firefly Corner - Plant Types v7"
 
-**Import readiness (March 7, 2026):**
-- `import_fieldsheets.py` built and dry-run tested: 245 plant assets across 18 sections, 77 unique species
-- Awaiting live run against farmOS (Agnes to approve)
+**Import status (March 9, 2026):**
+- ✅ Live farmOS import complete: 404 plant assets across 33 sections, 109 unique species
+- R1-R3: 245 plants (77 species, 18 sections)
+- R4: 109 plants (31 species, 8 sections)
+- R5: 50 plants (19 species, 6 sections — P2R5.38-44 skipped, not yet inventoried)
+- ✅ Historical logs imported: 422 backdated logs (392 R1-R3 + 30 R4/R5)
+- ✅ 4 gap sections added (P2R4.2-6, P2R4.14-20, P2R5.8-14, P2R5.22-29) — 37 total sections
 - No Seed assets exist yet (244 records in CSV ready)
-- Current plant assets: 2 (will grow to ~247 after import)
 - Seeding/transplanting logs don't use the native Seed→Plant workflow yet
 
 ### farmOS Data Model (Key Concepts)
@@ -266,7 +269,7 @@ client.log.send("activity", log_data)
 
 ### Plant Types Master Database
 
-**File:** `knowledge/plant_types.csv` (v7, 215 records)
+**File:** `knowledge/plant_types.csv` (v7, 218 records)
 **Columns:** common_name, variety, farmos_name, botanical_name, crop_family, origin, description, lifespan_years, lifecycle_years, maturity_days, strata, succession_stage, plant_functions, harvest_days, germination_time, transplant_days, source
 
 This is the farm's plant knowledge base. It grows as new species are introduced.
@@ -301,7 +304,9 @@ This is the farm's plant knowledge base. It grows as new species are introduced.
 **Format:** Excel files per row, tabs per section
 **Processing:** `scripts/parse_fieldsheets.py` → `site/src/data/sections.json`
 
-Have P2R1, P2R2, and P2R3 field sheets (all parsed). P2R4 and P2R5 pending from Claire.
+Have all 5 rows: P2R1, P2R2, P2R3, P2R4 and P2R5 field sheets (all parsed).
+- P2R4: `2026FEB-P2R4-Inventory-&-Next-Planting.xlsx` — v2-like format with dual count columns
+- P2R5: `P2R5.JAN2026.REGISTRATION.xlsx` — "registration" format (Plant/Seed distinction, per-plant dates)
 
 ### Sections JSON (Generated)
 
@@ -345,7 +350,9 @@ firefly-farm-ai/
 ├── site/                      ← Public QR code landing pages (deployed to GitHub Pages)
 │   ├── public/                ← Generated HTML pages + static assets
 │   │   ├── index.html         ← Paddock overview entry point
-│   │   ├── P2R3.14-21.html   ← Section landing page (one per section)
+│   │   ├── P2R3.14-21.html   ← Section view page (one per section, 33 total)
+│   │   ├── P2R3.14-21-observe.html ← Section observe page (worker form, 33 total)
+│   │   ├── observe.js         ← Vanilla JS: observation form logic + submission
 │   │   └── qrcodes/          ← Generated QR code images (gitignored)
 │   └── src/
 │       └── data/
@@ -363,12 +370,18 @@ firefly-farm-ai/
 │   └── generate_qrcodes.py    ← Generate QR images from sections.json
 │
 ├── knowledge/                 ← Farm knowledge base
-│   ├── plant_types.csv        ← Master plant database (v7, 213 species)
+│   ├── plant_types.csv        ← Master plant database (v7, 218 species)
 │   ├── plant_types_v6_archive.csv ← Previous v6 reference (180 species, archived)
 │   ├── plant_type_name_mapping.csv ← farmOS migration plan (v6→v7 name mapping)
 │   └── seed_bank.csv          ← Seed inventory (to be added)
 │
-├── mcp-server/                ← farmOS MCP server (Phase 1, to be built)
+├── mcp-server/                ← farmOS MCP server (Phase 1a built, STDIO transport)
+│   ├── __init__.py            ← Package marker
+│   ├── server.py              ← FastMCP server: 10 tools, 5 resources, 3 prompts
+│   ├── farmos_client.py       ← farmOS HTTP client (OAuth2 + JSON:API, raw requests)
+│   ├── helpers.py             ← Date parsing, response formatters
+│   ├── requirements.txt       ← fastmcp, python-dotenv, requests
+│   └── venv/                  ← Separate Python 3.13 venv (pydantic v2 for FastMCP)
 │
 ├── skills/                    ← Claude Skills (to be developed)
 │
@@ -439,8 +452,8 @@ This is **explicitly temporary**. The parse_fieldsheets.py script exists to brid
 
 | Phase | Data source for site generation | Why |
 |-------|-------------------------------|-----|
-| Phase 0 (now) | Claire's spreadsheets (via parse_fieldsheets.py) | farmOS doesn't have planting data yet |
-| Phase 1 | farmOS export (via export_farmos.py) | Planting data imported to farmOS |
+| Phase 0 (completed) | Claire's spreadsheets (via parse_fieldsheets.py) | farmOS didn't have planting data yet |
+| Phase 1 (now) | farmOS export (via export_farmos.py) | Planting data imported to farmOS, MCP server built |
 | Phase 2+ | farmOS export via MCP server | Live queries, no manual export needed |
 | Future | Real-time from farmOS API | Pages update automatically when farmOS changes |
 
@@ -525,7 +538,7 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 1. **Single agent, not multi-agent orchestration.** Following Anthropic's principle: start with the simplest thing that works. One well-tooled Claude agent with the farmOS MCP server. Sub-agents within a session (for parallel research, audits, validation) are fine — they're delegation, not orchestration. Agent Teams available for complex parallel development (e.g., Phase 1 MCP server build).
 
-2. **farmOS MCP server in Python.** farmOS.py is the mature Python client. Python MCP SDK is official. No reason to use another language.
+2. **farmOS MCP server in Python.** Python MCP SDK (FastMCP) is official. MCP server uses raw HTTP requests instead of farmOS.py to avoid pydantic v1/v2 conflict (farmOS.py needs v1, FastMCP needs v2). Separate venv at `mcp-server/venv/`.
 
 3. **Claude IS the UI** for non-technical users. Don't train Claire on farmOS's web interface. Let Claude translate natural language to API calls.
 
@@ -547,19 +560,41 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 ## 11. IMPLEMENTATION PHASES
 
-### Phase 0: Landcare Demo (Current — by March 10, 2026)
-- ✅ Parse P2R1, P2R2 and P2R3 field sheets into sections.json (18 sections: 4+7+7)
-- ✅ Generate 18 section HTML pages + index (all 3 rows)
+### Phase 0: Landcare Demo (COMPLETED — March 10, 2026)
+- ✅ Parse all 5 rows into sections.json (33 sections: 4 R1 + 7 R2 + 7 R3 + 8 R4 + 7 R5)
+- ✅ Generate 75 pages (37 view + 37 observe + 1 index) for all 5 rows (incl. 4 gap sections added March 9)
 - ✅ Pipeline tested end-to-end
 - ✅ Push to GitHub, enable GitHub Pages (live at https://agnesfa.github.io/firefly-farm-ai/)
 - ✅ Fresh farmOS export (March 4, 2026: 156 assets, 126 logs, 104 taxonomy)
-- ✅ Generate QR codes for all 18 sections
-- ✅ Built import_fieldsheets.py — dry-run tested (245 plants, 77 species, 0 failures)
-- ✅ Added 2 missing plant types: Citrus (Yuzu), Hyssop (total: 215)
-- ✅ Species name normalization: 90/90 species matched to plant_types.csv
-- ⬜ Live farmOS import (pending Agnes approval)
-- ⬜ Print QR codes for poles (minimum 3cm × 3cm)
-- ⬜ Test visitor experience on phone
+- ✅ Generate QR codes for all sections
+- ✅ Built import_fieldsheets.py — dry-run tested, then live import completed
+- ✅ Added 4 plant types: Citrus (Yuzu), Hyssop, Barley, Dianella (total: 217 CSV, 219 farmOS)
+- ✅ Species name normalization: 109/109 species matched to plant_types.csv
+- ✅ Live farmOS import: 404 plant assets, 442 observation logs, 0 failures
+- ✅ Built field observation system (Phase A): observe pages + observe.js + Apps Script backend
+- ✅ Print QR codes for poles
+
+### Phase A: Field Observation System (WORKING — March 7–9, 2026)
+**Goal:** Workers can log observations from QR code pages → Google Sheet → (future) farmOS.
+- ✅ Built observe.js — vanilla JS form with Quick Report + Full Inventory modes
+- ✅ Built Code.gs — Apps Script backend (Sheet append, Drive JSON save, media handling)
+- ✅ Generated 37 observe pages with floating action button on view pages
+- ✅ Fixed: fireflycorner.com.au Workspace account returned 403 for anonymous POST → switched to fireflyagents.com
+- ✅ Deployed Code.gs to fireflyagents.com Google account (March 9)
+- ✅ Wired all 37 observe pages to live endpoint
+- ✅ Google Sheet: "Firefly Corner - Field Observations" (ID: 1wLAIxcSE_DNWjZdhlmPtQacvxg1VxHkA70hvX6nGqRs)
+- ✅ Drive folder: "Firefly Corner AI Observations" (ID: 1WE1eMNEn--xW6RT7lAGnh0MFfJh4WCPX)
+- ✅ End-to-end tested March 9: 14 observations from Claire and James (7 sections, with photos)
+- ⬜ Phase B: Media capture (photo compression, audio recording) + offline queue (IndexedDB)
+- ⬜ Phase C: import_observations.py — pull reviewed observations from Sheet into farmOS
+
+### Phase H1: Historical Log Import (COMPLETED — March 9, 2026)
+**Goal:** Backfill farmOS with historical planting/inventory data from Claire's renovation spreadsheets.
+- ✅ Built `scripts/import_historical.py` — imports backdated transplanting + observation logs
+- ✅ Handles 4 spreadsheet formats (r1, r2, r3, r3_shifted) + R4 spring + R5 historical
+- ✅ R1-R3: 392 logs created (122 planted, 137 inventory, 133 renovation), 0 failures
+- ✅ R4/R5: 30 logs created (25 R4 planted, 5 R5 planted), 0 failures
+- ⬜ Phase H2: Create farmOS assets for 201 dead/removed plants (historical records without current assets)
 
 ### Phase 0.5: Plant Types Foundation (COMPLETED — March 6, 2026)
 **Goal:** Complete the plant_type taxonomy in farmOS (80 → 213 entries). ✅
@@ -572,18 +607,22 @@ These decisions have been made through extensive discussion. Don't revisit them 
 - ✅ Updated import_plants.py and generate_site.py for v7 column names
 - ✅ Created Google Sheet for Claire ("Firefly Corner - Plant Types v7")
 
-### Phase 1: farmOS MCP Server (Weeks 2–3)
-Core tools to implement:
-1. `query_assets` — Search assets by type, status, location
-2. `get_locations` — Return location hierarchy
-3. `get_plant_types` — Search/list plant type taxonomy
-4. `create_log` — Create activity/observation/seeding/transplanting/harvest logs
-5. `query_logs` — Search logs by date, type, asset, location
-6. `create_asset` — Create plant or seed assets
-7. `get_inventory` — Query seed stock levels
+### Phase 1: farmOS MCP Server (Phase 1a BUILT — March 9, 2026)
+**Goal:** Claude Desktop can query and manage farmOS data via MCP tools.
 
-Resources: `farm://overview`, `farm://plants`, `farm://locations`, `farm://recent`
-Prompts: `log-field-activity`, `record-seeding`, `transplant-to-paddock`
+**Phase 1a (BUILT):** Local STDIO server for Agnes with full read/write access.
+- ✅ Built `mcp-server/server.py` with FastMCP framework
+- ✅ Built `mcp-server/farmos_client.py` — raw HTTP client (OAuth2 + JSON:API)
+- ✅ Built `mcp-server/helpers.py` — date parsing, response formatters
+- ✅ Separate venv at `mcp-server/venv/` (avoids pydantic v1/v2 conflict)
+- ✅ 10 tools: `query_plants`, `query_sections`, `get_plant_detail`, `query_logs`, `get_inventory`, `search_plant_types`, `create_observation`, `create_activity`, `update_inventory`, `create_plant`
+- ✅ 5 resources: `farm://overview`, `farm://sections/{section_id}`, `farm://plant-types`, `farm://plant-types/{name}`, `farm://recent-logs`
+- ✅ 3 prompts: `log_field_observation`, `check_section_status`, `compare_inventory`
+- ✅ All tested against live farmOS (10/10 tools passing)
+- ⬜ Agnes to configure Claude Desktop and test end-to-end
+- ⬜ Commit MCP server code after Claude Desktop test
+
+**Phase 1b (PLANNED):** HTTP transport + API key auth for Claire/James remote access.
 
 ### Phase 2: Claire's First Real Log (Weeks 3–4)
 Goal: Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.
@@ -648,9 +687,16 @@ The dot separates the row from the section. The dash separates the start and end
 python3.13 -m venv venv
 source venv/bin/activate
 
-# Python dependencies
+# Python dependencies (main project — uses farmOS.py + pydantic v1)
 pip install -r requirements.txt
 # (requests, openpyxl, pandas, jinja2, qrcode[pil], python-dotenv, farmOS)
+
+# MCP server has SEPARATE venv (uses FastMCP + pydantic v2)
+cd mcp-server
+python3.13 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+# (fastmcp, python-dotenv, requests — NO farmOS.py)
 
 # farmOS credentials (create .env from .env.example, never commit .env)
 FARMOS_URL=https://margregen.farmos.net
@@ -675,7 +721,7 @@ python scripts/export_farmos.py  # exports to exports/farmos_export_YYYYMMDD/
 ```
 Phase 1 addition: `--output site/src/data/sections.json` for sections.json format.
 
-**import_fieldsheets.py** (BUILT — March 7, 2026; dry-run tested, live run pending)
+**import_fieldsheets.py** (BUILT — March 7, 2026; live import complete for all 5 rows)
 Imports sections.json data into farmOS: creates Plant assets, Quantity entities (inventory counts), and Observation logs (with movement to set location). Uses per-name API queries for idempotent existence checks.
 ```bash
 python scripts/import_fieldsheets.py --dry-run                    # Preview all sections
@@ -706,25 +752,52 @@ python scripts/fix_taxonomy.py --dry-run   # Verify state
 python scripts/fix_taxonomy.py --execute   # Fix issues
 ```
 
+**import_historical.py** (BUILT — March 9, 2026; historical logs imported)
+Imports backdated transplanting and observation logs from Claire's renovation spreadsheets into farmOS. Creates 3 log types per plant: initial planting, mid-season inventory, and renovation additions. Handles 4+ spreadsheet formats with ~150 species name overrides.
+```bash
+python scripts/import_historical.py --dry-run          # Preview all
+python scripts/import_historical.py --row P2R1         # Specific row
+python scripts/import_historical.py                    # Live import
+```
+Features: `--dry-run`, `--row` filter, idempotent (checks existing log names), maps historical section boundaries to current farmOS sections.
+
+### MCP Server Scripts
+
+**server.py** (BUILT — March 9, 2026; Phase 1a complete)
+FastMCP server providing Claude Desktop with farmOS access. Runs via STDIO transport.
+```bash
+# Run via Claude Desktop (configured in claude_desktop_config.json)
+mcp-server/venv/bin/python mcp-server/server.py
+
+# Test with MCP Inspector
+cd mcp-server && venv/bin/fastmcp dev server.py
+```
+10 tools (query_plants, query_sections, get_plant_detail, query_logs, get_inventory, search_plant_types, create_observation, create_activity, update_inventory, create_plant), 5 resources, 3 prompts.
+
+**farmos_client.py** — Direct HTTP client for farmOS JSON:API (replaces farmOS.py to avoid pydantic conflict). OAuth2 password grant auth, paginated fetching, CONTAINS filter for server-side log queries.
+
+**helpers.py** — Date parsing (`parse_date`, `format_planted_label`), asset name builder, farmOS response formatters (`format_plant_asset`, `format_log`, `format_plant_type`, `format_section_from_assets`).
+
 ### Demo Shortcut Scripts (Phase 0)
 
 **parse_fieldsheets.py**
-Converts Claire's Excel field sheets directly into sections.json, bypassing farmOS. This is the Phase 0 bridge — it will be replaced by export_farmos.py once planting data is in farmOS.
+Converts Claire's Excel field sheets directly into sections.json, bypassing farmOS. Handles 4 spreadsheet formats: v2 (R2, R3), R1 renovation, R4 dual-column, and R5 registration format. Includes species name normalization with explicit mapping dict + suffix stripping.
 ```bash
 python scripts/parse_fieldsheets.py --input fieldsheets/ --output site/src/data/
 ```
-Input: .xlsx files in fieldsheets/
-Output: site/src/data/sections.json
+Input: .xlsx files in fieldsheets/ (5 files, one per row)
+Output: site/src/data/sections.json (37 sections incl. 4 gap sections, 110 species)
 
 ### Site Generation Scripts (Permanent)
 
 **generate_site.py**
-Generates static HTML pages from sections.json + plant_types.csv. This script doesn't care whether sections.json came from farmOS export or spreadsheet parsing — same input format either way.
+Generates static HTML pages from sections.json + plant_types.csv. Produces view pages (visitor), observe pages (worker forms), and index page. Supports `--observe-endpoint URL` to bake in the Apps Script submission URL. Handles count=None (uninventoried) plants with "—" badges.
 ```bash
 python scripts/generate_site.py
+python scripts/generate_site.py --observe-endpoint https://script.google.com/macros/s/.../exec
 ```
 Input: site/src/data/sections.json, knowledge/plant_types.csv
-Output: site/public/*.html
+Output: site/public/*.html (37 view + 37 observe + 1 index = 75 pages)
 
 **generate_qrcodes.py**
 Creates printable QR code images for section poles.
@@ -761,8 +834,11 @@ These are the day-to-day processes that connect Claire's field work to the digit
 
 **Steps:**
 1. **Claire** updates her Excel field sheet with latest inventory counts
-   - v2 format: species in Col B, count in Col E ("Last Inventory"), notes in Col C
-   - Each tab = one section, section ID in Row 1
+   - v2 format (R2, R3): species in Col B, count in Col E ("Last Inventory"), notes in Col C, section ID in Row 1
+   - R1 format: tab names `R1.{range}.2025 spring renovation`, counts in Col M
+   - R4 format: v2-like but dual count columns (Col E or Col F), multiple inventory dates in Row 3
+   - R5 "registration" format: species in Col A, P/S in Col E, counts in Col I, per-plant dates in Col H
+   - Each tab = one section
 
 2. **Agnes** copies the updated spreadsheet to `fieldsheets/`
 
@@ -816,24 +892,31 @@ These are the day-to-day processes that connect Claire's field work to the digit
 
 **When:** Re-counting a section that's already been imported.
 
-**Current approach (until MCP server is built):**
+**MCP server approach (Phase 1 — available now for Agnes):**
+- Agnes tells Claude: "P2R3.14-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
+- Claude uses the `update_inventory` or `create_observation` MCP tool to create an observation log in farmOS
+- The MCP server handles: finding the plant asset, creating the quantity entity, creating the observation log with movement
+
+**Script approach (still available):**
 - Re-import with updated spreadsheet data. The import script is idempotent — existing plants are skipped.
-- For count updates on existing plants: update the observation log in farmOS UI, or create a new observation log with `inventory_adjustment: "reset"` via the API.
-- Future: Claire will use Claude natural language → MCP server → farmOS API to log inventory changes directly.
+- For count updates on existing plants: create a new observation log with `inventory_adjustment: "reset"` via the API.
 
 **Future approach (Phase 2+):**
 - Claire tells Claude: "P2R3.14-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
-- Claude creates an observation log in farmOS with updated count
+- Claude creates an observation log in farmOS with updated count via remote MCP server
 - Site pages regenerate automatically
 
 ---
 
 ## 17. WHAT'S NOT BUILT YET (And Shouldn't Be Built Prematurely)
 
+- MCP server HTTP transport for remote access (Phase 1b — currently STDIO only for Agnes)
+- Observation-to-farmOS import pipeline (Phase C — field observations stay in Google Sheet for now)
+- Dead plant asset creation (Phase H2 — 201 historical records without farmOS assets)
 - Multi-agent systems (one good agent first)
 - Custom farmOS views/dashboards (use the API, not the UI)
 - Weather integration
-- Photo/image logging
+- Photo/image logging (observe.js captures photos but they go to Drive, not farmOS)
 - Automated notifications
 - Custom mobile app (Claude mobile IS the app)
 - WhatsApp integration (harvest logs are there but parsing is Phase 5)
@@ -919,6 +1002,101 @@ These species appear across almost every row and are central to understanding th
 - Plant unit UUID: `2371b79e-a87b-4152-b6e4-ea6a9ed37fd0`
 - `inventory_adjustment: "reset"` sets absolute count on a plant asset.
 
+### March 7, 2026 (continued) — All 5 Rows Live + Field Observation System
+
+**Session 2: Observation System + R4/R5**
+
+Part 1 — Field Observation System (Phase A):
+- Built `site/public/observe.js` — vanilla JS form logic, localStorage observer name, Google Apps Script POST
+- Built `Code.gs` reference for Google Apps Script backend (doPost handler, Sheet append, Drive save)
+- Added `render_observe_page()` to generate_site.py — two-mode form (Quick Report + Full Inventory)
+- Added floating action button (FAB) "📋 Record Observation" to all view pages
+- Added `--observe-endpoint` CLI argument to generate_site.py
+- Generated 18 observe pages alongside view pages
+- Committed: "Add field observation system: observe pages, JS form logic, Apps Script backend" (42 files, 10181 insertions)
+
+Part 2 — R4 and R5 Spreadsheets:
+- Copied P2R4 and P2R5 spreadsheets from Agnes's Downloads
+- P2R4 format: v2-like with dual count columns (Col E vs Col F), multiple inventory dates, GREENMANURE strata, copy-paste bug in A1 cell of last tab
+- P2R5 format: "registration" format — Plant/Seed distinction in Col E, per-plant dates in Col H, inventory in Col I, native Kolala day plantings
+- Added `parse_r4_section()` and `parse_r5_section()` to parse_fieldsheets.py
+- Added ~25 new species name overrides for R4/R5 naming conventions
+- Added 2 new plant types: Barley, Dianella → CSV now 217 records
+- Parsed: 33 sections, 109 species, 109/109 matched — zero unmapped
+- Fixed generate_site.py: handle count=None (uninventoried) plants with "—" badge
+- Generated 67 pages (33 view + 33 observe + index)
+- Committed: "Add P2R4 (8 sections) and P2R5 (7 sections) to site — all 5 rows now live"
+
+Part 3 — farmOS Import:
+- Imported Barley + Dianella to farmOS taxonomy (219 total plant types)
+- Live import R4: 109 plants, 31 species, 8 sections, 0 failures
+- Live import R5: 50 plants, 19 species, 6 sections (P2R5.38-44 skipped — not inventoried), 0 failures
+- Final farmOS state: 219 plant types, 404 plant assets, 442 observation logs
+
+**Key learnings:**
+- R4 tab names are authoritative for section IDs — A1 cell has copy-paste errors
+- R5 P/S column distinguishes plants from seeds; only "P" entries go to landing pages
+- `p.get("count", 0)` returns None when key exists with value None — use `p.get("count") or 0`
+- Plants with count=None (not yet inventoried) are distinct from count=0 (dead) — show with "—" badge
+- Strata fill-in: when strata is None in parsed data, look up from plant_db (plant_types.csv)
+
+### March 8, 2026 — Apps Script Deployment + QR Code Cleanup
+
+- Updated CLAUDE.md and MEMORY.md with all March 7 session progress
+- Regenerated QR codes from current sections.json (33 codes, matching all pages)
+- Removed 24 stale QR codes from old farmOS export (different section boundaries)
+- Agnes deployed Code.gs to fireflycorner.com.au Apps Script account (later switched to fireflyagents.com — see March 9)
+- Regenerated all 33 observe pages with live Apps Script endpoint baked in
+- Pushed to GitHub Pages — observation forms now wired to real backend
+
+**Apps Script deployment details:**
+- Account: fireflyagents.com (switched from fireflycorner.com.au due to 403 on anonymous POST)
+- Endpoint: `https://script.google.com/macros/s/AKfycbzTFMAmf0JIMb2PNWBG_SNSP0WpXj_VG5VFiUHMNpRyFJpHIYVqaa2WLIkT4pGDWYwB/exec`
+- Sheet: "Firefly Corner - Field Observations" (ID: 1wLAIxcSE_DNWjZdhlmPtQacvxg1VxHkA70hvX6nGqRs)
+- Drive: "Firefly Corner AI Observations" (ID: 1WE1eMNEn--xW6RT7lAGnh0MFfJh4WCPX)
+
+### March 9, 2026 — Observation Fix + Gap Sections + Historical Import + MCP Server
+
+**Session 1: Observation endpoint fix + gap sections**
+- Fixed Apps Script 403: fireflycorner.com.au Workspace account blocked anonymous POST → switched all 37 observe pages to fireflyagents.com account endpoint
+- Added 4 gap sections (P2R4.2-6, P2R4.14-20, P2R5.8-14, P2R5.22-29) with green manure data
+- Added Broad Bean to plant_types.csv (218 total in CSV)
+- Green manure boxes now display on 19 sections across R1-R5
+- 37 total sections, 110 species, 75 pages generated
+- Committed: "Add 4 gap sections" and "Switch observe pages to fireflyagents.com endpoint"
+
+**Session 2: Phase H1 — Historical log import**
+- Built `scripts/import_historical.py` — imports backdated transplanting + observation logs from Claire's renovation spreadsheets
+- Handles 4 spreadsheet formats (r1, r2, r3, r3_shifted) across 17 renovation tabs
+- Maps historical section boundaries to current farmOS sections
+- R1-R3: 392 logs (122 planted, 137 inventory, 133 renovation), 201 unmatched dead plants
+- Extended for R4/R5: 30 more logs (25 R4 spring, 5 R5 Kolala Day)
+- Committed: "Add historical log importer" and "Extend with R4/R5 data"
+
+**Session 3: Field observations analyzed**
+- 14 field observations received from Claire (7) and James (7) — first real field data!
+- James found species identification issues (app misidentifying Tallowood as Walnut)
+- James noted observation form requires plant selection — requested general section comments
+- Claire used both Quick Report and Full Inventory modes
+
+**Session 4: Phase 1 — farmOS MCP Server built**
+- Built `mcp-server/farmos_client.py` — raw HTTP client with OAuth2 password grant
+  - Initially used farmOS.py, but pydantic v1/v2 conflict forced rewrite to raw HTTP
+  - Created separate venv at `mcp-server/venv/` with pydantic v2 for FastMCP
+- Built `mcp-server/helpers.py` — date parsing, response formatters
+- Built `mcp-server/server.py` — FastMCP server with 10 tools, 5 resources, 3 prompts
+- Fixed Markdown bold marker stripping: `.replace("**", "")` not `.strip("*")`
+- Fixed log query returning 32/39 instead of 39 for P2R2.0-3: implemented `_fetch_logs_contains()` using farmOS CONTAINS filter to push filtering server-side, bypassing pagination cap
+- All 10 tools tested against live farmOS — all passing
+- NOT YET COMMITTED — waiting for Agnes to test with Claude Desktop
+
+**Key learnings:**
+- pydantic v1/v2 conflict: farmOS.py needs v1, FastMCP needs v2 — separate venvs is the cleanest solution
+- farmOS CONTAINS filter: `filter[name][operator]=CONTAINS&filter[name][value]=X` — essential for querying 400+ logs
+- farmOS pagination caps at ~250 entries — `fetch_all_paginated` is unreliable for large collections
+- Markdown bold `**` in farmOS descriptions must be stripped with `.replace("**", "")` not `.strip("*")`
+- Google Workspace accounts (fireflycorner.com.au) return 403 for anonymous POST to Apps Script — use personal account (fireflyagents.com) instead
+
 ---
 
-*Last updated: March 7, 2026. This file should be updated as the project evolves.*
+*Last updated: March 9, 2026. This file should be updated as the project evolves.*

@@ -1,0 +1,284 @@
+"""
+Shared utilities for the farmOS MCP server.
+
+Extracts and centralizes reusable functions from existing scripts:
+- Date parsing (from import_fieldsheets.py)
+- Plant asset name formatting (from import_fieldsheets.py)
+- farmOS response formatting (for clean tool output)
+"""
+
+from datetime import datetime, timezone, timedelta
+
+
+AEST = timezone(timedelta(hours=10))
+PLANT_UNIT_UUID = "2371b79e-a87b-4152-b6e4-ea6a9ed37fd0"
+
+
+# ── Date utilities ──────────────────────────────────────────────
+
+def parse_date(date_str: str) -> int:
+    """Parse date string to Unix timestamp (farmOS format).
+
+    Handles multiple formats from farm data:
+    - ISO: "2025-10-09"
+    - Text: "2025-MARCH-20 to 24TH"
+    - Fallback: returns April 1, 2025
+
+    Returns:
+        Unix timestamp as integer
+    """
+    if not date_str:
+        return int(datetime.now(tz=AEST).timestamp())
+
+    # ISO format: 2025-10-09
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=AEST)
+        return int(dt.timestamp())
+    except ValueError:
+        pass
+
+    # ISO with time: 2026-03-09T03:15:00.000Z
+    try:
+        dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+        return int(dt.timestamp())
+    except ValueError:
+        pass
+
+    # "2025-MARCH-20 to 24TH" format
+    try:
+        parts = date_str.upper().replace(",", "").split("-")
+        if len(parts) >= 2:
+            year = int(parts[0].strip())
+            month_names = {
+                "JANUARY": 1, "FEBRUARY": 2, "MARCH": 3, "APRIL": 4,
+                "MAY": 5, "JUNE": 6, "JULY": 7, "AUGUST": 8,
+                "SEPTEMBER": 9, "OCTOBER": 10, "NOVEMBER": 11, "DECEMBER": 12,
+            }
+            month_str = parts[1].strip()
+            if month_str in month_names:
+                day = 1
+                if len(parts) >= 3:
+                    day_str = parts[2].strip().split()[0]
+                    try:
+                        day = int("".join(c for c in day_str if c.isdigit()))
+                    except ValueError:
+                        day = 1
+                dt = datetime(year, month_names[month_str], max(1, day), tzinfo=AEST)
+                return int(dt.timestamp())
+    except (ValueError, IndexError):
+        pass
+
+    # Fallback: now
+    return int(datetime.now(tz=AEST).timestamp())
+
+
+def format_planted_label(date_str: str) -> str:
+    """Format first_planted date for plant asset name.
+
+    Examples:
+        "2025-04-25" → "25 APR 2025"
+        "April 2025" → "APR 2025"
+        "" → "SPRING 2025"
+    """
+    if not date_str:
+        return "SPRING 2025"
+
+    # ISO format: 2025-04-25
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        return dt.strftime("%-d %b %Y").upper()
+    except ValueError:
+        pass
+
+    # Text format: "April 2025"
+    try:
+        dt = datetime.strptime(date_str, "%B %Y")
+        return dt.strftime("%b %Y").upper()
+    except ValueError:
+        pass
+
+    return date_str.upper()
+
+
+def build_asset_name(planted_date: str, farmos_name: str, section_id: str) -> str:
+    """Build a plant asset name following farmOS conventions.
+
+    Format: "{planted_date_label} - {farmos_name} - {section_id}"
+    Example: "25 APR 2025 - Pigeon Pea - P2R2.0-3"
+    """
+    label = format_planted_label(planted_date)
+    return f"{label} - {farmos_name} - {section_id}"
+
+
+def format_timestamp(unix_ts) -> str:
+    """Format a Unix timestamp or ISO string to human-readable date."""
+    if not unix_ts:
+        return "unknown"
+
+    try:
+        if isinstance(unix_ts, str):
+            # farmOS returns timestamps as strings
+            ts = int(unix_ts)
+        else:
+            ts = int(unix_ts)
+        dt = datetime.fromtimestamp(ts, tz=AEST)
+        return dt.strftime("%Y-%m-%d %H:%M")
+    except (ValueError, TypeError, OSError):
+        return str(unix_ts)
+
+
+# ── farmOS response formatting ─────────────────────────────────
+
+def format_plant_asset(asset: dict) -> dict:
+    """Format a raw farmOS plant asset for clean tool output."""
+    attrs = asset.get("attributes", {})
+    rels = asset.get("relationships", {})
+
+    # Extract plant type name from relationship
+    plant_type_data = rels.get("plant_type", {}).get("data", [])
+    plant_type_ids = [pt.get("id", "") for pt in plant_type_data] if plant_type_data else []
+
+    # Parse the asset name to extract components
+    # Format: "{date} - {species} - {section_id}"
+    # Species can contain " - " (e.g., "Basil - Sweet (Classic)")
+    # Section is always LAST, date is always FIRST
+    name = attrs.get("name", "")
+    parts = name.split(" - ")
+    if len(parts) >= 3:
+        planted_date = parts[0]
+        section = parts[-1]
+        species = " - ".join(parts[1:-1])
+    elif len(parts) == 2:
+        planted_date = parts[0]
+        species = parts[1]
+        section = ""
+    else:
+        planted_date = ""
+        species = name
+        section = ""
+
+    # Extract notes
+    notes_raw = attrs.get("notes", {})
+    notes = ""
+    if isinstance(notes_raw, dict):
+        notes = notes_raw.get("value", "")
+    elif isinstance(notes_raw, str):
+        notes = notes_raw
+
+    return {
+        "id": asset.get("id", ""),
+        "name": name,
+        "species": species,
+        "section": section,
+        "planted_date": planted_date,
+        "status": attrs.get("status", ""),
+        "notes": notes,
+        "plant_type_ids": plant_type_ids,
+    }
+
+
+def format_log(log: dict) -> dict:
+    """Format a raw farmOS log for clean tool output."""
+    attrs = log.get("attributes", {})
+    rels = log.get("relationships", {})
+
+    # Extract notes
+    notes_raw = attrs.get("notes", {})
+    notes = ""
+    if isinstance(notes_raw, dict):
+        notes = notes_raw.get("value", "")
+    elif isinstance(notes_raw, str):
+        notes = notes_raw
+
+    # Extract log type from the type field
+    log_type = log.get("type", "").replace("log--", "")
+
+    # Extract associated asset names
+    asset_data = rels.get("asset", {}).get("data", [])
+    asset_ids = [a.get("id", "") for a in asset_data] if asset_data else []
+
+    # Extract location
+    location_data = rels.get("location", {}).get("data", [])
+    location_ids = [l.get("id", "") for l in location_data] if location_data else []
+
+    return {
+        "id": log.get("id", ""),
+        "name": attrs.get("name", ""),
+        "type": log_type,
+        "timestamp": format_timestamp(attrs.get("timestamp")),
+        "status": attrs.get("status", ""),
+        "is_movement": attrs.get("is_movement", False),
+        "notes": notes,
+        "asset_ids": asset_ids,
+        "location_ids": location_ids,
+    }
+
+
+def format_plant_type(term: dict) -> dict:
+    """Format a raw farmOS plant_type taxonomy term for clean output."""
+    attrs = term.get("attributes", {})
+
+    # Parse description for syntropic metadata
+    desc_raw = attrs.get("description", {})
+    description = ""
+    if isinstance(desc_raw, dict):
+        description = desc_raw.get("value", "")
+    elif isinstance(desc_raw, str):
+        description = desc_raw
+
+    # Extract syntropic metadata from description
+    # Format in farmOS: "**Key:** Value" (Markdown bold markers)
+    metadata = {}
+    if "Syntropic Agriculture Data" in description:
+        for line in description.split("\n"):
+            # Strip Markdown bold markers: "**Key:** Value" → "Key: Value"
+            clean = line.strip().replace("**", "")
+            if clean.startswith("Botanical Name:"):
+                metadata["botanical_name"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Strata:"):
+                metadata["strata"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Succession Stage:"):
+                metadata["succession_stage"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Functions:"):
+                metadata["functions"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Family:"):
+                metadata["family"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Lifespan:"):
+                metadata["lifespan"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Life Cycle:"):
+                metadata["lifecycle"] = clean.split(":", 1)[1].strip()
+            elif clean.startswith("Source:"):
+                metadata["source"] = clean.split(":", 1)[1].strip()
+
+    return {
+        "id": term.get("id", ""),
+        "name": attrs.get("name", ""),
+        "maturity_days": attrs.get("maturity_days"),
+        "transplant_days": attrs.get("transplant_days"),
+        **metadata,
+    }
+
+
+def format_section_from_assets(section_asset: dict, plant_assets: list) -> dict:
+    """Build a section summary from a land asset and its associated plant assets."""
+    attrs = section_asset.get("attributes", {})
+    section_id = attrs.get("name", "")
+
+    # Group plants by strata
+    plants = []
+    for plant in plant_assets:
+        formatted = format_plant_asset(plant)
+        plants.append({
+            "species": formatted["species"],
+            "planted_date": formatted["planted_date"],
+            "status": formatted["status"],
+            "notes": formatted["notes"],
+        })
+
+    return {
+        "id": section_id,
+        "uuid": section_asset.get("id", ""),
+        "status": attrs.get("status", ""),
+        "plant_count": len(plants),
+        "plants": plants,
+    }
