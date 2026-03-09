@@ -182,13 +182,13 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 - **Auth:** OAuth2 (credentials in .env, never in repo)
 - **API base:** https://margregen.farmos.net/api
 
-### Current State (as of March 9, 2026 — all 5 rows imported + historical logs)
+### Current State (as of March 9, 2026 — all 5 rows imported + historical + field observations)
 
 | Entity | Count | Notes |
 |--------|-------|-------|
-| Plant type taxonomy | **219** | 218 in CSV + 1 extra in farmOS |
-| Plant assets | **404** | All 5 rows imported (245 R1-R3 + 109 R4 + 50 R5) |
-| Observation logs | **~580** | 442 inventory + ~137 historical inventory |
+| Plant type taxonomy | **223** | 222 in CSV (218 v7 + 5 field obs additions) + 1 extra in farmOS |
+| Plant assets | **415+** | 404 original + 11 new from field observations |
+| Observation logs | **~650** | 442 inventory + ~137 historical + ~70 from field obs imports |
 | Transplanting logs | **~238** | 7 original + ~230 historical (planted + renovation) |
 | Activity logs | **63** | Various |
 | Land assets | 93 | Paddocks and rows fully mapped, including 37 sections (33 + 4 gap) |
@@ -714,12 +714,12 @@ FARMOS_PASSWORD=...
 
 ### Foundation Pipeline Scripts
 
-**export_farmos.py** (EXISTS — raw exporter; needs sections.json output format for Phase 1)
-Exports all farmOS data (assets, logs, taxonomy) as raw JSON files. Currently used for auditing and QR code generation. Phase 1 will add sections.json output format for site generation.
+**export_farmos.py** (FOUNDATION — enriched sections.json exporter, March 9, 2026)
+Exports farmOS data as raw JSON files OR as enriched sections.json for site generation. The sections.json mode queries live farmOS per-section with CONTAINS filters, enriches each plant with first_planted dates (from earliest transplanting log), log history, and farmOS-computed inventory counts.
 ```bash
-python scripts/export_farmos.py  # exports to exports/farmos_export_YYYYMMDD/
+python scripts/export_farmos.py                                              # raw export to exports/
+python scripts/export_farmos.py --sections-json --output site/src/data/sections.json --existing site/src/data/sections.json --plants knowledge/plant_types.csv  # enriched sections.json
 ```
-Phase 1 addition: `--output site/src/data/sections.json` for sections.json format.
 
 **import_fieldsheets.py** (BUILT — March 7, 2026; live import complete for all 5 rows)
 Imports sections.json data into farmOS: creates Plant assets, Quantity entities (inventory counts), and Observation logs (with movement to set location). Uses per-name API queries for idempotent existence checks.
@@ -1096,6 +1096,37 @@ Part 3 — farmOS Import:
 - farmOS pagination caps at ~250 entries — `fetch_all_paginated` is unreliable for large collections
 - Markdown bold `**` in farmOS descriptions must be stripped with `.replace("**", "")` not `.strip("*")`
 - Google Workspace accounts (fireflycorner.com.au) return 403 for anonymous POST to Apps Script — use personal account (fireflyagents.com) instead
+
+### March 9, 2026 (continued) — Observation Review + farmOS Import + Page Regeneration
+
+**Session 5: End-to-end observation review and import**
+- Built `/review-observations` skill for Claire's review workflow
+- Processed 86 field observations from March 9 field test
+- 131 approved → imported to farmOS (64 inventory updates, 11 new plant assets, 5 new types)
+- 4 rejected (invalid species, wrong section, zero counts)
+- New plant types added: Davidson Plum, Pear (Flordahome), Pear (Nashi), Pluot (Black Adder), Chilli (Devil's Brew)
+- Rose Apple reclassified from archived to active
+- Code.gs v2 deployed with review/approval workflow
+
+**Session 6: Page regeneration from farmOS (Phase 1 pipeline)**
+- Built enriched export: `export_farmos.py --sections-json` — queries live farmOS per-section
+  - Each plant enriched with first_planted (from earliest transplanting log), log history, farmOS inventory counts
+  - Uses CONTAINS filter + pagination for 412 plants, 924 logs across 37 sections
+  - farmOS inventory is a computed attribute on assets — no separate Quantity API calls needed
+- Updated `generate_site.py`: first_planted dates, log timelines in expanded cards
+  - First planted date shown in collapsed view below botanical name
+  - Log timeline in expanded detail: 🌱 Transplanting, 📊 Observation, 🔧 Activity with dates
+- Updated `observe.js`: Section Comment mode, Add New Plant (222 species search), Unknown Plant option
+- Regenerated 75 pages from live farmOS data
+- Fixed planted date confusion: use earliest transplanting log date, not asset name date
+- Pushed to GitHub Pages: commits `a34337f` and `48bf235`
+
+**Key learnings:**
+- farmOS inventory is computed on assets: `plant['attributes']['inventory']` — no separate API calls needed
+- farmOS JSON:API returns ISO timestamps (not Unix) when using raw HTTP — handle both in parsers
+- first_planted should come from earliest transplanting log, NOT the asset name date (renovation plants had wrong dates)
+- farmOS file upload: binary POST to `/api/log/{type}/{uuid}/image` with Content-Disposition header (not base64)
+- All assets and logs have `image` and `file` relationship fields as base fields
 
 ---
 
