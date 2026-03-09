@@ -73,6 +73,18 @@
 .obs-status-offline { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
 .obs-status-sending { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
 
+/* Add New Plant */
+.add-plant-trigger { width: 100%; padding: 12px; margin-top: 10px; background: #f7f6f0; border: 2px dashed #d1d5db; border-radius: 10px; font-size: 13px; font-weight: 600; color: #6b7280; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.add-plant-trigger:active { background: #eeeddf; border-color: #e67e22; color: #e67e22; }
+.add-plant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.add-plant-close-btn { background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; padding: 4px 8px; }
+.plant-search-results { max-height: 200px; overflow-y: auto; border: 1px solid #e5e5e0; border-radius: 8px; margin-top: 4px; display: none; }
+.plant-search-result { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f0f0ec; font-size: 13px; }
+.plant-search-result:hover { background: #f7f6f0; }
+.plant-search-result .search-species { font-weight: 600; color: #1a1a1a; }
+.plant-search-result .search-meta { font-size: 11px; color: #9ca3af; font-style: italic; }
+.new-plant-display { font-size: 14px; font-weight: 600; color: #1a1a1a; padding: 8px 0; }
+
 /* Navigation */
 .obs-nav { padding: 16px; text-align: center; }
 .obs-back-link { color: #e67e22; text-decoration: none; font-size: 14px; font-weight: 500; }

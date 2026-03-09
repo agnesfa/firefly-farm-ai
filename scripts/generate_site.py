@@ -145,16 +145,69 @@ def render_function_tag(fn):
     return f'<span class="fn-tag" style="background:{bg};color:{fg}">{emoji} {esc(fn)}</span>'
 
 
+def format_planted_date_display(iso_date: str) -> str:
+    """Format ISO date for human-readable display: '2025-04-25' → 'Apr 2025'."""
+    if not iso_date:
+        return ""
+    try:
+        from datetime import datetime as dt
+        d = dt.strptime(iso_date[:10], "%Y-%m-%d")
+        return d.strftime("%b %Y")
+    except (ValueError, IndexError):
+        return iso_date
+
+
+def render_log_timeline(logs: list) -> str:
+    """Render a compact log timeline for expanded plant card view."""
+    if not logs:
+        return ""
+
+    log_icons = {
+        "transplanting": "🌱",
+        "observation": "📊",
+        "activity": "🔧",
+        "harvest": "🧺",
+    }
+
+    items = []
+    for log in logs:
+        icon = log_icons.get(log.get("type", ""), "📋")
+        date = log.get("date", "")
+        try:
+            from datetime import datetime as dt
+            d = dt.strptime(date, "%Y-%m-%d")
+            date_display = d.strftime("%b %Y")
+        except (ValueError, TypeError):
+            date_display = date
+
+        log_type = log.get("type", "").replace("_", " ").title()
+        name = log.get("name", "")
+        # Shorten log name for display
+        short = name[:50] + "..." if len(name) > 50 else name
+
+        items.append(
+            f'<div class="log-entry">'
+            f'<span class="log-icon">{icon}</span>'
+            f'<span class="log-date">{esc(date_display)}</span>'
+            f'<span class="log-type">{esc(log_type)}</span>'
+            f'</div>'
+        )
+
+    return f'<div class="log-timeline"><div class="log-timeline-title">History</div>{"".join(items)}</div>'
+
+
 def render_plant_card(planting, plant_db):
     """Render a single plant card HTML."""
     species = planting["species"]
     strata = planting["strata"]
     count = planting.get("count")
     notes = planting.get("notes", "")
-    
+    first_planted = planting.get("first_planted", "")
+    logs = planting.get("logs", [])
+
     plant = plant_db.get(species, {})
     st = STRATA_CONFIG.get(strata, STRATA_CONFIG["medium"])
-    
+
     botanical = plant.get("botanical", "")
     desc = plant.get("description", "")
     family = plant.get("family", "")
@@ -170,20 +223,24 @@ def render_plant_card(planting, plant_db):
         count_html = f'<span class="plant-count" style="background:#f0ece4;color:#999">—</span>'
 
     notes_html = f'<div class="plant-notes">{esc(notes)}</div>' if notes else ""
-    
+
+    # First planted date (shown in collapsed view)
+    planted_display = format_planted_date_display(first_planted)
+    planted_html = f'<div class="plant-planted">Planted {esc(planted_display)}</div>' if planted_display else ""
+
     # Function tags (collapsed: show 3)
     tags_html = "".join(render_function_tag(fn) for fn in functions[:3])
     if len(functions) > 3:
         tags_html += f'<span class="fn-more">+{len(functions) - 3}</span>'
-    
+
     # Expanded detail
     all_tags_html = "".join(render_function_tag(fn) for fn in functions)
-    
+
     meta_parts = [family, origin]
     if lifespan:
         meta_parts.append(f"Lives {lifespan}")
     meta_html = " · ".join(p for p in meta_parts if p)
-    
+
     succession_html = ""
     succ_colors = {"pioneer": "#f59e0b", "secondary": "#3b82f6", "climax": "#2d5016"}
     if succession and succession in succ_colors:
@@ -194,13 +251,17 @@ def render_plant_card(planting, plant_db):
             "climax": "The permanent forest — long-lived trees that define the mature system",
         }
         succession_html = f'<div class="succession-tag" style="background:{sc}18;color:{sc}"><span class="succ-dot" style="background:{sc}"></span>{succession.title()} — {succ_labels.get(succession, "")}</div>'
-    
+
+    # Log timeline (expanded view)
+    timeline_html = render_log_timeline(logs)
+
     return f"""
     <div class="plant-card" style="border-left-color:{st['color']}" onclick="this.classList.toggle('expanded')">
       <div class="plant-header">
         <div class="plant-info">
           <div class="plant-name">{esc(species)}</div>
           <div class="plant-botanical">{esc(botanical)}</div>
+          {planted_html}
         </div>
         {count_html}
       </div>
@@ -211,6 +272,7 @@ def render_plant_card(planting, plant_db):
         <div class="plant-meta">{esc(meta_html)}</div>
         {succession_html}
         <div class="plant-tags-expanded">{all_tags_html}</div>
+        {timeline_html}
       </div>
     </div>"""
 
@@ -459,9 +521,20 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .fn-tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; white-space: nowrap; }
 .fn-more { font-size: 11px; color: #bbb; padding: 2px 4px; }
 
+/* Planted date */
+.plant-planted { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+
 /* Succession */
 .succession-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
 .succ-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Log timeline */
+.log-timeline { margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0ec; }
+.log-timeline-title { font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.log-entry { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; color: #6b7280; }
+.log-icon { font-size: 13px; flex-shrink: 0; }
+.log-date { font-weight: 500; min-width: 65px; color: #4b5563; }
+.log-type { color: #9ca3af; }
 
 /* Explainer */
 .explainer-toggle { margin: 16px; padding: 12px 16px; background: #f7f6f0; border-radius: 10px 10px 0 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5e0; border-bottom: none; }
@@ -524,7 +597,10 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
     for p in regular_plants:
         if p["species"] not in species_seen:
             species_seen.add(p["species"])
-            species_options += f'<option value="{esc(p["species"])}">{esc(p["species"])} ({p.get("count", 0)})</option>'
+            count_display = p.get("count") if p.get("count") is not None else "—"
+            species_options += f'<option value="{esc(p["species"])}">{esc(p["species"])} ({count_display})</option>'
+    # Add Unknown Plant option
+    species_options += '<option value="Unknown">❓ Unknown Plant</option>'
 
     # Build full inventory rows grouped by strata
     inventory_html = ""
@@ -577,8 +653,15 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
 
     # Build embedded section data as JSON for JS
     section_plants_json = json.dumps([
-        {"species": p["species"], "strata": p.get("strata", ""), "count": p.get("count", 0)}
+        {"species": p["species"], "strata": p.get("strata", ""), "count": p.get("count")}
         for p in regular_plants
+    ])
+
+    # Build plant types data for "Add New Plant" search (all species from plant_types.csv)
+    plant_types_json = json.dumps([
+        {"species": name, "strata": info.get("strata", "low"), "botanical": info.get("botanical", "")}
+        for name, info in sorted(plant_db.items())
+        if not name.startswith("[ARCHIVED]")
     ])
 
     endpoint_js = f'const OBSERVE_ENDPOINT = "{observe_endpoint}";' if observe_endpoint else 'const OBSERVE_ENDPOINT = "";'
@@ -628,6 +711,7 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
   <div class="mode-toggle">
     <button class="mode-tab active" data-mode="quick">⚡ Quick Report</button>
     <button class="mode-tab" data-mode="inventory">📋 Full Inventory</button>
+    <button class="mode-tab" data-mode="comment">💬 Section Note</button>
   </div>
 
   <!-- QUICK MODE -->
@@ -675,6 +759,7 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
       </div>
 
       <button id="quick-submit" class="obs-submit-btn">Save Observation</button>
+      <button id="add-plant-btn-quick" class="add-plant-trigger" onclick="showAddPlantPanel()">➕ Add New Plant to Section</button>
     </div>
   </div>
 
@@ -700,6 +785,72 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
       </div>
 
       <button id="inventory-submit" class="obs-submit-btn">Save Full Inventory</button>
+      <button id="add-plant-btn-inv" class="add-plant-trigger" onclick="showAddPlantPanel()">➕ Add New Plant to Section</button>
+    </div>
+  </div>
+
+  <!-- SECTION COMMENT MODE -->
+  <div id="mode-comment" class="obs-mode-panel" style="display:none">
+    <div class="obs-form-section">
+      <p class="obs-hint">Leave a general note about this section — no plant selection needed.</p>
+
+      <div class="obs-field-group">
+        <label class="obs-label" for="comment-notes">Section notes</label>
+        <textarea id="comment-notes" class="obs-textarea" rows="4" placeholder="Overall section health, weed pressure, weather conditions, general observations..."></textarea>
+      </div>
+
+      <!-- Photo capture -->
+      <div class="obs-media-area">
+        <label class="obs-media-btn">
+          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
+          <span>📷 Add Section Photo</span>
+        </label>
+        <div class="obs-photo-previews"></div>
+      </div>
+
+      <button id="comment-submit" class="obs-submit-btn">Save Section Note</button>
+    </div>
+  </div>
+
+  <!-- ADD NEW PLANT (hidden until triggered) -->
+  <div id="add-plant-panel" class="obs-form-section" style="display:none">
+    <div class="add-plant-header">
+      <span class="obs-label">Add New Plant to Section</span>
+      <button id="add-plant-close" class="add-plant-close-btn">✕</button>
+    </div>
+    <div class="obs-field-group">
+      <input type="text" id="plant-search" class="obs-input" placeholder="Search plant types..." autocomplete="off">
+      <div id="plant-search-results" class="plant-search-results"></div>
+    </div>
+    <div id="new-plant-fields" style="display:none">
+      <div class="obs-field-row">
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label">Species</label>
+          <div id="new-plant-species" class="new-plant-display"></div>
+        </div>
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label">Strata</label>
+          <div id="new-plant-strata" class="new-plant-display"></div>
+        </div>
+      </div>
+      <div class="obs-field-row">
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="new-plant-count">Count</label>
+          <input type="number" id="new-plant-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+        </div>
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="new-plant-condition">Condition</label>
+          <select id="new-plant-condition" class="obs-select">
+            <option value="alive">Alive ✓</option>
+            <option value="damaged">Damaged ⚠️</option>
+          </select>
+        </div>
+      </div>
+      <div class="obs-field-group">
+        <label class="obs-label" for="new-plant-notes">Notes</label>
+        <input type="text" id="new-plant-notes" class="obs-input" placeholder="When planted, description, etc.">
+      </div>
+      <button id="new-plant-submit" class="obs-submit-btn">Save New Plant Observation</button>
     </div>
   </div>
 
@@ -726,6 +877,7 @@ const SECTION_DATA = {{
   row: {section.get('row', 0)},
   plants: {section_plants_json}
 }};
+const PLANT_TYPES_DATA = {plant_types_json};
 {endpoint_js}
 </script>
 <script src="{base_url}observe.js"></script>
@@ -809,6 +961,18 @@ def get_observe_css():
 .obs-status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 .obs-status-offline { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
 .obs-status-sending { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+/* Add New Plant */
+.add-plant-trigger { width: 100%; padding: 12px; margin-top: 10px; background: #f7f6f0; border: 2px dashed #d1d5db; border-radius: 10px; font-size: 13px; font-weight: 600; color: #6b7280; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.add-plant-trigger:active { background: #eeeddf; border-color: #e67e22; color: #e67e22; }
+.add-plant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.add-plant-close-btn { background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; padding: 4px 8px; }
+.plant-search-results { max-height: 200px; overflow-y: auto; border: 1px solid #e5e5e0; border-radius: 8px; margin-top: 4px; display: none; }
+.plant-search-result { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f0f0ec; font-size: 13px; }
+.plant-search-result:hover { background: #f7f6f0; }
+.plant-search-result .search-species { font-weight: 600; color: #1a1a1a; }
+.plant-search-result .search-meta { font-size: 11px; color: #9ca3af; font-style: italic; }
+.new-plant-display { font-size: 14px; font-weight: 600; color: #1a1a1a; padding: 8px 0; }
 
 /* Navigation */
 .obs-nav { padding: 16px; text-align: center; }

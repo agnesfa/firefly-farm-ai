@@ -74,6 +74,38 @@ function initObservePage() {
     });
   }
 
+  // Section comment submit
+  var commentSubmit = document.getElementById("comment-submit");
+  if (commentSubmit) {
+    commentSubmit.addEventListener("click", function (e) {
+      e.preventDefault();
+      submitSectionComment();
+    });
+  }
+
+  // Add New Plant panel
+  var plantCloseBtn = document.getElementById("add-plant-close");
+  if (plantCloseBtn) {
+    plantCloseBtn.addEventListener("click", function () {
+      hideAddPlantPanel();
+    });
+  }
+
+  var plantSearch = document.getElementById("plant-search");
+  if (plantSearch) {
+    plantSearch.addEventListener("input", function () {
+      filterPlantTypes(this.value);
+    });
+  }
+
+  var newPlantSubmit = document.getElementById("new-plant-submit");
+  if (newPlantSubmit) {
+    newPlantSubmit.addEventListener("click", function (e) {
+      e.preventDefault();
+      submitNewPlantObservation();
+    });
+  }
+
   // Photo capture handlers
   initPhotoCapture();
 
@@ -86,6 +118,7 @@ function initObservePage() {
 function switchMode(mode) {
   var quickPanel = document.getElementById("mode-quick");
   var inventoryPanel = document.getElementById("mode-inventory");
+  var commentPanel = document.getElementById("mode-comment");
   var tabs = document.querySelectorAll(".mode-tab");
 
   tabs.forEach(function (tab) {
@@ -94,6 +127,10 @@ function switchMode(mode) {
 
   if (quickPanel) quickPanel.style.display = mode === "quick" ? "block" : "none";
   if (inventoryPanel) inventoryPanel.style.display = mode === "inventory" ? "block" : "none";
+  if (commentPanel) commentPanel.style.display = mode === "comment" ? "block" : "none";
+
+  // Hide add-plant panel when switching modes
+  hideAddPlantPanel();
 }
 
 // ─── QUICK OBSERVATION ──────────────────────────────────────
@@ -102,6 +139,16 @@ function updateQuickPlantInfo(species) {
   var infoDiv = document.getElementById("quick-plant-info");
   if (!infoDiv || !species) {
     if (infoDiv) infoDiv.innerHTML = "";
+    return;
+  }
+
+  // Handle Unknown Plant selection
+  if (species === "Unknown") {
+    infoDiv.innerHTML =
+      '<div class="quick-info-row">' +
+      '<span class="quick-info-label">Unknown plant</span> ' +
+      '<span class="quick-info-value">Describe in notes + add photo</span>' +
+      "</div>";
     return;
   }
 
@@ -141,9 +188,11 @@ function collectQuickData() {
     return null;
   }
 
-  // Find plant info from SECTION_DATA
+  var isUnknown = species.value === "Unknown";
+
+  // Find plant info from SECTION_DATA (not applicable for Unknown)
   var plant = null;
-  if (typeof SECTION_DATA !== "undefined" && SECTION_DATA.plants) {
+  if (!isUnknown && typeof SECTION_DATA !== "undefined" && SECTION_DATA.plants) {
     for (var i = 0; i < SECTION_DATA.plants.length; i++) {
       if (SECTION_DATA.plants[i].species === species.value) {
         plant = SECTION_DATA.plants[i];
@@ -155,7 +204,7 @@ function collectQuickData() {
   var obs = {
     species: species.value,
     strata: plant ? plant.strata : "",
-    previous_count: plant ? (plant.count || 0) : 0,
+    previous_count: isUnknown ? 0 : (plant ? (plant.count || 0) : 0),
     condition: condition ? condition.value : "alive",
     notes: notes ? notes.value.trim() : "",
   };
@@ -228,6 +277,181 @@ function submitInventoryObservation() {
   var data = collectInventoryData();
   if (!data) return;
   submitObservation(data);
+}
+
+// ─── SECTION COMMENT ──────────────────────────────────────────
+
+function submitSectionComment() {
+  var commentNotes = document.getElementById("comment-notes");
+  if (!commentNotes || !commentNotes.value.trim()) {
+    showStatus("error", "Please enter a section note.");
+    return;
+  }
+
+  submitObservation({
+    observations: [],
+    section_notes: commentNotes.value.trim(),
+    mode: "comment",
+  });
+}
+
+// ─── ADD NEW PLANT ──────────────────────────────────────────
+
+function showAddPlantPanel() {
+  var panel = document.getElementById("add-plant-panel");
+  if (panel) {
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    var searchInput = document.getElementById("plant-search");
+    if (searchInput) {
+      searchInput.value = "";
+      searchInput.focus();
+    }
+    // Reset fields
+    var fieldsDiv = document.getElementById("new-plant-fields");
+    if (fieldsDiv) fieldsDiv.style.display = "none";
+    var resultsDiv = document.getElementById("plant-search-results");
+    if (resultsDiv) {
+      resultsDiv.style.display = "none";
+      resultsDiv.innerHTML = "";
+    }
+  }
+}
+
+function hideAddPlantPanel() {
+  var panel = document.getElementById("add-plant-panel");
+  if (panel) panel.style.display = "none";
+  var searchInput = document.getElementById("plant-search");
+  if (searchInput) searchInput.value = "";
+  var resultsDiv = document.getElementById("plant-search-results");
+  if (resultsDiv) {
+    resultsDiv.style.display = "none";
+    resultsDiv.innerHTML = "";
+  }
+  var fieldsDiv = document.getElementById("new-plant-fields");
+  if (fieldsDiv) fieldsDiv.style.display = "none";
+}
+
+function filterPlantTypes(query) {
+  var resultsDiv = document.getElementById("plant-search-results");
+  if (!resultsDiv) return;
+
+  query = query.trim().toLowerCase();
+  if (query.length < 2) {
+    resultsDiv.style.display = "none";
+    resultsDiv.innerHTML = "";
+    return;
+  }
+
+  // Filter from PLANT_TYPES_DATA (embedded in page)
+  var plantTypes = typeof PLANT_TYPES_DATA !== "undefined" ? PLANT_TYPES_DATA : [];
+  var matches = [];
+  for (var i = 0; i < plantTypes.length; i++) {
+    var pt = plantTypes[i];
+    var speciesLower = (pt.species || "").toLowerCase();
+    var botanicalLower = (pt.botanical || "").toLowerCase();
+    if (speciesLower.indexOf(query) !== -1 || botanicalLower.indexOf(query) !== -1) {
+      matches.push(pt);
+      if (matches.length >= 15) break;
+    }
+  }
+
+  if (matches.length === 0) {
+    resultsDiv.innerHTML =
+      '<div class="plant-search-result" style="color:#9ca3af;cursor:default">No matches found</div>';
+    resultsDiv.style.display = "block";
+    return;
+  }
+
+  var html = "";
+  for (var j = 0; j < matches.length; j++) {
+    var m = matches[j];
+    var escapedSpecies = escapeHtml(m.species);
+    var escapedBotanical = escapeHtml(m.botanical || "");
+    var escapedStrata = escapeHtml(m.strata || "");
+    html +=
+      '<div class="plant-search-result" data-species="' + escapedSpecies +
+      '" data-strata="' + escapedStrata +
+      '" data-botanical="' + escapedBotanical +
+      '" onclick="selectNewPlant(this)">' +
+      '<div class="search-species">' + escapedSpecies + '</div>' +
+      '<div class="search-meta">' + escapedBotanical +
+      (escapedStrata ? " · " + escapedStrata : "") + '</div>' +
+      '</div>';
+  }
+
+  resultsDiv.innerHTML = html;
+  resultsDiv.style.display = "block";
+}
+
+function selectNewPlant(el) {
+  var species = el.dataset.species;
+  var strata = el.dataset.strata;
+
+  // Show selection in display fields
+  var speciesDisplay = document.getElementById("new-plant-species");
+  var strataDisplay = document.getElementById("new-plant-strata");
+  if (speciesDisplay) speciesDisplay.textContent = species;
+  if (strataDisplay) strataDisplay.textContent = strata || "—";
+
+  // Store selection data
+  var fieldsDiv = document.getElementById("new-plant-fields");
+  if (fieldsDiv) {
+    fieldsDiv.style.display = "block";
+    fieldsDiv.dataset.selectedSpecies = species;
+    fieldsDiv.dataset.selectedStrata = strata;
+  }
+
+  // Hide search results
+  var resultsDiv = document.getElementById("plant-search-results");
+  if (resultsDiv) resultsDiv.style.display = "none";
+
+  // Update search input with selection
+  var searchInput = document.getElementById("plant-search");
+  if (searchInput) searchInput.value = species;
+
+  // Focus count input
+  var countInput = document.getElementById("new-plant-count");
+  if (countInput) countInput.focus();
+}
+
+function submitNewPlantObservation() {
+  var fieldsDiv = document.getElementById("new-plant-fields");
+  if (!fieldsDiv || !fieldsDiv.dataset.selectedSpecies) {
+    showStatus("error", "Please search and select a plant species first.");
+    return;
+  }
+
+  var countInput = document.getElementById("new-plant-count");
+  var conditionSelect = document.getElementById("new-plant-condition");
+  var notesInput = document.getElementById("new-plant-notes");
+
+  var obs = {
+    species: fieldsDiv.dataset.selectedSpecies,
+    strata: fieldsDiv.dataset.selectedStrata || "",
+    previous_count: 0,
+    new_count: countInput && countInput.value !== "" ? parseFloat(countInput.value) : null,
+    condition: conditionSelect ? conditionSelect.value : "alive",
+    notes: notesInput ? notesInput.value.trim() : "",
+    is_new_plant: true,
+  };
+
+  if (obs.new_count === null) {
+    showStatus("error", "Please enter the count for the new plant.");
+    return;
+  }
+
+  submitObservation({
+    observations: [obs],
+    section_notes: "",
+    mode: "new_plant",
+  });
+}
+
+function escapeHtml(text) {
+  var div = document.createElement("div");
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
 }
 
 // ─── SUBMISSION ──────────────────────────────────────────────
@@ -538,7 +762,7 @@ function resetForm(mode) {
     if (notes) notes.value = "";
     var infoDiv = document.getElementById("quick-plant-info");
     if (infoDiv) infoDiv.innerHTML = "";
-  } else {
+  } else if (mode === "inventory") {
     // Full inventory: clear all inputs
     var inputs = document.querySelectorAll(
       ".inv-count-input, .inv-note-input"
@@ -550,9 +774,14 @@ function resetForm(mode) {
     conditions.forEach(function (sel) {
       sel.value = "alive";
     });
+  } else if (mode === "comment") {
+    var commentNotes = document.getElementById("comment-notes");
+    if (commentNotes) commentNotes.value = "";
+  } else if (mode === "new_plant") {
+    hideAddPlantPanel();
   }
 
-  // Clear section notes
+  // Clear section notes (for modes that have them)
   var sectionNotes = document.getElementById("section-notes-" + mode);
   if (sectionNotes) sectionNotes.value = "";
 
