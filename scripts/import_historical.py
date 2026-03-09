@@ -69,6 +69,15 @@ HISTORICAL_TO_CURRENT = {
     "P2R3.21-26": None,  # no current section
     "P2R3.26-37": "P2R3.26-38",
     "P2R3.41-63": ["P2R3.40-50", "P2R3.50-62"],
+    # R4 (spring planting tabs use different boundaries than current)
+    "P2R4.0-1":   "P2R4.0-2",
+    "P2R4.6-13":  "P2R4.6-14",
+    "P2R4.20-27": "P2R4.20-30",
+    "P2R4.35-44": "P2R4.40-49",
+    # R5 (Kolala Day + early plantings map to current sections)
+    "P2R5.0-8":   "P2R5.0-8",
+    "P2R5.14-22": "P2R5.14-22",
+    "P2R5.29-38": "P2R5.29-38",
 }
 
 # ── Additional species overrides for renovation spreadsheets ────────────
@@ -239,6 +248,32 @@ HISTORICAL_SPECIES_OVERRIDES = {
     "GUAVA": "Guava (Strawberry)",
     "Guava": "Guava (Strawberry)",
     "guava": "Guava (Strawberry)",
+    # R4 spring planting tab names
+    "Sweet potato": "Sweet Potato",
+    "tree lucerne": "Tagasaste - Tree Lucerne",
+    "tree lucerne seedling ffc": "Tagasaste - Tree Lucerne",
+    "Sweet basil": "Basil - Sweet (Classic)",
+    "Cape Gooseberry": "Cape Gooseberry",
+    "Pigeon pea": "Pigeon Pea",
+    "Pigeon Pea": "Pigeon Pea",
+    "oregano": "Oregano",
+    "Ice ream bean": "Ice Cream Bean",
+    "Ice-cream bean": "Ice Cream Bean",
+    "Ice cream bean": "Ice Cream Bean",
+    "Tamarin": "Tamarind",
+    "Tomato": "Tomato (Marmande)",
+    "Tomatoes": "Tomato (Marmande)",
+    "tomatoes": "Tomato (Marmande)",
+    # R5 Kolala Day native species
+    "Rough barked apple": "Rough Barked Apple",
+    "Prickly-leaved paperbark or prickly tea-tree": "Prickly-leaved Paperbark",
+    "Black she-oak": None,  # Allocasuarina littoralis — no farmOS asset (dead)
+    "Flax-leaved paperbark, snow in summer": None,  # Melaleuca linariifolia — dead
+    "Prickly-leaved paperbark, prickly tea-tree": None,  # Melaleuca Nodosa — uninventoried
+    "White Feather, Honey Myrtle": None,  # Melaleuca decora — uninventoried
+    # R5 early plantings (text dates)
+    "Apple tree seedling": "Apple",
+    "Avocado tree seedling": "Avocado",
 }
 
 # Non-plant rows to skip in renovation sheets
@@ -254,6 +289,8 @@ SKIP_ROWS = {
 
 R2_FILE = "2025.SPRING.P2R2.0-46.INVENTORYandRENOVATION (2).xlsx"
 R3_FILE = "P2R3.0-63.2025.SPRING.INVENTORYandRENOVATION (2).xlsx"
+R4_SPRING_FILE = "P2R4.2025.SPRING.INVENTORY.xlsx"
+R5_FILE = "P2R5.JAN2026.REGISTRATION.xlsx"
 
 TAB_REGISTRY = {
     # R1 tabs (in the R2 file)
@@ -276,6 +313,15 @@ TAB_REGISTRY = {
     (R3_FILE, "P2R3.14-21.2025SpringRenovation"):     ("r3", "P2R3.14-21"),
     (R3_FILE, "P2R3.26-37.SpringRenovation"):         ("r3", "P2R3.26-37"),
     (R3_FILE, "P2R3.41-63.SpringRenovation"):         ("r3_shifted", "P2R3.41-63"),
+    # R4 spring planting tabs (registration format — different from renovation)
+    (R4_SPRING_FILE, "P2R4.0-1.2025spring.PlantnSeed"):  ("r4_spring", "P2R4.0-1"),
+    (R4_SPRING_FILE, "P2R4.6-13.2025spring.PlantnS"):    ("r4_spring_g", "P2R4.6-13"),
+    (R4_SPRING_FILE, "P2R4.20-27.2025spring.PlantnS"):   ("r4_spring_shifted", "P2R4.20-27"),
+    (R4_SPRING_FILE, "P2R4.35-44.2025spring.PlantnS"):   ("r4_spring_g", "P2R4.35-44"),
+    # R5 historical planting entries (in the main registration file)
+    (R5_FILE, "P2R5.0-8.JANV.2026"):       ("r5_historical", "P2R5.0-8"),
+    (R5_FILE, "P2R5.14-22.JANV.2026"):     ("r5_historical", "P2R5.14-22"),
+    (R5_FILE, "P2R5.29-38.JANV.2026"):     ("r5_historical", "P2R5.29-38"),
 }
 
 
@@ -480,6 +526,159 @@ def parse_renovation_tab(ws, fmt, historical_id):
         "inventory_date": inventory_date,
         "renovation_date": renovation_date,
         "plants": plants,
+    }
+
+
+def parse_r4_spring_tab(ws, fmt, historical_id):
+    """Parse an R4 spring planting tab (registration format).
+
+    fmt: 'r4_spring'        — qty in F, date in H (tab 0-1)
+         'r4_spring_g'      — plant qty in G, seed qty in F, date in H (tabs 6-13, 35-44)
+         'r4_spring_shifted' — mixed F/G, date in J (tab 20-27)
+    """
+    # Determine column positions
+    if fmt == "r4_spring_shifted":
+        col_date = 10     # J
+        col_origin = 11   # K
+    else:
+        col_date = 8      # H
+        col_origin = 9    # I
+
+    plants = []
+
+    for row in range(5, ws.max_row + 1):
+        species_raw = ws.cell(row, 1).value  # Col A
+        if not species_raw or is_skip_row(str(species_raw)):
+            continue
+        species_raw = str(species_raw).strip()
+        if not species_raw or species_raw.lower() in ("rjukn", "rjunk"):
+            continue
+
+        ps_val = ws.cell(row, 5).value  # Col E: P/S/tubercule
+        ps_str = str(ps_val).strip().upper() if ps_val else ""
+
+        # Skip seed entries (S) — we only want plants
+        if ps_str == "S":
+            continue
+
+        # Get quantity — try both F and G, prefer the numeric one
+        f_val = ws.cell(row, 6).value  # Col F
+        g_val = ws.cell(row, 7).value  # Col G
+
+        count = None
+        if fmt == "r4_spring":
+            # Tab 0-1: qty always in F
+            count, _ = parse_count_cell(f_val)
+        elif fmt == "r4_spring_g":
+            # Tabs 6-13, 35-44: plant qty in G
+            count, _ = parse_count_cell(g_val)
+            if count is None:
+                count, _ = parse_count_cell(f_val)
+        elif fmt == "r4_spring_shifted":
+            # Tab 20-27: mixed — try F first, then G
+            count, _ = parse_count_cell(f_val)
+            if count is None:
+                count, _ = parse_count_cell(g_val)
+
+        # Get planting date
+        planting_date = parse_date_cell(ws.cell(row, col_date).value)
+
+        # Get origin
+        origin_val = ws.cell(row, col_origin).value
+        origin = str(origin_val).strip() if origin_val else ""
+
+        if count is not None and count > 0:
+            plants.append({
+                "species_raw": species_raw,
+                "strata": None,
+                "initial_count": count,
+                "inventory_count": None,
+                "inventory_notes": "",
+                "renovation_count": None,
+                "renovation_notes": "",
+                "extra_notes": f"Origin: {origin}" if origin else "",
+                "planting_date": planting_date,
+            })
+
+    return {
+        "historical_id": historical_id,
+        "inventory_date": None,
+        "renovation_date": None,
+        "plants": plants,
+        "format": "r4_spring",
+    }
+
+
+def parse_r5_historical(ws, fmt, historical_id):
+    """Parse R5 tabs for historical entries predating the main Dec 30 planting.
+
+    Finds entries where Col H date is before December 2025 (Kolala Day,
+    May-June 2025 early plantings).
+    """
+    plants = []
+    dec_cutoff = datetime(2025, 12, 1)
+
+    for row in range(5, ws.max_row + 1):
+        species_raw = ws.cell(row, 1).value  # Col A
+        if not species_raw:
+            continue
+        species_raw = str(species_raw).strip()
+        if not species_raw or is_skip_row(species_raw):
+            continue
+
+        ps_val = ws.cell(row, 5).value  # Col E: P/S
+        ps_str = str(ps_val).strip().upper() if ps_val else ""
+        if ps_str == "S":
+            continue
+
+        date_val = ws.cell(row, 8).value  # Col H
+        planting_date = None
+        is_historical = False
+
+        if isinstance(date_val, datetime):
+            if date_val < dec_cutoff:
+                planting_date = date_val
+                is_historical = True
+        elif isinstance(date_val, str):
+            s = date_val.strip().lower()
+            if "may" in s or "june" in s or "jun" in s:
+                planting_date = datetime(2025, 5, 15)  # approximate
+                is_historical = True
+
+        if not is_historical:
+            continue
+
+        # Get quantity planted (Col F)
+        qty_val = ws.cell(row, 6).value
+        count, _ = parse_count_cell(qty_val)
+
+        # Get inventory count (Col I) for notes
+        inv_val = ws.cell(row, 9).value
+        inv_count, _ = parse_count_cell(inv_val)
+
+        # Get origin (Col J)
+        origin_val = ws.cell(row, 10).value
+        origin = str(origin_val).strip() if origin_val else ""
+
+        if count is not None and count > 0:
+            plants.append({
+                "species_raw": species_raw,
+                "strata": None,
+                "initial_count": count,
+                "inventory_count": None,
+                "inventory_notes": "",
+                "renovation_count": None,
+                "renovation_notes": "",
+                "extra_notes": f"Origin: {origin}" if origin else "",
+                "planting_date": planting_date,
+            })
+
+    return {
+        "historical_id": historical_id,
+        "inventory_date": None,
+        "renovation_date": None,
+        "plants": plants,
+        "format": "r5_historical",
     }
 
 
@@ -708,7 +907,14 @@ class HistoricalImporter:
                 continue
 
             ws = wb[tab_name]
-            section_data = parse_renovation_tab(ws, fmt, hist_id)
+
+            # Dispatch to appropriate parser
+            if fmt.startswith("r4_spring"):
+                section_data = parse_r4_spring_tab(ws, fmt, hist_id)
+            elif fmt == "r5_historical":
+                section_data = parse_r5_historical(ws, fmt, hist_id)
+            else:
+                section_data = parse_renovation_tab(ws, fmt, hist_id)
 
             # Map to current section(s)
             current = HISTORICAL_TO_CURRENT.get(hist_id)
@@ -819,14 +1025,18 @@ class HistoricalImporter:
                     log_name = f"Planted {current_id} — {farmos_name}"
                     notes = plant.get("extra_notes", "")
 
+                    # Use per-plant date if available (R4/R5), else section-level date
+                    plant_date = plant.get("planting_date") or initial_date
+
                     if self.dry_run:
-                        print(f"    + PLANTED: {farmos_name} (count: {plant['initial_count']})")
+                        date_str = plant_date.strftime("%Y-%m-%d") if plant_date else "unknown"
+                        print(f"    + PLANTED: {farmos_name} (count: {plant['initial_count']}, date: {date_str})")
                         self.stats["planted_logs"] += 1
                     else:
                         if self.log_exists("transplanting", log_name):
                             self.stats["skipped"] += 1
                         else:
-                            ts = to_timestamp(initial_date)
+                            ts = to_timestamp(plant_date)
                             log_id = self.create_log(
                                 "transplanting", plant_uuid, section_uuid, ts,
                                 log_name, count=plant["initial_count"],
