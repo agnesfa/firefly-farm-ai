@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fastmcp import FastMCP
 
 from farmos_client import FarmOSClient
+from observe_client import ObservationClient
 from helpers import (
     parse_date,
     format_planted_label,
@@ -54,6 +55,7 @@ with 33 sections containing 404 plant assets and 219 plant species.
 
 Use the available tools to query plants, sections, logs, and plant types.
 Use write tools to create observations, activities, and new plant records.
+Use observation tools to review and import field observations from the Sheet.
 
 Key concepts:
 - Sections are identified like P2R3.14-21 (Paddock 2, Row 3, metres 14-21)
@@ -63,8 +65,9 @@ Key concepts:
 """,
 )
 
-# Global farmOS client — connects lazily on first use
+# Global clients — connect lazily on first use
 _client: Optional[FarmOSClient] = None
+_observe_client: Optional[ObservationClient] = None
 
 
 def get_client() -> FarmOSClient:
@@ -74,6 +77,15 @@ def get_client() -> FarmOSClient:
         _client = FarmOSClient()
         _client.connect()
     return _client
+
+
+def get_observe_client() -> ObservationClient:
+    """Get or create the observation Sheet client connection."""
+    global _observe_client
+    if _observe_client is None or not _observe_client.is_connected:
+        _observe_client = ObservationClient()
+        _observe_client.connect()
+    return _observe_client
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -669,6 +681,332 @@ def create_plant(
             "name": log_name,
         },
         "notes": notes,
+    }, indent=2)
+
+
+# ═══════════════════════════════════════════════════════════════
+# TOOLS — Observation management (Sheet ↔ farmOS bridge)
+# ═══════════════════════════════════════════════════════════════
+
+@mcp.tool
+def list_observations(
+    status: Optional[str] = None,
+    section: Optional[str] = None,
+    observer: Optional[str] = None,
+    date: Optional[str] = None,
+) -> str:
+    """List field observations from the observation sheet.
+
+    Workers submit observations via QR code pages. This tool queries those
+    observations from the Google Sheet, grouped by submission.
+
+    Args:
+        status: Filter by status (pending, reviewed, approved, imported, rejected). Optional.
+        section: Filter by section ID (e.g., "P2R3.14-21"). Optional.
+        observer: Filter by observer name. Optional.
+        date: Filter by date (YYYY-MM-DD). Optional.
+
+    Returns:
+        Observations grouped by submission with summary.
+    """
+    obs_client = get_observe_client()
+    result = obs_client.list_observations(
+        status=status, section=section, observer=observer, date=date,
+    )
+
+    if not result.get("success"):
+        return json.dumps({"error": result.get("error", "Failed to fetch observations")})
+
+    observations = result.get("observations", [])
+
+    # Group by submission_id
+    submissions = {}
+    for obs in observations:
+        sid = obs.get("submission_id", "unknown")
+        if sid not in submissions:
+            submissions[sid] = {
+                "submission_id": sid,
+                "section_id": obs.get("section_id", ""),
+                "observer": obs.get("observer", ""),
+                "timestamp": obs.get("timestamp", ""),
+                "mode": obs.get("mode", ""),
+                "status": obs.get("status", ""),
+                "section_notes": obs.get("section_notes", ""),
+                "plants": [],
+            }
+        if obs.get("species"):
+            submissions[sid]["plants"].append({
+                "species": obs["species"],
+                "strata": obs.get("strata", ""),
+                "previous_count": obs.get("previous_count"),
+                "new_count": obs.get("new_count"),
+                "condition": obs.get("condition", ""),
+                "notes": obs.get("plant_notes", ""),
+            })
+
+    grouped = list(submissions.values())
+    # Sort by timestamp descending
+    grouped.sort(key=lambda s: s.get("timestamp", ""), reverse=True)
+
+    return json.dumps({
+        "filters": {"status": status, "section": section, "observer": observer, "date": date},
+        "total_observations": len(observations),
+        "total_submissions": len(grouped),
+        "submissions": grouped,
+    }, indent=2)
+
+
+@mcp.tool
+def update_observation_status(
+    submission_id: str,
+    new_status: str,
+    reviewer: str,
+    notes: str = "",
+) -> str:
+    """Update the review status of field observations.
+
+    Use this after reviewing observations to mark them as reviewed, approved, or rejected.
+
+    Args:
+        submission_id: The submission ID to update (all rows with this ID).
+        new_status: New status: reviewed, approved, rejected, or imported.
+        reviewer: Name of the reviewer (e.g., "Claire", "Agnes", "James").
+        notes: Review notes. Optional.
+
+    Returns:
+        Update confirmation with count of rows changed.
+    """
+    valid_statuses = ["reviewed", "approved", "rejected", "imported"]
+    if new_status not in valid_statuses:
+        return json.dumps({
+            "error": f"Invalid status '{new_status}'. Must be one of: {', '.join(valid_statuses)}"
+        })
+
+    obs_client = get_observe_client()
+    result = obs_client.update_status([{
+        "submission_id": submission_id,
+        "status": new_status,
+        "reviewer": reviewer,
+        "notes": notes,
+    }])
+
+    if not result.get("success"):
+        return json.dumps({"error": result.get("error", "Failed to update status")})
+
+    return json.dumps({
+        "status": "updated",
+        "submission_id": submission_id,
+        "new_status": new_status,
+        "reviewer": reviewer,
+        "notes": notes,
+        "rows_updated": result.get("updated", 0),
+    }, indent=2)
+
+
+@mcp.tool
+def import_observations(
+    submission_id: str,
+    reviewer: str = "Claude",
+    dry_run: bool = False,
+) -> str:
+    """Import approved/reviewed observations from the Sheet into farmOS.
+
+    Fetches observations for the submission, validates against farmOS,
+    creates appropriate logs/assets, and updates Sheet status to imported.
+
+    Args:
+        submission_id: The submission ID to import.
+        reviewer: Who is performing the import. Default "Claude".
+        dry_run: If true, show what would happen without making changes. Default false.
+
+    Returns:
+        Import results: what was created/updated in farmOS, any errors.
+    """
+    obs_client = get_observe_client()
+    client = get_client()
+
+    # Fetch observations for this submission
+    result = obs_client.list_observations(submission_id=submission_id)
+    if not result.get("success"):
+        return json.dumps({"error": result.get("error", "Failed to fetch observations")})
+
+    observations = result.get("observations", [])
+    if not observations:
+        return json.dumps({"error": f"No observations found for submission '{submission_id}'"})
+
+    # Validate status — must be reviewed or approved
+    statuses = set(obs.get("status") for obs in observations)
+    if statuses - {"reviewed", "approved"}:
+        return json.dumps({
+            "error": f"Submission has unexpected statuses: {statuses}. "
+                     "Only 'reviewed' or 'approved' observations can be imported.",
+        })
+
+    section_id = observations[0].get("section_id", "")
+    mode = observations[0].get("mode", "")
+    obs_date = observations[0].get("timestamp", "")[:10]  # YYYY-MM-DD
+
+    actions = []
+    errors = []
+
+    for obs in observations:
+        species = obs.get("species", "").strip()
+        new_count = obs.get("new_count")
+        previous_count = obs.get("previous_count")
+        condition = obs.get("condition", "")
+        plant_notes = obs.get("plant_notes", "")
+        section_notes = obs.get("section_notes", "")
+        obs_section = obs.get("section_id", section_id)
+        obs_mode = obs.get("mode", mode)
+
+        # Case A: Section comment only (no species)
+        if not species and section_notes:
+            action = {
+                "type": "activity",
+                "section": obs_section,
+                "notes": section_notes,
+            }
+            if not dry_run:
+                try:
+                    result_json = json.loads(create_activity(
+                        section_id=obs_section,
+                        activity_type="observation",
+                        notes=f"Field note: {section_notes}",
+                        date=obs_date or None,
+                    ))
+                    action["result"] = result_json.get("status", "unknown")
+                    action["log_id"] = result_json.get("log_id")
+                except Exception as e:
+                    action["result"] = "error"
+                    errors.append(f"Activity for {obs_section}: {e}")
+            else:
+                action["result"] = "dry_run"
+            actions.append(action)
+            continue
+
+        # Skip rows with no species (e.g., empty padding rows)
+        if not species:
+            continue
+
+        # Case B: New plant (mode=new_plant or inferred from previous_count=0)
+        if obs_mode == "new_plant" or (previous_count == 0 and new_count and new_count > 0):
+            count = int(new_count) if new_count else 1
+            action = {
+                "type": "create_plant",
+                "species": species,
+                "section": obs_section,
+                "count": count,
+                "notes": plant_notes,
+            }
+            if not dry_run:
+                try:
+                    result_json = json.loads(create_plant(
+                        species=species,
+                        section_id=obs_section,
+                        count=count,
+                        planted_date=obs_date or None,
+                        notes=plant_notes or f"Added via field observation",
+                    ))
+                    action["result"] = result_json.get("status", "unknown")
+                    action["plant_name"] = result_json.get("plant", {}).get("name")
+                except Exception as e:
+                    action["result"] = "error"
+                    errors.append(f"Create {species} in {obs_section}: {e}")
+            else:
+                action["result"] = "dry_run"
+            actions.append(action)
+            continue
+
+        # Case C: Inventory update (existing plant, count changed or has notes)
+        if new_count is not None or plant_notes or condition:
+            # Find existing plant asset by species + section
+            plants = client.get_plant_assets(section_id=obs_section, species=species)
+            if not plants:
+                errors.append(
+                    f"Plant '{species}' not found in section {obs_section}. "
+                    "Use import as new plant instead."
+                )
+                continue
+
+            plant = plants[0]
+            plant_name = plant.get("attributes", {}).get("name", "")
+            formatted = format_plant_asset(plant)
+
+            # Build notes
+            parts = []
+            if condition and condition != "alive":
+                parts.append(f"Condition: {condition}")
+            if plant_notes:
+                parts.append(plant_notes)
+            combined_notes = ". ".join(parts) if parts else ""
+
+            # Only update if count changed or there are meaningful notes
+            count_val = int(new_count) if new_count is not None else None
+            prev_val = int(previous_count) if previous_count is not None else None
+            count_changed = count_val is not None and count_val != prev_val
+
+            if count_changed or combined_notes:
+                action = {
+                    "type": "observation",
+                    "plant_name": plant_name,
+                    "species": species,
+                    "section": obs_section,
+                    "previous_count": prev_val,
+                    "new_count": count_val,
+                    "notes": combined_notes,
+                }
+                if not dry_run and count_val is not None:
+                    try:
+                        result_json = json.loads(create_observation(
+                            plant_name=plant_name,
+                            count=count_val,
+                            notes=combined_notes,
+                            date=obs_date or None,
+                        ))
+                        action["result"] = result_json.get("status", "unknown")
+                        action["log_id"] = result_json.get("log_id")
+                    except Exception as e:
+                        action["result"] = "error"
+                        errors.append(f"Observation for {species} in {obs_section}: {e}")
+                elif not dry_run and count_val is None:
+                    # Notes-only observation — create activity instead
+                    try:
+                        result_json = json.loads(create_activity(
+                            section_id=obs_section,
+                            activity_type="observation",
+                            notes=f"{species}: {combined_notes}",
+                            date=obs_date or None,
+                        ))
+                        action["result"] = result_json.get("status", "unknown")
+                        action["type"] = "activity"
+                    except Exception as e:
+                        action["result"] = "error"
+                        errors.append(f"Activity for {species} in {obs_section}: {e}")
+                else:
+                    action["result"] = "dry_run"
+                actions.append(action)
+
+    # Update Sheet status to imported (unless dry_run or all failed)
+    imported_count = sum(1 for a in actions if a.get("result") == "created")
+    if not dry_run and (imported_count > 0 or not errors):
+        try:
+            obs_client.update_status([{
+                "submission_id": submission_id,
+                "status": "imported",
+                "reviewer": reviewer,
+                "notes": f"{imported_count} actions imported to farmOS",
+            }])
+        except Exception as e:
+            errors.append(f"Failed to update Sheet status: {e}")
+
+    return json.dumps({
+        "submission_id": submission_id,
+        "section_id": section_id,
+        "dry_run": dry_run,
+        "total_actions": len(actions),
+        "actions": actions,
+        "errors": errors if errors else None,
+        "sheet_status": "imported" if not dry_run and not errors else ("dry_run" if dry_run else "partial"),
     }, indent=2)
 
 

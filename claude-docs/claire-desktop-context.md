@@ -51,11 +51,10 @@ Example: `P2R3.14-21` means Paddock 2, Row 3, from 14m to 21m mark.
 ## farmOS — The Source of Truth
 
 farmOS (margregen.farmos.net) is the central database for all farm data.
-You have access to it via MCP tools (prefixed `mcp__farmos__`).
+You have access to it via MCP tools.
 
-### Key MCP Tools
+### farmOS Query Tools
 
-**Querying:**
 - `query_plants(section_id, species, status)` — Find plant assets
 - `query_sections(row)` — List sections with plant counts
 - `get_plant_detail(plant_name)` — Full detail + all logs for a plant
@@ -63,11 +62,18 @@ You have access to it via MCP tools (prefixed `mcp__farmos__`).
 - `get_inventory(section_id, species)` — Current plant counts
 - `search_plant_types(query)` — Look up species in the taxonomy
 
-**Writing (requires approval):**
+### farmOS Write Tools
+
 - `create_observation(plant_name, count, notes, date)` — Log observation + update inventory
 - `update_inventory(plant_name, new_count, notes)` — Reset a plant's count
 - `create_plant(species, section_id, count, notes)` — Add new plant asset
 - `create_activity(section_id, activity_type, notes)` — Log an activity
+
+### Observation Management Tools
+
+- `list_observations(status, section, observer, date)` — List field observations from the Sheet
+- `update_observation_status(submission_id, new_status, reviewer, notes)` — Mark as reviewed/approved/rejected
+- `import_observations(submission_id, reviewer, dry_run)` — Import approved observations into farmOS
 
 ### Plant Asset Naming
 
@@ -93,19 +99,24 @@ Observations land in a Google Sheet and need to be reviewed before import to far
 ### Status Flow
 
 ```
-pending → reviewed (Claire confirms accuracy) → approved (Agnes imports to farmOS)
+pending → reviewed → imported
 ```
+
+- **pending**: Worker submitted from the field (untouched)
+- **reviewed**: You confirmed the observation is accurate
+- **imported**: Data has been pushed to farmOS
+- **rejected**: Observation was incorrect (wrong species, bad count, etc.)
 
 ### How to Review
 
-Use the `/review-observations` skill or ask to "review field observations".
+Ask Claude to "show me pending observations" or "review today's observations".
 
-The system will:
-1. Fetch pending observations from the observation sheet
+Claude will:
+1. Fetch pending observations using `list_observations(status="pending")`
 2. Group them by section and submission
-3. Cross-reference with current farmOS data
-4. Present a summary with flagged discrepancies
-5. Let you confirm, modify, or reject each observation
+3. Cross-reference with current farmOS data using `get_inventory`
+4. Present a summary with any flagged discrepancies
+5. Let you confirm, modify, or reject each submission
 
 ### What to Look For
 
@@ -117,27 +128,35 @@ The system will:
 
 ### After Review
 
-Once you've reviewed and confirmed observations:
-- Agnes will approve them in a separate session
-- Approved observations get imported to farmOS (inventory updates, new assets, etc.)
+Once you've reviewed observations, you can:
+1. **Review**: `update_observation_status(submission_id, "reviewed", "Claire")`
+2. **Import to farmOS**: `import_observations(submission_id, "Claire")` — this creates farmOS logs and updates inventory
+3. **Reject**: `update_observation_status(submission_id, "rejected", "Claire", "reason")`
+
+Use `dry_run=true` with `import_observations` to preview what will happen before committing.
 
 ---
 
-## Common Questions Claire Might Ask
+## Common Tasks
 
-- "What's planted in P2R3.14-21?" → Use `query_plants(section_id="P2R3.14-21")`
-- "How many pigeon peas do we have?" → Use `get_inventory(species="Pigeon Pea")`
-- "Show me the recent logs for section P2R2.0-3" → Use `query_logs(section_id="P2R2.0-3")`
-- "What species is this?" → Use `search_plant_types(query="...")`
-- "What's in Row 3?" → Use `query_sections(row="P2R3")`
-- "Review the field observations" → Use `/review-observations`
+- "What's planted in P2R3.14-21?" — shows all plants in that section
+- "How many pigeon peas do we have?" — searches across all sections
+- "Show me the recent logs for P2R2.0-3" — activity history for a section
+- "What species is this?" — search the plant type taxonomy
+- "What's in Row 3?" — overview of all sections in the row
+- "Show me pending observations" — list unreviewed field submissions
+- "Review observations for P2R3" — filter to a specific section
+- "Import the reviewed observations" — push confirmed data to farmOS
+- "Log that I planted 5 comfrey in P2R2.0-3" — create a new plant record
+- "Update pigeon pea count in P2R3.14-21 to 3" — adjust inventory
 
 ---
 
 ## Important Notes
 
 - farmOS is always the source of truth. Observations are proposals until imported.
-- Plant types must match the farmOS taxonomy exactly (219 species).
+- Plant types must match the farmOS taxonomy exactly (223 species).
 - Dead plants (count=0) stay in the system as records — they're not deleted.
 - Some sections have gap areas with green manure only (no individual plants tracked).
 - Photos from observations are saved in Google Drive, not in farmOS yet.
+- Always use `dry_run=true` first when importing, to preview the changes.
