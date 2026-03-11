@@ -27,7 +27,7 @@ Each row has alternating **tree sections** (full strata: emergent → high → m
 ### Section IDs
 
 Format: `P{paddock}R{row}.{start}-{end}` — metres from row origin.
-Example: `P2R3.14-21` means Paddock 2, Row 3, from 14m to 21m mark.
+Example: `P2R3.15-21` means Paddock 2, Row 3, from 15m to 21m mark.
 
 ### Strata (Vertical Layers)
 
@@ -139,7 +139,7 @@ Use `dry_run=true` with `import_observations` to preview what will happen before
 
 ## Common Tasks
 
-- "What's planted in P2R3.14-21?" — shows all plants in that section
+- "What's planted in P2R3.15-21?" — shows all plants in that section
 - "How many pigeon peas do we have?" — searches across all sections
 - "Show me the recent logs for P2R2.0-3" — activity history for a section
 - "What species is this?" — search the plant type taxonomy
@@ -148,7 +148,7 @@ Use `dry_run=true` with `import_observations` to preview what will happen before
 - "Review observations for P2R3" — filter to a specific section
 - "Import the reviewed observations" — push confirmed data to farmOS
 - "Log that I planted 5 comfrey in P2R2.0-3" — create a new plant record
-- "Update pigeon pea count in P2R3.14-21 to 3" — adjust inventory
+- "Update pigeon pea count in P2R3.15-21 to 3" — adjust inventory
 
 ---
 

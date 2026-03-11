@@ -24,7 +24,7 @@ P2R5 — ~77m, 7 sections (newest, Kolala Day plantings)
 ### Section IDs
 
 Format: `P{paddock}R{row}.{start}-{end}` — metres from row origin.
-Example: `P2R3.14-21` means Paddock 2, Row 3, from 14m to 21m mark.
+Example: `P2R3.15-21` means Paddock 2, Row 3, from 15m to 21m mark.
 
 ### Strata (Vertical Layers)
 
@@ -94,7 +94,7 @@ Workers submit observations via QR code pages. Observations land in a Google She
 - "What was planted this month?" — recent transplanting logs
 - "Which sections have the most plant losses?" — declining counts
 - "List all the fruit trees we have" — species by function
-- "Show me the observation history for P2R3.14-21" — log timeline
+- "Show me the observation history for P2R3.15-21" — log timeline
 
 **Recording:**
 - "Log that we watered Row 2 today" — activity log

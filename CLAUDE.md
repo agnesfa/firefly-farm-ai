@@ -610,17 +610,20 @@ These decisions have been made through extensive discussion. Don't revisit them 
 ### Phase 1: farmOS MCP Server (Phase 1a BUILT — March 9, 2026)
 **Goal:** Claude Desktop can query and manage farmOS data via MCP tools.
 
-**Phase 1a (BUILT):** Local STDIO server for Agnes with full read/write access.
+**Phase 1a (COMPLETE):** Local STDIO server deployed to Agnes, Claire, and James.
 - ✅ Built `mcp-server/server.py` with FastMCP framework
 - ✅ Built `mcp-server/farmos_client.py` — raw HTTP client (OAuth2 + JSON:API)
+- ✅ Built `mcp-server/observe_client.py` — HTTP client for Google Apps Script observation endpoint
 - ✅ Built `mcp-server/helpers.py` — date parsing, response formatters
 - ✅ Separate venv at `mcp-server/venv/` (avoids pydantic v1/v2 conflict)
-- ✅ 10 tools: `query_plants`, `query_sections`, `get_plant_detail`, `query_logs`, `get_inventory`, `search_plant_types`, `create_observation`, `create_activity`, `update_inventory`, `create_plant`
+- ✅ 13 tools: 6 read + 4 write + 3 observation management (`list_observations`, `update_observation_status`, `import_observations`)
 - ✅ 5 resources: `farm://overview`, `farm://sections/{section_id}`, `farm://plant-types`, `farm://plant-types/{name}`, `farm://recent-logs`
 - ✅ 3 prompts: `log_field_observation`, `check_section_status`, `compare_inventory`
-- ✅ All tested against live farmOS (10/10 tools passing)
-- ⬜ Agnes to configure Claude Desktop and test end-to-end
-- ⬜ Commit MCP server code after Claude Desktop test
+- ✅ All tested against live farmOS (13/13 tools passing)
+- ✅ Committed: `6e70ae4` (10 tools) → `46f7669` (13 tools + observation management)
+- ✅ James's Mac setup: Claude Desktop + MCP server at `~/firefly-mcp/` (March 11)
+- ✅ Claire's Windows PC setup: Claude Desktop + MCP server at `C:\firefly-mcp\` (March 11)
+- ✅ Both with Claude Desktop projects and role-specific context files
 
 **Phase 1b (PLANNED):** HTTP transport + API key auth for Claire/James remote access.
 
@@ -763,8 +766,8 @@ Features: `--dry-run`, `--row` filter, idempotent (checks existing log names), m
 
 ### MCP Server Scripts
 
-**server.py** (BUILT — March 9, 2026; Phase 1a complete)
-FastMCP server providing Claude Desktop with farmOS access. Runs via STDIO transport.
+**server.py** (BUILT — March 9–11, 2026; Phase 1a complete + observation tools)
+FastMCP server providing Claude Desktop with farmOS + observation management. Runs via STDIO transport.
 ```bash
 # Run via Claude Desktop (configured in claude_desktop_config.json)
 mcp-server/venv/bin/python mcp-server/server.py
@@ -772,9 +775,15 @@ mcp-server/venv/bin/python mcp-server/server.py
 # Test with MCP Inspector
 cd mcp-server && venv/bin/fastmcp dev server.py
 ```
-10 tools (query_plants, query_sections, get_plant_detail, query_logs, get_inventory, search_plant_types, create_observation, create_activity, update_inventory, create_plant), 5 resources, 3 prompts.
+13 tools total:
+- farmOS read (6): query_plants, query_sections, get_plant_detail, query_logs, get_inventory, search_plant_types
+- farmOS write (4): create_observation, create_activity, update_inventory, create_plant
+- Observation management (3): list_observations, update_observation_status, import_observations
+- 5 resources, 3 prompts
 
 **farmos_client.py** — Direct HTTP client for farmOS JSON:API (replaces farmOS.py to avoid pydantic conflict). OAuth2 password grant auth, paginated fetching, CONTAINS filter for server-side log queries.
+
+**observe_client.py** — Lightweight HTTP client for Google Apps Script observation endpoint. Fetches pending observations, updates status, enables review workflow via MCP tools.
 
 **helpers.py** — Date parsing (`parse_date`, `format_planted_label`), asset name builder, farmOS response formatters (`format_plant_asset`, `format_log`, `format_plant_type`, `format_section_from_assets`).
 
@@ -892,8 +901,8 @@ These are the day-to-day processes that connect Claire's field work to the digit
 
 **When:** Re-counting a section that's already been imported.
 
-**MCP server approach (Phase 1 — available now for Agnes):**
-- Agnes tells Claude: "P2R3.14-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
+**MCP server approach (Phase 1 — available now for Agnes, Claire, James):**
+- Tell Claude: "P2R3.15-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
 - Claude uses the `update_inventory` or `create_observation` MCP tool to create an observation log in farmOS
 - The MCP server handles: finding the plant asset, creating the quantity entity, creating the observation log with movement
 
@@ -902,16 +911,16 @@ These are the day-to-day processes that connect Claire's field work to the digit
 - For count updates on existing plants: create a new observation log with `inventory_adjustment: "reset"` via the API.
 
 **Future approach (Phase 2+):**
-- Claire tells Claude: "P2R3.14-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
-- Claude creates an observation log in farmOS with updated count via remote MCP server
+- Claire tells Claude: "P2R3.15-21 now has 3 pigeon peas (was 5, lost 2 to frost)"
+- Claude creates an observation log in farmOS with updated count
 - Site pages regenerate automatically
 
 ---
 
 ## 17. WHAT'S NOT BUILT YET (And Shouldn't Be Built Prematurely)
 
-- MCP server HTTP transport for remote access (Phase 1b — currently STDIO only for Agnes)
-- Observation-to-farmOS import pipeline (Phase C — field observations stay in Google Sheet for now)
+- MCP server HTTP transport for remote access (Phase 1b — currently STDIO on each machine: Agnes, Claire, James)
+- Section ID reconciliation: farmOS land assets have different boundaries than fieldsheets (e.g., P2R3.15-21 vs P2R3.14-21)
 - Dead plant asset creation (Phase H2 — 201 historical records without farmOS assets)
 - Multi-agent systems (one good agent first)
 - Custom farmOS views/dashboards (use the API, not the UI)
@@ -1128,6 +1137,49 @@ Part 3 — farmOS Import:
 - farmOS file upload: binary POST to `/api/log/{type}/{uuid}/image` with Content-Disposition header (not base64)
 - All assets and logs have `image` and `file` relationship fields as base fields
 
+### March 10–11, 2026 — MCP Observation Tools + Claire & James Claude Desktop Setup
+
+**Session 1 (March 10): Observation management tools added to MCP server**
+- Built `mcp-server/observe_client.py` — HTTP client for Google Apps Script observation endpoint
+- Added 3 observation tools to `mcp-server/server.py`: `list_observations`, `update_observation_status`, `import_observations`
+- `import_observations` is a composite tool: fetches from Sheet, validates, creates farmOS logs (activity/plant/observation), updates Sheet status
+- All 13 tools tested against live farmOS and observation Sheet
+- Built setup scripts: `scripts/setup-claude-desktop-mac.sh`, `scripts/setup-claude-desktop-win.ps1`
+- Created `claude-docs/james-desktop-context.md` — role-specific context for James
+- Updated `claude-docs/claire-desktop-context.md` — added observation management tools
+- Committed: `46f7669` — pushed to origin
+
+**Session 2 (March 11): Claire & James Claude Desktop setup**
+- Set up James's Mac:
+  - Installed Claude Desktop (DMG mount issue resolved)
+  - Installed Python 3.13 alongside existing 3.14 via python.org installer
+  - Copied 6 MCP server files to `~/firefly-mcp/`, created venv, installed deps
+  - Created `claude_desktop_config.json` with farmOS credentials in env block
+  - Config gotcha: must merge `preferences` and `mcpServers` in one JSON object (not two)
+  - Created "Firefly Corner Farm" project with james-desktop-context.md
+  - Tested: P2R5.55-66 query returned plants successfully ✅
+- Set up Claire's Windows PC (AMD64):
+  - Installed Claude Desktop for Windows
+  - Installed Python 3.13 via python.org Windows installer (64-bit), ticked "Add to PATH"
+  - Copied MCP files to `C:\firefly-mcp\`, created venv with `python -m venv venv`
+  - Config at `%APPDATA%\Claude\claude_desktop_config.json` (Windows paths with double backslashes)
+  - Same config merge gotcha — single JSON object required
+  - Config file location: Claude Desktop must be opened once first to create the folder
+  - Created project with claire-desktop-context.md
+  - Tested: farmOS queries working ✅
+- Discovered section ID mismatch: farmOS land assets have different boundaries than fieldsheets
+  - Example: P2R3.15-21 in farmOS vs P2R3.14-21 in fieldsheets/QR pages
+  - Both context files updated to use farmOS section IDs
+  - Reconciliation needed (QR pages still use fieldsheet IDs)
+
+**Key learnings:**
+- Claude Desktop config must be ONE JSON object — two separate `{}` blocks cause parse errors
+- Python 3.13 and 3.14 coexist fine — use `python3.13` explicitly for venv creation
+- Windows: `venv\Scripts\python.exe` (not `venv/bin/python`), double backslashes in JSON paths
+- `%APPDATA%\Claude` folder only exists after Claude Desktop has been opened at least once
+- farmOS section IDs differ from fieldsheet IDs — users must use farmOS IDs with MCP tools
+- Env vars in Claude Desktop config `env` block work cleanly — `load_dotenv()` is a no-op when vars already set
+
 ---
 
-*Last updated: March 9, 2026. This file should be updated as the project evolves.*
+*Last updated: March 11, 2026. This file should be updated as the project evolves.*
