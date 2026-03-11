@@ -93,11 +93,19 @@ class FarmOSClient:
     # ── Low-level HTTP helpers ──────────────────────────────────
 
     def _get(self, path: str) -> dict:
-        """GET request to farmOS API. Returns parsed JSON or empty dict."""
+        """GET request to farmOS API. Returns parsed JSON or raises on error."""
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
         url = f"{self.hostname}{path}"
         resp = self.session.get(url, timeout=30)
+        if resp.status_code in (401, 403):
+            self._connected = False
+            raise ConnectionError(
+                f"farmOS authentication expired (HTTP {resp.status_code}). "
+                "Restart the MCP server to reconnect."
+            )
         if resp.status_code != 200:
-            return {}
+            raise RuntimeError(f"farmOS API error: HTTP {resp.status_code} for {path}")
         return resp.json()
 
     def _post(self, path: str, payload: dict) -> dict:
@@ -149,10 +157,21 @@ class FarmOSClient:
 
         url = f"{self.hostname}{path}"
 
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+
         while url:
             resp = self.session.get(url, timeout=30)
+            if resp.status_code in (401, 403):
+                self._connected = False
+                raise ConnectionError(
+                    f"farmOS authentication expired (HTTP {resp.status_code}). "
+                    "Restart the MCP server to reconnect."
+                )
             if resp.status_code != 200:
-                break
+                raise RuntimeError(
+                    f"farmOS API error: HTTP {resp.status_code} fetching {api_path}"
+                )
 
             data = resp.json()
             items = data.get("data", [])
@@ -344,6 +363,9 @@ class FarmOSClient:
         Like _fetch_logs_contains, this pushes filtering to the server side,
         avoiding the need to fetch all 400+ plants and filter in Python.
         """
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+
         encoded = urllib.parse.quote(name_contains)
         path = (f"/api/asset/plant"
                 f"?filter[name][operator]=CONTAINS"
@@ -357,8 +379,14 @@ class FarmOSClient:
 
         while url:
             resp = self.session.get(url, timeout=30)
+            if resp.status_code in (401, 403):
+                self._connected = False
+                raise ConnectionError(
+                    f"farmOS authentication expired (HTTP {resp.status_code}). "
+                    "Restart the MCP server to reconnect."
+                )
             if resp.status_code != 200:
-                break
+                raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
             data = resp.json()
             for item in data.get("data", []):
                 item_id = item.get("id", "")
@@ -426,6 +454,9 @@ class FarmOSClient:
         because farmOS pagination caps at ~250 entries (5 pages of 50).
         The CONTAINS filter pushes the search to the server side.
         """
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+
         encoded = urllib.parse.quote(name_contains)
         path = (f"/api/log/{log_type}"
                 f"?filter[name][operator]=CONTAINS"
@@ -439,8 +470,14 @@ class FarmOSClient:
 
         while url:
             resp = self.session.get(url, timeout=30)
+            if resp.status_code in (401, 403):
+                self._connected = False
+                raise ConnectionError(
+                    f"farmOS authentication expired (HTTP {resp.status_code}). "
+                    "Restart the MCP server to reconnect."
+                )
             if resp.status_code != 200:
-                break
+                raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
 
             data = resp.json()
             for item in data.get("data", []):

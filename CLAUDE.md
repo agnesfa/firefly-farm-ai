@@ -920,7 +920,6 @@ These are the day-to-day processes that connect Claire's field work to the digit
 ## 17. WHAT'S NOT BUILT YET (And Shouldn't Be Built Prematurely)
 
 - MCP server HTTP transport for remote access (Phase 1b — currently STDIO on each machine: Agnes, Claire, James)
-- Section ID reconciliation: farmOS land assets have different boundaries than fieldsheets (e.g., P2R3.15-21 vs P2R3.14-21)
 - Dead plant asset creation (Phase H2 — 201 historical records without farmOS assets)
 - Multi-agent systems (one good agent first)
 - Custom farmOS views/dashboards (use the API, not the UI)
@@ -968,7 +967,7 @@ These species appear across almost every row and are central to understanding th
 - Fresh farmOS export: 156 assets, 126 logs, 104 taxonomy terms
 - Generated 32 QR codes from live farmOS data
 - Discovered: Jan 5 farmOS document had stale section IDs for P2R3
-- Discovered: P2R2 section mismatch between farmOS and fieldsheets (Agnes reviewing with Claire)
+- Discovered: P2R2 section mismatch between farmOS and fieldsheets (later verified March 11: sections now aligned)
 - Discovered: 126 plant types still need importing (23 name mismatches)
 - Added Phase 0.5 (Plant Types Foundation) to roadmap
 - Created claude-docs/ with design-and-roadmap.md
@@ -1167,17 +1166,13 @@ Part 3 — farmOS Import:
   - Config file location: Claude Desktop must be opened once first to create the folder
   - Created project with claire-desktop-context.md
   - Tested: farmOS queries working ✅
-- Discovered section ID mismatch: farmOS land assets have different boundaries than fieldsheets
-  - Example: P2R3.15-21 in farmOS vs P2R3.14-21 in fieldsheets/QR pages
-  - Both context files updated to use farmOS section IDs
-  - Reconciliation needed (QR pages still use fieldsheet IDs)
+- Section ID alignment verified March 11: all 37 active farmOS section IDs match QR page IDs exactly (414 plants, 1033 logs, 0 mismatches). Earlier concern was based on stale March 4 export.
 
 **Key learnings:**
 - Claude Desktop config must be ONE JSON object — two separate `{}` blocks cause parse errors
 - Python 3.13 and 3.14 coexist fine — use `python3.13` explicitly for venv creation
 - Windows: `venv\Scripts\python.exe` (not `venv/bin/python`), double backslashes in JSON paths
 - `%APPDATA%\Claude` folder only exists after Claude Desktop has been opened at least once
-- farmOS section IDs differ from fieldsheet IDs — users must use farmOS IDs with MCP tools
 - Env vars in Claude Desktop config `env` block work cleanly — `load_dotenv()` is a no-op when vars already set
 
 ---
