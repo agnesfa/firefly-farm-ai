@@ -401,16 +401,57 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
     plants = client.get_plant_assets(section_id=section_id, species=species)
     formatted = [format_plant_asset(p) for p in plants]
 
-    # Count summary
-    total = len(formatted)
+    # Build inventory summary with actual counts
+    inventory_items = []
+    total_plant_count = 0
+    unknown_count = 0
+    for p in formatted:
+        count = p.get("inventory_count")
+        item = {
+            "name": p["name"],
+            "species": p["species"],
+            "section": p["section"],
+            "inventory_count": count if count is not None else "unknown",
+            "status": p["status"],
+        }
+        if p.get("notes"):
+            item["notes"] = p["notes"]
+        inventory_items.append(item)
 
-    return json.dumps({
+        if count is not None:
+            total_plant_count += count
+        else:
+            unknown_count += 1
+
+    # Group by section for section-level summaries
+    section_totals = {}
+    for item in inventory_items:
+        sec = item["section"]
+        if sec not in section_totals:
+            section_totals[sec] = {"section": sec, "species_count": 0, "plant_count": 0}
+        section_totals[sec]["species_count"] += 1
+        if isinstance(item["inventory_count"], int):
+            section_totals[sec]["plant_count"] += item["inventory_count"]
+
+    result = {
         "query": {"section_id": section_id, "species": species},
-        "total_plant_assets": total,
-        "plants": formatted,
-        "note": "Each plant asset represents one species in one section. "
-                "Actual plant counts are tracked in the most recent observation log.",
-    }, indent=2)
+        "summary": {
+            "total_species_entries": len(inventory_items),
+            "total_plant_count": total_plant_count,
+        },
+        "plants": inventory_items,
+    }
+
+    if unknown_count > 0:
+        result["summary"]["entries_without_count"] = unknown_count
+
+    # Add section breakdown when querying by species across sections
+    if species and not section_id and len(section_totals) > 1:
+        result["by_section"] = sorted(
+            section_totals.values(), key=lambda s: s["section"]
+        )
+
+    return json.dumps(result, indent=2)
 
 
 @mcp.tool

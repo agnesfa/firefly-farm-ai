@@ -115,16 +115,27 @@ def format_timestamp(unix_ts) -> str:
     if not unix_ts:
         return "unknown"
 
+    # Try as Unix timestamp (integer or numeric string)
     try:
         if isinstance(unix_ts, str):
-            # farmOS returns timestamps as strings
             ts = int(unix_ts)
         else:
             ts = int(unix_ts)
         dt = datetime.fromtimestamp(ts, tz=AEST)
         return dt.strftime("%Y-%m-%d %H:%M")
     except (ValueError, TypeError, OSError):
-        return str(unix_ts)
+        pass
+
+    # Try as ISO 8601 string (farmOS raw HTTP returns these)
+    if isinstance(unix_ts, str):
+        try:
+            dt = datetime.fromisoformat(unix_ts.replace("Z", "+00:00"))
+            dt_local = dt.astimezone(AEST)
+            return dt_local.strftime("%Y-%m-%d %H:%M")
+        except (ValueError, TypeError):
+            pass
+
+    return str(unix_ts)
 
 
 # ── farmOS response formatting ─────────────────────────────────
@@ -165,7 +176,26 @@ def format_plant_asset(asset: dict) -> dict:
     elif isinstance(notes_raw, str):
         notes = notes_raw
 
-    return {
+    # Extract computed inventory count from farmOS
+    # farmOS returns: [{"measure": "count", "value": "4", "units": {"...": "plant"}}]
+    inventory_data = attrs.get("inventory", [])
+    inventory_count = None
+    if inventory_data:
+        for inv in inventory_data:
+            if inv.get("measure") == "count":
+                try:
+                    inventory_count = int(float(inv.get("value", 0)))
+                except (ValueError, TypeError):
+                    inventory_count = None
+                break
+        # If no "count" measure found but there is inventory data, take the first
+        if inventory_count is None and inventory_data:
+            try:
+                inventory_count = int(float(inventory_data[0].get("value", 0)))
+            except (ValueError, TypeError):
+                pass
+
+    result = {
         "id": asset.get("id", ""),
         "name": name,
         "species": species,
@@ -175,6 +205,9 @@ def format_plant_asset(asset: dict) -> dict:
         "notes": notes,
         "plant_type_ids": plant_type_ids,
     }
+    if inventory_count is not None:
+        result["inventory_count"] = inventory_count
+    return result
 
 
 def format_log(log: dict) -> dict:
@@ -201,7 +234,29 @@ def format_log(log: dict) -> dict:
     location_data = rels.get("location", {}).get("data", [])
     location_ids = [l.get("id", "") for l in location_data] if location_data else []
 
-    return {
+    # Extract quantity data (populated when logs are fetched with ?include=quantity)
+    # Merged into log by farmos_client as "_quantities" list
+    quantities = []
+    for q in log.get("_quantities", []):
+        q_attrs = q.get("attributes", {})
+        value_raw = q_attrs.get("value", {})
+        # value can be {"decimal": "3"} or just a number
+        if isinstance(value_raw, dict):
+            val = value_raw.get("decimal", value_raw.get("numerator"))
+        else:
+            val = value_raw
+        try:
+            val = int(float(val)) if val is not None else None
+        except (ValueError, TypeError):
+            val = None
+        quantities.append({
+            "value": val,
+            "measure": q_attrs.get("measure", ""),
+            "inventory_adjustment": q_attrs.get("inventory_adjustment", ""),
+            "label": q_attrs.get("label", ""),
+        })
+
+    result = {
         "id": log.get("id", ""),
         "name": attrs.get("name", ""),
         "type": log_type,
@@ -212,6 +267,9 @@ def format_log(log: dict) -> dict:
         "asset_ids": asset_ids,
         "location_ids": location_ids,
     }
+    if quantities:
+        result["quantity"] = quantities
+    return result
 
 
 def format_plant_type(term: dict) -> dict:

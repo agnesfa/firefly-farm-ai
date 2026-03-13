@@ -197,7 +197,8 @@ class FarmOSClient:
         return all_items
 
     def fetch_filtered(self, api_path: str, filters: Optional[dict] = None,
-                       sort: Optional[str] = None, max_results: int = 50) -> list:
+                       sort: Optional[str] = None, max_results: int = 50,
+                       include: Optional[str] = None) -> list:
         """Fetch with filters, limited to max_results (single page)."""
         path = f"/api/{api_path}?page[limit]={min(max_results, 50)}"
         if filters:
@@ -205,9 +206,17 @@ class FarmOSClient:
                 path += f"&filter[{key}]={urllib.parse.quote(str(value))}"
         if sort:
             path += f"&sort={sort}"
+        if include:
+            path += f"&include={include}"
 
         data = self._get(path)
-        return data.get("data", [])
+        items = data.get("data", [])
+
+        # Merge included entities if present (e.g., quantity on logs)
+        if include and "included" in data:
+            self._merge_included_quantities(data, items)
+
+        return items
 
     # ── Cached lookups ──────────────────────────────────────────
 
@@ -447,7 +456,40 @@ class FarmOSClient:
             if section_pattern.match(s.get("attributes", {}).get("name", ""))
         ]
 
-    def _fetch_logs_contains(self, log_type: str, name_contains: str) -> list:
+    @staticmethod
+    def _merge_included_quantities(data: dict, items: list) -> list:
+        """Merge included quantity entities into their parent log objects.
+
+        When logs are fetched with ?include=quantity, the JSON:API response
+        puts quantity entities in the top-level 'included' array. This method
+        matches them to logs via relationship IDs and attaches them as
+        '_quantities' on each log dict.
+        """
+        included = data.get("included", [])
+        if not included:
+            return items
+
+        # Build lookup: quantity UUID → quantity entity
+        qty_lookup = {}
+        for inc in included:
+            if inc.get("type", "").startswith("quantity--"):
+                qty_lookup[inc.get("id", "")] = inc
+
+        # Attach quantities to each log
+        for item in items:
+            qty_rels = item.get("relationships", {}).get("quantity", {}).get("data", [])
+            if qty_rels:
+                quantities = []
+                for qr in qty_rels:
+                    qid = qr.get("id", "")
+                    if qid in qty_lookup:
+                        quantities.append(qty_lookup[qid])
+                item["_quantities"] = quantities
+
+        return items
+
+    def _fetch_logs_contains(self, log_type: str, name_contains: str,
+                              include_quantity: bool = True) -> list:
         """Fetch logs using farmOS CONTAINS filter on name.
 
         This is far more reliable than fetch_all_paginated + Python filter,
@@ -463,6 +505,8 @@ class FarmOSClient:
                 f"&filter[name][value]={encoded}"
                 f"&page[limit]=50"
                 f"&sort=-timestamp")
+        if include_quantity:
+            path += "&include=quantity"
 
         all_items = []
         seen_ids = set()
@@ -480,7 +524,13 @@ class FarmOSClient:
                 raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
 
             data = resp.json()
-            for item in data.get("data", []):
+            page_items = data.get("data", [])
+
+            # Merge included quantity data into log objects
+            if include_quantity:
+                self._merge_included_quantities(data, page_items)
+
+            for item in page_items:
                 item_id = item.get("id", "")
                 if item_id and item_id not in seen_ids:
                     seen_ids.add(item_id)
@@ -521,12 +571,13 @@ class FarmOSClient:
         for lt in log_types:
             try:
                 if name_filter:
-                    logs = self._fetch_logs_contains(lt, name_filter)
+                    logs = self._fetch_logs_contains(lt, name_filter, include_quantity=True)
                 else:
                     logs = self.fetch_filtered(
                         f"log/{lt}",
                         sort="-timestamp",
                         max_results=max_results,
+                        include="quantity",
                     )
                 all_logs.extend(logs)
             except Exception:
