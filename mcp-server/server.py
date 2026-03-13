@@ -17,6 +17,7 @@ Usage:
 """
 
 import json
+import subprocess
 import sys
 import os
 from datetime import datetime
@@ -1048,6 +1049,155 @@ def import_observations(
         "actions": actions,
         "errors": errors if errors else None,
         "sheet_status": "imported" if not dry_run and not errors else ("dry_run" if dry_run else "partial"),
+    }, indent=2)
+
+
+# ═══════════════════════════════════════════════════════════════
+# TOOLS — Site generation (regenerate QR landing pages)
+# ═══════════════════════════════════════════════════════════════
+
+# Resolve project paths relative to server.py location
+_SERVER_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.dirname(_SERVER_DIR)
+_MAIN_VENV_PYTHON = os.path.join(_PROJECT_ROOT, "venv", "bin", "python3")
+_SCRIPTS_DIR = os.path.join(_PROJECT_ROOT, "scripts")
+_SECTIONS_JSON = os.path.join(_PROJECT_ROOT, "site", "src", "data", "sections.json")
+_PLANT_TYPES_CSV = os.path.join(_PROJECT_ROOT, "knowledge", "plant_types.csv")
+
+# Observe endpoint (Apps Script URL baked into generated observe pages)
+_OBSERVE_ENDPOINT = os.getenv(
+    "OBSERVE_ENDPOINT",
+    "https://script.google.com/macros/s/AKfycbwxz3n9MSH45tQ1KX1_MacGAheIP_KcFMmlX_AWnYMI4-wwQ0ZNjYO5U8DJqHebcGPa/exec",
+)
+
+
+def _run_script(script_name: str, args: list = None) -> dict:
+    """Run a project script using the main project venv Python.
+
+    Returns dict with stdout, stderr, returncode.
+    """
+    script_path = os.path.join(_SCRIPTS_DIR, script_name)
+    cmd = [_MAIN_VENV_PYTHON, script_path] + (args or [])
+
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            cwd=_PROJECT_ROOT,
+            env={**os.environ, "PYTHONPATH": _PROJECT_ROOT},
+        )
+        return {
+            "returncode": result.returncode,
+            "stdout": result.stdout[-2000:] if len(result.stdout) > 2000 else result.stdout,
+            "stderr": result.stderr[-2000:] if len(result.stderr) > 2000 else result.stderr,
+        }
+    except subprocess.TimeoutExpired:
+        return {"returncode": -1, "stdout": "", "stderr": "Script timed out after 120 seconds"}
+    except Exception as e:
+        return {"returncode": -1, "stdout": "", "stderr": str(e)}
+
+
+@mcp.tool
+def regenerate_pages(push_to_github: bool = True) -> str:
+    """Regenerate QR landing pages from live farmOS data and optionally push to GitHub Pages.
+
+    Runs the full pipeline:
+    1. Export farmOS data → sections.json (enriched with inventory counts, log history)
+    2. Generate HTML pages from sections.json + plant_types.csv
+    3. Git commit and push to trigger GitHub Pages deployment
+
+    This should be run after importing observations or making changes in farmOS
+    to update the public QR landing pages.
+
+    Args:
+        push_to_github: If True (default), commit and push changes to GitHub Pages.
+                       Set to False for a dry-run that generates but doesn't deploy.
+
+    Returns:
+        Status of each pipeline step.
+    """
+    steps = []
+
+    # Step 1: Export farmOS → sections.json
+    export_args = [
+        "--sections-json",
+        "--output", _SECTIONS_JSON,
+        "--existing", _SECTIONS_JSON,
+        "--plants", _PLANT_TYPES_CSV,
+    ]
+    result = _run_script("export_farmos.py", export_args)
+    steps.append({
+        "step": "export_farmos",
+        "success": result["returncode"] == 0,
+        "output": result["stdout"].strip() if result["returncode"] == 0 else result["stderr"].strip(),
+    })
+    if result["returncode"] != 0:
+        return json.dumps({"status": "failed", "failed_at": "export_farmos", "steps": steps}, indent=2)
+
+    # Step 2: Generate HTML pages
+    generate_args = [
+        "--data", _SECTIONS_JSON,
+        "--plants", _PLANT_TYPES_CSV,
+        "--observe-endpoint", _OBSERVE_ENDPOINT,
+    ]
+    result = _run_script("generate_site.py", generate_args)
+    steps.append({
+        "step": "generate_site",
+        "success": result["returncode"] == 0,
+        "output": result["stdout"].strip() if result["returncode"] == 0 else result["stderr"].strip(),
+    })
+    if result["returncode"] != 0:
+        return json.dumps({"status": "failed", "failed_at": "generate_site", "steps": steps}, indent=2)
+
+    # Step 3: Git commit and push (optional)
+    if push_to_github:
+        try:
+            # Check if there are changes to commit
+            status = subprocess.run(
+                ["git", "status", "--porcelain", "site/public/"],
+                capture_output=True, text=True, cwd=_PROJECT_ROOT,
+            )
+            if not status.stdout.strip():
+                steps.append({
+                    "step": "git_push",
+                    "success": True,
+                    "output": "No changes to deploy — pages are already up to date.",
+                })
+            else:
+                changed_files = len(status.stdout.strip().split("\n"))
+                # Stage, commit, push
+                subprocess.run(["git", "add", "site/public/"], cwd=_PROJECT_ROOT, check=True)
+                subprocess.run(
+                    ["git", "commit", "-m",
+                     f"Regenerate QR landing pages from farmOS ({changed_files} files updated)"],
+                    cwd=_PROJECT_ROOT, check=True,
+                    capture_output=True,
+                )
+                push_result = subprocess.run(
+                    ["git", "push"],
+                    capture_output=True, text=True, cwd=_PROJECT_ROOT, timeout=60,
+                )
+                steps.append({
+                    "step": "git_push",
+                    "success": push_result.returncode == 0,
+                    "output": f"Pushed {changed_files} updated files to GitHub Pages."
+                             if push_result.returncode == 0
+                             else push_result.stderr.strip(),
+                })
+        except Exception as e:
+            steps.append({
+                "step": "git_push",
+                "success": False,
+                "output": str(e),
+            })
+
+    all_success = all(s["success"] for s in steps)
+    return json.dumps({
+        "status": "success" if all_success else "partial",
+        "steps": steps,
+        "pages_url": "https://agnesfa.github.io/firefly-farm-ai/" if all_success and push_to_github else None,
     }, indent=2)
 
 
