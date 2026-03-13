@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-09T21:25:12.872999+10:00",
+  "generated_at": "2026-03-13T13:37:30.729929+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -11,7 +11,7 @@
       "length": "3m",
       "has_trees": false,
       "first_planted": "2025-03-19",
-      "inventory_date": "2025-10-08",
+      "inventory_date": "2026-03-09",
       "plants": [
         {
           "species": "Lavender",
@@ -30,13 +30,13 @@
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Lavender",
+              "name": "Inventory Oct 2025 P2R1.0-3 — Lavender",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory Oct 2025 P2R1.0-3 — Lavender",
+              "name": "Inventory P2R1.0-3 — Lavender",
               "notes": ""
             },
             {
@@ -64,13 +64,13 @@
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Rosemary",
+              "name": "Inventory Oct 2025 P2R1.0-3 — Rosemary",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory Oct 2025 P2R1.0-3 — Rosemary",
+              "name": "Inventory P2R1.0-3 — Rosemary",
               "notes": ""
             },
             {
@@ -98,13 +98,13 @@
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Comfrey",
+              "name": "Inventory Oct 2025 P2R1.0-3 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory Oct 2025 P2R1.0-3 — Comfrey",
+              "name": "Inventory P2R1.0-3 — Comfrey",
               "notes": ""
             },
             {
@@ -118,7 +118,7 @@
         {
           "species": "Thyme",
           "strata": "low",
-          "count": 4,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Thyme - P2R1.0-3",
@@ -132,13 +132,13 @@
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Thyme",
+              "name": "Inventory Oct 2025 P2R1.0-3 — Thyme",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory Oct 2025 P2R1.0-3 — Thyme",
+              "name": "Inventory P2R1.0-3 — Thyme",
               "notes": ""
             },
             {
@@ -146,13 +146,19 @@
               "date": "2025-10-08",
               "name": "Renovation P2R1.0-3 — Thyme",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.0-3 — Thyme",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Mint",
           "strata": "low",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Mint - P2R1.0-3",
@@ -174,6 +180,44 @@
               "date": "2025-10-08",
               "name": "Inventory Oct 2025 P2R1.0-3 — Mint",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.0-3 — Mint",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 5,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Geranium - P2R1.0-3",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R1.0-3 — Geranium",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Oregano",
+          "strata": "medium",
+          "count": 3,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Oregano - P2R1.0-3",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R1.0-3 — Oregano",
+              "notes": "Added via field observation"
             }
           ]
         }
@@ -187,7 +231,7 @@
       "length": "6m",
       "has_trees": true,
       "first_planted": "2025-03-19",
-      "inventory_date": "2025-10-19",
+      "inventory_date": "2026-03-11",
       "plants": [
         {
           "species": "Guava",
@@ -199,9 +243,21 @@
           "logs": [
             {
               "type": "observation",
+              "date": "2025-02-28",
+              "name": "Inventory P2R1.3-9 — Guava (Hawaiian)",
+              "notes": "Purchased from Daleys Fruit Nursery. Planted March 2025."
+            },
+            {
+              "type": "observation",
               "date": "2025-10-19",
               "name": "Inventory P2R1.3-9 — Guava",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Guava",
+              "notes": "1 strawberry guava + 2 Thai white"
             }
           ]
         },
@@ -222,13 +278,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.3-9 — Grape Vine",
+              "name": "Inventory Oct 2025 P2R1.3-9 — Grape Vine",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.3-9 — Grape Vine",
+              "name": "Inventory P2R1.3-9 — Grape Vine",
               "notes": ""
             }
           ]
@@ -236,7 +292,7 @@
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": 7,
+          "count": 5,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Pigeon Pea - P2R1.3-9",
@@ -250,13 +306,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.3-9 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R1.3-9 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.3-9 — Pigeon Pea",
+              "name": "Inventory P2R1.3-9 — Pigeon Pea",
               "notes": ""
             },
             {
@@ -264,13 +320,19 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Pigeon Pea",
               "notes": "less 1"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Pigeon Pea",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Fig",
           "strata": "high",
-          "count": 10,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Fig - P2R1.3-9",
@@ -286,13 +348,19 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Fig",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-11",
+              "name": "Observation P2R1.3-9 — Fig",
+              "notes": "Inventory update: Registration error — figs were never planted in this section. Count corrected to 0."
             }
           ]
         },
         {
           "species": "Lemon",
           "strata": "medium",
-          "count": 6,
+          "count": 4,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Lemon - P2R1.3-9",
@@ -312,6 +380,12 @@
             {
               "type": "observation",
               "date": "2025-10-19",
+              "name": "Inventory Oct 2025 P2R1.3-9 — Lemon",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-10-19",
               "name": "Inventory P2R1.3-9 — Lemon",
               "notes": ""
             },
@@ -322,15 +396,15 @@
               "notes": ""
             },
             {
-              "type": "observation",
-              "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.3-9 — Lemon",
-              "notes": ""
-            },
-            {
               "type": "transplanting",
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Lemon",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Lemon",
               "notes": ""
             }
           ]
@@ -338,7 +412,7 @@
         {
           "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
           "strata": "medium",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Tea Tree Oil (Melaleuca) (Alternifolia) - P2R1.3-9",
@@ -353,6 +427,12 @@
               "type": "observation",
               "date": "2025-10-19",
               "name": "Inventory P2R1.3-9 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Tea Tree Oil (Melaleuca) (Alternifolia)",
               "notes": ""
             }
           ]
@@ -374,13 +454,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.3-9 — Comfrey",
+              "name": "Inventory Oct 2025 P2R1.3-9 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.3-9 — Comfrey",
+              "name": "Inventory P2R1.3-9 — Comfrey",
               "notes": ""
             }
           ]
@@ -388,7 +468,7 @@
         {
           "species": "Oregano",
           "strata": "medium",
-          "count": 2,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Oregano - P2R1.3-9",
@@ -404,6 +484,12 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Oregano",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Oregano",
+              "notes": "The 3 oregano are now in the first 0-3m section"
             }
           ]
         },
@@ -432,7 +518,7 @@
         {
           "species": "Hyssop",
           "strata": "low",
-          "count": 2,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Hyssop - P2R1.3-9",
@@ -448,13 +534,19 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Hyssop",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-08",
+              "name": "Observation P2R1.3-9 — Hyssop",
+              "notes": "Dead . Was not treated correctLu in the nursery. Transplanted too late"
             }
           ]
         },
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 4,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Geranium - P2R1.3-9",
@@ -476,13 +568,19 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Geranium",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Geranium",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Tansy",
           "strata": "low",
-          "count": 4,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Tansy - P2R1.3-9",
@@ -498,6 +596,44 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.3-9 — Tansy",
               "notes": "plant more"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.3-9 — Tansy",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Guava (Hawaiian)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Purchased from Daleys Fruit Nursery. Planted March 2025.",
+          "first_planted": "",
+          "asset_name": "2025-03-01 - Guava (Hawaiian) - P2R1.3-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-02-28",
+              "name": "Inventory P2R1.3-9 — Guava (Hawaiian)",
+              "notes": "Purchased from Daleys Fruit Nursery. Planted March 2025."
+            }
+          ]
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 6,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Lavender - P2R1.3-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R1.3-9 — Lavender",
+              "notes": "Added via field observation"
             }
           ]
         }
@@ -511,7 +647,7 @@
       "length": "4m",
       "has_trees": false,
       "first_planted": "2025-03-19",
-      "inventory_date": "2025-11-09",
+      "inventory_date": "2026-03-09",
       "plants": [
         {
           "species": "Lavender",
@@ -530,13 +666,13 @@
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory P2R1.9-13 — Lavender",
+              "name": "Inventory Oct 2025 P2R1.9-13 — Lavender",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory Oct 2025 P2R1.9-13 — Lavender",
+              "name": "Inventory P2R1.9-13 — Lavender",
               "notes": ""
             },
             {
@@ -550,7 +686,7 @@
         {
           "species": "Rosemary",
           "strata": "medium",
-          "count": 3,
+          "count": 4,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Rosemary - P2R1.9-13",
@@ -564,13 +700,19 @@
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory P2R1.9-13 — Rosemary",
+              "name": "Inventory Oct 2025 P2R1.9-13 — Rosemary",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory Oct 2025 P2R1.9-13 — Rosemary",
+              "name": "Inventory P2R1.9-13 — Rosemary",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.9-13 — Rosemary",
               "notes": ""
             }
           ]
@@ -578,7 +720,7 @@
         {
           "species": "Sage",
           "strata": "medium",
-          "count": 6,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Sage - P2R1.9-13",
@@ -592,13 +734,13 @@
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory P2R1.9-13 — Sage",
+              "name": "Inventory Oct 2025 P2R1.9-13 — Sage",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory Oct 2025 P2R1.9-13 — Sage",
+              "name": "Inventory P2R1.9-13 — Sage",
               "notes": ""
             },
             {
@@ -606,13 +748,19 @@
               "date": "2025-11-09",
               "name": "Renovation P2R1.9-13 — Sage",
               "notes": "added 10 nov 2025"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.9-13 — Sage",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 2,
+          "count": 1,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Comfrey - P2R1.9-13",
@@ -626,19 +774,25 @@
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory P2R1.9-13 — Comfrey",
+              "name": "Inventory Oct 2025 P2R1.9-13 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory Oct 2025 P2R1.9-13 — Comfrey",
+              "name": "Inventory P2R1.9-13 — Comfrey",
               "notes": ""
             },
             {
               "type": "transplanting",
               "date": "2025-11-09",
               "name": "Renovation P2R1.9-13 — Comfrey",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.9-13 — Comfrey",
               "notes": ""
             }
           ]
@@ -660,13 +814,13 @@
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory P2R1.9-13 — Oregano",
+              "name": "Inventory Oct 2025 P2R1.9-13 — Oregano",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory Oct 2025 P2R1.9-13 — Oregano",
+              "name": "Inventory P2R1.9-13 — Oregano",
               "notes": ""
             }
           ]
@@ -674,7 +828,7 @@
         {
           "species": "Coriander",
           "strata": "low",
-          "count": 10,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Coriander - P2R1.9-13",
@@ -696,13 +850,19 @@
               "date": "2025-11-09",
               "name": "Inventory Oct 2025 P2R1.9-13 — Coriander",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.9-13 — Coriander",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Parsley (Italian)",
           "strata": "low",
-          "count": 10,
+          "count": 4,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Parsley (Italian) - P2R1.9-13",
@@ -724,6 +884,12 @@
               "date": "2025-11-09",
               "name": "Inventory Oct 2025 P2R1.9-13 — Parsley (Italian)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.9-13 — Parsley (Italian)",
+              "notes": ""
             }
           ]
         }
@@ -737,12 +903,12 @@
       "length": "9m",
       "has_trees": true,
       "first_planted": "2025-03-19",
-      "inventory_date": "2025-10-19",
+      "inventory_date": "2026-03-09",
       "plants": [
         {
           "species": "Eucalypt-Gum (Generic)",
           "strata": "emergent",
-          "count": 2,
+          "count": 1,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Eucalypt-Gum (Generic) - P2R1.16-25",
@@ -758,13 +924,19 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.16-25 — Eucalypt-Gum (Generic)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Eucalypt-Gum (Generic)",
+              "notes": "Condition: damaged"
             }
           ]
         },
         {
           "species": "Ice Cream Bean",
           "strata": "high",
-          "count": 4,
+          "count": 1,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Ice Cream Bean - P2R1.16-25",
@@ -779,6 +951,12 @@
               "type": "transplanting",
               "date": "2025-10-19",
               "name": "Renovation P2R1.16-25 — Ice Cream Bean",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Ice Cream Bean",
               "notes": ""
             }
           ]
@@ -796,13 +974,19 @@
               "date": "2025-10-19",
               "name": "Inventory P2R1.16-25 — Guava",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Guava",
+              "notes": "2 Thai white + 1 strawberry guava"
             }
           ]
         },
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": 3,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Pigeon Pea - P2R1.16-25",
@@ -816,19 +1000,25 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R1.16-25 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.16-25 — Pigeon Pea",
+              "name": "Inventory P2R1.16-25 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "transplanting",
               "date": "2025-10-19",
               "name": "Renovation P2R1.16-25 — Pigeon Pea",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Pigeon Pea",
               "notes": ""
             }
           ]
@@ -850,13 +1040,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Olive",
+              "name": "Inventory Oct 2025 P2R1.16-25 — Olive",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.16-25 — Olive",
+              "name": "Inventory P2R1.16-25 — Olive",
               "notes": ""
             }
           ]
@@ -878,13 +1068,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Fig",
+              "name": "Inventory Oct 2025 P2R1.16-25 — Fig",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.16-25 — Fig",
+              "name": "Inventory P2R1.16-25 — Fig",
               "notes": ""
             },
             {
@@ -898,7 +1088,7 @@
         {
           "species": "Lavender",
           "strata": "medium",
-          "count": 8,
+          "count": 7,
           "notes": "",
           "first_planted": "2025-10-19",
           "asset_name": "20 MAR 2025 - Lavender - P2R1.16-25",
@@ -906,19 +1096,25 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Lavender",
+              "name": "Inventory Oct 2025 P2R1.16-25 — Lavender",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.16-25 — Lavender",
+              "name": "Inventory P2R1.16-25 — Lavender",
               "notes": ""
             },
             {
               "type": "transplanting",
               "date": "2025-10-19",
               "name": "Renovation P2R1.16-25 — Lavender",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Lavender",
               "notes": ""
             }
           ]
@@ -940,13 +1136,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Citrus (Yuzu)",
+              "name": "Inventory Oct 2025 P2R1.16-25 — Citrus (Yuzu)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.16-25 — Citrus (Yuzu)",
+              "name": "Inventory P2R1.16-25 — Citrus (Yuzu)",
               "notes": ""
             }
           ]
@@ -954,7 +1150,7 @@
         {
           "species": "Lemon",
           "strata": "medium",
-          "count": 13,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Lemon - P2R1.16-25",
@@ -970,12 +1166,6 @@
               "date": "2025-03-19",
               "name": "Planted P2R1.16-25 — Lemon Balm",
               "notes": "TO PRUNE"
-            },
-            {
-              "type": "observation",
-              "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Lemon",
-              "notes": ""
             },
             {
               "type": "observation",
@@ -996,17 +1186,35 @@
               "notes": ""
             },
             {
+              "type": "observation",
+              "date": "2025-10-19",
+              "name": "Inventory P2R1.16-25 — Lemon",
+              "notes": ""
+            },
+            {
               "type": "transplanting",
               "date": "2025-10-19",
               "name": "Renovation P2R1.16-25 — Lemon",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Lemon",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Lemon Balm",
+              "notes": "Condition: dead. Next Self seeded maybe ?"
             }
           ]
         },
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 12,
+          "count": 10,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Comfrey - P2R1.16-25",
@@ -1020,13 +1228,13 @@
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory P2R1.16-25 — Comfrey",
+              "name": "Inventory Oct 2025 P2R1.16-25 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R1.16-25 — Comfrey",
+              "name": "Inventory P2R1.16-25 — Comfrey",
               "notes": ""
             },
             {
@@ -1034,13 +1242,19 @@
               "date": "2025-10-19",
               "name": "Renovation P2R1.16-25 — Comfrey",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Comfrey",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Lemon Balm",
           "strata": "low",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Lemon Balm - P2R1.16-25",
@@ -1062,13 +1276,19 @@
               "date": "2025-10-19",
               "name": "Inventory Oct 2025 P2R1.16-25 — Lemon Balm",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Lemon Balm",
+              "notes": "Condition: dead. Next Self seeded maybe ?"
             }
           ]
         },
         {
           "species": "Sweet Potato",
           "strata": "low",
-          "count": 2,
+          "count": 4,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Sweet Potato - P2R1.16-25",
@@ -1090,6 +1310,28 @@
               "date": "2025-10-19",
               "name": "Inventory Oct 2025 P2R1.16-25 — Sweet Potato",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R1.16-25 — Sweet Potato",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Parsley (Italian)",
+          "strata": "low",
+          "count": 6,
+          "notes": "Self seeded from last year",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Parsley (Italian) - P2R1.16-25",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R1.16-25 — Parsley (Italian)",
+              "notes": "Self seeded from last year"
             }
           ]
         }
@@ -6730,6 +6972,12 @@
               "date": "2025-11-09",
               "name": "Inventory P2R2.0-3 — Guava (Strawberry)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.0-3 — Guava (Strawberry)",
+              "notes": "Guava Purple (not strawberry)"
             }
           ]
         },
@@ -6844,7 +7092,7 @@
         {
           "species": "Lemon",
           "strata": "medium",
-          "count": 2,
+          "count": 1,
           "notes": "FFC seedling",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Lemon - P2R2.0-3",
@@ -6872,13 +7120,19 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.0-3 — Lemon",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.0-3 — Lemon",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 4,
+          "count": 1,
           "notes": "1 planted Oct/Nov",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Comfrey - P2R2.0-3",
@@ -6905,6 +7159,12 @@
               "type": "transplanting",
               "date": "2025-11-10",
               "name": "Renovation P2R2.0-3 — Comfrey",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.0-3 — Comfrey",
               "notes": ""
             }
           ]
@@ -6990,7 +7250,7 @@
         {
           "species": "Calendula",
           "strata": "low",
-          "count": 6,
+          "count": 4,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Calendula - P2R2.0-3",
@@ -7006,6 +7266,12 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.0-3 — Calendula",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.0-3 — Calendula",
+              "notes": "Condition: damaged. Almost all dead"
             }
           ]
         },
@@ -7046,7 +7312,7 @@
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 2,
+          "count": 1,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Geranium - P2R2.0-3",
@@ -7061,6 +7327,12 @@
               "type": "transplanting",
               "date": "2025-11-10",
               "name": "Renovation P2R2.0-3 — Geranium",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.0-3 — Geranium",
               "notes": ""
             }
           ]
@@ -7141,7 +7413,7 @@
       "length": "6m",
       "has_trees": false,
       "first_planted": "2025-04-24",
-      "inventory_date": "2025-11-10",
+      "inventory_date": "2026-03-10",
       "plants": [
         {
           "species": "Comfrey",
@@ -7208,7 +7480,7 @@
         {
           "species": "Sweet Potato",
           "strata": "low",
-          "count": 8,
+          "count": 5,
           "notes": "2 planted Oct/Nov",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Sweet Potato - P2R2.3-9",
@@ -7235,6 +7507,12 @@
               "type": "transplanting",
               "date": "2025-11-10",
               "name": "Renovation P2R2.3-9 — Sweet Potato",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.3-9 — Sweet Potato",
               "notes": ""
             }
           ]
@@ -7270,7 +7548,7 @@
         {
           "species": "Calendula",
           "strata": "low",
-          "count": 6,
+          "count": 3,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Calendula - P2R2.3-9",
@@ -7286,13 +7564,19 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.3-9 — Calendula",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.3-9 — Calendula",
+              "notes": "Condition: damaged. Almost all dead"
             }
           ]
         },
         {
           "species": "Pak Choi",
           "strata": "medium",
-          "count": 2,
+          "count": 0,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Pak Choi - P2R2.3-9",
@@ -7314,6 +7598,76 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.3-9 — Pak Choi",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.3-9 — Pak Choi",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-11 - Achiote - P2R2.3-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Inventory P2R2.3-9 — Achiote",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Pear (Nashi)",
+          "strata": "high",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Pear (Nashi) - P2R2.3-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R2.3-9 — Pear (Nashi)",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Chilli (Jalapeño) - P2R2.3-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R2.3-9 — Chilli (Jalapeño)",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Lemon - P2R2.3-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R2.3-9 — Lemon",
+              "notes": "Added via field observation"
             }
           ]
         }
@@ -7345,7 +7699,7 @@
       "length": "7m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-09",
+      "inventory_date": "2026-03-11",
       "plants": [
         {
           "species": "Forest Red Gum",
@@ -7406,7 +7760,7 @@
         {
           "species": "Quince",
           "strata": "high",
-          "count": 8,
+          "count": 3,
           "notes": "FFC cuttings, planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Quince - P2R2.9-16",
@@ -7422,6 +7776,12 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.9-16 — Quince",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-11",
+              "name": "Observation P2R2.9-16 — Quince",
+              "notes": "Inventory update: Corrected from Hadrien's inventory (→1). Claire confirmed 3 Quince remain, 5 died."
             }
           ]
         },
@@ -7644,7 +8004,7 @@
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 7,
+          "count": 5,
           "notes": "1 survived + 3 planted Oct/Nov",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Comfrey - P2R2.9-16",
@@ -7671,6 +8031,12 @@
               "type": "transplanting",
               "date": "2025-11-10",
               "name": "Renovation P2R2.9-16 — Comfrey",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.9-16 — Comfrey",
               "notes": ""
             }
           ]
@@ -7786,7 +8152,7 @@
         {
           "species": "Cape Gooseberry",
           "strata": "medium",
-          "count": 2,
+          "count": 1,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Cape Gooseberry - P2R2.9-16",
@@ -7808,6 +8174,12 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.9-16 — Cape Gooseberry",
               "notes": "add more when ready from nursery"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R2.9-16 — Cape Gooseberry",
+              "notes": ""
             }
           ]
         },
@@ -7866,6 +8238,70 @@
               "notes": ""
             }
           ]
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Misidentified as Passionfruit by Hadrien — confirmed Achiote by Claire. Submission corrected.",
+          "first_planted": "",
+          "asset_name": "2026-03-12 - Achiote - P2R2.9-16",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-11",
+              "name": "Inventory P2R2.9-16 — Achiote",
+              "notes": "Misidentified as Passionfruit by Hadrien — confirmed Achiote by Claire. Submission corrected."
+            }
+          ]
+        },
+        {
+          "species": "Basil - Perennial (Thai)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Basil - Perennial (Thai) - P2R2.9-16",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R2.9-16 — Basil - Perennial (Thai)",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Basil - Sweet (Classic) - P2R2.9-16",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R2.9-16 — Basil - Sweet (Classic)",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Geranium - P2R2.9-16",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R2.9-16 — Geranium",
+              "notes": "Added via field observation"
+            }
+          ]
         }
       ],
       "green_manure": [
@@ -7895,12 +8331,12 @@
       "length": "7m",
       "has_trees": false,
       "first_planted": "2025-04-24",
-      "inventory_date": "2025-11-10",
+      "inventory_date": "2026-03-11",
       "plants": [
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 12,
+          "count": 3,
           "notes": "1 lost",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Comfrey - P2R2.16-23",
@@ -7914,13 +8350,13 @@
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory P2R2.16-23 — Comfrey",
+              "name": "Inventory Oct 2025 P2R2.16-23 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.16-23 — Comfrey",
+              "name": "Inventory P2R2.16-23 — Comfrey",
               "notes": ""
             },
             {
@@ -7928,6 +8364,12 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.16-23 — Comfrey",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-11",
+              "name": "Observation P2R2.16-23 — Comfrey",
+              "notes": "Inventory update: Claire confirmed 3 Comfrey remain. Hadrien's inventory showed →0 which was incorrect."
             }
           ]
         },
@@ -7948,13 +8390,13 @@
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory P2R2.16-23 — Sweet Potato",
+              "name": "Inventory Oct 2025 P2R2.16-23 — Sweet Potato",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.16-23 — Sweet Potato",
+              "name": "Inventory P2R2.16-23 — Sweet Potato",
               "notes": ""
             }
           ]
@@ -7976,13 +8418,13 @@
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory P2R2.16-23 — Tansy",
+              "name": "Inventory Oct 2025 P2R2.16-23 — Tansy",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.16-23 — Tansy",
+              "name": "Inventory P2R2.16-23 — Tansy",
               "notes": ""
             }
           ]
@@ -7990,7 +8432,7 @@
         {
           "species": "Pak Choi",
           "strata": "medium",
-          "count": 22,
+          "count": 0,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-11-10",
           "asset_name": "25 APR 2025 - Pak Choi - P2R2.16-23",
@@ -8006,13 +8448,19 @@
               "date": "2025-11-10",
               "name": "Renovation P2R2.16-23 — Pak Choi",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Observation P2R2.16-23 — Pak Choi",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Pumpkin (Generic)",
           "strata": "low",
-          "count": 5,
+          "count": 2,
           "notes": "planted Oct/Nov",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Pumpkin (Generic) - P2R2.16-23",
@@ -8022,6 +8470,28 @@
               "date": "2025-11-10",
               "name": "Inventory P2R2.16-23 — Pumpkin (Generic)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Observation P2R2.16-23 — Pumpkin (Generic)",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 2,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-11 - Basil - Sweet (Classic) - P2R2.16-23",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Inventory P2R2.16-23 — Basil - Sweet (Classic)",
+              "notes": "Added via field observation"
             }
           ]
         }
@@ -10353,12 +10823,12 @@
       "length": "11m",
       "has_trees": true,
       "first_planted": "2025-12-30",
-      "inventory_date": "2026-01-12",
+      "inventory_date": "2026-03-10",
       "plants": [
         {
           "species": "Papaya",
           "strata": "high",
-          "count": 6,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Papaya - P2R5.55-66",
@@ -10368,13 +10838,19 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.55-66 — Papaya",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R5.55-66 — Papaya",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Tallowood (Gum)",
           "strata": "emergent",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Tallowood (Gum) - P2R5.55-66",
@@ -10384,13 +10860,19 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.55-66 — Tallowood (Gum)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R5.55-66 — Tallowood (Gum)",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Forest Red Gum",
           "strata": "emergent",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Forest Red Gum - P2R5.55-66",
@@ -10400,13 +10882,19 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.55-66 — Forest Red Gum",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R5.55-66 — Forest Red Gum",
+              "notes": ""
             }
           ]
         },
         {
           "species": "Jacaranda",
           "strata": "medium",
-          "count": 6,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Jacaranda - P2R5.55-66",
@@ -10415,6 +10903,12 @@
               "type": "observation",
               "date": "2026-01-12",
               "name": "Inventory P2R5.55-66 — Jacaranda",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R5.55-66 — Jacaranda",
               "notes": ""
             }
           ]
@@ -10450,6 +10944,54 @@
               "notes": ""
             }
           ]
+        },
+        {
+          "species": "Coriander",
+          "strata": "low",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Coriander - P2R5.55-66",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R5.55-66 — Coriander",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Dianella",
+          "strata": "low",
+          "count": 4,
+          "notes": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm",
+          "first_planted": "",
+          "asset_name": "2026-03-11 - Dianella - P2R5.55-66",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Inventory P2R5.55-66 — Dianella",
+              "notes": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm"
+            }
+          ]
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 2,
+          "notes": "Seeded January 2026.",
+          "first_planted": "",
+          "asset_name": "2026-01-01 - Pigeon Pea - P2R5.55-66",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-12-31",
+              "name": "Inventory P2R5.55-66 — Pigeon Pea",
+              "notes": "Seeded January 2026."
+            }
+          ]
         }
       ]
     },
@@ -10461,7 +11003,7 @@
       "length": "11m",
       "has_trees": true,
       "first_planted": "2025-12-30",
-      "inventory_date": "2026-01-12",
+      "inventory_date": "2026-03-10",
       "plants": [
         {
           "species": "Papaya",
@@ -10482,7 +11024,7 @@
         {
           "species": "Tallowood (Gum)",
           "strata": "emergent",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Tallowood (Gum) - P2R5.66-77",
@@ -10492,13 +11034,19 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.66-77 — Tallowood (Gum)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Observation P2R5.66-77 — Tallowood (Gum)",
+              "notes": "previous section"
             }
           ]
         },
         {
           "species": "Forest Red Gum",
           "strata": "emergent",
-          "count": 1,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Forest Red Gum - P2R5.66-77",
@@ -10508,6 +11056,12 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.66-77 — Forest Red Gum",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Observation P2R5.66-77 — Forest Red Gum",
+              "notes": "previous section but not seen neither"
             }
           ]
         },
@@ -10556,6 +11110,102 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.66-77 — Pumpkin (Generic)",
               "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Dianella",
+          "strata": "low",
+          "count": 5,
+          "notes": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm",
+          "first_planted": "",
+          "asset_name": "2026-03-11 - Dianella - P2R5.66-77",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Inventory P2R5.66-77 — Dianella",
+              "notes": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm"
+            }
+          ]
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 2,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Comfrey - P2R5.66-77",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R5.66-77 — Comfrey",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Geranium - P2R5.66-77",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R5.66-77 — Geranium",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Coriander",
+          "strata": "low",
+          "count": 5,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Coriander - P2R5.66-77",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R5.66-77 — Coriander",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "Added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-10 - Tagasaste - Tree Lucerne - P2R5.66-77",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Inventory P2R5.66-77 — Tagasaste - Tree Lucerne",
+              "notes": "Added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 10,
+          "notes": "Seeded/planted January-February 2026.",
+          "first_planted": "",
+          "asset_name": "2026-01-15 - Pigeon Pea - P2R5.66-77",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-01-14",
+              "name": "Inventory P2R5.66-77 — Pigeon Pea",
+              "notes": "Seeded/planted January-February 2026."
             }
           ]
         }
