@@ -377,9 +377,11 @@ firefly-farm-ai/
 │
 ├── mcp-server/                ← farmOS MCP server (Phase 1a built, STDIO transport)
 │   ├── __init__.py            ← Package marker
-│   ├── server.py              ← FastMCP server: 10 tools, 5 resources, 3 prompts
+│   ├── server.py              ← FastMCP server: 18 tools, 5 resources, 3 prompts
 │   ├── farmos_client.py       ← farmOS HTTP client (OAuth2 + JSON:API, raw requests)
-│   ├── helpers.py             ← Date parsing, response formatters
+│   ├── observe_client.py      ← Google Apps Script observation endpoint client
+│   ├── memory_client.py       ← Google Apps Script team memory endpoint client
+│   ├── helpers.py             ← Date parsing, response formatters, plant type builders
 │   ├── requirements.txt       ← fastmcp, python-dotenv, requests
 │   └── venv/                  ← Separate Python 3.13 venv (pydantic v2 for FastMCP)
 │
@@ -607,25 +609,27 @@ These decisions have been made through extensive discussion. Don't revisit them 
 - ✅ Updated import_plants.py and generate_site.py for v7 column names
 - ✅ Created Google Sheet for Claire ("Firefly Corner - Plant Types v7")
 
-### Phase 1: farmOS MCP Server (Phase 1a BUILT — March 9, 2026)
+### Phase 1: farmOS MCP Server (Phase 1a BUILT — March 9, 2026; Sprint March 13)
 **Goal:** Claude Desktop can query and manage farmOS data via MCP tools.
 
-**Phase 1a (COMPLETE):** Local STDIO server deployed to Agnes, Claire, and James.
+**Phase 1a (COMPLETE + SPRINT):** Local STDIO server deployed to all 4 users.
 - ✅ Built `mcp-server/server.py` with FastMCP framework
 - ✅ Built `mcp-server/farmos_client.py` — raw HTTP client (OAuth2 + JSON:API)
 - ✅ Built `mcp-server/observe_client.py` — HTTP client for Google Apps Script observation endpoint
-- ✅ Built `mcp-server/helpers.py` — date parsing, response formatters
+- ✅ Built `mcp-server/memory_client.py` — HTTP client for Team Memory Apps Script endpoint (March 13)
+- ✅ Built `mcp-server/helpers.py` — date parsing, response formatters, plant type description builders
 - ✅ Separate venv at `mcp-server/venv/` (avoids pydantic v1/v2 conflict)
-- ✅ 13 tools: 6 read + 4 write + 3 observation management (`list_observations`, `update_observation_status`, `import_observations`)
-- ✅ 5 resources: `farm://overview`, `farm://sections/{section_id}`, `farm://plant-types`, `farm://plant-types/{name}`, `farm://recent-logs`
-- ✅ 3 prompts: `log_field_observation`, `check_section_status`, `compare_inventory`
-- ✅ All tested against live farmOS (13/13 tools passing)
-- ✅ Committed: `6e70ae4` (10 tools) → `46f7669` (13 tools + observation management)
+- ✅ 18 tools: 6 read + 4 write + 3 observation + 3 memory + 2 plant type management
+- ✅ 5 resources, 3 prompts
+- ✅ Committed: `6e70ae4` (10 tools) → `46f7669` (13 tools) → March 13 sprint (18 tools, NOT YET COMMITTED)
+- ✅ Agnes's macOS setup: Claude Desktop + MCP server (March 9)
 - ✅ James's Mac setup: Claude Desktop + MCP server at `~/firefly-mcp/` (March 11)
 - ✅ Claire's Windows PC setup: Claude Desktop + MCP server at `C:\firefly-mcp\` (March 11)
-- ✅ Both with Claude Desktop projects and role-specific context files
+- ✅ Olivier's Windows PC setup: Claude Desktop + MCP server at `C:\firefly-mcp\` (March 13)
+- ✅ All 4 with Claude Desktop projects and role-specific context files
+- ⬜ March 13 sprint needs: Apps Script deployments (Team Memory + observation Code.gs updates), then copy to all machines
 
-**Phase 1b (PLANNED):** HTTP transport + API key auth for Claire/James remote access.
+**Phase 1b (PLANNED — must ship by March 22):** HTTP transport + API key auth for remote access. Deploy on Railway.
 
 ### Phase 2: Claire's First Real Log (Weeks 3–4)
 Goal: Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.
@@ -766,8 +770,8 @@ Features: `--dry-run`, `--row` filter, idempotent (checks existing log names), m
 
 ### MCP Server Scripts
 
-**server.py** (BUILT — March 9–11, 2026; Phase 1a complete + observation tools)
-FastMCP server providing Claude Desktop with farmOS + observation management. Runs via STDIO transport.
+**server.py** (BUILT — March 9–11, 2026; Phase 1a complete + sprint March 13)
+FastMCP server providing Claude Desktop with farmOS + observation management + team memory + plant type management. Runs via STDIO transport.
 ```bash
 # Run via Claude Desktop (configured in claude_desktop_config.json)
 mcp-server/venv/bin/python mcp-server/server.py
@@ -775,17 +779,21 @@ mcp-server/venv/bin/python mcp-server/server.py
 # Test with MCP Inspector
 cd mcp-server && venv/bin/fastmcp dev server.py
 ```
-13 tools total:
+18 tools total (after March 13 sprint, not yet committed):
 - farmOS read (6): query_plants, query_sections, get_plant_detail, query_logs, get_inventory, search_plant_types
 - farmOS write (4): create_observation, create_activity, update_inventory, create_plant
 - Observation management (3): list_observations, update_observation_status, import_observations
+- Team memory (3): write_session_summary, read_team_activity, search_team_memory
+- Plant type management (2): add_plant_type, update_plant_type
 - 5 resources, 3 prompts
 
-**farmos_client.py** — Direct HTTP client for farmOS JSON:API (replaces farmOS.py to avoid pydantic conflict). OAuth2 password grant auth, paginated fetching, CONTAINS filter for server-side log queries.
+**farmos_client.py** — Direct HTTP client for farmOS JSON:API (replaces farmOS.py to avoid pydantic conflict). OAuth2 password grant auth, paginated fetching, CONTAINS filter for server-side log queries. Added March 13: `_patch()`, `create_plant_type()`, `update_plant_type()`, `upload_file()`.
 
-**observe_client.py** — Lightweight HTTP client for Google Apps Script observation endpoint. Fetches pending observations, updates status, enables review workflow via MCP tools.
+**observe_client.py** — Lightweight HTTP client for Google Apps Script observation endpoint. Fetches pending observations, updates status, enables review workflow via MCP tools. Added March 13: `delete_imported()`, `get_media()`.
 
-**helpers.py** — Date parsing (`parse_date`, `format_planted_label`), asset name builder, farmOS response formatters (`format_plant_asset`, `format_log`, `format_plant_type`, `format_section_from_assets`).
+**memory_client.py** — HTTP client for Google Apps Script team memory endpoint. Follows same pattern as observe_client.py. Methods: `write_summary()`, `read_activity()`, `search_memory()`. New env var: `MEMORY_ENDPOINT`.
+
+**helpers.py** — Date parsing (`parse_date`, `format_planted_label`), asset name builder, farmOS response formatters (`format_plant_asset`, `format_log`, `format_plant_type`, `format_section_from_assets`). Added March 13: `build_plant_type_description()`, `parse_plant_type_metadata()`.
 
 ### Demo Shortcut Scripts (Phase 0)
 
@@ -1175,6 +1183,60 @@ Part 3 — farmOS Import:
 - `%APPDATA%\Claude` folder only exists after Claude Desktop has been opened at least once
 - Env vars in Claude Desktop config `env` block work cleanly — `load_dotenv()` is a no-op when vars already set
 
+### March 13, 2026 — Agnes Architecture Review + MCP Sprint (6 Improvements) + Olivier Setup
+
+**Session 1: Seed bank spreadsheet for Claire**
+- Created `Downloads/Seed bank inventory - MARCH2026.xlsx` — pre-filled plant type taxonomy columns from plant_types.csv
+- Applied styled header row: bold white text on dark green (#2d5016) background, 40px height, centered alignment
+
+**Session 2: Olivier Claude Desktop setup**
+- Installed on Olivier's Windows PC (Claire's old PC, user `C:\Users\Claire`)
+- Hit MSIX sandbox blocker — Microsoft Store/MSIX install blocks MCP process spawning
+- Extensive troubleshooting: direct Python path, .bat wrapper, config in sandbox path — none worked
+- **Solution**: `winget install Anthropic.Claude` installs non-sandboxed version
+- MCP at `C:\firefly-mcp\`, Python 3.13, context file: `claude-docs/olivier-desktop-context.md`
+- **All 4 users now equipped**: Agnes (macOS), Claire (Windows), James (macOS), Olivier (Windows)
+
+**Session 3: Agnes review analysis + MCP server sprint**
+- Analyzed Agnes's 3 review documents (roadmap, architecture, shared intelligence options)
+- Consolidated priorities driven by March 22 hard deadline (Claire/Olivier departure)
+- Agnes approved and explicitly requested implementing 6 MCP server improvements:
+
+**MCP Server Sprint — 6 improvements (code complete, not yet committed):**
+
+1. **Shared Intelligence (Option A)**: New `memory_client.py` + 3 tools in server.py
+   - `write_session_summary`, `read_team_activity`, `search_team_memory`
+   - Needs: Apps Script Code.gs for "Firefly Corner - Team Memory" Sheet + MEMORY_ENDPOINT env var
+
+2. **Import preserves raw data**: `_build_import_notes()` helper builds rich farmOS log notes
+   - Includes: reporter, timestamp, mode, condition, section/plant notes, count changes
+   - Replaces sparse notes in all 3 import cases (section comment, new plant, inventory update)
+
+3. **Plant type management**: 2 new tools (`add_plant_type`, `update_plant_type`)
+   - `farmos_client.py`: `_patch()`, `create_plant_type()`, `update_plant_type()`
+   - `helpers.py`: `build_plant_type_description()`, `parse_plant_type_metadata()`
+   - Validates name doesn't exist before create, merges metadata on update
+
+4. **Sheet cleanup after import**: `observe_client.delete_imported(submission_id)`
+   - Called automatically in import_observations after successful status update
+   - Needs: Apps Script `delete_imported` handler in observation Code.gs
+
+5. **Media to farmOS logs**: `observe_client.get_media()` + `farmos_client.upload_file()`
+   - Client methods implemented, media fetch+upload loop in import_observations NOT YET CODED
+   - Needs: Apps Script `get_media` handler in observation Code.gs
+
+6. **Auto-regenerate after import**: At end of import_observations
+   - Checks `_MAIN_VENV_PYTHON` (only on Agnes's machine with git repo)
+   - If exists: calls `regenerate_pages(push_to_github=True)`
+   - Other machines: returns "Pages need regeneration" message
+
+**Key learnings:**
+- Windows MSIX/Microsoft Store Claude Desktop install runs in a sandboxed environment that blocks process spawning (Python, MCP servers)
+- Standard .exe download from claude.ai can ALSO install as MSIX on some machines
+- `winget install Anthropic.Claude` is the reliable non-sandboxed install method
+- Known bug (GitHub issue #26073): MSIX "Edit Config" opens wrong file path (real vs virtualized %APPDATA%)
+- `harvest_days` is NOT a valid farmOS plant_type field — causes 422. Only `maturity_days` and `transplant_days` work.
+
 ---
 
-*Last updated: March 11, 2026. This file should be updated as the project evolves.*
+*Last updated: March 13, 2026. This file should be updated as the project evolves.*

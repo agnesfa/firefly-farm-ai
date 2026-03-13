@@ -115,6 +115,21 @@ class FarmOSClient:
         resp.raise_for_status()
         return resp.json()
 
+    def _patch(self, path: str, payload: dict) -> dict:
+        """PATCH request to farmOS API. Returns parsed JSON."""
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+        url = f"{self.hostname}{path}"
+        resp = self.session.patch(url, json=payload, timeout=30)
+        if resp.status_code in (401, 403):
+            self._connected = False
+            raise ConnectionError(
+                f"farmOS authentication expired (HTTP {resp.status_code}). "
+                "Restart the MCP server to reconnect."
+            )
+        resp.raise_for_status()
+        return resp.json()
+
     # ── Reliable query methods ──────────────────────────────────
 
     def fetch_by_name(self, api_path: str, name: str) -> list:
@@ -609,3 +624,75 @@ class FarmOSClient:
     def get_recent_logs(self, count: int = 20) -> list:
         """Get the most recent logs across all types."""
         return self.get_logs(max_results=count)
+
+    # ── Plant type taxonomy management ─────────────────────────
+
+    def create_plant_type(self, name: str, description: str,
+                          maturity_days: Optional[int] = None,
+                          transplant_days: Optional[int] = None) -> Optional[str]:
+        """Create a plant_type taxonomy term. Returns UUID.
+
+        Note: harvest_days is NOT a valid farmOS field and causes 422 errors.
+        Only maturity_days and transplant_days are supported.
+        """
+        data = {
+            "attributes": {
+                "name": name,
+                "description": {"value": description, "format": "default"},
+            }
+        }
+        if maturity_days and maturity_days > 0:
+            data["attributes"]["maturity_days"] = maturity_days
+        if transplant_days and transplant_days > 0:
+            data["attributes"]["transplant_days"] = transplant_days
+
+        payload = {"data": {"type": "taxonomy_term--plant_type", **data}}
+        result = self._post("/api/taxonomy_term/plant_type", payload)
+        return result.get("data", {}).get("id")
+
+    def update_plant_type(self, uuid: str, attributes: dict) -> dict:
+        """PATCH a plant_type taxonomy term with updated attributes."""
+        payload = {
+            "data": {
+                "type": "taxonomy_term--plant_type",
+                "id": uuid,
+                "attributes": attributes,
+            }
+        }
+        return self._patch(f"/api/taxonomy_term/plant_type/{uuid}", payload)
+
+    # ── File upload ────────────────────────────────────────────
+
+    def upload_file(self, entity_type: str, entity_id: str,
+                    field_name: str, filename: str, binary_data: bytes,
+                    mime_type: str = "image/jpeg") -> Optional[str]:
+        """Upload a file to a farmOS entity's image/file field.
+
+        Uses binary POST (not the session's JSON content-type).
+
+        Args:
+            entity_type: e.g., "log/observation", "asset/plant"
+            entity_id: UUID of the entity
+            field_name: "image" or "file"
+            filename: e.g., "photo.jpg"
+            binary_data: raw file bytes
+            mime_type: MIME type (default "image/jpeg")
+        """
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+
+        url = f"{self.hostname}/api/{entity_type}/{entity_id}/{field_name}"
+        headers = {
+            "Authorization": self.session.headers["Authorization"],
+            "Content-Type": "application/octet-stream",
+            "Content-Disposition": f'file; filename="{filename}"',
+        }
+        resp = requests.post(url, data=binary_data, headers=headers, timeout=60)
+        if resp.status_code in (401, 403):
+            self._connected = False
+            raise ConnectionError(
+                f"farmOS authentication expired (HTTP {resp.status_code}). "
+                "Restart the MCP server to reconnect."
+            )
+        resp.raise_for_status()
+        return resp.json().get("data", {}).get("id")

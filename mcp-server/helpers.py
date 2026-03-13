@@ -340,3 +340,87 @@ def format_section_from_assets(section_asset: dict, plant_assets: list) -> dict:
         "plant_count": len(plants),
         "plants": plants,
     }
+
+
+# ── Plant type description helpers ─────────────────────────────
+
+
+def build_plant_type_description(fields: dict) -> str:
+    """Build farmOS plant type description with syntropic metadata block.
+
+    Replicates the format from scripts/import_plants.py build_description().
+    The metadata is embedded in the description as Markdown-formatted key-value
+    pairs, since farmOS doesn't have native syntropic fields yet (Phase 4).
+
+    Args:
+        fields: Dict with keys: description, botanical_name, lifecycle_years,
+                strata, succession_stage, plant_functions, crop_family,
+                lifespan_years, source.
+    """
+    parts = []
+
+    if fields.get("description"):
+        parts.append(fields["description"])
+
+    metadata = []
+    if fields.get("botanical_name"):
+        metadata.append(f"**Botanical Name:** {fields['botanical_name']}")
+    if fields.get("lifecycle_years"):
+        metadata.append(f"**Life Cycle:** {fields['lifecycle_years']} years")
+    if fields.get("strata"):
+        metadata.append(f"**Strata:** {fields['strata'].title()}")
+    if fields.get("succession_stage"):
+        metadata.append(f"**Succession Stage:** {fields['succession_stage'].title()}")
+    if fields.get("plant_functions"):
+        functions = fields["plant_functions"].replace("_", " ").replace(",", ", ")
+        metadata.append(f"**Functions:** {functions.title()}")
+    if fields.get("crop_family"):
+        metadata.append(f"**Family:** {fields['crop_family']}")
+    if fields.get("lifespan_years"):
+        metadata.append(f"**Lifespan:** {fields['lifespan_years']} years")
+    if fields.get("source"):
+        metadata.append(f"**Source:** {fields['source']}")
+
+    if metadata:
+        parts.append("\n\n---\n**Syntropic Agriculture Data:**\n" + "\n".join(metadata))
+
+    return "\n".join(parts)
+
+
+def parse_plant_type_metadata(description_text: str) -> dict:
+    """Extract syntropic metadata from a plant type description.
+
+    Parses the Markdown-formatted metadata block embedded in farmOS
+    plant_type descriptions.
+
+    Returns dict with keys: botanical_name, strata, succession_stage,
+    plant_functions, crop_family, lifespan_years, lifecycle_years, source.
+    """
+    metadata = {}
+    if not description_text or "Syntropic Agriculture Data" not in description_text:
+        return metadata
+
+    for line in description_text.split("\n"):
+        clean = line.strip().replace("**", "")
+        if clean.startswith("Botanical Name:"):
+            metadata["botanical_name"] = clean.split(":", 1)[1].strip()
+        elif clean.startswith("Strata:"):
+            metadata["strata"] = clean.split(":", 1)[1].strip().lower()
+        elif clean.startswith("Succession Stage:"):
+            metadata["succession_stage"] = clean.split(":", 1)[1].strip().lower()
+        elif clean.startswith("Functions:"):
+            # Restore underscore format: "Nitrogen Fixer" → "nitrogen_fixer"
+            raw = clean.split(":", 1)[1].strip()
+            metadata["plant_functions"] = raw.lower().replace(" ", "_").replace(",_", ",")
+        elif clean.startswith("Family:"):
+            metadata["crop_family"] = clean.split(":", 1)[1].strip()
+        elif clean.startswith("Lifespan:"):
+            val = clean.split(":", 1)[1].strip()
+            metadata["lifespan_years"] = val.replace(" years", "")
+        elif clean.startswith("Life Cycle:"):
+            val = clean.split(":", 1)[1].strip()
+            metadata["lifecycle_years"] = val.replace(" years", "")
+        elif clean.startswith("Source:"):
+            metadata["source"] = clean.split(":", 1)[1].strip()
+
+    return metadata

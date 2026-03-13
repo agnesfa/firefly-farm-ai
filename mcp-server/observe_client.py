@@ -99,3 +99,40 @@ class ObservationClient:
         )
         resp.raise_for_status()
         return resp.json()
+
+    def delete_imported(self, submission_id: str) -> dict:
+        """Delete imported observation rows from the Sheet.
+
+        Only deletes rows where status is "imported". Raw data must
+        be preserved in farmOS log notes BEFORE calling this.
+
+        Args:
+            submission_id: The submission whose imported rows to delete.
+
+        Returns dict with keys: success, deleted (int).
+        """
+        payload = json.dumps({
+            "action": "delete_imported",
+            "submission_id": submission_id,
+        })
+        resp = requests.post(
+            self.endpoint,
+            data=payload,
+            headers={"Content-Type": "text/plain"},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+    def get_media(self, submission_id: str) -> dict:
+        """Fetch media files for a submission from Google Drive via Apps Script.
+
+        Args:
+            submission_id: The submission whose media files to retrieve.
+
+        Returns dict with keys: success, files (list of {filename, mime_type, data_base64}).
+        """
+        params = {"action": "get_media", "submission_id": submission_id}
+        resp = requests.get(self.endpoint, params=params, timeout=60)
+        resp.raise_for_status()
+        return resp.json()

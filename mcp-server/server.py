@@ -30,6 +30,7 @@ from fastmcp import FastMCP
 
 from farmos_client import FarmOSClient
 from observe_client import ObservationClient
+from memory_client import MemoryClient
 from helpers import (
     parse_date,
     format_planted_label,
@@ -39,6 +40,8 @@ from helpers import (
     format_log,
     format_plant_type,
     format_section_from_assets,
+    build_plant_type_description,
+    parse_plant_type_metadata,
     AEST,
 )
 
@@ -57,6 +60,8 @@ with 33 sections containing 404 plant assets and 219 plant species.
 Use the available tools to query plants, sections, logs, and plant types.
 Use write tools to create observations, activities, and new plant records.
 Use observation tools to review and import field observations from the Sheet.
+Use memory tools to read team activity and write session summaries.
+Use plant type tools to add or update species in the farmOS taxonomy.
 
 Key concepts:
 - Sections are identified like P2R3.14-21 (Paddock 2, Row 3, metres 14-21)
@@ -69,6 +74,7 @@ Key concepts:
 # Global clients — connect lazily on first use
 _client: Optional[FarmOSClient] = None
 _observe_client: Optional[ObservationClient] = None
+_memory_client: Optional[MemoryClient] = None
 
 
 def get_client() -> FarmOSClient:
@@ -87,6 +93,15 @@ def get_observe_client() -> ObservationClient:
         _observe_client = ObservationClient()
         _observe_client.connect()
     return _observe_client
+
+
+def get_memory_client() -> MemoryClient:
+    """Get or create the team memory client connection."""
+    global _memory_client
+    if _memory_client is None or not _memory_client.is_connected:
+        _memory_client = MemoryClient()
+        _memory_client.connect()
+    return _memory_client
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -845,6 +860,32 @@ def update_observation_status(
     }, indent=2)
 
 
+def _build_import_notes(obs: dict, extra: str = "") -> str:
+    """Build rich notes from observation data for farmOS log.
+
+    Preserves ALL raw data from the field observation so the Google Sheet
+    rows can be safely deleted after import.
+    """
+    parts = []
+    if obs.get("observer"):
+        parts.append(f"Reporter: {obs['observer']}")
+    if obs.get("timestamp"):
+        parts.append(f"Submitted: {obs['timestamp'][:19]}")
+    if obs.get("mode"):
+        parts.append(f"Mode: {obs['mode']}")
+    if obs.get("condition") and obs["condition"] != "alive":
+        parts.append(f"Condition: {obs['condition']}")
+    if obs.get("section_notes"):
+        parts.append(f"Section notes: {obs['section_notes']}")
+    if obs.get("plant_notes"):
+        parts.append(f"Plant notes: {obs['plant_notes']}")
+    if obs.get("previous_count") is not None and obs.get("new_count") is not None:
+        parts.append(f"Count: {obs['previous_count']} → {obs['new_count']}")
+    if extra:
+        parts.append(extra)
+    return "\n".join(parts)
+
+
 @mcp.tool
 def import_observations(
     submission_id: str,
@@ -913,7 +954,7 @@ def import_observations(
                     result_json = json.loads(create_activity(
                         section_id=obs_section,
                         activity_type="observation",
-                        notes=f"Field note: {section_notes}",
+                        notes=_build_import_notes(obs),
                         date=obs_date or None,
                     ))
                     action["result"] = result_json.get("status", "unknown")
@@ -947,7 +988,7 @@ def import_observations(
                         section_id=obs_section,
                         count=count,
                         planted_date=obs_date or None,
-                        notes=plant_notes or f"Added via field observation",
+                        notes=_build_import_notes(obs, "New plant added via field observation"),
                     ))
                     action["result"] = result_json.get("status", "unknown")
                     action["plant_name"] = result_json.get("plant", {}).get("name")
@@ -974,13 +1015,8 @@ def import_observations(
             plant_name = plant.get("attributes", {}).get("name", "")
             formatted = format_plant_asset(plant)
 
-            # Build notes
-            parts = []
-            if condition and condition != "alive":
-                parts.append(f"Condition: {condition}")
-            if plant_notes:
-                parts.append(plant_notes)
-            combined_notes = ". ".join(parts) if parts else ""
+            # Build notes — preserve all raw data from the field observation
+            combined_notes = _build_import_notes(obs)
 
             # Only update if count changed or there are meaningful notes
             count_val = int(new_count) if new_count is not None else None
@@ -1016,7 +1052,7 @@ def import_observations(
                         result_json = json.loads(create_activity(
                             section_id=obs_section,
                             activity_type="observation",
-                            notes=f"{species}: {combined_notes}",
+                            notes=combined_notes,
                             date=obs_date or None,
                         ))
                         action["result"] = result_json.get("status", "unknown")
@@ -1030,6 +1066,7 @@ def import_observations(
 
     # Update Sheet status to imported (unless dry_run or all failed)
     imported_count = sum(1 for a in actions if a.get("result") == "created")
+    sheet_status = "dry_run" if dry_run else "pending"
     if not dry_run and (imported_count > 0 or not errors):
         try:
             obs_client.update_status([{
@@ -1038,8 +1075,33 @@ def import_observations(
                 "reviewer": reviewer,
                 "notes": f"{imported_count} actions imported to farmOS",
             }])
+            sheet_status = "imported"
         except Exception as e:
             errors.append(f"Failed to update Sheet status: {e}")
+            sheet_status = "partial"
+
+        # Delete imported rows from Sheet (raw data preserved in farmOS log notes)
+        if sheet_status == "imported":
+            try:
+                obs_client.delete_imported(submission_id)
+                sheet_status = "imported_and_cleaned"
+            except Exception as e:
+                errors.append(f"Failed to clean up Sheet rows: {e}")
+
+    # Auto-regenerate QR landing pages if on a machine with the project repo
+    regen_message = None
+    if not dry_run and actions:
+        if os.path.isfile(_MAIN_VENV_PYTHON):
+            try:
+                regen_result = json.loads(regenerate_pages(push_to_github=True))
+                regen_message = regen_result.get("status", "unknown")
+            except Exception as e:
+                regen_message = f"regeneration failed: {e}"
+        else:
+            regen_message = (
+                "Pages need regeneration. Run regenerate_pages tool on a machine "
+                "with the project repo, or ask Agnes."
+            )
 
     return json.dumps({
         "submission_id": submission_id,
@@ -1048,7 +1110,8 @@ def import_observations(
         "total_actions": len(actions),
         "actions": actions,
         "errors": errors if errors else None,
-        "sheet_status": "imported" if not dry_run and not errors else ("dry_run" if dry_run else "partial"),
+        "sheet_status": sheet_status,
+        "pages_regenerated": regen_message,
     }, indent=2)
 
 
@@ -1199,6 +1262,297 @@ def regenerate_pages(push_to_github: bool = True) -> str:
         "steps": steps,
         "pages_url": "https://agnesfa.github.io/firefly-farm-ai/" if all_success and push_to_github else None,
     }, indent=2)
+
+
+# ═══════════════════════════════════════════════════════════════
+# TOOLS — Team Memory (shared intelligence across users)
+# ═══════════════════════════════════════════════════════════════
+
+
+@mcp.tool
+def write_session_summary(
+    user: str,
+    topics: str = "",
+    decisions: str = "",
+    farmos_changes: str = "",
+    questions: str = "",
+    summary: str = "",
+    skip: bool = False,
+) -> str:
+    """Write a session summary to the shared Team Memory.
+
+    Call this at the end of significant sessions to share what was discussed
+    and decided with the rest of the team.
+
+    Args:
+        user: Who this summary is from (e.g., "Claire", "Agnes", "Olivier").
+        topics: Comma-separated topic keywords (e.g., "compost, P2R3, pigeon pea").
+        decisions: Key decisions made in this session.
+        farmos_changes: JSON string of farmOS changes made, e.g., '[{"type":"observation","id":"uuid","name":"..."}]'.
+        questions: Open questions or things to follow up on.
+        summary: Free-text session summary.
+        skip: If True, mark as private/skipped (not shared with team). Default False.
+    """
+    try:
+        mem_client = get_memory_client()
+    except ValueError as e:
+        return json.dumps({"error": str(e), "hint": "MEMORY_ENDPOINT env var not set"})
+
+    try:
+        result = mem_client.write_summary(
+            user=user,
+            topics=topics,
+            decisions=decisions,
+            farmos_changes=farmos_changes,
+            questions=questions,
+            summary=summary,
+            skip=skip,
+        )
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to write summary: {e}"})
+
+
+@mcp.tool
+def read_team_activity(
+    days: int = 7,
+    user: Optional[str] = None,
+    limit: int = 20,
+) -> str:
+    """Read recent team session summaries from shared memory.
+
+    Call this at the start of sessions to see what the team has been doing.
+
+    Args:
+        days: How many days back to look (default 7).
+        user: Filter by team member name (optional).
+        limit: Max results to return (default 20).
+    """
+    try:
+        mem_client = get_memory_client()
+    except ValueError as e:
+        return json.dumps({"error": str(e), "hint": "MEMORY_ENDPOINT env var not set"})
+
+    try:
+        result = mem_client.read_activity(days=days, user=user, limit=limit)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to read team activity: {e}"})
+
+
+@mcp.tool
+def search_team_memory(
+    query: str,
+    days: int = 30,
+) -> str:
+    """Search team memory for matching session summaries.
+
+    Searches across topics, decisions, questions, and summary text.
+
+    Args:
+        query: Text to search for (e.g., "compost", "pigeon pea", "nursery").
+        days: How many days back to search (default 30).
+    """
+    try:
+        mem_client = get_memory_client()
+    except ValueError as e:
+        return json.dumps({"error": str(e), "hint": "MEMORY_ENDPOINT env var not set"})
+
+    try:
+        result = mem_client.search_memory(query=query, days=days)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to search team memory: {e}"})
+
+
+# ═══════════════════════════════════════════════════════════════
+# TOOLS — Plant type taxonomy management
+# ═══════════════════════════════════════════════════════════════
+
+
+@mcp.tool
+def add_plant_type(
+    farmos_name: str,
+    botanical_name: Optional[str] = None,
+    strata: Optional[str] = None,
+    succession_stage: Optional[str] = None,
+    plant_functions: Optional[str] = None,
+    crop_family: Optional[str] = None,
+    origin: Optional[str] = None,
+    description: Optional[str] = None,
+    lifespan_years: Optional[str] = None,
+    lifecycle_years: Optional[str] = None,
+    source: Optional[str] = None,
+    maturity_days: Optional[int] = None,
+    transplant_days: Optional[int] = None,
+) -> str:
+    """Add a new plant type to the farmOS taxonomy.
+
+    Creates a plant_type taxonomy term with syntropic agriculture metadata
+    embedded in the description.
+
+    Args:
+        farmos_name: The canonical name (e.g., "Tomato (Marmande)", "Pigeon Pea"). Must not already exist.
+        botanical_name: Scientific name (e.g., "Cajanus cajan").
+        strata: Height layer — emergent, high, medium, or low.
+        succession_stage: Temporal role — pioneer, secondary, or climax.
+        plant_functions: Comma-separated function tags (e.g., "nitrogen_fixer,edible_seed,biomass_producer").
+        crop_family: Botanical family (e.g., "Fabaceae").
+        origin: Geographic origin (e.g., "India/Africa").
+        description: Free-text description of the plant.
+        lifespan_years: How long the plant lives (e.g., "5-10", "20+").
+        lifecycle_years: Production/harvest cycle (e.g., "0.5", "3-5").
+        source: Where seeds/plants come from (e.g., "EDEN Seeds", "Daleys Fruit Nursery").
+        maturity_days: Days to maturity (numeric, optional).
+        transplant_days: Days from seed to transplant (numeric, optional).
+    """
+    client = get_client()
+
+    # Check if already exists
+    existing = client.fetch_by_name("taxonomy_term/plant_type", farmos_name)
+    if existing:
+        return json.dumps({
+            "error": f"Plant type '{farmos_name}' already exists in farmOS.",
+            "existing_id": existing[0]["id"],
+        })
+
+    # Build description with syntropic metadata
+    fields = {
+        "description": description or "",
+        "botanical_name": botanical_name,
+        "lifecycle_years": lifecycle_years,
+        "strata": strata,
+        "succession_stage": succession_stage,
+        "plant_functions": plant_functions,
+        "crop_family": crop_family,
+        "lifespan_years": lifespan_years,
+        "source": source,
+    }
+    full_description = build_plant_type_description(fields)
+
+    try:
+        uuid = client.create_plant_type(
+            name=farmos_name,
+            description=full_description,
+            maturity_days=maturity_days,
+            transplant_days=transplant_days,
+        )
+        # Clear cache so new type is immediately available
+        client._plant_type_cache.pop(farmos_name, None)
+
+        return json.dumps({
+            "status": "created",
+            "id": uuid,
+            "name": farmos_name,
+            "strata": strata,
+            "succession_stage": succession_stage,
+        }, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to create plant type: {e}"})
+
+
+@mcp.tool
+def update_plant_type(
+    farmos_name: str,
+    botanical_name: Optional[str] = None,
+    strata: Optional[str] = None,
+    succession_stage: Optional[str] = None,
+    plant_functions: Optional[str] = None,
+    crop_family: Optional[str] = None,
+    origin: Optional[str] = None,
+    description: Optional[str] = None,
+    lifespan_years: Optional[str] = None,
+    lifecycle_years: Optional[str] = None,
+    source: Optional[str] = None,
+    maturity_days: Optional[int] = None,
+    transplant_days: Optional[int] = None,
+) -> str:
+    """Update an existing plant type in the farmOS taxonomy.
+
+    Fetches the existing term, merges in the provided updates,
+    rebuilds the description with syntropic metadata, and patches.
+
+    Args:
+        farmos_name: The exact name of the plant type to update. Must already exist.
+        botanical_name: New scientific name (optional).
+        strata: New height layer (optional).
+        succession_stage: New temporal role (optional).
+        plant_functions: New function tags, comma-separated (optional).
+        crop_family: New botanical family (optional).
+        origin: New geographic origin (optional).
+        description: New free-text description (optional).
+        lifespan_years: New lifespan (optional).
+        lifecycle_years: New lifecycle (optional).
+        source: New source (optional).
+        maturity_days: New days to maturity (optional).
+        transplant_days: New days to transplant (optional).
+    """
+    client = get_client()
+
+    # Find existing term
+    existing = client.fetch_by_name("taxonomy_term/plant_type", farmos_name)
+    if not existing:
+        return json.dumps({"error": f"Plant type '{farmos_name}' not found in farmOS."})
+
+    term = existing[0]
+    uuid = term["id"]
+    attrs = term.get("attributes", {})
+
+    # Parse existing metadata from description
+    existing_desc = attrs.get("description", {})
+    if isinstance(existing_desc, dict):
+        existing_text = existing_desc.get("value", "")
+    else:
+        existing_text = str(existing_desc) if existing_desc else ""
+
+    current_meta = parse_plant_type_metadata(existing_text)
+
+    # Extract the plain description (before the --- separator)
+    plain_desc = existing_text.split("\n\n---\n")[0] if "\n\n---\n" in existing_text else existing_text
+
+    # Merge updates into current metadata
+    fields = {
+        "description": description if description is not None else plain_desc,
+        "botanical_name": botanical_name or current_meta.get("botanical_name"),
+        "lifecycle_years": lifecycle_years or current_meta.get("lifecycle_years"),
+        "strata": strata or current_meta.get("strata"),
+        "succession_stage": succession_stage or current_meta.get("succession_stage"),
+        "plant_functions": plant_functions or current_meta.get("plant_functions"),
+        "crop_family": crop_family or current_meta.get("crop_family"),
+        "lifespan_years": lifespan_years or current_meta.get("lifespan_years"),
+        "source": source or current_meta.get("source"),
+    }
+    new_description = build_plant_type_description(fields)
+
+    # Build PATCH attributes
+    patch_attrs = {
+        "description": {"value": new_description, "format": "default"},
+    }
+    if maturity_days is not None:
+        patch_attrs["maturity_days"] = maturity_days
+    if transplant_days is not None:
+        patch_attrs["transplant_days"] = transplant_days
+
+    try:
+        client.update_plant_type(uuid, patch_attrs)
+        # Clear cache
+        client._plant_type_cache.pop(farmos_name, None)
+
+        return json.dumps({
+            "status": "updated",
+            "id": uuid,
+            "name": farmos_name,
+            "updated_fields": [k for k, v in {
+                "botanical_name": botanical_name, "strata": strata,
+                "succession_stage": succession_stage, "plant_functions": plant_functions,
+                "crop_family": crop_family, "description": description,
+                "lifespan_years": lifespan_years, "lifecycle_years": lifecycle_years,
+                "source": source, "maturity_days": maturity_days,
+                "transplant_days": transplant_days,
+            }.items() if v is not None],
+        }, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to update plant type: {e}"})
 
 
 # ═══════════════════════════════════════════════════════════════
