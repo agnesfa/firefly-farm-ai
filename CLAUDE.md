@@ -382,7 +382,17 @@ firefly-farm-ai/
 │   ├── observe_client.py      ← Google Apps Script observation endpoint client
 │   ├── memory_client.py       ← Google Apps Script team memory endpoint client
 │   ├── helpers.py             ← Date parsing, response formatters, plant type builders
-│   ├── requirements.txt       ← fastmcp, python-dotenv, requests
+│   ├── requirements.txt       ← fastmcp, python-dotenv, requests, pytest, responses
+│   ├── pytest.ini             ← Test configuration
+│   ├── tests/                 ← TDD test harness (86 tests, 3 layers)
+│   │   ├── conftest.py        ← Factory fixtures (make_plant_asset, make_log, etc.)
+│   │   ├── test_helpers.py    ← Layer 1: pure functions (parse_date, name parsing, metadata)
+│   │   ├── test_farmos_client.py ← Layer 2: HTTP client (OAuth2, pagination, entity creation)
+│   │   ├── test_observe_client.py ← Layer 2: observation Sheet client
+│   │   ├── test_memory_client.py  ← Layer 2: team memory client
+│   │   ├── test_tools_read.py    ← Layer 3: read tool orchestration
+│   │   ├── test_tools_write.py   ← Layer 3: write tools + idempotency
+│   │   └── test_import_workflow.py ← Layer 3: import_observations composite workflow
 │   └── venv/                  ← Separate Python 3.13 venv (pydantic v2 for FastMCP)
 │
 ├── skills/                    ← Claude Skills (to be developed)
@@ -557,6 +567,8 @@ These decisions have been made through extensive discussion. Don't revisit them 
 9. **Native farmOS Seed and Plant assets** over custom Material assets. This aligns with farmOS best practices and enables the built-in Seed→Plant lifecycle workflow.
 
 10. **Plant types CSV is the master reference** until all data is properly in farmOS with custom fields. The CSV grows iteratively as new species are identified.
+
+11. **Test first, smart coverage, intelligent testing.** Every new feature or tool gets tests before or alongside implementation. The test harness uses 3 layers — unit tests for pure functions (highest ROI), HTTP-mocked client tests (contract verification), and integration tests with mock clients (orchestration logic). Tests target the highest-risk areas: name parsing edge cases, idempotency guards, import workflow branching, and error resilience. Coverage analysis drives where to invest test effort — focus on code paths that touch production data (farmOS writes, Sheet mutations), not boilerplate. Tests must run fast (<2s), require zero network access, and catch regressions before they corrupt the shared farm database.
 
 ---
 
@@ -1236,6 +1248,22 @@ Part 3 — farmOS Import:
 - `winget install Anthropic.Claude` is the reliable non-sandboxed install method
 - Known bug (GitHub issue #26073): MSIX "Edit Config" opens wrong file path (real vs virtualized %APPDATA%)
 - `harvest_days` is NOT a valid farmOS plant_type field — causes 422. Only `maturity_days` and `transplant_days` work.
+
+### March 13, 2026 (continued) — TDD Test Harness
+
+**Session: Test harness for MCP server**
+- Designed 3-layer test architecture: unit (helpers.py), client (HTTP mocks), integration (tool orchestration)
+- Built complete test harness: 86 tests across 7 test files, all passing in 0.82s
+- Layer 1 (`test_helpers.py`, 29 tests): parse_date (7 formats), format_planted_label, build_asset_name, name parsing edge cases (species with dashes like "Basil - Sweet (Classic)"), inventory extraction, plant_type metadata roundtrip, _build_import_notes, format_timestamp
+- Layer 2 (`test_farmos_client.py`, 15 tests): OAuth2 connect/fail/missing-vars, 401/500/422 error handling, single/multi-page pagination with dedup, CONTAINS filter URL construction, quantity merging, entity creation payload verification
+- Layer 2 (`test_observe_client.py`, 8 tests + `test_memory_client.py`, 6 tests): connect/missing-env, payload/param verification, error propagation
+- Layer 3 (`test_tools_write.py`, 10 tests): create_observation happy/not-found/idempotency, create_activity happy/not-found, create_plant happy/type-not-found/idempotency, update_inventory delegation
+- Layer 3 (`test_tools_read.py`, 6 tests): query_plants, get_plant_detail found/not-found, get_inventory grouping, query_sections grouping, search_plant_types case-insensitive
+- Layer 3 (`test_import_workflow.py`, 12 tests): Case A/B/C routing, inferred new plant, status validation, sheet lifecycle, dry run, error resilience, auto-regen gating
+- Coverage: 79% total (helpers 77%, farmos_client 52%, server 59%, observe_client 94%, memory_client 100%)
+- Added architecture principle #11: "Test first, smart coverage, intelligent testing"
+- Zero network calls — all mocked with `responses` library or `MagicMock`
+- Dependencies added: pytest>=8.0.0, responses>=0.25.0, pytest-cov>=5.0.0
 
 ---
 
