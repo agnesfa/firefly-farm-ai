@@ -88,6 +88,8 @@ function doPost(e) {
     // Route based on action
     if (payload.action === "update_status") {
       return handleUpdateStatus(payload);
+    } else if (payload.action === "delete_imported") {
+      return handleDeleteImported(payload);
     }
 
     // Default: field observation submission
@@ -108,6 +110,8 @@ function doGet(e) {
 
   if (action === "list") {
     return handleListObservations(params);
+  } else if (action === "get_media") {
+    return handleGetMedia(e.parameter);
   }
 
   // Default: health check
@@ -549,6 +553,121 @@ function getOrCreateSubfolder(parent, name) {
     return folders.next();
   }
   return parent.createFolder(name);
+}
+
+// ─── DELETE IMPORTED ROWS ────────────────────────────────
+
+/**
+ * Delete rows with matching submission_id WHERE status="imported".
+ * Called by MCP server after successful farmOS import to clean up the Sheet.
+ *
+ * Payload: { action: "delete_imported", submission_id: "abc-123" }
+ * Returns: { success: true, deleted: N }
+ */
+function handleDeleteImported(body) {
+  var submissionId = body.submission_id;
+  if (!submissionId) {
+    return jsonResponse({ success: false, error: "Missing submission_id" });
+  }
+
+  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return jsonResponse({ success: true, deleted: 0 });
+  }
+
+  var data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
+
+  // Collect row indices to delete (1-indexed, offset by header row)
+  var rowsToDelete = [];
+  for (var i = 0; i < data.length; i++) {
+    if (
+      String(data[i][COL.SUBMISSION_ID]) === submissionId &&
+      String(data[i][COL.STATUS]).toLowerCase() === "imported"
+    ) {
+      rowsToDelete.push(i + 2); // +2: 1-indexed + header row
+    }
+  }
+
+  // Delete from bottom to top to avoid index shift
+  rowsToDelete.sort(function (a, b) { return b - a; });
+  for (var j = 0; j < rowsToDelete.length; j++) {
+    sheet.deleteRow(rowsToDelete[j]);
+  }
+
+  return jsonResponse({ success: true, deleted: rowsToDelete.length });
+}
+
+// ─── GET MEDIA FILES ─────────────────────────────────────
+
+/**
+ * Fetch media files from Google Drive for a given submission.
+ * Navigates the Drive folder structure: {root}/{YYYY-MM-DD}/{section_id}/
+ *
+ * Query params: ?action=get_media&submission_id=abc-123
+ * Returns: { success: true, files: [{filename, mime_type, data_base64}] }
+ */
+function handleGetMedia(params) {
+  var submissionId = params.submission_id;
+  if (!submissionId) {
+    return jsonResponse({ success: false, error: "Missing submission_id" });
+  }
+
+  // Find the submission in the Sheet to get date and section
+  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return jsonResponse({ success: true, files: [] });
+  }
+
+  var data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
+  var date = null;
+  var section = null;
+
+  for (var i = 0; i < data.length; i++) {
+    if (String(data[i][COL.SUBMISSION_ID]) === submissionId) {
+      var d = new Date(data[i][COL.TIMESTAMP]);
+      date = Utilities.formatDate(d, Session.getScriptTimeZone(), "yyyy-MM-dd");
+      section = String(data[i][COL.SECTION_ID]);
+      break;
+    }
+  }
+
+  if (!date || !section) {
+    return jsonResponse({ success: true, files: [], message: "No date/section found for submission" });
+  }
+
+  try {
+    var rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+    var dateFolders = rootFolder.getFoldersByName(date);
+    if (!dateFolders.hasNext()) {
+      return jsonResponse({ success: true, files: [], message: "No folder for date: " + date });
+    }
+
+    var dateFolder = dateFolders.next();
+    var sectionFolders = dateFolder.getFoldersByName(section);
+    if (!sectionFolders.hasNext()) {
+      return jsonResponse({ success: true, files: [], message: "No folder for section: " + section });
+    }
+
+    var sectionFolder = sectionFolders.next();
+    var files = sectionFolder.getFiles();
+    var results = [];
+
+    while (files.hasNext()) {
+      var file = files.next();
+      var blob = file.getBlob();
+      results.push({
+        filename: file.getName(),
+        mime_type: blob.getContentType(),
+        data_base64: Utilities.base64Encode(blob.getBytes()),
+      });
+    }
+
+    return jsonResponse({ success: true, files: results });
+  } catch (err) {
+    return jsonResponse({ success: false, error: "Drive error: " + err.message });
+  }
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────
