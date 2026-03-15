@@ -661,6 +661,43 @@ class FarmOSClient:
         }
         return self._patch(f"/api/taxonomy_term/plant_type/{uuid}", payload)
 
+    # ── Plant asset management ─────────────────────────────────
+
+    def archive_plant(self, name_or_uuid: str) -> dict:
+        """Archive a plant asset (set status to 'archived').
+
+        Args:
+            name_or_uuid: Exact plant asset name or UUID.
+
+        Returns:
+            The updated plant asset dict from farmOS.
+
+        Raises:
+            ValueError: If the plant asset is not found.
+        """
+        # Determine if this is a UUID (36 chars with dashes) or a name
+        is_uuid = (len(name_or_uuid) == 36 and name_or_uuid.count("-") == 4)
+
+        if is_uuid:
+            plant_uuid = name_or_uuid
+        else:
+            assets = self.fetch_by_name("asset/plant", name_or_uuid)
+            if not assets:
+                raise ValueError(f"Plant asset '{name_or_uuid}' not found in farmOS")
+            plant_uuid = assets[0]["id"]
+
+        payload = {
+            "data": {
+                "type": "asset--plant",
+                "id": plant_uuid,
+                "attributes": {
+                    "status": "archived",
+                },
+            }
+        }
+        result = self._patch(f"/api/asset/plant/{plant_uuid}", payload)
+        return result.get("data", {})
+
     # ── File upload ────────────────────────────────────────────
 
     def upload_file(self, entity_type: str, entity_id: str,

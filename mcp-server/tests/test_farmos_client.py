@@ -390,3 +390,103 @@ class TestEntityCreation:
 
         # Verify POST went to the correct endpoint
         assert responses.calls[-1].request.url == f"{BASE_URL}/api/taxonomy_term/plant_type"
+
+
+# ── Archive plant tests ──────────────────────────────────────
+
+
+class TestArchivePlant:
+
+    @responses.activate
+    def test_archive_plant_by_name(self, env_vars):
+        """archive_plant looks up plant by name, then PATCHes status to archived."""
+        client = _connect(env_vars)
+        plant_uuid = "plant-uuid-789"
+
+        # Mock the name lookup
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={
+                "data": [
+                    {
+                        "type": "asset--plant",
+                        "id": plant_uuid,
+                        "attributes": {
+                            "name": "25 APR 2025 - Pigeon Pea - P2R2.0-3",
+                            "status": "active",
+                        },
+                    }
+                ]
+            },
+        )
+
+        # Mock the PATCH
+        responses.add(
+            responses.PATCH,
+            f"{BASE_URL}/api/asset/plant/{plant_uuid}",
+            json={
+                "data": {
+                    "type": "asset--plant",
+                    "id": plant_uuid,
+                    "attributes": {
+                        "name": "25 APR 2025 - Pigeon Pea - P2R2.0-3",
+                        "status": "archived",
+                    },
+                }
+            },
+        )
+
+        result = client.archive_plant("25 APR 2025 - Pigeon Pea - P2R2.0-3")
+
+        assert result["id"] == plant_uuid
+        assert result["attributes"]["status"] == "archived"
+
+        # Verify the PATCH payload
+        import json
+        body = json.loads(responses.calls[-1].request.body)
+        assert body["data"]["type"] == "asset--plant"
+        assert body["data"]["id"] == plant_uuid
+        assert body["data"]["attributes"]["status"] == "archived"
+
+    @responses.activate
+    def test_archive_plant_by_uuid(self, env_vars):
+        """archive_plant with a UUID skips name lookup and PATCHes directly."""
+        client = _connect(env_vars)
+        plant_uuid = "12345678-1234-1234-1234-123456789012"
+
+        responses.add(
+            responses.PATCH,
+            f"{BASE_URL}/api/asset/plant/{plant_uuid}",
+            json={
+                "data": {
+                    "type": "asset--plant",
+                    "id": plant_uuid,
+                    "attributes": {
+                        "name": "25 APR 2025 - Comfrey - P2R3.15-21",
+                        "status": "archived",
+                    },
+                }
+            },
+        )
+
+        result = client.archive_plant(plant_uuid)
+
+        assert result["id"] == plant_uuid
+        assert result["attributes"]["status"] == "archived"
+        # Should only have made 1 call (PATCH), no GET for name lookup
+        assert len(responses.calls) == 2  # 1 token + 1 PATCH
+
+    @responses.activate
+    def test_archive_plant_not_found(self, env_vars):
+        """archive_plant raises ValueError when plant name doesn't exist."""
+        client = _connect(env_vars)
+
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={"data": []},
+        )
+
+        with pytest.raises(ValueError, match="not found"):
+            client.archive_plant("NONEXISTENT - Fake Plant - P2R9.0-1")

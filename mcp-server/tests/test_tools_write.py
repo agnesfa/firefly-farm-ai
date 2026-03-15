@@ -300,3 +300,100 @@ class TestUpdateInventory:
         ))
 
         assert result["notes"] == "Inventory update: snails ate two"
+
+
+# ── archive_plant ────────────────────────────────────────────
+
+
+class TestArchivePlant:
+    def test_archive_plant_happy_path(self, mock_farmos_client, monkeypatch):
+        """Successful archive changes status and returns confirmation."""
+        import server
+
+        plant_name = "25 APR 2025 - Pigeon Pea - P2R2.0-3"
+        plant_uuid = make_uuid()
+
+        # archive_plant returns the updated asset dict
+        mock_farmos_client.archive_plant.return_value = {
+            "type": "asset--plant",
+            "id": plant_uuid,
+            "attributes": {
+                "name": plant_name,
+                "status": "archived",
+                "inventory": [],
+                "notes": {},
+            },
+            "relationships": {
+                "plant_type": {"data": [{"type": "taxonomy_term--plant_type", "id": make_uuid()}]},
+            },
+        }
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.archive_plant(plant_name=plant_name))
+
+        assert result["status"] == "archived"
+        assert result["plant"]["id"] == plant_uuid
+        assert result["plant"]["species"] == "Pigeon Pea"
+        assert result["plant"]["section"] == "P2R2.0-3"
+        mock_farmos_client.archive_plant.assert_called_once_with(plant_name)
+        # No activity log when no reason given
+        mock_farmos_client.create_activity_log.assert_not_called()
+
+    def test_archive_plant_not_found(self, mock_farmos_client, monkeypatch):
+        """Returns error JSON when the plant asset does not exist."""
+        import server
+
+        mock_farmos_client.archive_plant.side_effect = ValueError(
+            "Plant asset 'NONEXISTENT' not found in farmOS"
+        )
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.archive_plant(plant_name="NONEXISTENT"))
+
+        assert "error" in result
+        assert "not found" in result["error"]
+        mock_farmos_client.create_activity_log.assert_not_called()
+
+    def test_archive_plant_with_reason(self, mock_farmos_client, monkeypatch):
+        """When reason is provided, creates an activity log explaining why."""
+        import server
+
+        plant_name = "25 APR 2025 - Comfrey - P2R3.15-21"
+        plant_uuid = make_uuid()
+        section_uuid = make_uuid()
+        log_id = make_uuid()
+
+        mock_farmos_client.archive_plant.return_value = {
+            "type": "asset--plant",
+            "id": plant_uuid,
+            "attributes": {
+                "name": plant_name,
+                "status": "archived",
+                "inventory": [],
+                "notes": {},
+            },
+            "relationships": {
+                "plant_type": {"data": [{"type": "taxonomy_term--plant_type", "id": make_uuid()}]},
+            },
+        }
+        mock_farmos_client.get_section_uuid.return_value = section_uuid
+        mock_farmos_client.create_activity_log.return_value = log_id
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.archive_plant(
+            plant_name=plant_name,
+            reason="Died from frost damage",
+        ))
+
+        assert result["status"] == "archived"
+        assert result["activity_log"]["id"] == log_id
+        assert result["activity_log"]["reason"] == "Died from frost damage"
+        assert "Comfrey" in result["activity_log"]["name"]
+        assert "P2R3.15-21" in result["activity_log"]["name"]
+
+        mock_farmos_client.create_activity_log.assert_called_once()
+        call_kwargs = mock_farmos_client.create_activity_log.call_args
+        assert call_kwargs.kwargs.get("notes") or call_kwargs[1].get("notes") == "Died from frost damage"

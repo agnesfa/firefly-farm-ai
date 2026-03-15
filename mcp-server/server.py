@@ -741,6 +741,70 @@ def create_plant(
     }, indent=2)
 
 
+@mcp.tool
+def archive_plant(
+    plant_name: str,
+    reason: str = "",
+) -> str:
+    """Archive a plant asset in farmOS (mark as no longer active).
+
+    Use this when a plant has died, been removed, or is no longer being tracked.
+    Optionally records an activity log explaining why.
+
+    Args:
+        plant_name: Exact plant asset name (e.g., "25 APR 2025 - Pigeon Pea - P2R2.0-3")
+                   or UUID.
+        reason: Why the plant is being archived (e.g., "Died from frost", "Removed during
+               renovation"). Optional — if provided, an activity log is created.
+
+    Returns:
+        Confirmation with archived asset details, or error message.
+    """
+    client = get_client()
+
+    try:
+        updated = client.archive_plant(plant_name)
+    except ValueError as e:
+        return json.dumps({"error": str(e)})
+
+    # Format the updated asset for the response
+    formatted = format_plant_asset(updated)
+
+    result = {
+        "status": "archived",
+        "plant": {
+            "id": updated.get("id", ""),
+            "name": formatted.get("name", plant_name),
+            "species": formatted.get("species", ""),
+            "section": formatted.get("section", ""),
+        },
+    }
+
+    # Optionally create an activity log with the reason
+    if reason:
+        section_id = formatted.get("section", "")
+        section_uuid = client.get_section_uuid(section_id) if section_id else None
+
+        if section_uuid:
+            timestamp = parse_date(None)
+            species = formatted.get("species", "")
+            log_name = f"Archived — {species} — {section_id}"
+            log_id = client.create_activity_log(
+                section_uuid=section_uuid,
+                timestamp=timestamp,
+                name=log_name,
+                notes=reason,
+                asset_ids=[updated.get("id", "")],
+            )
+            result["activity_log"] = {
+                "id": log_id,
+                "name": log_name,
+                "reason": reason,
+            }
+
+    return json.dumps(result, indent=2)
+
+
 # ═══════════════════════════════════════════════════════════════
 # TOOLS — Observation management (Sheet ↔ farmOS bridge)
 # ═══════════════════════════════════════════════════════════════
