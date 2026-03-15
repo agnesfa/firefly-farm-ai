@@ -150,8 +150,10 @@ class FarmOSClient:
                             sort: Optional[str] = None, limit: int = 50) -> list:
         """Raw HTTP pagination for complete enumeration.
 
-        Follows links.next to get ALL records, handling the farmOS pagination
-        quirk where link URLs include the full hostname.
+        Uses explicit page[offset] to bypass the farmOS JSON:API bug where
+        links.next stops being returned after ~250 items (5 pages of 50).
+        Falls back to links.next when available, but continues with offset
+        pagination when links.next disappears and items are still being returned.
 
         Args:
             api_path: e.g., "taxonomy_term/plant_type", "asset/plant"
@@ -162,20 +164,24 @@ class FarmOSClient:
         all_items = []
         seen_ids = set()
 
-        # Build initial URL
-        path = f"/api/{api_path}?page[limit]={limit}"
+        # Build base filter/sort params
+        # Default sort by name ensures stable ordering across pages —
+        # without it, farmOS's unstable default sort causes items to shift
+        # between pages, leading to duplicates and missed entries.
+        effective_sort = sort or "name"
+        base_params = f"page[limit]={limit}"
         if filters:
             for key, value in filters.items():
-                path += f"&filter[{key}]={urllib.parse.quote(str(value))}"
-        if sort:
-            path += f"&sort={sort}"
-
-        url = f"{self.hostname}{path}"
+                base_params += f"&filter[{key}]={urllib.parse.quote(str(value))}"
+        base_params += f"&sort={effective_sort}"
 
         if not self._connected:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
 
-        while url:
+        offset = 0
+        while True:
+            url = f"{self.hostname}/api/{api_path}?{base_params}&page[offset]={offset}"
+
             resp = self.session.get(url, timeout=30)
             if resp.status_code in (401, 403):
                 self._connected = False
@@ -191,23 +197,16 @@ class FarmOSClient:
             data = resp.json()
             items = data.get("data", [])
 
+            if not items:
+                break
+
             for item in items:
                 item_id = item.get("id", "")
                 if item_id and item_id not in seen_ids:
                     seen_ids.add(item_id)
                     all_items.append(item)
 
-            # Follow pagination
-            next_link = data.get("links", {}).get("next", {})
-            if isinstance(next_link, dict):
-                url = next_link.get("href", "")
-            elif isinstance(next_link, str):
-                url = next_link
-            else:
-                url = ""
-
-            if not url:
-                break
+            offset += limit
 
         return all_items
 

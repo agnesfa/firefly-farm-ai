@@ -124,6 +124,7 @@ class TestPagination:
     @responses.activate
     def test_fetch_all_paginated_single_page(self, env_vars):
         client = _connect(env_vars)
+        # Page 1 (offset=0): returns 2 items
         responses.add(
             responses.GET,
             f"{BASE_URL}/api/taxonomy_term/plant_type",
@@ -137,6 +138,12 @@ class TestPagination:
                 "links": {},
             },
         )
+        # Page 2 (offset=50): empty — signals end of data
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
+            json={"data": [], "links": {}},
+        )
 
         result = client.fetch_all_paginated("taxonomy_term/plant_type")
         assert len(result) == 2
@@ -146,9 +153,8 @@ class TestPagination:
     @responses.activate
     def test_fetch_all_paginated_multi_page(self, env_vars):
         client = _connect(env_vars)
-        page2_url = f"{BASE_URL}/api/taxonomy_term/plant_type?page[offset]=50"
 
-        # Page 1 with next link
+        # Page 1 (offset=0)
         responses.add(
             responses.GET,
             f"{BASE_URL}/api/taxonomy_term/plant_type",
@@ -157,13 +163,13 @@ class TestPagination:
                     {"id": "uuid-1", "type": "t", "attributes": {"name": "A"}},
                     {"id": "uuid-2", "type": "t", "attributes": {"name": "B"}},
                 ],
-                "links": {"next": {"href": page2_url}},
+                "links": {},
             },
         )
-        # Page 2 with a duplicate uuid-2 to test dedup
+        # Page 2 (offset=50): duplicate uuid-2 to test dedup
         responses.add(
             responses.GET,
-            page2_url,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
             json={
                 "data": [
                     {"id": "uuid-2", "type": "t", "attributes": {"name": "B"}},
@@ -171,6 +177,12 @@ class TestPagination:
                 ],
                 "links": {},
             },
+        )
+        # Page 3 (offset=100): empty — signals end
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
+            json={"data": [], "links": {}},
         )
 
         result = client.fetch_all_paginated("taxonomy_term/plant_type")

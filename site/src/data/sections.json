@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-15T15:42:17.090100+10:00",
+  "generated_at": "2026-03-15T17:17:52.197906+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -7860,34 +7860,6 @@
           ]
         },
         {
-          "species": "Tomato (Marmande)",
-          "strata": "low",
-          "count": 0,
-          "notes": "planted Oct/Nov",
-          "first_planted": "2025-11-10",
-          "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R2.9-16",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-10",
-              "name": "Inventory P2R2.9-16 — Tomato (Marmande)",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-10",
-              "name": "Renovation P2R2.9-16 — Tomato (Marmande)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R2.9-16 — Tomato (Marmande)",
-              "notes": "Removed after summer production Mar 2026"
-            }
-          ]
-        },
-        {
           "species": "Chilli (Jalapeño)",
           "strata": "medium",
           "count": 5,
@@ -8628,34 +8600,6 @@
               "date": "2026-03-09",
               "name": "Observation P2R2.23-26 — Pigeon Pea",
               "notes": "2 more planted Feb 2026"
-            }
-          ]
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "low",
-          "count": 0,
-          "notes": "planted Oct/Nov",
-          "first_planted": "2025-11-10",
-          "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R2.23-26",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-10",
-              "name": "Inventory P2R2.23-26 — Tomato (Marmande)",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-10",
-              "name": "Renovation P2R2.23-26 — Tomato (Marmande)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R2.23-26 — Tomato (Marmande)",
-              "notes": "Removed after summer production"
             }
           ]
         },
