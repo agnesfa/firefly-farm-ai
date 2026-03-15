@@ -11284,6 +11284,171 @@
           "quantity_grams": 120
         }
       ]
+    },
+    "P1R1.0-5": {
+      "id": "P1R1.0-5",
+      "paddock": 1,
+      "row": 1,
+      "range": "0–5",
+      "length": "5m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R1.5-9": {
+      "id": "P1R1.5-9",
+      "paddock": 1,
+      "row": 1,
+      "range": "5–9",
+      "length": "4m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R1.9-19": {
+      "id": "P1R1.9-19",
+      "paddock": 1,
+      "row": 1,
+      "range": "9–19",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R1.19-29": {
+      "id": "P1R1.19-29",
+      "paddock": 1,
+      "row": 1,
+      "range": "19–29",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R1.29-39": {
+      "id": "P1R1.29-39",
+      "paddock": 1,
+      "row": 1,
+      "range": "29–39",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R1.39-42": {
+      "id": "P1R1.39-42",
+      "paddock": 1,
+      "row": 1,
+      "range": "39–42",
+      "length": "3m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R3.0-3": {
+      "id": "P1R3.0-3",
+      "paddock": 1,
+      "row": 3,
+      "range": "0–3",
+      "length": "3m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R3.3-13": {
+      "id": "P1R3.3-13",
+      "paddock": 1,
+      "row": 3,
+      "range": "3–13",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R3.13-23": {
+      "id": "P1R3.13-23",
+      "paddock": 1,
+      "row": 3,
+      "range": "13–23",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R3.23-33": {
+      "id": "P1R3.23-33",
+      "paddock": 1,
+      "row": 3,
+      "range": "23–33",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R3.33-42": {
+      "id": "P1R3.33-42",
+      "paddock": 1,
+      "row": 3,
+      "range": "33–42",
+      "length": "9m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R5.0-10": {
+      "id": "P1R5.0-10",
+      "paddock": 1,
+      "row": 5,
+      "range": "0–10",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R5.10-20": {
+      "id": "P1R5.10-20",
+      "paddock": 1,
+      "row": 5,
+      "range": "10–20",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R5.20-30": {
+      "id": "P1R5.20-30",
+      "paddock": 1,
+      "row": 5,
+      "range": "20–30",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
+    },
+    "P1R5.30-35": {
+      "id": "P1R5.30-35",
+      "paddock": 1,
+      "row": 5,
+      "range": "30–35",
+      "length": "5m",
+      "has_trees": false,
+      "first_planted": "",
+      "inventory_date": "",
+      "plants": []
     }
   },
   "rows": {
@@ -11368,6 +11533,48 @@
       ],
       "first_planted": "2025-05-01",
       "total_length": "77m"
+    },
+    "P1R1": {
+      "id": "P1R1",
+      "paddock": "Paddock 1",
+      "row": "Row 1",
+      "sections": [
+        "P1R1.0-5",
+        "P1R1.5-9",
+        "P1R1.9-19",
+        "P1R1.19-29",
+        "P1R1.29-39",
+        "P1R1.39-42"
+      ],
+      "first_planted": "",
+      "total_length": "42m"
+    },
+    "P1R3": {
+      "id": "P1R3",
+      "paddock": "Paddock 1",
+      "row": "Row 3",
+      "sections": [
+        "P1R3.0-3",
+        "P1R3.3-13",
+        "P1R3.13-23",
+        "P1R3.23-33",
+        "P1R3.33-42"
+      ],
+      "first_planted": "",
+      "total_length": "42m"
+    },
+    "P1R5": {
+      "id": "P1R5",
+      "paddock": "Paddock 1",
+      "row": "Row 5",
+      "sections": [
+        "P1R5.0-10",
+        "P1R5.10-20",
+        "P1R5.20-30",
+        "P1R5.30-35"
+      ],
+      "first_planted": "",
+      "total_length": "35m"
     }
   }
 }
