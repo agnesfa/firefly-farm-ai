@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-13T19:03:31.845665+10:00",
+  "generated_at": "2026-03-15T15:42:17.090100+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -235,7 +235,7 @@
       "plants": [
         {
           "species": "Guava",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 2,
           "notes": "",
           "first_planted": "2025-03-20",
@@ -607,7 +607,7 @@
         },
         {
           "species": "Guava (Hawaiian)",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 1,
           "notes": "Purchased from Daleys Fruit Nursery. Planted March 2025.",
           "first_planted": "",
@@ -963,7 +963,7 @@
         },
         {
           "species": "Guava",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 3,
           "notes": "",
           "first_planted": "2025-03-20",
@@ -1525,7 +1525,7 @@
       "plants": [
         {
           "species": "Guava (Strawberry)",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 1,
           "notes": "good state",
           "first_planted": "2025-04-24",
@@ -6949,7 +6949,7 @@
       "plants": [
         {
           "species": "Guava (Strawberry)",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 1,
           "notes": "",
           "first_planted": "2025-04-24",
@@ -7625,7 +7625,7 @@
         },
         {
           "species": "Pear (Nashi)",
-          "strata": "high",
+          "strata": "emergent",
           "count": 1,
           "notes": "Added via field observation",
           "first_planted": "",
@@ -8549,7 +8549,7 @@
         },
         {
           "species": "Guava (Strawberry)",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 1,
           "notes": "1 Purple ok, 1 Thai White eaten",
           "first_planted": "2025-04-24",
@@ -8942,7 +8942,7 @@
         },
         {
           "species": "Guava (Strawberry)",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 1,
           "notes": "1 Purple ok, 1 Strawberry Guava good",
           "first_planted": "2025-04-24",
@@ -9546,7 +9546,7 @@
       "plants": [
         {
           "species": "Guava (Strawberry)",
-          "strata": "medium",
+          "strata": "emergent",
           "count": 2,
           "notes": "1 Purple ok, 1 Hawaiian ok, 1 Thai White ok",
           "first_planted": "2025-04-24",
@@ -9950,7 +9950,7 @@
         },
         {
           "species": "Davidson Plum",
-          "strata": "high",
+          "strata": "medium",
           "count": 1,
           "notes": "Identified by Claire from Hadrien's photo",
           "first_planted": "2026-03-01",
