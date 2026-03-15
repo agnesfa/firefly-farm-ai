@@ -172,7 +172,7 @@ Olivier handles compost, cooking, and is currently leading the seed bank invento
 ## Key Concepts (Quick Reference)
 
 ### Section IDs
-Format: `P2R3.15-21` = Paddock 2, Row 3, from 14m to 21m mark.
+Format: `P2R3.15-21` = Paddock 2, Row 3, from 15m to 21m mark.
 
 ### Plant Strata (height layers)
 - **Emergent** (20m+): Forest Red Gum, Tallowood, Ice Cream Bean

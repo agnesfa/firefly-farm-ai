@@ -415,7 +415,7 @@ def build_pdf(output_path):
 
     story.append(Paragraph("Section IDs", styles["H3"]))
     story.append(Paragraph(
-        "Format: <b>P2R3.15-21</b> = Paddock 2, Row 3, from 14m to 21m mark.",
+        "Format: <b>P2R3.15-21</b> = Paddock 2, Row 3, from 15m to 21m mark.",
         styles["Body"]
     ))
 
