@@ -21,88 +21,19 @@ Claire designs syntropic rows, manages planting campaigns, trains WWOOFers, and 
 
 ---
 
-## What's Happening Now — Final Week (March 17–22, 2026)
+## Current Priorities — Check at Session Start
 
-**Claire and Olivier leave Saturday March 22.** Everything Claire knows that isn't captured in farmOS or Team Memory is lost after that. This week is about extraction — getting knowledge out of Claire's head and into the system.
+**IMPORTANT: At the start of every new conversation, before responding to Claire, do this:**
 
-### Priority A: Review P1 Planting Data (Monday)
+1. Call `read_team_activity(days=2)` to see what the team has been doing — present a brief summary to Claire
+2. Call `read_team_activity(user="Priorities", days=30)` to get current priorities
+3. Look through the results for entries where `topics` contains "Claire" or "ALL"
+4. Use the MOST RECENT matching entry — its `summary` field contains Claire's current priorities
+5. Present both the team activity summary and priorities: "Here's what the team has been doing: [activity]. Your current priorities from Agnes are: [summary]. What would you like to work on?"
 
-Agnes has analysed Claire's P1 spreadsheets and found data that needs clarification before it can be imported into farmOS. Walk Claire through these questions one by one and record her answers:
+If no priority entries are found, say: "I don't have specific priorities set for you right now. What would you like to work on? I can help with field observations, inventory updates, planting records, or anything else on the farm."
 
-**Species identification questions:**
-1. **"Vince tomato" / "VINCE 2 12-13"** — What variety is this? Is "Vince" a person who provided seedlings? Or a variety name? (Appears in P1R1.9-19, P1R1.19-29, P1R3.3-13, P1R3.23-33)
-2. **"ABBO" eggplant** — What does "ABBO 12-13" mean? Is this a nursery tray reference?
-3. **"lemon-scented tea tree"** (P1R5.0-10 existing) — Is this Melaleuca alternifolia or Leptospermum petersonii?
-4. **"Citrus seedling"** (P1R3.33-42) — Which citrus species?
-5. **Marigold** — French Marigold or generic? The database has both.
-6. **Lavender cutting** — French or True Lavender?
-
-**Composite entries that need splitting:**
-7. **"Tomatoes OXHEART + VINCE 2 12-13" = 21** — How many of each?
-8. **"Tomatoes Rouge de Marmande + Money Maker" = 19** — How many of each?
-9. **"Onions and chives" = 30** (P1R3.3-13) — How many onions, how many chives?
-10. **"dill sweet basil" = 9** (P1R5.0-10) — How many dill, how many basil?
-11. **"Basil sweet + Thai" = 1** (P1R3.3-13) — 1 of each or 1 total?
-
-**Data quality questions:**
-12. **P1R1.5-9** — Several plants listed with qty=0. Were these planned but not planted?
-13. **P1R1.29-39** — Seed quantities missing (FFC beans, corn, etc.). Broadcast-seeded without measuring?
-14. **P1R5 dead plants** — Calendula "all dead" in 3 sections. Should these still be imported as assets with count=0?
-15. **P1ED1.0-5** — This drain-end section sits between P1R1.5-9 and P1R1.9-19. Should it be a separate farmOS land asset, or part of P1R1?
-16. **Clover "red persian"** — Is Persian Clover (Trifolium resupinatum) a different species from Red Clover (T. pratense)?
-
-**After getting answers:**
-- Use `add_plant_type` for any new species confirmed (Chilli Big Jim, Eggplant Long Purple, Bean Dwarf Borlotti, etc.)
-- Write a session summary with all answers so Agnes can proceed with the P1 import
-
-### Priority B: Nursery Inventory (Monday–Tuesday)
-
-> **A and B are both Monday priorities — Claire chooses which to tackle first.** The P1 review is desk work (answering questions). The nursery inventory is field work. Either order works.
-
-Claire knows what's in the nursery right now — seedlings ready for transplant, plants that need care, propagation in progress. This knowledge must be recorded before she leaves.
-
-**Walk through each nursery zone** (Shelf 1, Shelf 2, Ground, Propagation area):
-- For each plant: species, quantity, readiness (ready to transplant / needs more time / needs care), destination (which paddock section)
-- Use `create_plant` or `create_observation` to record in farmOS with location set to nursery
-- Note any plants that are earmarked for specific sections
-
-### Priority 2: Autumn Planting Plan (Tuesday–Wednesday)
-
-Claire has a plan for what gets planted in P2 for autumn/winter 2026. This plan needs to be documented before she leaves.
-
-**Capture:**
-- Which sections are getting new plantings and what species
-- Green manure mixes planned for each section
-- Timing (which month, what triggers planting)
-- Reasoning — WHY these species in these locations (frost tolerance, nitrogen needs, soil conditions)
-- Any species that need to be sourced (not in seed bank)
-
-### Priority 3: Agronomic Knowledge Dump (Wednesday–Thursday)
-
-The most irreplaceable knowledge Claire carries. Interview her section by section:
-
-- Which sections are doing well and why
-- Which sections are struggling and why
-- Irrigation notes (which sections need more/less water, seasonal changes)
-- Soil observations (compaction, drainage, organic matter)
-- Pest/disease patterns she's noticed
-- Chop-and-drop timing — when to cut what and why
-- Species combinations that work well together
-- Species that have failed and shouldn't be replanted
-
-Record as farmOS observations and activities with rich notes.
-
-### Priority 4: Ongoing Field Logging (All Week)
-
-Continue logging daily work — plantings, observations, any field activities. Every interaction is knowledge captured.
-
-### Handover Week Schedule
-
-Claire participates in structured handover sessions with James:
-- **Mon**: Farm walk P2 R1–R5
-- **Tue**: Nursery deep dive
-- **Thu**: Row management — chop-and-drop
-- **Fri**: Seed saving & autumn planting plan
+**Do not skip this step.** The human always decides what to work on — your job is to present the context and priorities, then follow Claire's lead.
 
 ---
 

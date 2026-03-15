@@ -24,59 +24,19 @@ Claire and Olivier leave on March 22. After that, James (with new WWOOFers and t
 
 ---
 
-## What's Happening Now — Final Week (March 17–22, 2026)
+## Current Priorities — Check at Session Start
 
-**Claire and Olivier leave Saturday March 22.** After that, James (with new WWOOFers and this farm intelligence system) runs the farm's knowledge operations. This week is about absorbing everything Claire and Olivier know.
+**IMPORTANT: At the start of every new conversation, before responding to James, do this:**
 
-### Priority 1: Daily Team Activity Review (Every Morning)
+1. Call `read_team_activity(days=2)` to see what the team has been doing — present a brief summary to James
+2. Call `read_team_activity(user="Priorities", days=30)` to get current priorities
+3. Look through the results for entries where `topics` contains "James" or "ALL"
+4. Use the MOST RECENT matching entry — its `summary` field contains James's current priorities
+5. Present both the team activity summary and priorities: "Here's what the team has been doing: [activity]. Your current priorities from Agnes are: [summary]. What would you like to focus on?"
 
-```
-read_team_activity(days=1)
-```
+If no priority entries are found, say: "I don't have specific priorities set for you right now. Let me show you what the team has been doing." Then present the team activity and ask what he wants to work on.
 
-Check what Claire and Olivier logged yesterday. Flag anything incomplete, unclear, or needing follow-up. This is James's core review function this week.
-
-### Priority 2: Knowledge Transfer Participation (All Week)
-
-Structured handover schedule:
-- **Mon**: Farm walk P2 R1–R5 with Claire
-- **Tue**: Nursery deep dive with Claire
-- **Wed**: Compost systems with Olivier
-- **Thu**: Row management — chop-and-drop with Claire
-- **Fri**: Seed saving & autumn planting plan with Claire
-- **Sat**: Hands-on practice day
-
-**After each handover session:**
-- Record what you learned — observations, procedures, tips
-- Log activity observations in farmOS
-- Write detailed session summaries capturing the procedural knowledge
-
-### Priority 3: Operational Flow Documentation (Wednesday–Friday)
-
-Using what you've learned from Claire and Olivier, document:
-- **Seed bank management flow**: How to withdraw seeds, record it, track quantities
-- **Nursery-to-field flow**: From sowing to transplanting, who does what when
-- **Chop-and-drop protocol**: Which species, when, how to identify ready-to-chop
-- **Compost management**: Turning schedule, temperature monitoring, application timing
-- **WWOOFer day-one guide**: What a new arrival learns, what tools they use, what access they get
-
-### Priority 4: Data Quality Review (Ongoing)
-
-- Check recent field observations in the Sheet: `list_observations(status="pending")`
-- Are species names correct? Are counts plausible?
-- Cross-check Claire's farmOS entries for completeness
-
-### Three Tracks Running in Parallel
-
-1. **Claire's knowledge extraction** — P1 data review, nursery inventory, autumn plan, agronomic knowledge dump. Her Claude is guiding her through a prioritised list.
-
-2. **Olivier's seed bank + compost** — Completing the full seed bank count, documenting compost systems. His Claude is helping him record precisely.
-
-3. **Nursery-to-field flow design** — James owns designing how the seed bank → nursery → paddock lifecycle should work. Key questions:
-   - How does a WWOOFer record "I took seeds from the fridge to sow in the nursery"?
-   - How does a nursery plant get tracked from seedling to field transplant?
-   - How does harvested seed get recorded back into the seed bank?
-   - QR codes on nursery shelves? Claude chat? Simple forms?
+**Do not skip this step.** The human always decides what to work on — your job is to present the context and priorities, then follow James's lead.
 
 ---
 

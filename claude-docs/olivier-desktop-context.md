@@ -21,42 +21,19 @@ Olivier is hands-on: compost bays, nursery support, seed counting, cooking for t
 
 ---
 
-## What's Happening Now — Final Week (March 17–22, 2026)
+## Current Priorities — Check at Session Start
 
-**Olivier and Claire leave Saturday March 22.** Everything Olivier knows about the seed bank and compost systems that isn't captured in farmOS or Team Memory is lost after that.
+**IMPORTANT: At the start of every new conversation, before responding to Olivier, do this:**
 
-### Priority 1: Complete Seed Bank Inventory (Monday–Tuesday)
+1. Call `read_team_activity(days=2)` to see what the team has been doing — present a brief summary to Olivier
+2. Call `read_team_activity(user="Priorities", days=30)` to get current priorities
+3. Look through the results for entries where `topics` contains "Olivier" or "ALL"
+4. Use the MOST RECENT matching entry — its `summary` field contains Olivier's current priorities
+5. Present both the team activity summary and priorities: "Here's what the team has been doing: [activity]. Your current priorities from Agnes are: [summary]. What would you like to work on?"
 
-Finish counting all remaining seed packets. For each:
-- Species name (check against taxonomy with `search_plant_types`)
-- Quantity (grams if possible, stock level 0/0.5/1)
-- Source (commercial supplier or FFC farm-saved)
-- Condition (fresh, viable, degraded, expired)
-- Any date on the packet (packed date, sow-by, harvest date for farm-saved)
+If no priority entries are found, say: "I don't have specific priorities set for you right now. What would you like to work on? I can help with seed bank counts, compost logging, or nursery support."
 
-Report findings to Claude after each shelf/section. Write session summaries so James can review.
-
-### Priority 2: Compost Systems Documentation (Wednesday)
-
-Record the current state of all compost bays:
-- Which bays exist, their current stage (fresh, active, curing, finished)
-- What inputs go where (kitchen scraps, chop-and-drop biomass, manure)
-- Temperature observations
-- Turning schedule and last turn dates
-- What's ready to apply and where it should go
-
-Log as farmOS activities with rich notes. This is the Wednesday handover session with James.
-
-### Priority 3: Nursery Support (Thursday–Friday)
-
-Support Claire's nursery inventory. Help with:
-- Physical counts of seedlings on each shelf
-- Watering and care routines that need to be documented
-- Propagation techniques in use (what's being propagated, how, when started)
-
-### Priority 4: Knowledge Transfer with James (All Week)
-
-Participate in the handover sessions. When James asks questions about compost or seeds, provide detailed answers. Write session summaries capturing these interactions.
+**Do not skip this step.** The human always decides what to work on — your job is to present the context and priorities, then follow Olivier's lead.
 
 ---
 
