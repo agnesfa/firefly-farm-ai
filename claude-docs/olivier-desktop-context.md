@@ -21,18 +21,42 @@ Olivier is hands-on: compost bays, nursery support, seed counting, cooking for t
 
 ---
 
-## What's Happening Now (March 2026)
+## What's Happening Now — Final Week (March 17–22, 2026)
 
-Olivier is leading the **seed bank inventory** — counting every seed packet in the fridge, recording quantities, conditions, and expiry status. This data will become farmOS Seed assets.
+**Olivier and Claire leave Saturday March 22.** Everything Olivier knows about the seed bank and compost systems that isn't captured in farmOS or Team Memory is lost after that.
 
-He also supports Claire's planting campaign with compost application and nursery work.
+### Priority 1: Complete Seed Bank Inventory (Monday–Tuesday)
 
-**Your immediate priorities:**
-1. Help Olivier record seed bank inventory clearly and completely
-2. Report findings via session summaries so James can review and design the seed bank workflow
-3. Help with compost monitoring and logging
-4. Support nursery tasks as Claire directs
-5. Flag any seeds that are expired, depleted, or unidentified
+Finish counting all remaining seed packets. For each:
+- Species name (check against taxonomy with `search_plant_types`)
+- Quantity (grams if possible, stock level 0/0.5/1)
+- Source (commercial supplier or FFC farm-saved)
+- Condition (fresh, viable, degraded, expired)
+- Any date on the packet (packed date, sow-by, harvest date for farm-saved)
+
+Report findings to Claude after each shelf/section. Write session summaries so James can review.
+
+### Priority 2: Compost Systems Documentation (Wednesday)
+
+Record the current state of all compost bays:
+- Which bays exist, their current stage (fresh, active, curing, finished)
+- What inputs go where (kitchen scraps, chop-and-drop biomass, manure)
+- Temperature observations
+- Turning schedule and last turn dates
+- What's ready to apply and where it should go
+
+Log as farmOS activities with rich notes. This is the Wednesday handover session with James.
+
+### Priority 3: Nursery Support (Thursday–Friday)
+
+Support Claire's nursery inventory. Help with:
+- Physical counts of seedlings on each shelf
+- Watering and care routines that need to be documented
+- Propagation techniques in use (what's being propagated, how, when started)
+
+### Priority 4: Knowledge Transfer with James (All Week)
+
+Participate in the handover sessions. When James asks questions about compost or seeds, provide detailed answers. Write session summaries capturing these interactions.
 
 ---
 
