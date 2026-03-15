@@ -31,6 +31,7 @@ from fastmcp import FastMCP
 from farmos_client import FarmOSClient
 from observe_client import ObservationClient
 from memory_client import MemoryClient
+from plant_types_client import PlantTypesClient
 from helpers import (
     parse_date,
     format_planted_label,
@@ -75,6 +76,7 @@ Key concepts:
 _client: Optional[FarmOSClient] = None
 _observe_client: Optional[ObservationClient] = None
 _memory_client: Optional[MemoryClient] = None
+_plant_types_client: Optional[PlantTypesClient] = None
 
 
 def get_client() -> FarmOSClient:
@@ -102,6 +104,24 @@ def get_memory_client() -> MemoryClient:
         _memory_client = MemoryClient()
         _memory_client.connect()
     return _memory_client
+
+
+def get_plant_types_client() -> Optional[PlantTypesClient]:
+    """Get or create the plant types Sheet client connection.
+
+    Returns None if PLANT_TYPES_ENDPOINT is not configured (graceful degradation).
+    """
+    global _plant_types_client
+    if _plant_types_client is None:
+        try:
+            _plant_types_client = PlantTypesClient()
+            _plant_types_client.connect()
+        except ValueError:
+            # PLANT_TYPES_ENDPOINT not set — Sheet sync disabled
+            return None
+    if not _plant_types_client.is_connected:
+        return None
+    return _plant_types_client
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1504,12 +1524,47 @@ def add_plant_type(
         # Clear cache so new type is immediately available
         client._plant_type_cache.pop(farmos_name, None)
 
+        # Sync to Google Sheet (if configured)
+        sheet_status = "not_configured"
+        pt_client = get_plant_types_client()
+        if pt_client:
+            try:
+                # Derive common_name and variety from farmos_name
+                common_name = farmos_name
+                variety = ""
+                if " (" in farmos_name and farmos_name.endswith(")"):
+                    common_name = farmos_name[:farmos_name.rindex(" (")]
+                    variety = farmos_name[farmos_name.rindex(" (") + 2:-1]
+
+                sheet_fields = {
+                    "common_name": common_name,
+                    "variety": variety,
+                    "farmos_name": farmos_name,
+                    "botanical_name": botanical_name or "",
+                    "crop_family": crop_family or "",
+                    "origin": origin or "",
+                    "description": description or "",
+                    "lifespan_years": lifespan_years or "",
+                    "lifecycle_years": lifecycle_years or "",
+                    "maturity_days": str(maturity_days) if maturity_days else "",
+                    "strata": strata or "",
+                    "succession_stage": succession_stage or "",
+                    "plant_functions": plant_functions or "",
+                    "transplant_days": str(transplant_days) if transplant_days else "",
+                    "source": source or "",
+                }
+                result = pt_client.add(sheet_fields)
+                sheet_status = "synced" if result.get("success") else result.get("error", "failed")
+            except Exception as se:
+                sheet_status = f"sync_error: {se}"
+
         return json.dumps({
             "status": "created",
             "id": uuid,
             "name": farmos_name,
             "strata": strata,
             "succession_stage": succession_stage,
+            "sheet_sync": sheet_status,
         }, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to create plant type: {e}"})
@@ -1602,21 +1657,158 @@ def update_plant_type(
         # Clear cache
         client._plant_type_cache.pop(farmos_name, None)
 
+        updated_fields = [k for k, v in {
+            "botanical_name": botanical_name, "strata": strata,
+            "succession_stage": succession_stage, "plant_functions": plant_functions,
+            "crop_family": crop_family, "description": description,
+            "lifespan_years": lifespan_years, "lifecycle_years": lifecycle_years,
+            "source": source, "maturity_days": maturity_days,
+            "transplant_days": transplant_days,
+        }.items() if v is not None]
+
+        # Sync to Google Sheet (if configured)
+        sheet_status = "not_configured"
+        pt_client = get_plant_types_client()
+        if pt_client:
+            try:
+                sheet_fields = {}
+                if botanical_name is not None:
+                    sheet_fields["botanical_name"] = botanical_name
+                if strata is not None:
+                    sheet_fields["strata"] = strata
+                if succession_stage is not None:
+                    sheet_fields["succession_stage"] = succession_stage
+                if plant_functions is not None:
+                    sheet_fields["plant_functions"] = plant_functions
+                if crop_family is not None:
+                    sheet_fields["crop_family"] = crop_family
+                if origin is not None:
+                    sheet_fields["origin"] = origin
+                if description is not None:
+                    sheet_fields["description"] = description
+                if lifespan_years is not None:
+                    sheet_fields["lifespan_years"] = lifespan_years
+                if lifecycle_years is not None:
+                    sheet_fields["lifecycle_years"] = lifecycle_years
+                if source is not None:
+                    sheet_fields["source"] = source
+                if maturity_days is not None:
+                    sheet_fields["maturity_days"] = str(maturity_days)
+                if transplant_days is not None:
+                    sheet_fields["transplant_days"] = str(transplant_days)
+
+                if sheet_fields:
+                    result = pt_client.update(farmos_name, sheet_fields)
+                    sheet_status = "synced" if result.get("success") else result.get("error", "failed")
+                else:
+                    sheet_status = "no_sheet_fields"
+            except Exception as se:
+                sheet_status = f"sync_error: {se}"
+
         return json.dumps({
             "status": "updated",
             "id": uuid,
             "name": farmos_name,
-            "updated_fields": [k for k, v in {
-                "botanical_name": botanical_name, "strata": strata,
-                "succession_stage": succession_stage, "plant_functions": plant_functions,
-                "crop_family": crop_family, "description": description,
-                "lifespan_years": lifespan_years, "lifecycle_years": lifecycle_years,
-                "source": source, "maturity_days": maturity_days,
-                "transplant_days": transplant_days,
-            }.items() if v is not None],
+            "updated_fields": updated_fields,
+            "sheet_sync": sheet_status,
         }, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to update plant type: {e}"})
+
+
+@mcp.tool
+def reconcile_plant_types() -> str:
+    """Compare plant types between the Google Sheet and farmOS taxonomy.
+
+    Detects drift: strata mismatches, missing entries, metadata differences.
+    Returns a report of discrepancies that need to be resolved.
+
+    Requires PLANT_TYPES_ENDPOINT to be configured.
+    """
+    pt_client = get_plant_types_client()
+    if not pt_client:
+        return json.dumps({
+            "error": "PLANT_TYPES_ENDPOINT not configured. Cannot reconcile without the Google Sheet."
+        })
+
+    client = get_client()
+
+    # Fetch sheet data
+    try:
+        sheet_data = pt_client.get_reconcile_data()
+        if not sheet_data.get("success"):
+            return json.dumps({"error": f"Failed to fetch sheet data: {sheet_data.get('error')}"})
+    except Exception as e:
+        return json.dumps({"error": f"Failed to connect to Plant Types sheet: {e}"})
+
+    sheet_types = {pt["farmos_name"]: pt for pt in sheet_data.get("plant_types", [])}
+
+    # Fetch all plant types from farmOS
+    try:
+        farmos_types_raw = client.fetch_all_paginated("taxonomy_term/plant_type")
+    except Exception as e:
+        return json.dumps({"error": f"Failed to fetch farmOS taxonomy: {e}"})
+
+    # Parse farmOS types into comparable format
+    farmos_types = {}
+    for term in farmos_types_raw:
+        attrs = term.get("attributes", {})
+        name = attrs.get("name", "")
+        if name.startswith("[ARCHIVED]"):
+            continue
+
+        desc = attrs.get("description", {})
+        desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc or "")
+        meta = parse_plant_type_metadata(desc_text)
+
+        farmos_types[name] = {
+            "farmos_name": name,
+            "strata": meta.get("strata", ""),
+            "succession_stage": meta.get("succession_stage", ""),
+            "botanical_name": meta.get("botanical_name", ""),
+            "crop_family": meta.get("crop_family", ""),
+            "plant_functions": meta.get("plant_functions", ""),
+        }
+
+    # Compare
+    mismatches = []
+    in_sheet_not_farmos = []
+    in_farmos_not_sheet = []
+
+    for name, sheet_entry in sheet_types.items():
+        if name not in farmos_types:
+            in_sheet_not_farmos.append(name)
+            continue
+
+        farmos_entry = farmos_types[name]
+        diffs = []
+        for field in ["strata", "succession_stage", "botanical_name", "crop_family"]:
+            sv = (sheet_entry.get(field) or "").strip().lower()
+            fv = (farmos_entry.get(field) or "").strip().lower()
+            if sv and fv and sv != fv:
+                diffs.append({
+                    "field": field,
+                    "sheet": sheet_entry.get(field, ""),
+                    "farmos": farmos_entry.get(field, ""),
+                })
+        if diffs:
+            mismatches.append({"farmos_name": name, "differences": diffs})
+
+    for name in farmos_types:
+        if name not in sheet_types:
+            in_farmos_not_sheet.append(name)
+
+    report = {
+        "sheet_count": len(sheet_types),
+        "farmos_count": len(farmos_types),
+        "mismatches": mismatches,
+        "mismatch_count": len(mismatches),
+        "in_sheet_not_farmos": in_sheet_not_farmos,
+        "in_farmos_not_sheet": in_farmos_not_sheet,
+        "status": "clean" if not mismatches and not in_sheet_not_farmos and not in_farmos_not_sheet else "drift_detected",
+    }
+
+    return json.dumps(report, indent=2)
 
 
 # ═══════════════════════════════════════════════════════════════
