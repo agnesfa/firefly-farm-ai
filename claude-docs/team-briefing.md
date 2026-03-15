@@ -5,6 +5,14 @@
 
 ---
 
+## Quick Definitions
+
+**A session** is simply a Claude conversation — it starts when you open the chat and ends when you close it. Each conversation is one session.
+
+**QR code scans are separate** — they bypass Claude entirely and submit observations straight to the Google Sheet. You don't need to be in a Claude session to use them.
+
+---
+
 ## What We've Built
 
 Every person at Firefly Corner now has their own Claude — an AI assistant connected to farmOS (our farm database) and to each other through a shared memory system.
@@ -62,9 +70,15 @@ Claude captures what you say in farmOS notes. The reasoning is gold:
 - "This section gets waterlogged in winter" → infrastructure knowledge
 - "Seeds look degraded, low germination expected" → quality intelligence
 
-### Session summaries
+### Session summaries — the closing ritual
 
-At the end of a work session, your Claude should write a summary of what happened. This goes to the Team Memory where everyone can see it. If your Claude doesn't do it automatically, just say: "Write a session summary of what we did."
+Before you close a Claude conversation, ask Claude to save a summary. Just say:
+
+> "Write a session summary of what we did."
+
+Claude will save it and confirm with a message like "Session summary written successfully." **That's it — you're done.** If you're unsure whether it worked, just ask: "Did that get saved?"
+
+If you close the conversation without writing a summary, that session's knowledge is lost to the team. Make it a habit: **summary before closing.**
 
 The summary captures:
 - **Topics** — what you worked on
@@ -158,7 +172,7 @@ Olivier handles compost, cooking, and is currently leading the seed bank invento
 ## Key Concepts (Quick Reference)
 
 ### Section IDs
-Format: `P2R3.14-21` = Paddock 2, Row 3, from 14m to 21m mark.
+Format: `P2R3.15-21` = Paddock 2, Row 3, from 14m to 21m mark.
 
 ### Plant Strata (height layers)
 - **Emergent** (20m+): Forest Red Gum, Tallowood, Ice Cream Bean

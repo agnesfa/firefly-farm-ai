@@ -133,19 +133,19 @@ class TestFormatPlantAssetNameParsing:
 
     def test_species_with_dash(self):
         """Species containing a dash: 'Basil - Sweet'."""
-        asset = make_plant_asset(name="25 APR 2025 - Basil - Sweet - P2R3.14-21")
+        asset = make_plant_asset(name="25 APR 2025 - Basil - Sweet - P2R3.15-21")
         result = format_plant_asset(asset)
         assert result["species"] == "Basil - Sweet"
-        assert result["section"] == "P2R3.14-21"
+        assert result["section"] == "P2R3.15-21"
 
     def test_species_with_dash_and_variety(self):
         """Species with dash and variety: 'Basil - Sweet (Classic)'."""
         asset = make_plant_asset(
-            name="25 APR 2025 - Basil - Sweet (Classic) - P2R3.14-21"
+            name="25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21"
         )
         result = format_plant_asset(asset)
         assert result["species"] == "Basil - Sweet (Classic)"
-        assert result["section"] == "P2R3.14-21"
+        assert result["section"] == "P2R3.15-21"
 
     def test_two_part_name_no_section(self):
         """2-part name (no section) sets section to empty string."""

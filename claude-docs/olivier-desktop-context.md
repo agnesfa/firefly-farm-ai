@@ -213,7 +213,7 @@ Report findings to Claude after each counting session. A good report:
 
 **Nursery:**
 - "What's in the nursery?" → `query_plants` for nursery location
-- "We transplanted 5 tomatoes to P2R3.14-21" → `create_activity` with notes
+- "We transplanted 5 tomatoes to P2R3.15-21" → `create_activity` with notes
 
 **Field support:**
 - "What's planted in P2R2.3-7?" → `query_plants(section_id="P2R2.3-7")`

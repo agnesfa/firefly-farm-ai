@@ -6,7 +6,7 @@
  * Google Sheets + Drive.
  *
  * Endpoints:
- *   GET  ?action=list[&status=pending&section=P2R3.14-21&observer=Claire]
+ *   GET  ?action=list[&status=pending&section=P2R3.15-21&observer=Claire]
  *        → Returns observations as JSON array
  *   GET  ?action=health
  *        → Health check (default if no action specified)

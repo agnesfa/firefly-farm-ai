@@ -147,7 +147,7 @@ Prompts: `log-field-activity`, `record-seeding`, `transplant-to-paddock`
 
 **Goal:** Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.
 
-- Claire says: "Planted 5 pigeon pea seedlings in P2R3.14-21 today"
+- Claire says: "Planted 5 pigeon pea seedlings in P2R3.15-21 today"
 - Claude creates: Transplanting Log with correct asset references, location, quantities
 - farmOS reflects: Updated plant inventory for that section
 
@@ -249,7 +249,7 @@ See full mismatch list in session notes (March 4, 2026).
 ### URL Format
 
 URLs are section-based: `https://agnesfa.github.io/firefly-farm-ai/{section_id}.html`
-Example: `https://agnesfa.github.io/firefly-farm-ai/P2R3.14-21.html`
+Example: `https://agnesfa.github.io/firefly-farm-ai/P2R3.15-21.html`
 
 ### Permanence Decision
 

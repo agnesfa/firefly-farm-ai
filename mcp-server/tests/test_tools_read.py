@@ -86,7 +86,7 @@ def test_get_inventory_groups_by_section(monkeypatch, mock_farmos_client):
     """get_inventory groups results by section when querying by species."""
     plants = [
         make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R2.0-3", inventory_count=4),
-        make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.14-21", inventory_count=3),
+        make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21", inventory_count=3),
     ]
     mock_farmos_client.get_plant_assets.return_value = plants
     monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
@@ -100,7 +100,7 @@ def test_get_inventory_groups_by_section(monkeypatch, mock_farmos_client):
     assert len(result["by_section"]) == 2
     sections = [s["section"] for s in result["by_section"]]
     assert "P2R2.0-3" in sections
-    assert "P2R3.14-21" in sections
+    assert "P2R3.15-21" in sections
 
 
 # ── query_sections ────────────────────────────────────────────
@@ -111,13 +111,13 @@ def test_query_sections_groups_by_row(monkeypatch, mock_farmos_client):
     sections = [
         make_section_asset(name="P2R2.0-3"),
         make_section_asset(name="P2R2.3-7"),
-        make_section_asset(name="P2R3.14-21"),
+        make_section_asset(name="P2R3.15-21"),
     ]
     # Plants for the count index
     all_plants = [
         make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R2.0-3"),
         make_plant_asset(name="25 APR 2025 - Comfrey - P2R2.0-3"),
-        make_plant_asset(name="25 APR 2025 - Macadamia - P2R3.14-21"),
+        make_plant_asset(name="25 APR 2025 - Macadamia - P2R3.15-21"),
     ]
     mock_farmos_client.get_section_assets.return_value = sections
     mock_farmos_client.fetch_all_paginated.return_value = all_plants

@@ -73,7 +73,7 @@ class TestCaseRouting:
         assert result["total_actions"] == 1
         action = result["actions"][0]
         assert action["type"] == "activity"
-        assert action["section"] == "P2R3.14-21"
+        assert action["section"] == "P2R3.15-21"
         assert action["result"] == "created"
 
     def test_import_case_b_new_plant(self, monkeypatch, mock_farmos_client, mock_observe_client):
@@ -96,7 +96,7 @@ class TestCaseRouting:
         def fake_create_plant(**kwargs):
             return json.dumps({
                 "status": "created",
-                "plant": {"name": "09 MAR 2026 - Macadamia - P2R3.14-21"},
+                "plant": {"name": "09 MAR 2026 - Macadamia - P2R3.15-21"},
             })
 
         monkeypatch.setattr(server, "create_plant", fake_create_plant)
@@ -109,7 +109,7 @@ class TestCaseRouting:
         assert action["species"] == "Macadamia"
         assert action["count"] == 2
         assert action["result"] == "created"
-        assert action["plant_name"] == "09 MAR 2026 - Macadamia - P2R3.14-21"
+        assert action["plant_name"] == "09 MAR 2026 - Macadamia - P2R3.15-21"
 
     def test_import_case_b_inferred(self, monkeypatch, mock_farmos_client, mock_observe_client):
         """Observation with previous_count=0, new_count=3 → inferred as new plant."""
@@ -131,7 +131,7 @@ class TestCaseRouting:
         def fake_create_plant(**kwargs):
             return json.dumps({
                 "status": "created",
-                "plant": {"name": "09 MAR 2026 - Comfrey - P2R3.14-21"},
+                "plant": {"name": "09 MAR 2026 - Comfrey - P2R3.15-21"},
             })
 
         monkeypatch.setattr(server, "create_plant", fake_create_plant)
@@ -162,7 +162,7 @@ class TestCaseRouting:
 
         # Case C looks up the plant asset via the client
         plant = make_plant_asset(
-            name="25 APR 2025 - Pigeon Pea - P2R3.14-21",
+            name="25 APR 2025 - Pigeon Pea - P2R3.15-21",
             inventory_count=5,
         )
         mock_farmos_client.get_plant_assets.return_value = [plant]
@@ -174,7 +174,7 @@ class TestCaseRouting:
         assert result["total_actions"] == 1
         action = result["actions"][0]
         assert action["type"] == "observation"
-        assert action["plant_name"] == "25 APR 2025 - Pigeon Pea - P2R3.14-21"
+        assert action["plant_name"] == "25 APR 2025 - Pigeon Pea - P2R3.15-21"
         assert action["previous_count"] == 5
         assert action["new_count"] == 3
         assert action["result"] == "created"
@@ -308,7 +308,7 @@ class TestDryRun:
         _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
 
         # Plant lookup still needed for Case C even in dry_run
-        plant = make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.14-21", inventory_count=5)
+        plant = make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21", inventory_count=5)
         mock_farmos_client.get_plant_assets.return_value = [plant]
 
         # Tool functions should NOT be called — set them to fail if invoked

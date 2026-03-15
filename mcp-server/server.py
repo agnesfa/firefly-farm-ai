@@ -64,7 +64,7 @@ Use memory tools to read team activity and write session summaries.
 Use plant type tools to add or update species in the farmOS taxonomy.
 
 Key concepts:
-- Sections are identified like P2R3.14-21 (Paddock 2, Row 3, metres 14-21)
+- Sections are identified like P2R3.15-21 (Paddock 2, Row 3, metres 14-21)
 - Plant assets are named: "{date} - {species} - {section}"
 - Strata: emergent (20m+), high (8-20m), medium (2-8m), low (0-2m)
 - Succession: pioneer (0-5yr), secondary (3-15yr), climax (15+yr)
@@ -234,7 +234,7 @@ def query_plants(
     """Search plant assets by section, species, or status.
 
     Args:
-        section_id: Filter by section (e.g., "P2R3.14-21"). Optional.
+        section_id: Filter by section (e.g., "P2R3.15-21"). Optional.
         species: Filter by species name (e.g., "Pigeon Pea"). Partial match. Optional.
         status: Asset status filter. Default "active".
 
@@ -402,7 +402,7 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
     """Get current inventory (plant counts) for a section or specific species.
 
     Args:
-        section_id: Section to check inventory for (e.g., "P2R3.14-21"). Optional.
+        section_id: Section to check inventory for (e.g., "P2R3.15-21"). Optional.
         species: Species to check across all sections (e.g., "Pigeon Pea"). Optional.
         At least one of section_id or species should be provided.
 
@@ -588,7 +588,7 @@ def create_activity(
     """Log a field activity (watering, weeding, mulching, etc.) for a section.
 
     Args:
-        section_id: Section where the activity happened (e.g., "P2R3.14-21").
+        section_id: Section where the activity happened (e.g., "P2R3.15-21").
         activity_type: Type of activity (e.g., "watering", "weeding", "mulching", "pruning").
         notes: Description of the activity.
         date: Activity date in ISO format. Defaults to today.
@@ -668,7 +668,7 @@ def create_plant(
     Args:
         species: Plant species farmos_name (e.g., "Pigeon Pea", "Tomato (Marmande)").
                 Must match an existing plant_type taxonomy term.
-        section_id: Section to place the plant (e.g., "P2R3.14-21").
+        section_id: Section to place the plant (e.g., "P2R3.15-21").
         count: Initial number of plants.
         planted_date: Planting date in ISO format (e.g., "2026-03-09"). Defaults to today.
         notes: Additional notes about the planting. Optional.
@@ -759,7 +759,7 @@ def list_observations(
 
     Args:
         status: Filter by status (pending, reviewed, approved, imported, rejected). Optional.
-        section: Filter by section ID (e.g., "P2R3.14-21"). Optional.
+        section: Filter by section ID (e.g., "P2R3.15-21"). Optional.
         observer: Filter by observer name. Optional.
         date: Filter by date (YYYY-MM-DD). Optional.
 
@@ -1564,7 +1564,7 @@ def log_field_observation(section_id: str) -> str:
     """Template for recording field observations in a section.
 
     Args:
-        section_id: The section being observed (e.g., "P2R3.14-21").
+        section_id: The section being observed (e.g., "P2R3.15-21").
     """
     return f"""I want to record field observations for section {section_id}.
 
@@ -1582,7 +1582,7 @@ def check_section_status(section_id: str) -> str:
     """Template for reviewing the current state of a section.
 
     Args:
-        section_id: The section to review (e.g., "P2R3.14-21").
+        section_id: The section to review (e.g., "P2R3.15-21").
     """
     return f"""Show me the current state of section {section_id}.
 
@@ -1598,7 +1598,7 @@ def compare_inventory(section_id: str) -> str:
     """Template for comparing inventory counts over time.
 
     Args:
-        section_id: The section to compare (e.g., "P2R3.14-21").
+        section_id: The section to compare (e.g., "P2R3.15-21").
     """
     return f"""Compare the inventory history for section {section_id}.
 

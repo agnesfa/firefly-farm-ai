@@ -159,7 +159,7 @@ for asset in client.asset.iterate("land", params=params):
 # Create new log
 new_log = {
     "attributes": {
-        "name": "Planted tomatoes in P2R3.14-21",
+        "name": "Planted tomatoes in P2R3.15-21",
         "status": "done",
         "timestamp": "2026-01-12T10:00:00+00:00",
     },

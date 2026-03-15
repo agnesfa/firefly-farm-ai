@@ -116,7 +116,7 @@ class TestCreateActivity:
         monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
 
         result = json.loads(server.create_activity(
-            section_id="P2R3.14-21",
+            section_id="P2R3.15-21",
             activity_type="watering",
             notes="Deep watering after dry spell",
             date="2026-03-10",
@@ -124,8 +124,8 @@ class TestCreateActivity:
 
         assert result["status"] == "created"
         assert result["log_id"] == log_id
-        assert result["log_name"] == "Watering \u2014 P2R3.14-21"
-        assert result["section"] == "P2R3.14-21"
+        assert result["log_name"] == "Watering \u2014 P2R3.15-21"
+        assert result["section"] == "P2R3.15-21"
         assert result["activity_type"] == "watering"
         assert result["notes"] == "Deep watering after dry spell"
 
@@ -175,7 +175,7 @@ class TestCreatePlant:
 
         result = json.loads(server.create_plant(
             species="Pigeon Pea",
-            section_id="P2R3.14-21",
+            section_id="P2R3.15-21",
             count=5,
             planted_date="2026-03-09",
             notes="New planting",
@@ -184,11 +184,11 @@ class TestCreatePlant:
         assert result["status"] == "created"
         assert result["plant"]["id"] == plant_id
         assert result["plant"]["species"] == "Pigeon Pea"
-        assert result["plant"]["section"] == "P2R3.14-21"
+        assert result["plant"]["section"] == "P2R3.15-21"
         assert result["plant"]["count"] == 5
         # Asset name follows convention: "{date_label} - {species} - {section}"
         assert "Pigeon Pea" in result["plant"]["name"]
-        assert "P2R3.14-21" in result["plant"]["name"]
+        assert "P2R3.15-21" in result["plant"]["name"]
         assert result["observation_log"]["id"] == log_id
 
         mock_farmos_client.create_plant_asset.assert_called_once()
@@ -206,7 +206,7 @@ class TestCreatePlant:
 
         result = json.loads(server.create_plant(
             species="Nonexistent Species",
-            section_id="P2R3.14-21",
+            section_id="P2R3.15-21",
             count=1,
         ))
 
@@ -228,7 +228,7 @@ class TestCreatePlant:
 
         result = json.loads(server.create_plant(
             species="Pigeon Pea",
-            section_id="P2R3.14-21",
+            section_id="P2R3.15-21",
             count=3,
             planted_date="2026-03-09",
         ))
@@ -249,7 +249,7 @@ class TestUpdateInventory:
         import server
 
         plant = make_plant_asset(
-            name="25 APR 2025 - Comfrey - P2R3.14-21",
+            name="25 APR 2025 - Comfrey - P2R3.15-21",
             inventory_count=6,
         )
         log_id = make_uuid()
@@ -263,7 +263,7 @@ class TestUpdateInventory:
         monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
 
         result = json.loads(server.update_inventory(
-            plant_name="25 APR 2025 - Comfrey - P2R3.14-21",
+            plant_name="25 APR 2025 - Comfrey - P2R3.15-21",
             new_count=4,
             notes="2 lost to frost",
         ))

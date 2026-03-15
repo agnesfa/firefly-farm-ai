@@ -254,7 +254,7 @@ Once you have 50-100 session summaries and understand the patterns:
 ### Phase 3: Proactive Intelligence + Automation (Month 3)
 
 - Scheduled task: daily/weekly digest synthesizing all team activity
-- Pattern detection: "Claire checked P2R3.14-21 three times — flag for Agnes"
+- Pattern detection: "Claire checked P2R3.15-21 three times — flag for Agnes"
 - Context enrichment: query about a section auto-surfaces all team notes on it
 - farmOS integration: link session summaries to specific farmOS assets/logs
 

@@ -92,7 +92,7 @@ P2R3 — ~63m, 7 sections
 ```
 
 Section IDs: `P{paddock}R{row}.{start}-{end}` — metres from row origin.
-Example: `P2R3.14-21` = Paddock 2, Row 3, 14m to 21m.
+Example: `P2R3.15-21` = Paddock 2, Row 3, 14m to 21m.
 
 Each row alternates **tree sections** (full strata) and **open cultivation** (annuals, no tall canopy).
 

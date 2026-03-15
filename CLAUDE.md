@@ -249,7 +249,7 @@ This is the farmOS-recommended approach we should use:
 
 3. Transplanting Log created →
    References Plant Asset
-   Moves location to field → P2R3.14-21
+   Moves location to field → P2R3.15-21
 ```
 
 ### farmOS Python Library
@@ -316,8 +316,8 @@ Have all 5 rows: P2R1, P2R2, P2R3, P2R4 and P2R5 field sheets (all parsed).
 ```json
 {
   "sections": {
-    "P2R3.14-21": {
-      "id": "P2R3.14-21",
+    "P2R3.15-21": {
+      "id": "P2R3.15-21",
       "paddock": 2, "row": 3,
       "range": "14–21", "length": "7m",
       "has_trees": true,
@@ -350,8 +350,8 @@ firefly-farm-ai/
 ├── site/                      ← Public QR code landing pages (deployed to GitHub Pages)
 │   ├── public/                ← Generated HTML pages + static assets
 │   │   ├── index.html         ← Paddock overview entry point
-│   │   ├── P2R3.14-21.html   ← Section view page (one per section, 33 total)
-│   │   ├── P2R3.14-21-observe.html ← Section observe page (worker form, 33 total)
+│   │   ├── P2R3.15-21.html   ← Section view page (one per section, 33 total)
+│   │   ├── P2R3.15-21-observe.html ← Section observe page (worker form, 33 total)
 │   │   ├── observe.js         ← Vanilla JS: observation form logic + submission
 │   │   └── qrcodes/          ← Generated QR code images (gitignored)
 │   └── src/
@@ -673,7 +673,7 @@ Goal: Claire uses Claude + MCP to log a field activity in natural language, and 
 
 ### Location IDs
 Format: `P{paddock}R{row}.{start}-{end}` (metres from row origin)
-Examples: `P2R3.0-3`, `P2R3.14-21`, `P1R1.0-10`
+Examples: `P2R3.0-3`, `P2R3.15-21`, `P1R1.0-10`
 The dot separates the row from the section. The dash separates the start and end metre marks.
 
 ### Plant Type Names
@@ -694,7 +694,7 @@ The dot separates the row from the section. The dash separates the start and end
 - Asset names for plants: `{planted_date} - {farmos_name} - {section_id}` — e.g., "25 APR 2025 - Pigeon Pea - P2R2.0-3", "20 MAR 2025 - Comfrey - P2R1.3-9"
 - Date label format: exact date "25 APR 2025", month "APR 2025", or fallback "SPRING 2025"
 - Seed asset names: `{Species} Seeds` — e.g., "Pigeon Pea Seeds"
-- Log names: descriptive of the action — "Inventory P2R3.14-21 — Pigeon Pea"
+- Log names: descriptive of the action — "Inventory P2R3.15-21 — Pigeon Pea"
 
 ---
 

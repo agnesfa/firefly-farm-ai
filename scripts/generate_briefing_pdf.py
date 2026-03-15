@@ -233,11 +233,21 @@ def build_pdf(output_path):
     ]:
         story.append(bullet(f"<i>{reason}</i>", styles))
 
-    story.append(Paragraph("Session summaries", styles["H3"]))
+    story.append(Paragraph("Session summaries \u2014 the closing ritual", styles["H3"]))
     story.append(Paragraph(
-        "At the end of a work session, your Claude should write a summary of what happened. "
-        'This goes to the Team Memory where everyone can see it. If your Claude doesn\'t do it '
-        'automatically, just say: <b>"Write a session summary of what we did."</b>',
+        'Before you close a Claude conversation, ask Claude to save a summary. Just say: '
+        '<b>"Write a session summary of what we did."</b>',
+        styles["Body"]
+    ))
+    story.append(Paragraph(
+        'Claude will save it and confirm with a message like "Session summary written successfully." '
+        "That's it \u2014 you're done. If you're unsure whether it worked, just ask: "
+        '"Did that get saved?"',
+        styles["Body"]
+    ))
+    story.append(Paragraph(
+        "If you close the conversation without writing a summary, that session's knowledge is lost "
+        "to the team. Make it a habit: <b>summary before closing.</b>",
         styles["Body"]
     ))
     story.append(Paragraph("The summary captures:", styles["Body"]))
@@ -405,7 +415,7 @@ def build_pdf(output_path):
 
     story.append(Paragraph("Section IDs", styles["H3"]))
     story.append(Paragraph(
-        "Format: <b>P2R3.14-21</b> = Paddock 2, Row 3, from 14m to 21m mark.",
+        "Format: <b>P2R3.15-21</b> = Paddock 2, Row 3, from 14m to 21m mark.",
         styles["Body"]
     ))
 

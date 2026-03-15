@@ -65,7 +65,7 @@ HISTORICAL_TO_CURRENT = {
     "P2R3.0-3":   "P2R3.0-2",
     "P2R3.3-9":   "P2R3.2-9",
     "P2R3.9-14":  "P2R3.9-15",
-    "P2R3.14-21": "P2R3.15-21",
+    "P2R3.15-21": "P2R3.15-21",
     "P2R3.21-26": None,  # no current section
     "P2R3.26-37": "P2R3.26-38",
     "P2R3.41-63": ["P2R3.40-50", "P2R3.50-62"],
@@ -310,7 +310,7 @@ TAB_REGISTRY = {
     (R3_FILE, "P2R3.0-3.2025SpringRenovation"):       ("r3", "P2R3.0-3"),
     (R3_FILE, "P2R3.3-9.2025SpringRenovatio "):       ("r3", "P2R3.3-9"),
     (R3_FILE, "P2R3.9-14.2025SpringRenovation"):      ("r3", "P2R3.9-14"),
-    (R3_FILE, "P2R3.14-21.2025SpringRenovation"):     ("r3", "P2R3.14-21"),
+    (R3_FILE, "P2R3.15-21.2025SpringRenovation"):     ("r3", "P2R3.15-21"),
     (R3_FILE, "P2R3.26-37.SpringRenovation"):         ("r3", "P2R3.26-37"),
     (R3_FILE, "P2R3.41-63.SpringRenovation"):         ("r3_shifted", "P2R3.41-63"),
     # R4 spring planting tabs (registration format — different from renovation)

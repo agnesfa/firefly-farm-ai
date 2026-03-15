@@ -138,7 +138,7 @@
 **Key design choices:**
 - Plant type descriptions embed syntropic data (strata, succession, functions) as text until Phase 4 custom module
 - Inventory uses `inventory_adjustment: "reset"` on observation logs for absolute counts
-- Land asset hierarchy: Paddock → Row → Section (e.g., P2 → P2R3 → P2R3.14-21)
+- Land asset hierarchy: Paddock → Row → Section (e.g., P2 → P2R3 → P2R3.15-21)
 - Plant asset naming: `{date} - {species} - {section_id}`
 
 ### 2. MCP Server — AI ↔ farmOS Bridge

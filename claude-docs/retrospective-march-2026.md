@@ -16,7 +16,7 @@ The decision to use raw HTTP requests (via Python `requests`) instead of the far
 - Ability to handle edge cases (ISO vs Unix timestamps, relationship fields)
 
 **2. Server-side CONTAINS filter**
-The single most impactful pattern. With 400+ plants and 750+ logs, client-side pagination fails (caps at ~250). Pushing filtering server-side via `?filter[name][operator]=CONTAINS&filter[name][value]=P2R3.14-21` returns exactly what we need in 1-2 pages. This pattern is reusable across any farmOS query.
+The single most impactful pattern. With 400+ plants and 750+ logs, client-side pagination fails (caps at ~250). Pushing filtering server-side via `?filter[name][operator]=CONTAINS&filter[name][value]=P2R3.15-21` returns exactly what we need in 1-2 pages. This pattern is reusable across any farmOS query.
 
 **3. STDIO transport for development**
 Starting with STDIO (not HTTP) was right. Zero networking complexity, instant testing via Claude Code's MCP config. The tools were testable the same session they were built.

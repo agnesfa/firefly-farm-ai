@@ -75,7 +75,7 @@ def test_list_observations_no_filters(client):
 @responses.activate
 def test_list_observations_with_filters(client):
     """GET includes status and section params when provided."""
-    obs = [{"species": "Pigeon Pea", "section_id": "P2R3.14-21", "status": "pending"}]
+    obs = [{"species": "Pigeon Pea", "section_id": "P2R3.15-21", "status": "pending"}]
     responses.add(
         responses.GET,
         FAKE_ENDPOINT,
@@ -83,12 +83,12 @@ def test_list_observations_with_filters(client):
         status=200,
     )
 
-    result = client.list_observations(status="pending", section="P2R3.14-21")
+    result = client.list_observations(status="pending", section="P2R3.15-21")
 
     assert result["count"] == 1
     req = responses.calls[0].request
     assert "status=pending" in req.url
-    assert "section=P2R3.14-21" in req.url
+    assert "section=P2R3.15-21" in req.url
 
 
 # ── update_status ─────────────────────────────────────────────

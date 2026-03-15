@@ -187,12 +187,12 @@ class TestPagination:
             json={"data": [], "links": {}},
         )
 
-        client._fetch_plants_contains("P2R3.14-21")
+        client._fetch_plants_contains("P2R3.15-21")
 
         # Verify the request URL contains CONTAINS filter params
         request_url = responses.calls[-1].request.url
         assert "filter%5Bname%5D%5Boperator%5D=CONTAINS" in request_url
-        assert "P2R3.14-21" in request_url
+        assert "P2R3.15-21" in request_url
         assert "filter%5Bstatus%5D=active" in request_url
 
 
@@ -306,7 +306,7 @@ class TestEntityCreation:
             section_uuid="section-1",
             quantity_id="qty-1",
             timestamp=1710000000,
-            name="Inventory P2R3.14-21 - Pigeon Pea",
+            name="Inventory P2R3.15-21 - Pigeon Pea",
             notes="3 healthy",
         )
 

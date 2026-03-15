@@ -58,7 +58,7 @@ def make_plant_asset(
 
 
 def make_log(
-    name="Observation P2R3.14-21 — Pigeon Pea",
+    name="Observation P2R3.15-21 — Pigeon Pea",
     log_type="observation",
     log_uuid=None,
     timestamp=None,
@@ -148,7 +148,7 @@ def make_plant_type(
     }
 
 
-def make_section_asset(name="P2R3.14-21", asset_uuid=None):
+def make_section_asset(name="P2R3.15-21", asset_uuid=None):
     """Build a farmOS JSON:API land asset dict (section)."""
     asset_uuid = asset_uuid or make_uuid()
     return {
@@ -163,7 +163,7 @@ def make_section_asset(name="P2R3.14-21", asset_uuid=None):
 
 def make_observation(
     species="Pigeon Pea",
-    section_id="P2R3.14-21",
+    section_id="P2R3.15-21",
     observer="Claire",
     new_count=3,
     previous_count=5,
@@ -218,7 +218,7 @@ def pigeon_pea_asset():
 def basil_sweet_classic_asset():
     """Tricky double-dash name that tests name parsing edge case."""
     return make_plant_asset(
-        name="25 APR 2025 - Basil - Sweet (Classic) - P2R3.14-21",
+        name="25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21",
         inventory_count=2,
     )
 
