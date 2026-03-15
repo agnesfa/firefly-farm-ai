@@ -15,7 +15,7 @@
 
 Claire's knowledge is the most critical asset at risk. Her Claude should help her work through this list in order.
 
-### Priority 1: Review P1 Planting Data (Monday)
+### Priority A: Review P1 Planting Data (Monday)
 
 Agnes has analysed Claire's P1 spreadsheets and found data that needs clarification before it can be imported into farmOS. Claire needs to answer these questions — her Claude should walk her through them one by one:
 
@@ -46,9 +46,11 @@ Agnes has analysed Claire's P1 spreadsheets and found data that needs clarificat
 - Use `add_plant_type` for any new species confirmed (Chilli Big Jim, Eggplant Long Purple, Bean Dwarf Borlotti, etc.)
 - Write a session summary with all answers so Agnes can proceed with the import
 
-### Priority 2: Nursery Inventory (Monday–Tuesday)
+### Priority B: Nursery Inventory (Monday–Tuesday)
 
 Claire knows what's in the nursery right now — seedlings ready for transplant, plants that need care, propagation in progress. This knowledge must be recorded before she leaves.
+
+> **A and B are both Monday priorities — Claire chooses which to tackle first.** The P1 review is desk work (answering questions for Agnes). The nursery inventory is field work. Either order works.
 
 **Claire's Claude should help her:**
 - Walk through each nursery zone (Shelf 1, Shelf 2, Ground, Propagation area)
@@ -56,7 +58,7 @@ Claire knows what's in the nursery right now — seedlings ready for transplant,
 - Use `create_plant` or `create_observation` to record in farmOS with location set to nursery
 - Note any plants that are earmarked for specific sections
 
-### Priority 3: Autumn Planting Plan (Tuesday–Wednesday)
+### Priority 2: Autumn Planting Plan (Tuesday–Wednesday)
 
 Claire has a plan for what gets planted in P2 for autumn/winter 2026. This plan needs to be documented before she leaves.
 
@@ -67,7 +69,7 @@ Claire has a plan for what gets planted in P2 for autumn/winter 2026. This plan 
 - Reasoning — WHY these species in these locations (frost tolerance, nitrogen needs, soil conditions)
 - Any species that need to be sourced (not in seed bank)
 
-### Priority 4: Agronomic Knowledge Dump (Wednesday–Thursday)
+### Priority 3: Agronomic Knowledge Dump (Wednesday–Thursday)
 
 The most irreplaceable knowledge Claire carries. Her Claude should interview her section by section:
 
@@ -82,7 +84,7 @@ The most irreplaceable knowledge Claire carries. Her Claude should interview her
 
 Record as farmOS observations and activities with rich notes.
 
-### Priority 5: Ongoing Field Logging (All Week)
+### Priority 4: Ongoing Field Logging (All Week)
 
 Continue logging daily work — plantings, observations, any field activities. Every interaction is knowledge captured.
 
