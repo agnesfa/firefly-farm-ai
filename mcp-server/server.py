@@ -517,6 +517,36 @@ def search_plant_types(query: str) -> str:
     }, indent=2)
 
 
+@mcp.tool
+def get_all_plant_types() -> str:
+    """Get ALL plant types with full syntropic metadata in a single call.
+
+    Returns the complete taxonomy (220+ species) with strata, succession stage,
+    lifecycle, lifespan, botanical name, crop family, plant functions, and source.
+
+    USE THIS instead of calling search_plant_types multiple times when you need
+    data for many species (e.g., building inventory sheets, comparing strata across
+    a row). One call replaces 40+ individual lookups.
+
+    Results are cached for 5 minutes — fast on repeated calls within a session.
+
+    Returns:
+        All plant types with full metadata, sorted alphabetically.
+    """
+    client = get_client()
+    all_types = client.get_all_plant_types_cached()
+
+    formatted = sorted(
+        [format_plant_type(t) for t in all_types],
+        key=lambda x: x.get("name", "").lower(),
+    )
+
+    return json.dumps({
+        "count": len(formatted),
+        "plant_types": formatted,
+    }, indent=2)
+
+
 # ═══════════════════════════════════════════════════════════════
 # TOOLS — Write tools (Agnes only in Phase 1a)
 # ═══════════════════════════════════════════════════════════════

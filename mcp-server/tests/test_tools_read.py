@@ -159,3 +159,33 @@ def test_search_plant_types_case_insensitive(monkeypatch, mock_farmos_client):
     assert "Pigeon Pea" in matched_names
     assert "Peanut" in matched_names
     assert "Sweet Potato" not in matched_names
+
+
+# ── get_all_plant_types ──────────────────────────────────────
+
+
+def test_get_all_plant_types_returns_all_sorted(monkeypatch, mock_farmos_client):
+    """get_all_plant_types returns all types sorted alphabetically."""
+    types = [
+        make_plant_type(name="Sweet Potato", description="Living mulch"),
+        make_plant_type(name="Comfrey", description="Nutrient accumulator"),
+        make_plant_type(name="Pigeon Pea", description="Pioneer nitrogen fixer"),
+    ]
+    mock_farmos_client.get_all_plant_types_cached.return_value = types
+    monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+    result = json.loads(server.get_all_plant_types())
+
+    assert result["count"] == 3
+    names = [t["name"] for t in result["plant_types"]]
+    assert names == ["Comfrey", "Pigeon Pea", "Sweet Potato"]
+
+
+def test_get_all_plant_types_uses_cache(monkeypatch, mock_farmos_client):
+    """get_all_plant_types calls cached method, not raw fetch."""
+    mock_farmos_client.get_all_plant_types_cached.return_value = []
+    monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+    server.get_all_plant_types()
+
+    mock_farmos_client.get_all_plant_types_cached.assert_called_once()

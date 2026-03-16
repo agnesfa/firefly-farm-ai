@@ -550,7 +550,7 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 1. **Single agent, not multi-agent orchestration.** Following Anthropic's principle: start with the simplest thing that works. One well-tooled Claude agent with the farmOS MCP server. Sub-agents within a session (for parallel research, audits, validation) are fine — they're delegation, not orchestration. Agent Teams available for complex parallel development (e.g., Phase 1 MCP server build).
 
-2. **farmOS MCP server in Python.** Python MCP SDK (FastMCP) is official. MCP server uses raw HTTP requests instead of farmOS.py to avoid pydantic v1/v2 conflict (farmOS.py needs v1, FastMCP needs v2). Separate venv at `mcp-server/venv/`.
+2. **farmOS MCP server: Python (Phase 1a) → TypeScript (Phase 1b).** Phase 1a uses Python FastMCP with STDIO transport (separate venv at `mcp-server/venv/` for pydantic v2). Phase 1b ports to TypeScript using the Firefly Agents MCP Framework for remote HTTP deployment on Railway. Python server stays as Agnes's local STDIO fallback.
 
 3. **Claude IS the UI** for non-technical users. Don't train Claire on farmOS's web interface. Let Claude translate natural language to API calls.
 
@@ -568,7 +568,9 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 10. **Plant types CSV is the master reference** until all data is properly in farmOS with custom fields. The CSV grows iteratively as new species are identified.
 
-11. **Test first, smart coverage, intelligent testing.** Every new feature or tool gets tests before or alongside implementation. The test harness uses 3 layers — unit tests for pure functions (highest ROI), HTTP-mocked client tests (contract verification), and integration tests with mock clients (orchestration logic). Tests target the highest-risk areas: name parsing edge cases, idempotency guards, import workflow branching, and error resilience. Coverage analysis drives where to invest test effort — focus on code paths that touch production data (farmOS writes, Sheet mutations), not boilerplate. Tests must run fast (<2s), require zero network access, and catch regressions before they corrupt the shared farm database.
+11. **Stay on Farmier for farmOS hosting.** Self-hosting evaluated March 15 — Railway is wrong for stateful Drupal (no cron, volume issues). Farmier at $75/year beats any self-hosted option until Phase 4 requires custom Drupal modules. When ready: Hetzner VPS + Coolify.
+
+12. **Test first, smart coverage, intelligent testing.** Every new feature or tool gets tests before or alongside implementation. The test harness uses 3 layers — unit tests for pure functions (highest ROI), HTTP-mocked client tests (contract verification), and integration tests with mock clients (orchestration logic). Tests target the highest-risk areas: name parsing edge cases, idempotency guards, import workflow branching, and error resilience. Coverage analysis drives where to invest test effort — focus on code paths that touch production data (farmOS writes, Sheet mutations), not boilerplate. Tests must run fast (<2s), require zero network access, and catch regressions before they corrupt the shared farm database.
 
 ---
 
@@ -631,17 +633,24 @@ These decisions have been made through extensive discussion. Don't revisit them 
 - ✅ Built `mcp-server/memory_client.py` — HTTP client for Team Memory Apps Script endpoint (March 13)
 - ✅ Built `mcp-server/helpers.py` — date parsing, response formatters, plant type description builders
 - ✅ Separate venv at `mcp-server/venv/` (avoids pydantic v1/v2 conflict)
-- ✅ 18 tools: 6 read + 4 write + 3 observation + 3 memory + 2 plant type management
+- ✅ 22 tools: 6 read + 5 write + 3 observation + 3 memory + 3 plant type management + 2 site
 - ✅ 5 resources, 3 prompts
-- ✅ Committed: `6e70ae4` (10 tools) → `46f7669` (13 tools) → March 13 sprint (18 tools, NOT YET COMMITTED)
+- ✅ Committed: `6e70ae4` (10 tools) → `46f7669` (13 tools) → `f8a57e7` (18 tools) → March 15 (22 tools)
 - ✅ Agnes's macOS setup: Claude Desktop + MCP server (March 9)
 - ✅ James's Mac setup: Claude Desktop + MCP server at `~/firefly-mcp/` (March 11)
 - ✅ Claire's Windows PC setup: Claude Desktop + MCP server at `C:\firefly-mcp\` (March 11)
 - ✅ Olivier's Windows PC setup: Claude Desktop + MCP server at `C:\firefly-mcp\` (March 13)
 - ✅ All 4 with Claude Desktop projects and role-specific context files
-- ⬜ March 13 sprint needs: Apps Script deployments (Team Memory + observation Code.gs updates), then copy to all machines
+- ✅ March 14 team rollout: all 4 users updated with 18 tools + OBSERVE/MEMORY endpoints
+- ✅ March 15: Plant Types Google Sheet sync + reconcile tool + archive_plant tool (22 tools)
+- ✅ Dynamic priorities system: context files pull priorities from Team Memory at session start
 
-**Phase 1b (PLANNED — must ship by March 22):** HTTP transport + API key auth for remote access. Deploy on Railway.
+**Phase 1b (PLANNED — must ship by March 22):** Remote HTTP transport via FA Framework (TypeScript).
+- Plan: Port Python MCP server to TypeScript using Firefly Agents MCP Framework
+- Deploy to Railway ($5/mo Hobby plan) with per-user API keys via credentials.json
+- Clients connect via `npx mcp-remote` — no Python/venv needed on client machines
+- farmOS stays on Farmier (margregen.farmos.net) — self-hosting deferred to Phase 4
+- Full plan: `claude-docs/phase1b-plan-fa-framework.md`
 
 ### Phase 2: Claire's First Real Log (Weeks 3–4)
 Goal: Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.

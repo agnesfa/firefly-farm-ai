@@ -11,6 +11,7 @@ scripts/import_fieldsheets.py and scripts/fix_taxonomy.py.
 
 import os
 import re
+import time
 import urllib.parse
 from typing import Optional
 
@@ -34,6 +35,9 @@ class FarmOSClient:
         self.session = None  # requests.Session with auth headers
         self._plant_type_cache = {}   # farmos_name → UUID
         self._section_cache = {}      # section_id → UUID
+        self._plant_type_full_cache = None  # Full taxonomy cache (list of raw items)
+        self._plant_type_full_cache_time = 0  # Cache timestamp
+        self._PLANT_TYPE_CACHE_TTL = 300  # 5 minutes
         self._connected = False
 
     def connect(self) -> bool:
@@ -618,7 +622,23 @@ class FarmOSClient:
         """Get plant type taxonomy terms, optionally filtered by name."""
         if name:
             return self.fetch_by_name("taxonomy_term/plant_type", name)
-        return self.fetch_all_paginated("taxonomy_term/plant_type")
+        return self.get_all_plant_types_cached()
+
+    def get_all_plant_types_cached(self) -> list:
+        """Get ALL plant types with 5-minute cache. Single API fetch, no per-species calls."""
+        now = time.time()
+        if (self._plant_type_full_cache is not None
+                and (now - self._plant_type_full_cache_time) < self._PLANT_TYPE_CACHE_TTL):
+            return self._plant_type_full_cache
+        result = self.fetch_all_paginated("taxonomy_term/plant_type")
+        self._plant_type_full_cache = result
+        self._plant_type_full_cache_time = now
+        return result
+
+    def _invalidate_plant_type_cache(self):
+        """Clear the full taxonomy cache after writes."""
+        self._plant_type_full_cache = None
+        self._plant_type_full_cache_time = 0
 
     def get_recent_logs(self, count: int = 20) -> list:
         """Get the most recent logs across all types."""
@@ -647,6 +667,7 @@ class FarmOSClient:
 
         payload = {"data": {"type": "taxonomy_term--plant_type", **data}}
         result = self._post("/api/taxonomy_term/plant_type", payload)
+        self._invalidate_plant_type_cache()
         return result.get("data", {}).get("id")
 
     def update_plant_type(self, uuid: str, attributes: dict) -> dict:
@@ -658,7 +679,9 @@ class FarmOSClient:
                 "attributes": attributes,
             }
         }
-        return self._patch(f"/api/taxonomy_term/plant_type/{uuid}", payload)
+        result = self._patch(f"/api/taxonomy_term/plant_type/{uuid}", payload)
+        self._invalidate_plant_type_cache()
+        return result
 
     # ── Plant asset management ─────────────────────────────────
 

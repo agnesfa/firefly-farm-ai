@@ -502,3 +502,62 @@ class TestArchivePlant:
 
         with pytest.raises(ValueError, match="not found"):
             client.archive_plant("NONEXISTENT - Fake Plant - P2R9.0-1")
+
+
+# ── Plant type cache tests ───────────────────────────────────
+
+
+class TestPlantTypeCache:
+
+    @responses.activate
+    def test_cached_results_avoid_second_fetch(self, env_vars):
+        """Second call to get_all_plant_types_cached uses cache, no HTTP."""
+        client = _connect(env_vars)
+
+        # Page 1 with data
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
+            json={"data": [{"id": "abc", "type": "taxonomy_term--plant_type",
+                            "attributes": {"name": "Comfrey", "description": {"value": ""}}}]},
+        )
+        # Page 2 empty (pagination terminator)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
+            json={"data": []},
+        )
+
+        result1 = client.get_all_plant_types_cached()
+        result2 = client.get_all_plant_types_cached()
+
+        assert result1 == result2
+        # 2 GET calls for pagination (page 1 + empty page 2), NOT 4 (no second fetch)
+        get_calls = [c for c in responses.calls if "taxonomy_term" in c.request.url]
+        assert len(get_calls) == 2  # page 1 + empty page 2, only once
+
+    @responses.activate
+    def test_cache_invalidated_on_create(self, env_vars):
+        """create_plant_type clears the cache."""
+        client = _connect(env_vars)
+
+        # Prime the cache (page 1 empty = no types)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
+            json={"data": []},
+        )
+        client.get_all_plant_types_cached()
+        assert client._plant_type_full_cache is not None
+
+        # Create invalidates
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/taxonomy_term/plant_type",
+            json={"data": {"id": "new-uuid", "type": "taxonomy_term--plant_type",
+                           "attributes": {"name": "Test"}}},
+            status=201,
+        )
+        client.create_plant_type("Test", "A test plant")
+
+        assert client._plant_type_full_cache is None
