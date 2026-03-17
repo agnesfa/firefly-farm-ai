@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Shelf 3-1 — Firefly Corner Nursery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.nursery-card .plant-process { font-size: 0.82rem; color: #6b7280; margin-top: 2px; }
+.rtt-badge { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.78rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 12px; margin: 4px 0 0 0; }
+.nursery-tag { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.75rem;
+  padding: 2px 8px; border-radius: 8px; margin: 2px 4px 2px 0; }
+.nursery-tags { margin-top: 6px; }
+.transplant-plan { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; margin-top: 8px;
+  border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #78350f; }
+.transplant-title { font-weight: 600; margin-bottom: 4px; }
+.empty-zone { text-align: center; padding: 40px 20px; color: #9ca3af; font-style: italic; }
+.zone-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 16px; background: #f8faf5; }
+.zone-nav-group { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; margin-bottom: 4px; }
+.zone-nav-label { font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;
+  width: 100%; padding: 2px 0; }
+.zone-tab { font-size: 0.75rem; padding: 4px 8px; background: white; border: 1px solid #d1d5db;
+  border-radius: 6px; text-decoration: none; color: #374151; white-space: nowrap; }
+.zone-tab:hover { background: #f0fdf4; border-color: #4a8c2e; }
+.zone-tab.active { background: #2d6b1a; color: white; border-color: #2d6b1a; font-weight: 600; }
+.obs-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+  background: #2d6b1a; color: white; border: none; border-radius: 50%;
+  font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 100; display: flex; align-items: center; justify-content: center;
+  text-decoration: none; }
+.obs-fab:hover { background: #1a5010; transform: scale(1.05); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #2d6b1a 0%, #4a8c2e 60%, #5da83a 100%)">
+    <div class="breadcrumb">Firefly Corner · Plant Nursery · Shelving Unit 3</div>
+    <div class="section-title-row">
+      <h1 class="section-range">Shelf 3-1</h1>
+      <span class="section-type-badge">🌱 Nursery Shelf</span>
+    </div>
+    
+  </div>
+
+  <div class="zone-nav">
+<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit I</span><a href="NURS.SH1-1.html" class="zone-tab">Shelf 1-1</a><a href="NURS.SH1-2.html" class="zone-tab">Shelf 1-2</a><a href="NURS.SH1-3.html" class="zone-tab">Shelf 1-3</a><a href="NURS.SH1-4.html" class="zone-tab">Shelf 1-4</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit II</span><a href="NURS.SH2-1.html" class="zone-tab">Shelf 2-1</a><a href="NURS.SH2-2.html" class="zone-tab">Shelf 2-2</a><a href="NURS.SH2-3.html" class="zone-tab">Shelf 2-3</a><a href="NURS.SH2-4.html" class="zone-tab">Shelf 2-4</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit III</span><a href="NURS.SH3-1.html" class="zone-tab active">Shelf 3-1</a><a href="NURS.SH3-2.html" class="zone-tab">Shelf 3-2</a><a href="NURS.SH3-3.html" class="zone-tab">Shelf 3-3</a><a href="NURS.SH3-4.html" class="zone-tab">Shelf 3-4</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Ground & Zones</span><a href="NURS.GR.html" class="zone-tab">Ground Right</a><a href="NURS.GL.html" class="zone-tab">Ground Left</a><a href="NURS.FRT.html" class="zone-tab">Front Area</a><a href="NURS.BCK.html" class="zone-tab">Back Area</a><a href="NURS.HILL.html" class="zone-tab">Hillside</a><a href="NURS.STRB.html" class="zone-tab">Strawberry Area</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Storage</span><a href="SEED.BANK.html" class="zone-tab">Seed Bank</a></div>
+</div>
+
+
+  <div style="padding: 0 0 80px 0;">
+    <div class="empty-zone"><p>No plants recorded at this location yet.</p></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Inventory date: March 17, 2026</div>
+    <div class="footer-sub">Firefly Corner Farm · Plant Nursery</div>
+  </div>
+
+</div>
+
+<!-- Floating action button → observe page -->
+<a href="NURS.SH3-1-observe.html" class="obs-fab" title="Record Observation">📋</a>
+
+</body>
+</html>

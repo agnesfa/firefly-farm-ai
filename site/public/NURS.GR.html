@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ground Right — Firefly Corner Nursery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.nursery-card .plant-process { font-size: 0.82rem; color: #6b7280; margin-top: 2px; }
+.rtt-badge { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.78rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 12px; margin: 4px 0 0 0; }
+.nursery-tag { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.75rem;
+  padding: 2px 8px; border-radius: 8px; margin: 2px 4px 2px 0; }
+.nursery-tags { margin-top: 6px; }
+.transplant-plan { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; margin-top: 8px;
+  border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #78350f; }
+.transplant-title { font-weight: 600; margin-bottom: 4px; }
+.empty-zone { text-align: center; padding: 40px 20px; color: #9ca3af; font-style: italic; }
+.zone-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 16px; background: #f8faf5; }
+.zone-nav-group { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; margin-bottom: 4px; }
+.zone-nav-label { font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;
+  width: 100%; padding: 2px 0; }
+.zone-tab { font-size: 0.75rem; padding: 4px 8px; background: white; border: 1px solid #d1d5db;
+  border-radius: 6px; text-decoration: none; color: #374151; white-space: nowrap; }
+.zone-tab:hover { background: #f0fdf4; border-color: #4a8c2e; }
+.zone-tab.active { background: #2d6b1a; color: white; border-color: #2d6b1a; font-weight: 600; }
+.obs-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+  background: #2d6b1a; color: white; border: none; border-radius: 50%;
+  font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 100; display: flex; align-items: center; justify-content: center;
+  text-decoration: none; }
+.obs-fab:hover { background: #1a5010; transform: scale(1.05); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #2d6b1a 0%, #4a8c2e 60%, #5da83a 100%)">
+    <div class="breadcrumb">Firefly Corner · Plant Nursery · Ground Right</div>
+    <div class="section-title-row">
+      <h1 class="section-range">Ground Right</h1>
+      <span class="section-type-badge">🌱 Nursery Zone</span>
+    </div>
+    
+    <div class="section-stats">
+      <div class="stat"><div class="stat-value">27</div><div class="stat-label">species</div></div>
+      <div class="stat"><div class="stat-value">114</div><div class="stat-label">viable plants</div></div>
+      <div class="stat"><div class="stat-value">35</div><div class="stat-label">ready to transplant</div></div>
+    </div>
+  </div>
+
+  <div class="zone-nav">
+<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit I</span><a href="NURS.SH1-1.html" class="zone-tab">Shelf 1-1</a><a href="NURS.SH1-2.html" class="zone-tab">Shelf 1-2</a><a href="NURS.SH1-3.html" class="zone-tab">Shelf 1-3</a><a href="NURS.SH1-4.html" class="zone-tab">Shelf 1-4</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit II</span><a href="NURS.SH2-1.html" class="zone-tab">Shelf 2-1</a><a href="NURS.SH2-2.html" class="zone-tab">Shelf 2-2</a><a href="NURS.SH2-3.html" class="zone-tab">Shelf 2-3</a><a href="NURS.SH2-4.html" class="zone-tab">Shelf 2-4</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit III</span><a href="NURS.SH3-1.html" class="zone-tab">Shelf 3-1</a><a href="NURS.SH3-2.html" class="zone-tab">Shelf 3-2</a><a href="NURS.SH3-3.html" class="zone-tab">Shelf 3-3</a><a href="NURS.SH3-4.html" class="zone-tab">Shelf 3-4</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Ground & Zones</span><a href="NURS.GR.html" class="zone-tab active">Ground Right</a><a href="NURS.GL.html" class="zone-tab">Ground Left</a><a href="NURS.FRT.html" class="zone-tab">Front Area</a><a href="NURS.BCK.html" class="zone-tab">Back Area</a><a href="NURS.HILL.html" class="zone-tab">Hillside</a><a href="NURS.STRB.html" class="zone-tab">Strawberry Area</a></div>
+<div class="zone-nav-group"><span class="zone-nav-label">Storage</span><a href="SEED.BANK.html" class="zone-tab">Seed Bank</a></div>
+</div>
+
+
+  <div style="padding: 0 0 80px 0;">
+    <div class="plant-inventory">
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#e8f4fd;border-bottom-color:#1e40af">
+        <span class="strata-icon">🌱</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#1e40af">Seedlings</span>
+          <span class="strata-height">13 entries</span>
+        </div>
+        <span class="strata-count" style="background:#1e40af">52</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Achiote</div>
+          <div class="plant-botanical">Bixa orellana</div>
+          <div class="plant-process">🌱 seedling · bought 02/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">2</span>
+      </div>
+      <span class="rtt-badge">📦 2 ready → P2R2, P2R4</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical shrub to 6m producing red seed pods yielding annatto - natural food coloring used worldwide. Pink flowers. Seeds also medicinal. Frost sensitive.</p>
+        <div class="plant-meta">Seeded: bought 02/2026 · Pots: 2 · Source: Daleys Fruit Nursery</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        <div class="transplant-plan"><div class="transplant-title">📋 Transplant Plan</div><div>Destination: P2R2, P2R4</div><div>How many: 5</div><div>When: Mar-26</div></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Avocado</div>
+          <div class="plant-botanical">Persea americana</div>
+          <div class="plant-process">🌱 seedling · Oct-25</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">3</span>
+      </div>
+      <span class="rtt-badge">📦 3 ready → P2R4</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Subtropical fruit tree with rich creamy flesh. Requires well-drained soil - will not tolerate wet feet. Plant A and B types together for better pollination and heavier crops.</p>
+        <div class="plant-meta">Seeded: Oct-25 · Pots: 1 · Source: supermarket</div>
+        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">secondary to climax</span></div>
+        <div class="transplant-plan"><div class="transplant-title">📋 Transplant Plan</div><div>Destination: P2R4</div><div>How many: 2</div><div>When: Mar-26</div></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Cape Gooseberry</div>
+          <div class="plant-botanical">Physalis peruviana</div>
+          <div class="plant-process">🌱 seedling</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Perennial fruiting plant producing golden berries in papery husks. Sweet-tart flavor. Self-seeds readily. Frost sensitive but regrows from roots.</p>
+        <div class="plant-meta">Source: EDEN SEEDS</div>
+        <div class="nursery-tags"><span class="nursery-tag">low-medium</span><span class="nursery-tag">placenta to secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Carob</div>
+          <div class="plant-botanical">Ceratonia siliqua</div>
+          <div class="plant-process">🌱 seedling</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Nitrogen-fixing tree producing edible pods as chocolate substitute. Drought tolerant once established, excellent for syntropic systems providing shade and biomass.</p>
+        <div class="plant-meta">Source: EDEN SEEDS</div>
+        <div class="nursery-tags"><span class="nursery-tag">emergent</span><span class="nursery-tag">secondary to climax</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Chilli (Bird Eye)</div>
+          <div class="plant-botanical">Capsicum annuum</div>
+          <div class="plant-process">🌱 seedling</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Compact, prolific chilli variety producing small, intensely hot fruits. Also known as Thai chilli. Plants are bushy and productive over multiple seasons in frost-free areas. Excellent companion plant attracting beneficial insects when flowering. Fruits ripen from green to red.</p>
+        <div class="plant-meta">Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Chilli (Jalapeño)</div>
+          <div class="plant-botanical">Capsicum annuum</div>
+          <div class="plant-process">🌱 seedling · 15/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">40</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Medium-hot jalapeño pepper. Thick-walled fruits good fresh, pickled or smoked (chipotle). Heavy producer.</p>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 40 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Coriander</div>
+          <div class="plant-botanical">Coriandrum sativum</div>
+          <div class="plant-process">🌱 seedling · 15/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      <span class="rtt-badge">📦 1 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Aromatic herb - leaves (cilantro) and seeds both used. Bolts quickly in heat - plant in cool season or part shade. Self-seeds readily. Attracts beneficial insects.</p>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 1 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Finger Lime</div>
+          <div class="plant-botanical">Citrus australasica</div>
+          <div class="plant-process">🌱 seedling · 15/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">1</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Australian native rainforest citrus producing unique caviar-like lime pearls. Thorny shrub to 6m. Fruit highly prized by chefs. Slow growing but very long-lived. Prefers part shade when young.</p>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 1 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Forest Red Gum</div>
+          <div class="plant-botanical">Eucalyptus tereticornis</div>
+          <div class="plant-process">🌱 seedling</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Tall Australian native eucalypt growing to 50m. Excellent honey producer and timber tree. Fast-growing emergent providing wildlife habitat and wind protection.</p>
+        <div class="plant-meta">Source: The seed Vine</div>
+        <div class="nursery-tags"><span class="nursery-tag">emergent</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Jacaranda</div>
+          <div class="plant-botanical">Jacaranda mimosifolia</div>
+          <div class="plant-process">🌱 seedling · Nov-25</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">3</span>
+      </div>
+      <span class="rtt-badge">📦 3 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Ornamental tree with spectacular purple flowers in spring. Provides light dappled shade. Deciduous in winter.</p>
+        <div class="plant-meta">Seeded: Nov-25 · Pots: 3 · Source: The Bucketts Way</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Lemon</div>
+          <div class="plant-botanical">citrus limon</div>
+          <div class="plant-process">🌱 seedling · Oct-25</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">1</span>
+      </div>
+      <span class="rtt-badge">📦 1 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
+        <div class="plant-meta">Seeded: Oct-25 · Pots: 1 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Tomato</div>
+          <div class="plant-botanical">Solanum lycopersicum</div>
+          <div class="plant-process">🌱 seedling · 15/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      <span class="rtt-badge">📦 1 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Heart-shaped heirloom tomato with meaty flesh. Excellent flavor for fresh eating. Indeterminate growth.</p>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 1 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Wattle - Cootamundra (Baileyana)</div>
+          <div class="plant-botanical">Acacia Baileyana</div>
+          <div class="plant-process">🌱 seedling · Oct-25</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">2</span>
+      </div>
+      <span class="rtt-badge">📦 2 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Beautiful native wattle with silver-blue feathery foliage and masses of golden flowers. Fast nitrogen-fixer for medium layer. Can be short-lived but self-seeds readily.</p>
+        <div class="plant-meta">Seeded: Oct-25 · Pots: 2 · Source: EDEN SEEDS</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">placenta</span></div>
+        
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#edf4e4;border-bottom-color:#2d5016">
+        <span class="strata-icon">✂️</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#2d5016">Cuttings</span>
+          <span class="strata-height">9 entries</span>
+        </div>
+        <span class="strata-count" style="background:#2d5016">44</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Finger Lime</div>
+          <div class="plant-botanical">Citrus australasica</div>
+          <div class="plant-process">✂️ cutting · Bought 04/2025</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">2</span>
+      </div>
+      <span class="rtt-badge">📦 2 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Australian native rainforest citrus producing unique caviar-like lime pearls. Thorny shrub to 6m. Fruit highly prized by chefs. Slow growing but very long-lived. Prefers part shade when young.</p>
+        <div class="plant-meta">Seeded: Bought 04/2025 · Pots: 2 · Source: Daleys Fruit Nursery</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Geranium</div>
+          <div class="plant-botanical">Pelargonium graveolens</div>
+          <div class="plant-process">✂️ cutting · 15/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      <span class="rtt-badge">📦 12 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Scented leaf geranium with rose-like fragrance. Used for aromatics and pest management. Drought tolerant.</p>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 12 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">low-placenta 2 transition</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Grape Vine</div>
+          <div class="plant-botanical">Vitis vinifera</div>
+          <div class="plant-process">✂️ cutting · 27/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">2</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">French-American red wine grape variety. Disease resistant and productive. Deep colored wine. Needs trellising. Prefers warm dry autumn for ripening.</p>
+        <div class="plant-meta">Seeded: 27/01/2026 · Pots: 4 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Olive</div>
+          <div class="plant-botanical">Olea europaea</div>
+          <div class="plant-process">✂️ cutting · 01/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">5</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Long-lived Mediterranean tree producing table olives and oil. Kalamata variety renowned for large purple-black fruit. Drought tolerant once established. Needs winter chill for fruiting.</p>
+        <div class="plant-meta">Seeded: 01/03/2026 · Pots: 3 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">climax</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Quince</div>
+          <div class="plant-botanical">Cidonia Oblonga</div>
+          <div class="plant-process">✂️ cutting · 23/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">8</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Deciduous fruit tree related to apples and pears. Fragrant golden fruit used for preserves, paste and cooking. Beautiful pink-white blossoms.</p>
+        <div class="plant-meta">Seeded: 23/01/2026 · Pots: 11 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium-high</span><span class="nursery-tag">secondary to climax</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Rosemary</div>
+          <div class="plant-botanical">Salvia officinalis</div>
+          <div class="plant-process">✂️ cutting · 15/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">9</span>
+      </div>
+      <span class="rtt-badge">📦 6 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Aromatic Mediterranean shrub with needle-like leaves. Drought tolerant once established. Blue flowers attract bees.</p>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 9 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium-high</span><span class="nursery-tag">placenta to secondary</span></div>
+        <div class="transplant-plan"><div class="transplant-title">📋 Transplant Plan</div><div>Not ready yet: 3</div></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Spinach-Perennial (Okinawa Spinach)</div>
+          <div class="plant-botanical">Gynura crepioides</div>
+          <div class="plant-process">✂️ cutting · 02/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">4</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">a nutritious, low-maintenance perennial leafy green with striking green tops and purple undersides, subtropical-tropical climate; dense groundcover or pot plant. The leaves have a mild, nutty, pine-like flavor, ideal for salads, stir-fries, or tempura</p>
+        <div class="plant-meta">Seeded: 02/03/2026 · Pots: 4 · Source: Minimbah</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Sweet Potato</div>
+          <div class="plant-botanical">ipomea batatas</div>
+          <div class="plant-process">✂️ cutting · 07/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">14</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical tuber with edible leaves. Excellent living mulch groundcover suppressing weeds. Plant slips in warm soil.</p>
+        <div class="plant-meta">Seeded: 07/03/2026 · Pots: 14 · Source: Minimbah</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Thyme</div>
+          <div class="plant-botanical">thymus vulgaris</div>
+          <div class="plant-process">✂️ cutting</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Low-growing aromatic herb with tiny leaves. Drought tolerant groundcover. Essential culinary herb. Attracts bees.</p>
+        <div class="plant-meta">Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">high-emergent</span><span class="nursery-tag">placenta to secondary</span></div>
+        
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#f1f5f9;border-bottom-color:#475569">
+        <span class="strata-icon">🌿</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#475569">Other</span>
+          <span class="strata-height">4 entries</span>
+        </div>
+        <span class="strata-count" style="background:#475569">0</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" style="border-left-color:#475569" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Fig</div>
+          <div class="plant-botanical">Ficus carica</div>
+          <div class="plant-process">🌿 </div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Deciduous fruit tree producing sweet fruits. Drought tolerant once established. Loves warm Mediterranean-type climate but produces well in subtropical and temperate areas. Give sunny position and well-drained soil.</p>
+        <div class="plant-meta">Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">secondary to climax</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#475569" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Mango</div>
+          <div class="plant-botanical">Mangifera indica</div>
+          <div class="plant-process">🌿  · 27/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical fruit tree producing delicious sweet fruit. Long-lived climax species. Grafted trees fruit quicker than seedlings. Needs frost-free position.</p>
+        <div class="plant-meta">Seeded: 27/01/2026 · Pots: 4 · Source: supermarket / Daleys FN</div>
+        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">secondary to climax</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#475569" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Mulberry (White)</div>
+          <div class="plant-botanical">Morus alba (native to China)</div>
+          <div class="plant-process">🌿 </div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Fast-growing deciduous tree producing sweet white-pink fruit. Excellent for biomass - recovers quickly from hard pruning. Also fodder for silkworms.</p>
+        <div class="plant-meta">Source: EDEN SEEDS</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium-high</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+    <div class="plant-card nursery-card" style="border-left-color:#475569" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Tallowood (Gum)</div>
+          <div class="plant-botanical">Eucalyptus microcoris</div>
+          <div class="plant-process">🌿 </div>
+        </div>
+        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Premium hardwood timber species native to NSW coastal forests. Durable timber resistant to termites. Long-lived climax species.</p>
+        <div class="plant-meta">Source: The seed Vine</div>
+        <div class="nursery-tags"><span class="nursery-tag">emergent</span><span class="nursery-tag">climax</span></div>
+        
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#d1fae5;border-bottom-color:#065f46">
+        <span class="strata-icon">🪴</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#065f46">Plants</span>
+          <span class="strata-height">1 entry</span>
+        </div>
+        <span class="strata-count" style="background:#065f46">15</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" style="border-left-color:#065f46" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Aloe Vera</div>
+          <div class="plant-botanical">Aloe barbadensis Miller / Aloe vera (L.) Burm. f.</div>
+          <div class="plant-process">🪴 plant · 06/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#d1fae5;color:#065f46">15</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Succulent perennial with thick fleshy leaves containing medicinal gel. Drought tolerant, prefers well-drained soil. Used topically for burns and skin care.</p>
+        <div class="plant-meta">Seeded: 06/03/2026 · Pots: 15 · Source: FFC</div>
+        <div class="nursery-tags"><span class="nursery-tag">Low</span><span class="nursery-tag">Secondary</span></div>
+        
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#fef3c7;border-bottom-color:#92400e">
+        <span class="strata-icon">🌿</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#92400e">Root Division</span>
+          <span class="strata-height">1 entry</span>
+        </div>
+        <span class="strata-count" style="background:#92400e">2</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" style="border-left-color:#92400e" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Ginger</div>
+          <div class="plant-botanical">Zingiber officinale</div>
+          <div class="plant-process">🌿 root · 15/11/2025</div>
+        </div>
+        <span class="plant-count" style="background:#fef3c7;color:#92400e">2</span>
+      </div>
+      <span class="rtt-badge">📦 2 ready</span>
+      <div class="plant-detail">
+        <p class="plant-desc">Tropical rhizome crop. Plant in spring, harvest when leaves yellow in autumn. Needs warmth, moisture and rich soil.</p>
+        <div class="plant-meta">Seeded: 15/11/2025 · Pots: 2 · Source: greenpach organic</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#fef3c7;border-bottom-color:#78350f">
+        <span class="strata-icon">👑</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#78350f">Mother Plants</span>
+          <span class="strata-height">1 entry</span>
+        </div>
+        <span class="strata-count" style="background:#78350f">1</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" style="border-left-color:#78350f" onclick="this.classList.toggle('expanded')">
+      <div class="plant-header">
+        <div class="plant-info">
+          <div class="plant-name">Spinach-Perennial (Okinawa Spinach)</div>
+          <div class="plant-botanical">Gynura crepioides</div>
+          <div class="plant-process">👑 mother plant · Jan-26</div>
+        </div>
+        <span class="plant-count" style="background:#fef3c7;color:#78350f">1</span>
+      </div>
+      
+      <div class="plant-detail">
+        <p class="plant-desc">a nutritious, low-maintenance perennial leafy green with striking green tops and purple undersides, subtropical-tropical climate; dense groundcover or pot plant. The leaves have a mild, nutty, pine-like flavor, ideal for salads, stir-fries, or tempura</p>
+        <div class="plant-meta">Seeded: Jan-26 · Pots: 1 · Source: Minimbah</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+    </div>
+      </div>
+    </div>
+</div>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Inventory date: March 17, 2026</div>
+    <div class="footer-sub">Firefly Corner Farm · Plant Nursery</div>
+  </div>
+
+</div>
+
+<!-- Floating action button → observe page -->
+<a href="NURS.GR-observe.html" class="obs-fab" title="Record Observation">📋</a>
+
+</body>
+</html>
