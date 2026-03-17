@@ -165,8 +165,7 @@ class FarmOSClient:
             sort: Optional sort field, e.g. "-changed" for newest first
             limit: Page size (default 50)
         """
-        all_items = []
-        seen_ids = set()
+        seen = {}  # UUID → item dict, deduplicates across pages
 
         # Build base filter/sort params
         # Default sort by name ensures stable ordering across pages —
@@ -206,13 +205,12 @@ class FarmOSClient:
 
             for item in items:
                 item_id = item.get("id", "")
-                if item_id and item_id not in seen_ids:
-                    seen_ids.add(item_id)
-                    all_items.append(item)
+                if item_id:
+                    seen[item_id] = item
 
             offset += limit
 
-        return all_items
+        return list(seen.values())
 
     def fetch_filtered(self, api_path: str, filters: Optional[dict] = None,
                        sort: Optional[str] = None, max_results: int = 50,
@@ -400,8 +398,7 @@ class FarmOSClient:
                 f"&filter[status]={status}"
                 f"&page[limit]=50")
 
-        all_items = []
-        seen_ids = set()
+        seen = {}  # UUID → item dict, deduplicates across pages
         url = f"{self.hostname}{path}"
 
         while url:
@@ -417,9 +414,8 @@ class FarmOSClient:
             data = resp.json()
             for item in data.get("data", []):
                 item_id = item.get("id", "")
-                if item_id and item_id not in seen_ids:
-                    seen_ids.add(item_id)
-                    all_items.append(item)
+                if item_id:
+                    seen[item_id] = item
             next_link = data.get("links", {}).get("next", {})
             if isinstance(next_link, dict):
                 url = next_link.get("href", "")
@@ -430,7 +426,7 @@ class FarmOSClient:
             if not url:
                 break
 
-        return all_items
+        return list(seen.values())
 
     def get_plant_assets(self, section_id: Optional[str] = None,
                           species: Optional[str] = None,
@@ -526,8 +522,7 @@ class FarmOSClient:
         if include_quantity:
             path += "&include=quantity"
 
-        all_items = []
-        seen_ids = set()
+        seen = {}  # UUID → item dict, deduplicates across pages
         url = f"{self.hostname}{path}"
 
         while url:
@@ -550,9 +545,8 @@ class FarmOSClient:
 
             for item in page_items:
                 item_id = item.get("id", "")
-                if item_id and item_id not in seen_ids:
-                    seen_ids.add(item_id)
-                    all_items.append(item)
+                if item_id:
+                    seen[item_id] = item
 
             next_link = data.get("links", {}).get("next", {})
             if isinstance(next_link, dict):
@@ -565,7 +559,7 @@ class FarmOSClient:
             if not url:
                 break
 
-        return all_items
+        return list(seen.values())
 
     def get_logs(self, log_type: Optional[str] = None,
                   section_id: Optional[str] = None,

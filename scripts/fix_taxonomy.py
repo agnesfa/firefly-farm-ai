@@ -49,8 +49,7 @@ def fetch_all_terms(client):
     This is unreliable for complete enumeration. Use fetch_terms_by_name()
     for guaranteed complete results.
     """
-    all_terms = []
-    seen_ids = set()
+    seen = {}  # UUID → term dict, deduplicates across pages
 
     session = client.session
     hostname = client.session.hostname
@@ -69,9 +68,8 @@ def fetch_all_terms(client):
 
         for term in terms:
             tid = term.get("id", "")
-            if tid and tid not in seen_ids:
-                seen_ids.add(tid)
-                all_terms.append(term)
+            if tid:
+                seen[tid] = term
 
         next_url = data.get("links", {}).get("next", {})
         if isinstance(next_url, dict):
@@ -89,7 +87,7 @@ def fetch_all_terms(client):
         else:
             url = None
 
-    return all_terms
+    return list(seen.values())
 
 
 def fetch_terms_by_name(client, name):
