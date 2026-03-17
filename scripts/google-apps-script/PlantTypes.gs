@@ -108,8 +108,10 @@ function doPost(e) {
       return handleAdd(body);
     } else if (action === "update") {
       return handleUpdate(body);
+    } else if (action === "fix_formats") {
+      return handleFixFormats(body);
     } else {
-      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: add, update" });
+      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: add, update, fix_formats" });
     }
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
@@ -209,11 +211,19 @@ function handleAdd(body) {
   }
 
   sheet.appendRow(newRow);
+  var newRowNum = sheet.getLastRow();
+
+  // Force plain text format on numeric/range columns to prevent date auto-formatting
+  var TEXT_COLS = [COLS.lifespan_years, COLS.lifecycle_years, COLS.maturity_days,
+                   COLS.harvest_days, COLS.germination_time, COLS.transplant_days];
+  for (var k = 0; k < TEXT_COLS.length; k++) {
+    sheet.getRange(newRowNum, TEXT_COLS[k] + 1).setNumberFormat("@");
+  }
 
   return jsonResponse({
     success: true,
     message: "Added plant type: " + farmosName,
-    row: sheet.getLastRow()
+    row: newRowNum
   });
 }
 
@@ -249,13 +259,22 @@ function handleUpdate(body) {
     });
   }
 
+  // Fields that must be stored as plain text to prevent date auto-formatting
+  var TEXT_FIELDS = ["lifespan_years", "lifecycle_years", "maturity_days",
+                     "harvest_days", "germination_time", "transplant_days"];
+
   // Update only the fields that were provided (don't overwrite with empty)
   var updatedFields = [];
   for (var j = 0; j < COL_NAMES.length; j++) {
     var colName = COL_NAMES[j];
     if (colName === "farmos_name") continue; // Don't update the key field
     if (body.hasOwnProperty(colName) && body[colName] !== undefined && body[colName] !== null) {
-      sheet.getRange(targetRow, j + 1).setValue(body[colName]);
+      var cell = sheet.getRange(targetRow, j + 1);
+      // Force plain text format for numeric/range fields that Sheets misinterprets as dates
+      if (TEXT_FIELDS.indexOf(colName) !== -1) {
+        cell.setNumberFormat("@");
+      }
+      cell.setValue(body[colName]);
       updatedFields.push(colName);
     }
   }
@@ -307,6 +326,88 @@ function handleReconcile(params) {
   }
 
   return jsonResponse({ success: true, plant_types: results, count: results.length });
+}
+
+// ── Fix date-formatted columns ──────────────────────────────────
+
+/**
+ * Bulk-fix cell formats for lifespan_years (col H) and lifecycle_years (col I).
+ * Sets the number format to plain text ("@") and rewrites each value as a string
+ * to prevent Google Sheets from interpreting values like "3-10" as dates.
+ *
+ * Also accepts optional "values" dict mapping farmos_name → {lifespan_years, lifecycle_years}
+ * to simultaneously fix format AND push correct values.
+ *
+ * POST {action: "fix_formats"}                    — fix format only (keeps current display values)
+ * POST {action: "fix_formats", values: {...}}     — fix format AND push correct values
+ */
+function handleFixFormats(body) {
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return jsonResponse({ success: true, message: "No data rows", fixed: 0 });
+  }
+
+  var numRows = lastRow - 1;
+  var lifespanCol = COLS.lifespan_years + 1; // 1-indexed = 8
+  var lifecycleCol = COLS.lifecycle_years + 1; // 1-indexed = 9
+
+  // Set entire columns H and I to plain text format
+  var lifespanRange = sheet.getRange(2, lifespanCol, numRows, 1);
+  var lifecycleRange = sheet.getRange(2, lifecycleCol, numRows, 1);
+  lifespanRange.setNumberFormat("@");
+  lifecycleRange.setNumberFormat("@");
+
+  // If values dict provided, push corrected values
+  var valuesProvided = body.values || null;
+  var fixed = 0;
+
+  if (valuesProvided) {
+    // Build lookup of farmos_name → row index
+    var farmosNames = sheet.getRange(2, COLS.farmos_name + 1, numRows, 1).getValues();
+    var nameToRow = {};
+    for (var i = 0; i < farmosNames.length; i++) {
+      nameToRow[String(farmosNames[i][0])] = i + 2; // 1-indexed + header
+    }
+
+    for (var name in valuesProvided) {
+      var rowNum = nameToRow[name];
+      if (!rowNum) continue;
+      var vals = valuesProvided[name];
+      if (vals.lifespan_years !== undefined) {
+        sheet.getRange(rowNum, lifespanCol).setValue(String(vals.lifespan_years));
+        fixed++;
+      }
+      if (vals.lifecycle_years !== undefined) {
+        sheet.getRange(rowNum, lifecycleCol).setValue(String(vals.lifecycle_years));
+        fixed++;
+      }
+    }
+  } else {
+    // No values provided — rewrite existing display values as strings
+    // Read the DISPLAY values (getDisplayValues returns what users see, not internal dates)
+    var lifespanDisplay = lifespanRange.getDisplayValues();
+    var lifecycleDisplay = lifecycleRange.getDisplayValues();
+
+    for (var r = 0; r < numRows; r++) {
+      var lsVal = lifespanDisplay[r][0];
+      var lcVal = lifecycleDisplay[r][0];
+      if (lsVal) {
+        sheet.getRange(r + 2, lifespanCol).setValue(lsVal);
+        fixed++;
+      }
+      if (lcVal) {
+        sheet.getRange(r + 2, lifecycleCol).setValue(lcVal);
+        fixed++;
+      }
+    }
+  }
+
+  return jsonResponse({
+    success: true,
+    message: "Fixed format for lifespan_years and lifecycle_years columns to plain text",
+    fixed: fixed
+  });
 }
 
 // ── Utility ────────────────────────────────────────────────────

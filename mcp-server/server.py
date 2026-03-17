@@ -32,6 +32,7 @@ from farmos_client import FarmOSClient
 from observe_client import ObservationClient
 from memory_client import MemoryClient
 from plant_types_client import PlantTypesClient
+from knowledge_client import KnowledgeClient
 from helpers import (
     parse_date,
     format_planted_label,
@@ -77,6 +78,7 @@ _client: Optional[FarmOSClient] = None
 _observe_client: Optional[ObservationClient] = None
 _memory_client: Optional[MemoryClient] = None
 _plant_types_client: Optional[PlantTypesClient] = None
+_knowledge_client: Optional[KnowledgeClient] = None
 
 
 def get_client() -> FarmOSClient:
@@ -122,6 +124,24 @@ def get_plant_types_client() -> Optional[PlantTypesClient]:
     if not _plant_types_client.is_connected:
         return None
     return _plant_types_client
+
+
+def get_knowledge_client() -> Optional[KnowledgeClient]:
+    """Get or create the knowledge base client connection.
+
+    Returns None if KNOWLEDGE_ENDPOINT is not configured (graceful degradation).
+    """
+    global _knowledge_client
+    if _knowledge_client is None:
+        try:
+            _knowledge_client = KnowledgeClient()
+            _knowledge_client.connect()
+        except ValueError:
+            # KNOWLEDGE_ENDPOINT not set — knowledge tools disabled
+            return None
+    if not _knowledge_client.is_connected:
+        return None
+    return _knowledge_client
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -591,11 +611,12 @@ def create_observation(
     # Parse date
     timestamp = parse_date(date) if date else parse_date(None)
 
-    # Build log name
+    # Build log name — include date so future inventory updates aren't blocked
     species = formatted["species"]
-    log_name = f"Observation {section_id} — {species}"
+    obs_date = datetime.fromtimestamp(timestamp, tz=AEST).strftime("%Y-%m-%d")
+    log_name = f"Observation {section_id} — {species} — {obs_date}"
 
-    # Check if this log already exists (idempotency)
+    # Check if this exact log already exists (same species + section + date)
     existing = client.log_exists(log_name, "observation")
     if existing:
         return json.dumps({
@@ -1839,6 +1860,176 @@ def reconcile_plant_types() -> str:
     }
 
     return json.dumps(report, indent=2)
+
+
+# ═══════════════════════════════════════════════════════════════
+# TOOLS — Knowledge Base (shared farm knowledge library)
+# ═══════════════════════════════════════════════════════════════
+
+
+@mcp.tool
+def search_knowledge(
+    query: str,
+    category: Optional[str] = None,
+) -> str:
+    """Search the farm knowledge base for articles, tutorials, guides, and SOPs.
+
+    Searches across titles, content, tags, related plants, and authors.
+    Use this to find farm practices, syntropic agriculture guides, composting
+    methods, pest management strategies, or any documented farm knowledge.
+
+    Args:
+        query: Text to search for (e.g., "pigeon pea", "frost damage", "composting").
+        category: Optional category filter (e.g., "syntropic", "composting",
+                  "irrigation", "nursery", "pests", "harvest", "equipment", "general").
+    """
+    kb_client = get_knowledge_client()
+    if not kb_client:
+        return json.dumps({
+            "error": "Knowledge base not available",
+            "hint": "KNOWLEDGE_ENDPOINT env var not configured",
+        })
+
+    try:
+        result = kb_client.search(query=query, category=category)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Knowledge search failed: {e}"})
+
+
+@mcp.tool
+def list_knowledge(
+    category: Optional[str] = None,
+    limit: int = 20,
+) -> str:
+    """List knowledge base entries, optionally filtered by category.
+
+    Use this to browse the farm knowledge library or see what's available
+    in a specific category.
+
+    Args:
+        category: Optional category filter (e.g., "syntropic", "composting").
+        limit: Max entries to return (default 20).
+    """
+    kb_client = get_knowledge_client()
+    if not kb_client:
+        return json.dumps({
+            "error": "Knowledge base not available",
+            "hint": "KNOWLEDGE_ENDPOINT env var not configured",
+        })
+
+    try:
+        result = kb_client.list_entries(category=category, limit=limit)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to list knowledge entries: {e}"})
+
+
+@mcp.tool
+def add_knowledge(
+    title: str,
+    content: str,
+    category: str,
+    author: str = "",
+    tags: str = "",
+    source_type: str = "guide",
+    related_plants: str = "",
+    related_sections: str = "",
+    media_links: str = "",
+) -> str:
+    """Add a new entry to the farm knowledge base.
+
+    Use this to document farming practices, field learnings, tutorials,
+    composting methods, pest solutions, or any knowledge that should be
+    preserved and shared with the team and future workers.
+
+    Args:
+        title: Article/guide title (e.g., "Pigeon Pea Chop-and-Drop Technique").
+        content: Full text content of the knowledge entry.
+        category: Category tag — one of: syntropic, composting, irrigation,
+                  nursery, pests, harvest, equipment, cooking, general.
+        author: Who wrote/contributed this (e.g., "Claire", "Olivier").
+        tags: Comma-separated search tags (e.g., "nitrogen_fixer,biomass,pioneer").
+        source_type: Type of entry — tutorial, sop, guide, observation, recipe, reference.
+        related_plants: Comma-separated farmos_names of related plant types
+                        (e.g., "Pigeon Pea,Comfrey,Sweet Potato").
+        related_sections: Comma-separated section IDs (e.g., "P2R3.15-21,P2R4.20-30").
+        media_links: Comma-separated Google Drive file IDs or URLs for
+                     photos, PDFs, or audio files related to this entry.
+    """
+    kb_client = get_knowledge_client()
+    if not kb_client:
+        return json.dumps({
+            "error": "Knowledge base not available",
+            "hint": "KNOWLEDGE_ENDPOINT env var not configured",
+        })
+
+    try:
+        result = kb_client.add(fields={
+            "title": title,
+            "content": content,
+            "category": category,
+            "author": author,
+            "tags": tags,
+            "source_type": source_type,
+            "related_plants": related_plants,
+            "related_sections": related_sections,
+            "media_links": media_links,
+        })
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to add knowledge entry: {e}"})
+
+
+@mcp.tool
+def update_knowledge(
+    entry_id: str,
+    title: Optional[str] = None,
+    content: Optional[str] = None,
+    category: Optional[str] = None,
+    tags: Optional[str] = None,
+    related_plants: Optional[str] = None,
+    related_sections: Optional[str] = None,
+    media_links: Optional[str] = None,
+) -> str:
+    """Update an existing knowledge base entry.
+
+    Only the fields you provide will be updated — others are preserved.
+
+    Args:
+        entry_id: The UUID of the entry to update (from search_knowledge or list_knowledge).
+        title: New title (optional).
+        content: New/updated content (optional).
+        category: New category (optional).
+        tags: New comma-separated tags (optional).
+        related_plants: New related plant types (optional).
+        related_sections: New related sections (optional).
+        media_links: New media links (optional).
+    """
+    kb_client = get_knowledge_client()
+    if not kb_client:
+        return json.dumps({
+            "error": "Knowledge base not available",
+            "hint": "KNOWLEDGE_ENDPOINT env var not configured",
+        })
+
+    fields = {}
+    for key, val in {
+        "title": title, "content": content, "category": category,
+        "tags": tags, "related_plants": related_plants,
+        "related_sections": related_sections, "media_links": media_links,
+    }.items():
+        if val is not None:
+            fields[key] = val
+
+    if not fields:
+        return json.dumps({"error": "No fields to update"})
+
+    try:
+        result = kb_client.update(entry_id=entry_id, fields=fields)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to update knowledge entry: {e}"})
 
 
 # ═══════════════════════════════════════════════════════════════
