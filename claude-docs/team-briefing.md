@@ -148,12 +148,34 @@ QR codes are being generated for each nursery zone (shelves, ground areas, fridg
 
 A new system for storing farm tutorials, SOPs, and guides. This is where Olivier's nursery/cuttings tutorials, compost procedures, and Claire's agronomic guides will live permanently.
 
-**How to use it:**
-- "Save this as a knowledge base entry about how to take cuttings" → Claude stores it
+It has two parts:
+
+**1. Knowledge Drive** (shared Google Drive folder for files):
+[https://drive.google.com/drive/folders/1z7nBdELcIoqXaeQqhcSypwPHJ5hu7JUw](https://drive.google.com/drive/folders/1z7nBdELcIoqXaeQqhcSypwPHJ5hu7JUw)
+
+Upload your documents, photos, audio, and PDFs here first. The folder is organized by type:
+
+| Folder | What goes in it | Examples |
+|--------|----------------|----------|
+| `tutorials` | Step-by-step how-to guides | Cuttings technique PDF, grafting photos, seed saving audio |
+| `sops` | Standard operating procedures | Daily watering routine, compost turning schedule |
+| `guides` | Agronomic knowledge & advice | Planting calendar, pest management, consortium design |
+| `recipes` | Cooking recipes using farm produce | Olivier's kitchen recipes |
+| `reference` | General reference material | Supplier contacts, equipment manuals, farm maps |
+
+**2. Knowledge Base tools** (Claude indexes and searches your uploads):
+
+Once your file is in the Drive, tell Claude about it. Claude will create a searchable entry linking to your file:
+
+- "I uploaded a tutorial about taking rosemary cuttings to the tutorials folder — save it to the knowledge base" → Claude creates a searchable entry with the link
 - "Search the knowledge base for compost" → find existing guides
 - "What tutorials do we have?" → browse by category
 
-Categories: `tutorial`, `sop`, `guide`, `observation`, `recipe`, `reference`
+**The two-step process:**
+1. **You** upload the file to the right folder in the Knowledge Drive
+2. **Claude** creates the searchable index entry — tell Claude what it is, who wrote it, and what species/sections it relates to
+
+This way, the actual documents live in a shared Drive everyone can browse, AND they're searchable through Claude.
 
 ### Plant Taxonomy — Fully Synced
 
