@@ -45,7 +45,7 @@ NURSERY_LOCATIONS = [
     ("NURS.SH3-3", "Shelf 3-3", "Nursery — Shelving Unit 3"),
     ("NURS.SH3-4", "Shelf 3-4", "Nursery — Shelving Unit 3, Bottom"),
     # Ground areas
-    ("NURS.GR", "Ground", "Nursery — Ground Area"),
+    ("NURS.GR", "Ground Right", "Nursery — Ground Right"),
     ("NURS.GL", "Ground Left", "Nursery — Ground Left"),
     ("NURS.FRT", "Front", "Nursery — Front Area"),
     ("NURS.BCK", "Back", "Nursery — Back Area"),

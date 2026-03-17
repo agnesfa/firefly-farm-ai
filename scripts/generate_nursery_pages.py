@@ -40,7 +40,7 @@ NURSERY_LOCATIONS = [
     ("NURS.SH3-3", "Shelf 3-3", "Firefly Corner \u00b7 Plant Nursery \u00b7 Shelving Unit 3"),
     ("NURS.SH3-4", "Shelf 3-4", "Firefly Corner \u00b7 Plant Nursery \u00b7 Shelving Unit 3"),
     # Ground areas
-    ("NURS.GR", "Ground Area", "Firefly Corner \u00b7 Plant Nursery \u00b7 Ground"),
+    ("NURS.GR", "Ground Right", "Firefly Corner \u00b7 Plant Nursery \u00b7 Ground Right"),
     ("NURS.GL", "Ground Left", "Firefly Corner \u00b7 Plant Nursery \u00b7 Ground"),
     ("NURS.FRT", "Front Area", "Firefly Corner \u00b7 Plant Nursery \u00b7 Front"),
     ("NURS.BCK", "Back Area", "Firefly Corner \u00b7 Plant Nursery \u00b7 Back"),
