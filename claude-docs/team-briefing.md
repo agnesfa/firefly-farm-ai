@@ -19,13 +19,15 @@ Every person at Firefly Corner now has their own Claude — an AI assistant conn
 
 When you tell your Claude something — "I planted 5 tagasaste in P2R3 today" or "the pigeon peas in Row 2 look frost-damaged" — it doesn't just listen. It records that knowledge in farmOS, where it becomes part of the farm's permanent intelligence. And through the Team Memory, everyone else's Claude can see what you did.
 
-**The system has three layers:**
+**The system has four layers:**
 
-1. **farmOS** — the source of truth. Every plant, every observation, every activity is recorded here. Your Claude reads from and writes to farmOS on your behalf.
+1. **farmOS** — the source of truth. Every plant, every seed, every observation, every activity is recorded here. Your Claude reads from and writes to farmOS on your behalf.
 
-2. **Observation Sheet** — field workers submit observations via QR code pages on section poles. These land in a Google Sheet for review before being imported to farmOS.
+2. **Observation Sheet** — field workers submit observations via QR code pages on section poles and nursery zones. These land in a Google Sheet for review before being imported to farmOS.
 
 3. **Team Memory** — a shared log where each person's Claude writes session summaries. This is how the team stays in sync without meetings.
+
+4. **Knowledge Base** — permanent farm knowledge: tutorials, SOPs, agronomic guides, compost procedures. Unlike Team Memory (which captures daily activity), the Knowledge Base stores reference material that stays useful forever.
 
 ---
 
@@ -97,26 +99,97 @@ You can ask:
 
 ## The QR Code System
 
-Every section pole in Paddock 2 has a QR code. Scanning it shows:
-- **What's planted** — species, counts, strata, botanical names
+Every section pole in Paddock 1 and Paddock 2 has a QR code. Every nursery zone and the seed bank also have QR codes. Scanning one shows:
+- **What's there** — species, counts, strata, botanical names (paddock sections) or seed inventory (seed bank) or nursery plants
 - **Record observation** button — submit field observations
 
-**Anyone can use the QR pages** — no login needed. Observations go to the Google Sheet for review. Claire reviews them for accuracy, then they get imported to farmOS.
+**Anyone can use the QR pages** — no login needed. Observations go to the Google Sheet for review, then get imported to farmOS.
+
+**QR code locations:**
+- 54 paddock sections (P1R1, P1R3, P1R5, P2R1–P2R5)
+- Nursery zones (shelves, ground areas, front, back, hill, strawberry)
+- 1 Seed Bank code (covers fridge + freezer)
+
+---
+
+## What's New — March 17 Update
+
+> **If you've read the briefing before, start here.** Everything below this section is unchanged.
+
+### Seed Bank is LIVE in farmOS
+
+111 Seed assets have been created in farmOS, covering every seed packet on the farm. Each has:
+- **Inventory tracking** — bulk seeds in grams, sachets as stock level (0 = empty, 0.5 = opened/partial, 1 = full/unopened)
+- **Link to plant taxonomy** — every seed is connected to its species
+- **Location** — all currently at NURS.FRDG (nursery fridge)
+
+**What this means for you:**
+- Ask Claude "What seeds do we have for pigeon pea?" → it knows
+- Ask "How much basil seed is left?" → it knows the grams or stock level
+- When you use seeds, tell Claude so it can update the inventory
+
+### Nursery QR Codes (coming tonight)
+
+QR codes are being generated for each nursery zone (shelves, ground areas, fridge, freezer) plus one for the Seed Bank. These work exactly like the paddock QR codes — scan to see what's there, tap to record an observation.
+
+**Nursery locations in farmOS:**
+- `NURS.SH1-1` through `NURS.SH3-4` — 12 shelf positions (3 shelving units × 4 shelves)
+- `NURS.GR` — ground area
+- `NURS.GL` — ground left
+- `NURS.BCK` — back area
+- `NURS.HILL` — hillside area
+- `NURS.FRT` — front area
+- `NURS.STRB` — strawberry area
+- `NURS.FRDG` — fridge (seed storage)
+- `NURS.FRZR` — freezer
+- `Seed Bank` — one QR code for the whole seed bank
+
+### Knowledge Base — NEW (Olivier's tutorials)
+
+A new system for storing farm tutorials, SOPs, and guides. This is where Olivier's nursery/cuttings tutorials, compost procedures, and Claire's agronomic guides will live permanently.
+
+**How to use it:**
+- "Save this as a knowledge base entry about how to take cuttings" → Claude stores it
+- "Search the knowledge base for compost" → find existing guides
+- "What tutorials do we have?" → browse by category
+
+Categories: `tutorial`, `sop`, `guide`, `observation`, `recipe`, `reference`
+
+### Plant Taxonomy — Fully Synced
+
+271 active plant types in farmOS, matching the master CSV exactly. Claire's seed bank and nursery corrections are all incorporated. No more "species not found" errors.
+
+### Paddock 1 is in farmOS
+
+P1R1 (6 sections), P1R3 (5 sections), P1R5 (4 sections) — all imported with plant data and QR pages live. Tomorrow's field test includes P1.
 
 ---
 
 ## What's Happening Now (March 2026)
 
-Three parallel tracks running simultaneously:
+### Field Day — March 18 (Tomorrow)
 
-### 1. P2 Autumn Planting (Claire leads)
-New trees and green manure mixes going into Paddock 2 for autumn/winter. Claire uses QR observe pages and Claude to record everything. New species get added to the plant type database as needed.
+Full end-to-end test of all systems. James, Agnes, and a WWOOFer will walk the farm testing:
+- QR code scans on paddock sections (P1 + P2)
+- QR code scans on nursery locations
+- Seed bank QR code
+- Observation submissions via QR pages
+- Claude-based inventory queries and updates
+- Knowledge base entries
+- Team Memory flow
 
-### 2. Seed Bank Inventory (Olivier leads)
-Complete count of all seed packets — species, quantities, conditions, sources. This data will become farmOS Seed assets, enabling the full seed-to-field lifecycle tracking.
+**Goal:** Find bugs, test the full operational flow, verify everything works before Claire and Olivier leave March 22.
+
+### Parallel tracks:
+
+### 1. Nursery Inventory (Claire + Olivier)
+Physical nursery walkthrough — every shelf, every zone. Plants get counted, located, and recorded in farmOS. QR codes on each zone enable ongoing tracking.
+
+### 2. Knowledge Capture (Olivier leads, Claire contributes)
+Tutorials being captured: cuttings technique, seed saving, compost management. These go into the Knowledge Base for permanent reference.
 
 ### 3. Operational Flow Design (James leads)
-James reviews what Claire and Olivier are doing and designs repeatable workflows. The goal: when new WWOOFers arrive after March 22, they can follow these flows without expert guidance.
+James designs the seed bank → nursery → paddock operational flow. The goal: when new WWOOFers arrive after March 22, they can follow these flows without expert guidance.
 
 ---
 
@@ -198,8 +271,12 @@ Format: `P2R3.15-21` = Paddock 2, Row 3, from 15m to 21m mark.
 
 ## The March 22 Deadline
 
-Claire and Olivier leave on March 22. Everything they know about this farm needs to be captured before then — in farmOS, in the Team Memory, and in the workflows James designs. Every session summary, every observation, every piece of reasoning matters.
+Claire and Olivier leave on March 22. Everything they know about this farm needs to be captured before then — in farmOS, in the Team Memory, in the Knowledge Base, and in the workflows James designs. Every session summary, every observation, every tutorial, every piece of reasoning matters.
 
 This isn't about creating perfect documentation. It's about making sure the farm intelligence has enough knowledge that James (with new WWOOFers and Claude) can keep the farm's operations running and growing.
 
 **The farm intelligence is only as good as what you feed it. Feed it well.**
+
+---
+
+*Last updated: March 17, 2026 — v2 (seed bank live, nursery QR codes, knowledge base, P1 imported)*
