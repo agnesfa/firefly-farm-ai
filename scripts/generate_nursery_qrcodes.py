@@ -162,8 +162,8 @@ def main():
 
     qr_images = []
     for loc_id, label, subtitle in NURSERY_LOCATIONS:
-        # QR links to the observe page for this location
-        url = f"{base_url}{loc_id}-observe.html"
+        # QR links to the view page (which has FAB to observe page)
+        url = f"{base_url}{loc_id}.html"
         output_path = output_dir / f"{loc_id}.png"
         img = generate_qr(url, label, output_path, subtitle)
         qr_images.append((label, img))
