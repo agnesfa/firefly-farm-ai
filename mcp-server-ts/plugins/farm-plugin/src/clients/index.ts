@@ -1,8 +1,13 @@
 /**
- * Client factory functions — resolve clients from auth context or env vars.
+ * Client factory functions.
  *
- * In the FA Framework, credentials flow through the auth context per-tenant.
- * Shared endpoints (Apps Script) come from server-level env vars.
+ * farmOS credentials come from server-level env vars (FARMOS_URL, FARMOS_USERNAME,
+ * FARMOS_PASSWORD) because all users share the same farmOS account and the FA Framework
+ * only injects auth context (extra.authInfo) when a platform OAuth handler is configured.
+ * Without a platform handler, extra.authInfo is undefined — so env vars are the reliable path.
+ *
+ * User identity (userName) comes from credentials.json metadata via extra.authInfo.
+ * Apps Script endpoints come from server-level env vars.
  */
 
 import { FarmOSClient } from './farmos-client.js';
@@ -18,31 +23,35 @@ export { PlantTypesClient } from './plant-types-client.js';
 export { KnowledgeClient } from './knowledge-client.js';
 
 /**
- * Get a FarmOS client from the tool handler's auth context.
+ * Get a FarmOS client from server-level env vars.
+ *
+ * farmOS credentials are shared across all users (single farmOS account),
+ * so they live as env vars rather than per-user auth context.
  * Uses singleton pattern — one client per farmUrl.
  */
-export function getFarmOSClient(extra?: any): FarmOSClient {
-  const auth = extra?.auth;
-  const farmUrl = auth?.clientMetadata?.farmUrl;
-  const creds = auth?.platformCredentials?.credentials;
+export function getFarmOSClient(_extra?: any): FarmOSClient {
+  const farmUrl = process.env.FARMOS_URL;
+  const username = process.env.FARMOS_USERNAME;
+  const password = process.env.FARMOS_PASSWORD;
 
-  if (!farmUrl || !creds?.username || !creds?.password) {
+  if (!farmUrl || !username || !password) {
     throw new Error(
-      'FarmOS credentials not found in auth context. ' +
-      'Ensure credentials.json has farmUrl in metadata and username/password in credentials.',
+      'FarmOS credentials not found. Set FARMOS_URL, FARMOS_USERNAME, and FARMOS_PASSWORD env vars.',
     );
   }
 
-  return FarmOSClient.getInstance({
-    farmUrl,
-    username: creds.username,
-    password: creds.password,
-  });
+  return FarmOSClient.getInstance({ farmUrl, username, password });
 }
 
-/** Get userName from auth context metadata. */
+/**
+ * Get userName from auth context metadata (credentials.json).
+ * Falls back to FARMOS_DEFAULT_USER env var, then 'Unknown'.
+ */
 export function getUserName(extra?: any): string {
-  return extra?.auth?.clientMetadata?.userName ?? 'Unknown';
+  return extra?.authInfo?.metadata?.userName
+    ?? extra?.authInfo?.clientMetadata?.userName
+    ?? process.env.FARMOS_DEFAULT_USER
+    ?? 'Unknown';
 }
 
 /** Get an observation client from env vars. Returns null if not configured. */
