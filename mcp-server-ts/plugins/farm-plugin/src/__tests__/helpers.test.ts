@@ -151,7 +151,7 @@ describe('formatPlantAsset inventory', () => {
 
   it('truncates float inventory', () => {
     const asset = makePlantAsset({ name: 'Test Plant' });
-    asset.attributes.inventory = [{ measure: 'count', value: '3.7' }];
+    asset.attributes.inventory = [{ measure: 'count', value: '3.7', units: { name: 'Plants' } }];
     const result = formatPlantAsset(asset);
     expect(result.inventory_count).toBe(3);
   });

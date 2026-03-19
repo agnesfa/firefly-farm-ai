@@ -171,7 +171,7 @@ describe('FarmOSClient', () => {
       const data = {
         included: [{ id: qtyId, type: 'quantity--standard', attributes: { value: { decimal: '10' } } }],
       };
-      const items = [{ relationships: { quantity: { data: [{ id: qtyId }] } } }];
+      const items: any[] = [{ relationships: { quantity: { data: [{ id: qtyId }] } } }];
 
       FarmOSClient.mergeIncludedQuantities(data, items);
       expect(items[0]._quantities).toHaveLength(1);
