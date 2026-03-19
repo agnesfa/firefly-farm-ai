@@ -1,0 +1,29 @@
+{
+  "name": "@farm/farm-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FarmOS MCP Server application",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@fireflyagents/mcp-server-core": "file:../../packed-deps/fireflyagents-mcp-server-core-1.0.0-beta.0.tgz",
+    "@fireflyagents/mcp-shared-utils": "file:../../packed-deps/fireflyagents-mcp-shared-utils-1.0.0-beta.0.tgz",
+    "@farm/farm-plugin": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.8.3",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.4",
+    "rimraf": "^6.0.1"
+  }
+}

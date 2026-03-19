@@ -1,0 +1,25 @@
+{
+  "name": "@farm/fa-farm-mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FarmOS MCP Server - Built with Firefly Agents MCP Server Framework",
+  "workspaces": [
+    "apps/*",
+    "plugins/*"
+  ],
+  "scripts": {
+    "build": "npm run build:foundation && npm run build:consumers",
+    "build:foundation": "npm run --workspace=plugins/farm-plugin build",
+    "build:consumers": "npm run --workspace=apps/farm-server build",
+    "dev": "npm run --workspace=apps/farm-server dev",
+    "start": "npm run --workspace=apps/farm-server start",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit -p apps/farm-server/tsconfig.json && tsc --noEmit -p plugins/farm-plugin/tsconfig.json",
+    "clean": "rm -rf apps/*/dist plugins/*/dist"
+  },
+  "engines": {
+    "node": "^18.0.0 || ^20.0.0 || ^22.0.0"
+  }
+}
