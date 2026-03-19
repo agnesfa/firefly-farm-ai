@@ -49,8 +49,11 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=builder --chown=farmuser:nodejs /app/plugins/farm-plugin/dist ./plugins/farm-plugin/dist
 COPY --from=builder --chown=farmuser:nodejs /app/apps/farm-server/dist ./apps/farm-server/dist
 
-# Fix ownership
-RUN chown -R farmuser:nodejs /app
+# Copy entrypoint script
+COPY --chown=farmuser:nodejs docker-entrypoint.sh ./
+
+# Fix ownership and make entrypoint executable
+RUN chown -R farmuser:nodejs /app && chmod +x /app/docker-entrypoint.sh
 
 # Switch to non-root user
 USER farmuser
@@ -68,5 +71,6 @@ ENV CREDENTIALS_PATH=/app/secrets/credentials.json
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD node -e "const http = require('http'); const options = { host: '0.0.0.0', port: process.env.PORT || 3010, path: '/health/live', timeout: 5000 }; const req = http.request(options, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.on('timeout', () => process.exit(1)); req.end();"
 
-# Start the FarmOS MCP Server
+# Entrypoint writes credentials from env var, then runs CMD
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["npm", "run", "--workspace=@farm/farm-server", "start"]
