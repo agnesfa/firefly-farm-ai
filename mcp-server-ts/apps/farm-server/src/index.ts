@@ -31,6 +31,11 @@ async function main() {
     await app.start();
 
     printAppInfo(appConfig);
+
+    // Keep-alive: ping own health endpoint every 4 minutes to prevent
+    // Railway from sleeping the container. Without this, cold starts
+    // take ~5-10s and exceed MCP client timeouts.
+    startKeepAlive(appConfig.server.port);
   } catch (error) {
     logger.error('Failed to start server', {
       error: error instanceof Error ? error.message : error,
@@ -68,5 +73,21 @@ const printAppInfo = (appConfig: AppConfig) => {
   console.log(' Press Ctrl+C to stop');
   console.log('-----------------------------------------------------------------------');
 };
+
+function startKeepAlive(port: number) {
+  const INTERVAL_MS = 4 * 60 * 1000; // 4 minutes
+  const url = `http://localhost:${port}/health`;
+
+  setInterval(async () => {
+    try {
+      await fetch(url);
+      logger.debug('Keep-alive ping sent');
+    } catch {
+      // Server might be restarting — ignore
+    }
+  }, INTERVAL_MS);
+
+  logger.info('Keep-alive enabled', { intervalMinutes: 4 });
+}
 
 main();
