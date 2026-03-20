@@ -118,7 +118,7 @@ def load_nursery_inventory(csv_path):
                 "process": row.get("Process", "").strip(),
                 "seeding_date": row.get("Seeding/Planting Date", "").strip(),
                 "pots_planted": row.get("Pots Planted", "").strip(),
-                "viable": row.get("Viable (Mar 17)", "").strip(),
+                "viable": (row.get("Viable (Mar 20)") or row.get("Viable (Mar 17)") or "").strip(),
                 "success_rate": row.get("Success Rate %", "").strip(),
                 "nrtt": row.get("Not RTT", "").strip(),
                 "rtt": row.get("RTT", "").strip(),
@@ -399,7 +399,7 @@ def render_view_page(loc_id, display_name, breadcrumb, plants, plant_db):
   </div>
 
   <div class="footer">
-    <div class="footer-sub">Inventory date: March 17, 2026</div>
+    <div class="footer-sub">Inventory date: March 20, 2026</div>
     <div class="footer-sub">{footer_label}</div>
   </div>
 

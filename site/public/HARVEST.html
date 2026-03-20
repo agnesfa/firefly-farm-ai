@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Harvest Log — Firefly Corner Farm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+<style>
+/* Harvest-specific styles */
+.harvest-section { padding: 16px; }
+.harvest-divider { height: 1px; background: #e5e5e0; margin: 0 16px; }
+
+/* Species search */
+.species-search-wrap { position: relative; }
+.species-results { position: absolute; top: 100%; left: 0; right: 0; z-index: 30;
+  max-height: 240px; overflow-y: auto; background: #fff;
+  border: 1px solid #e5e5e0; border-top: none; border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; }
+.species-result { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f0f0ec; }
+.species-result:hover { background: #f7f6f0; }
+.species-result:last-child { border-bottom: none; }
+.species-result-name { font-weight: 600; font-size: 14px; color: #1a1a1a; }
+.species-result-botanical { font-size: 11px; color: #9ca3af; font-style: italic; }
+
+/* Weight row */
+.weight-row { display: flex; gap: 10px; align-items: flex-end; }
+.weight-input-wrap { flex: 1; }
+.unit-toggle { display: flex; gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid #d1d5db; flex-shrink: 0; align-self: flex-end; }
+.unit-btn { padding: 10px 16px; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  border: none; cursor: pointer; background: #f7f6f0; color: #6b7280; transition: all 0.15s; }
+.unit-btn.active { background: #2d6b1a; color: #fff; }
+.unit-btn:first-child { border-right: 1px solid #d1d5db; }
+
+/* Photo area */
+.harvest-photo-area { margin-bottom: 14px; }
+
+/* Success state */
+.harvest-success { display: none; text-align: center; padding: 40px 20px; }
+.success-icon { font-size: 48px; margin-bottom: 16px; }
+.success-message { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 600;
+  color: #1a1a1a; margin-bottom: 8px; }
+.success-sub { font-size: 14px; color: #6b7280; margin-bottom: 24px; line-height: 1.5; }
+.another-btn { display: inline-block; padding: 14px 32px; background: #2d6b1a; color: #fff;
+  border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.another-btn:active { background: #1a5010; }
+</style>
+</head>
+<body data-endpoint="">
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #3d6b2e 0%, #5a8a3c 60%, #6b9e4a 100%)">
+    <div class="breadcrumb">Firefly Corner &middot; Harvest Log</div>
+    <div class="section-title-row">
+      <h1 class="section-range">Harvest Log</h1>
+      <span class="section-type-badge">&#9878;&#65039; Harvest Station</span>
+    </div>
+    <div class="obs-subtitle">Record what you harvested</div>
+  </div>
+
+  <!-- Offline queue banner -->
+  <div id="queue-banner" class="queue-banner" style="display:none">
+    <span class="queue-count"></span>
+    <button onclick="syncPendingQueue()" class="queue-sync-btn">Sync Now</button>
+  </div>
+
+  <!-- Status messages -->
+  <div id="harvest-status" class="obs-status" style="display:none"></div>
+
+  <!-- Form -->
+  <div id="harvest-form">
+
+    <!-- Harvester name + datetime -->
+    <div class="harvest-section">
+      <div class="obs-field-group">
+        <label class="obs-label" for="harvester-name">Your name</label>
+        <input type="text" id="harvester-name" class="obs-input" placeholder="e.g. Claire, James, WWOOFer name" autocomplete="name">
+      </div>
+      <div class="obs-field-group">
+        <label class="obs-label" for="harvest-datetime">Date &amp; time</label>
+        <input type="datetime-local" id="harvest-datetime" class="obs-input">
+      </div>
+    </div>
+
+    <div class="harvest-divider"></div>
+
+    <!-- Species search -->
+    <div class="harvest-section">
+      <div class="obs-field-group">
+        <label class="obs-label" for="species-search">Species harvested</label>
+        <div class="species-search-wrap">
+          <input type="text" id="species-search" class="obs-input" placeholder="Search species (e.g. Tomato, Zucchini)" autocomplete="off">
+          <div id="species-results" class="species-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="harvest-divider"></div>
+
+    <!-- Weight -->
+    <div class="harvest-section">
+      <div class="obs-field-group">
+        <label class="obs-label">Weight</label>
+        <div class="weight-row">
+          <div class="weight-input-wrap">
+            <input type="number" id="harvest-weight" class="obs-input" placeholder="0" min="0" step="any" inputmode="decimal">
+          </div>
+          <div class="unit-toggle">
+            <button type="button" class="unit-btn active" data-unit="g">g</button>
+            <button type="button" class="unit-btn" data-unit="kg">kg</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="harvest-divider"></div>
+
+    <!-- Location -->
+    <div class="harvest-section">
+      <div class="obs-field-group">
+        <label class="obs-label" for="harvest-location">Harvested from</label>
+        <select id="harvest-location" class="obs-select">
+          <option value="">Select location...</option>
+          <optgroup label="Paddock 1">
+            <option value="P1R1">P1 Row 1</option>
+            <option value="P1R2">P1 Row 2</option>
+            <option value="P1R3">P1 Row 3</option>
+            <option value="P1R4">P1 Row 4</option>
+            <option value="P1R5">P1 Row 5</option>
+          </optgroup>
+          <optgroup label="Paddock 2">
+            <option value="P2R1">P2 Row 1</option>
+            <option value="P2R2">P2 Row 2</option>
+            <option value="P2R3">P2 Row 3</option>
+            <option value="P2R4">P2 Row 4</option>
+            <option value="P2R5">P2 Row 5</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="Nursery">Nursery</option>
+            <option value="Other">Other</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+    <div class="harvest-divider"></div>
+
+    <!-- Photo + Notes -->
+    <div class="harvest-section">
+      <div class="obs-field-group harvest-photo-area">
+        <label class="obs-label">Photo (optional)</label>
+        <label class="obs-media-btn">
+          &#128247; Take Photo
+          <input type="file" id="harvest-photo-input" accept="image/*" capture="environment" style="display:none" class="obs-photo-input">
+        </label>
+        <div id="harvest-photo-previews" class="obs-photo-previews"></div>
+      </div>
+      <div class="obs-field-group">
+        <label class="obs-label" for="harvest-notes">Notes (optional)</label>
+        <textarea id="harvest-notes" class="obs-textarea" rows="2" placeholder="e.g. Beautiful big ones, first harvest of the season"></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="harvest-section">
+      <button type="button" id="harvest-submit" class="obs-submit-btn" style="background:#2d6b1a">Record Harvest</button>
+    </div>
+
+  </div>
+
+  <!-- Success state -->
+  <div id="harvest-success" class="harvest-success">
+    <div class="success-icon">&#9878;&#65039;</div>
+    <div class="success-message">Harvest recorded!</div>
+    <div class="success-sub">Check the status message above for details.</div>
+    <button type="button" id="harvest-another" class="another-btn">Record Another Harvest</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-sub"><a href="index.html" style="color:#9ca3af;text-decoration:none">Back to Paddock Overview</a></div>
+    <div class="footer-sub">Firefly Corner Farm &middot; Harvest Station</div>
+  </div>
+
+</div>
+
+<!-- Plant types data — Generated from plant_types.csv — update with generate_site.py -->
+<script>
+var PLANT_TYPES_DATA = [{"species": "Acerola", "botanical": "Malpighia emarginata", "strata": "medium"}, {"species": "Achiote", "botanical": "Bixa orellana", "strata": "medium"}, {"species": "Aloe Vera", "botanical": "Aloe barbadensis", "strata": "low"}, {"species": "Amaranth", "botanical": "Amaranthus spp.", "strata": "low"}, {"species": "Amaranth (Calaloo)", "botanical": "Amaranthus spp.", "strata": "low"}, {"species": "Amla", "botanical": "Phyllanthus emblica", "strata": "high"}, {"species": "Apple", "botanical": "Malus domestica", "strata": "medium"}, {"species": "Apricot", "botanical": "Prunus armeniaca", "strata": "high"}, {"species": "Arrowroot", "botanical": "Canna edulis", "strata": "medium"}, {"species": "Australian Climbing Bluebell", "botanical": "Billardiera fusiformis", "strata": "low"}, {"species": "Avocado", "botanical": "Persea americana", "strata": "high"}, {"species": "Avocado (Hass)", "botanical": "Persea americana", "strata": "high"}, {"species": "Banagrass", "botanical": "Cenchrus purpureus", "strata": "high"}, {"species": "Banana", "botanical": "Musa acuminata", "strata": "high"}, {"species": "Barley", "botanical": "Hordeum vulgare", "strata": "low"}, {"species": "Barley (Pearl)", "botanical": "Hordeum vulgare", "strata": "low"}, {"species": "Basil - Perennial", "botanical": "Ocimum basilicum", "strata": "medium"}, {"species": "Basil - Perennial (Greek)", "botanical": "Ocimum minimum", "strata": "low"}, {"species": "Basil - Perennial (Thai)", "botanical": "Ocimum basilicum", "strata": "medium"}, {"species": "Basil - Sweet (Classic)", "botanical": "Ocimum basilicum", "strata": "low"}, {"species": "Basil - Sweet (Gourmet Mix)", "botanical": "Ocimum basilicum", "strata": "low"}, {"species": "Bean - Climbing", "botanical": "Phaseolus vulgaris", "strata": "medium"}, {"species": "Bean - Climbing (Blue Lake)", "botanical": "Phaseolus vulgaris", "strata": "medium"}, {"species": "Bean - Climbing (Purple King)", "botanical": "Phaseolus vulgaris", "strata": "medium"}, {"species": "Bean - Dwarf", "botanical": "Phaseolus vulgaris", "strata": "low"}, {"species": "Bean - Dwarf (Borlotti)", "botanical": "Phaseolus vulgaris", "strata": "low"}, {"species": "Bee & Butterfly Mix", "botanical": "Mixed species", "strata": "low"}, {"species": "Beetroot", "botanical": "Beta vulgaris", "strata": "low"}, {"species": "Beetroot (Crimson Globe)", "botanical": "Beta vulgaris", "strata": "low"}, {"species": "Beetroot (Moulin Rouge)", "botanical": "Beta vulgaris", "strata": "low"}, {"species": "Black Coral Pea", "botanical": "Kennedia nigricans", "strata": "low"}, {"species": "Black She-oak", "botanical": "Allocasuarina littoralis", "strata": "high"}, {"species": "Blackberry", "botanical": "Rubus fruticosus", "strata": "low"}, {"species": "Blueberry", "botanical": "Vaccinium corymbosum", "strata": "low"}, {"species": "Borage", "botanical": "Borago officinalis", "strata": "low"}, {"species": "Borage (Blue Flower)", "botanical": "Borago officinalis", "strata": "low"}, {"species": "Borage (White Flower)", "botanical": "Borago officinalis", "strata": "low"}, {"species": "Broad Bean", "botanical": "Vicia faba", "strata": "medium"}, {"species": "Broad Bean (Long Pod)", "botanical": "Vicia faba", "strata": "medium"}, {"species": "Broccoletti (Raab Rapini)", "botanical": "Brassica oleracea var. italica", "strata": "low"}, {"species": "Broccoli", "botanical": "Brassica oleracea var. italica", "strata": "low"}, {"species": "Broccoli (Summer Green)", "botanical": "Brassica oleracea var. italica", "strata": "low"}, {"species": "Brussels Sprout", "botanical": "Brassica oleracea var. gemmifera", "strata": "low"}, {"species": "Buckwheat", "botanical": "Fagopyrum esculentum", "strata": "low"}, {"species": "Bunnya Pine", "botanical": "Araucaria bidwilii", "strata": "emergent"}, {"species": "Butternut Pumpkin", "botanical": "Cucurbita maxima", "strata": "low"}, {"species": "Cabbage", "botanical": "Brassica oleracea", "strata": "low"}, {"species": "Cabbage (Golden Acre)", "botanical": "Brassica oleracea var. capitata", "strata": "low"}, {"species": "Cabbage (Red)", "botanical": "Brassica oleracea var. capitata", "strata": "low"}, {"species": "Cabbage (Savoy Vertu)", "botanical": "Brassica oleracea var. capitata", "strata": "low"}, {"species": "Calendula", "botanical": "Calendula officinalis", "strata": "low"}, {"species": "Cape Gooseberry", "botanical": "Physalis peruviana", "strata": "medium"}, {"species": "Capsicum", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Capsicum (Red)", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Carob", "botanical": "Ceratonia siliqua", "strata": "emergent"}, {"species": "Carrot", "botanical": "Daucus carota", "strata": "low"}, {"species": "Castor Bean", "botanical": "Ricinus communis", "strata": "medium"}, {"species": "Cattail", "botanical": "Typha spp.", "strata": "medium"}, {"species": "Cauliflower", "botanical": "Brassica oleracea var. botrytis", "strata": "low"}, {"species": "Celery", "botanical": "Apium graveolens", "strata": "low"}, {"species": "Celery (Golden Self Blanching)", "botanical": "Apium graveolens", "strata": "low"}, {"species": "Celery (Tendercrisp)", "botanical": "Apium graveolens", "strata": "low"}, {"species": "Chamomile", "botanical": "Chamaemelum nobile", "strata": "low"}, {"species": "Chilli", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Chilli (Big Jim)", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Chilli (Bird Eye)", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Chilli (Cayenne)", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Chilli (Devil's Brew)", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Chilli (Jalapeño)", "botanical": "Capsicum annuum", "strata": "medium"}, {"species": "Chives", "botanical": "Allium schoenoprasum", "strata": "low"}, {"species": "Chives - Garlic", "botanical": "Allium tuberosum", "strata": "low"}, {"species": "Choko", "botanical": "Sechium edule", "strata": "medium"}, {"species": "Citrus (Yuzu)", "botanical": "Citrus junos", "strata": "medium"}, {"species": "Clover", "botanical": "Trifolium repens", "strata": "low"}, {"species": "Clover (Crimson)", "botanical": "Trifolium pratense", "strata": "low"}, {"species": "Clover (Red Persian)", "botanical": "Trifolium pratense", "strata": "low"}, {"species": "Clover (White Haifa)", "botanical": "Trifolium repens", "strata": "low"}, {"species": "Coffee", "botanical": "Coffea arabica", "strata": "medium"}, {"species": "Coffee (Arabica)", "botanical": "Coffea arabica", "strata": "medium"}, {"species": "Comfrey", "botanical": "Symphytum officinale", "strata": "low"}, {"species": "Coriander", "botanical": "Coriandrum sativum", "strata": "low"}, {"species": "Corn", "botanical": "Zea mays", "strata": "emergent"}, {"species": "Corn (Manning Pride)", "botanical": "Zea mays", "strata": "emergent"}, {"species": "Corn (Sweet)", "botanical": "Zea mays", "strata": "emergent"}, {"species": "Cottage Garden Mix", "botanical": "Mixed species", "strata": "low"}, {"species": "Cowpea", "botanical": "Vigna unguiculata", "strata": "low"}, {"species": "Cowpea (Red)", "botanical": "Vigna unguiculata", "strata": "low"}, {"species": "Cucumber", "botanical": "Cucumis sativus", "strata": "medium"}, {"species": "Cucumber (Burpless)", "botanical": "Cucumis sativus", "strata": "medium"}, {"species": "Cucumber (Lebanese)", "botanical": "Cucumis sativus", "strata": "medium"}, {"species": "Cucumber (Space Master)", "botanical": "Cucumis sativus", "strata": "medium"}, {"species": "Curry Leaf", "botanical": "Murraya koenigii", "strata": "medium"}, {"species": "Davidson Plum", "botanical": "Davidsonia jerseyana", "strata": "high"}, {"species": "Dianella", "botanical": "Dianella spp.", "strata": "low"}, {"species": "Dill", "botanical": "Anethum graveolens", "strata": "low"}, {"species": "Eggplant", "botanical": "Solanum melongena", "strata": "medium"}, {"species": "Eggplant (Long Purple)", "botanical": "Solanum melongena", "strata": "medium"}, {"species": "Eucalypt-Gum (Generic)", "botanical": "Eucalyptus", "strata": "emergent"}, {"species": "Everlastings", "botanical": "Rhodanthe chlorocephala", "strata": "low"}, {"species": "Fennel", "botanical": "Foeniculum vulgare", "strata": "low"}, {"species": "Fig", "botanical": "Ficus carica", "strata": "high"}, {"species": "Finger Lime", "botanical": "Citrus australasica", "strata": "medium"}, {"species": "Forest Red Gum", "botanical": "Eucalyptus tereticornis", "strata": "emergent"}, {"species": "Forget-Me-Not", "botanical": "Myosotis sylvatica", "strata": "low"}, {"species": "Garlic", "botanical": "Allium sativum", "strata": "low"}, {"species": "Garlic Chives", "botanical": "Allium tuberosum", "strata": "low"}, {"species": "Geranium", "botanical": "Pelargonium graveolens", "strata": "low"}, {"species": "Ginger", "botanical": "Zingiber officinale", "strata": "low"}, {"species": "Ginger - Galangal", "botanical": "Alpinia galanga", "strata": "low"}, {"species": "Grape Vine", "botanical": "Vitis vinifera", "strata": "medium"}, {"species": "Grape Vine (Chambourcin)", "botanical": "Vitis vinifera hybrid", "strata": "medium"}, {"species": "Grapefruit", "botanical": "Citrus × paradisi", "strata": "high"}, {"species": "Green Manure Mix", "botanical": "Mixed species", "strata": "low"}, {"species": "Guava", "botanical": "Psidium", "strata": "medium"}, {"species": "Guava (Hawaiian)", "botanical": "Psidium guajava", "strata": "medium"}, {"species": "Guava (Purple)", "botanical": "Psidium rufum", "strata": "medium"}, {"species": "Guava (Strawberry)", "botanical": "Psidium cattleianum", "strata": "medium"}, {"species": "Guava (Thai White)", "botanical": "Psidium guajava", "strata": "medium"}, {"species": "Gum (Peppermint)", "botanical": "Eucalyptus radiata", "strata": "emergent"}, {"species": "Hyssop", "botanical": "Hyssopus officinalis", "strata": "low"}, {"species": "Ice Cream Bean", "botanical": "Inga edulis", "strata": "high"}, {"species": "Jaboticaba", "botanical": "Plinia cauliflora", "strata": "medium"}, {"species": "Jacaranda", "botanical": "Jacaranda mimosifolia", "strata": "medium"}, {"species": "Jackfruit", "botanical": "Artocarpus heterophyllus", "strata": "high"}, {"species": "Kale (Nero di Toscana)", "botanical": "Brassica oleracea var. acephala", "strata": "low"}, {"species": "Kangaroo Paw", "botanical": "Anigozanthos flavidus", "strata": "low"}, {"species": "Kennedia Nigricans", "botanical": "Kennedia nigricans", "strata": "low"}, {"species": "Kumquat", "botanical": "Citrus japonica", "strata": "medium"}, {"species": "Lavender", "botanical": "Lavandula", "strata": "medium"}, {"species": "Lavender - French", "botanical": "Lavandula dentata", "strata": "medium"}, {"species": "Lavender - True", "botanical": "Lavandula angustifolia", "strata": "medium"}, {"species": "Leek", "botanical": "Allium ampeloprasum", "strata": "low"}, {"species": "Leek (Carentan 2)", "botanical": "Allium ampeloprasum", "strata": "low"}, {"species": "Lemon", "botanical": "Citrus limon", "strata": "medium"}, {"species": "Lemon Balm", "botanical": "Melissa officinalis", "strata": "low"}, {"species": "Lemon Myrtle", "botanical": "Backhousia citriodora", "strata": "high"}, {"species": "Lemongrass", "botanical": "Cymbopogon citratus", "strata": "low"}, {"species": "Lettuce", "botanical": "Lactuca sativa", "strata": "medium"}, {"species": "Lettuce (Cos)", "botanical": "Lactuca sativa", "strata": "medium"}, {"species": "Lettuce (Mix)", "botanical": "Lactuca sativa", "strata": "medium"}, {"species": "Lilly Pilly", "botanical": "Syzygium spp.", "strata": "high"}, {"species": "Linseed", "botanical": "Linum usitatissimum", "strata": "low"}, {"species": "Linseed (Brown)", "botanical": "Linum usitatissimum", "strata": "low"}, {"species": "Liquidambar", "botanical": "Liquidambar styraciflua", "strata": "emergent"}, {"species": "Longan", "botanical": "Dimocarpus longan", "strata": "high"}, {"species": "Luffa", "botanical": "Luffa aegyptiaca", "strata": "low"}, {"species": "Lupin", "botanical": "Lupinus hartwegii", "strata": "low"}, {"species": "Macadamia", "botanical": "Macadamia integrifolia", "strata": "high"}, {"species": "Malabar Chestnut", "botanical": "Pachira aquatica", "strata": "high"}, {"species": "Mango", "botanical": "Mangifera indica", "strata": "high"}, {"species": "Marigold", "botanical": "Tagetes patula", "strata": "low"}, {"species": "Marigold (African)", "botanical": "Tagetes patula", "strata": "low"}, {"species": "Marigold (French - Dwarf)", "botanical": "Tagetes patula", "strata": "low"}, {"species": "Marigold (French)", "botanical": "Tagetes patula", "strata": "low"}, {"species": "Melaleuca (Ball Honey Myrtle)", "botanical": "Melaleuca nodosa", "strata": "medium"}, {"species": "Melaleuca (Generic)", "botanical": "Melaleuca spp.", "strata": "high"}, {"species": "Melaleuca (Snow in Summer)", "botanical": "Melaleuca linariifolia", "strata": "high"}, {"species": "Melaleuca-White Feather Honey Myrtle (Decora)", "botanical": "Melaleuca decora", "strata": "high"}, {"species": "Melon", "botanical": "Cucumis melo", "strata": "low"}, {"species": "Millet", "botanical": "Panicum miliaceum", "strata": "medium"}, {"species": "Millet (White French)", "botanical": "Panicum miliaceum", "strata": "medium"}, {"species": "Mint", "botanical": "Mentha spicata", "strata": "low"}, {"species": "Mint (Australian)", "botanical": "Mentha australis", "strata": "low"}, {"species": "Mulberry", "botanical": "Morus", "strata": "high"}, {"species": "Mulberry (Beenleigh Black)", "botanical": "Morus nigra", "strata": "high"}, {"species": "Mulberry (White)", "botanical": "Morus alba", "strata": "high"}, {"species": "Mung Bean", "botanical": "Vigna radiata", "strata": "low"}, {"species": "Mustard (White Yellow)", "botanical": "Sinapis alba", "strata": "low"}, {"species": "Nasturtium", "botanical": "Tropaeolum majus", "strata": "low"}, {"species": "Native Sarsaparilla", "botanical": "Hardenbergia violacea", "strata": "low"}, {"species": "Nettle", "botanical": "Urtica dioica", "strata": "low"}, {"species": "Oat", "botanical": "Avena sativa", "strata": "medium"}, {"species": "Okra", "botanical": "Abelmoschus esculentus", "strata": "medium"}, {"species": "Olive", "botanical": "Olea europaea", "strata": "high"}, {"species": "Olive (Kalamata)", "botanical": "Olea europaea", "strata": "high"}, {"species": "Onion", "botanical": "Allium cepa", "strata": "low"}, {"species": "Onion (Gladalan Brown)", "botanical": "Allium cepa", "strata": "low"}, {"species": "Onion (Red)", "botanical": "Allium cepa", "strata": "low"}, {"species": "Orach", "botanical": "Atriplex hortensis", "strata": "low"}, {"species": "Orange", "botanical": "Citrus sinensis", "strata": "high"}, {"species": "Oregano", "botanical": "Origanum vulgare", "strata": "medium"}, {"species": "Pak Choi", "botanical": "Brassica rapa var. chinensis", "strata": "medium"}, {"species": "Papaya", "botanical": "Carica papaya", "strata": "high"}, {"species": "Parsley (Italian)", "botanical": "Petroselinum crispum", "strata": "low"}, {"species": "Parsley (Moss Curled)", "botanical": "Petroselinum crispum", "strata": "low"}, {"species": "Parsnip (Hollow Grown)", "botanical": "Pastinaca sativa", "strata": "low"}, {"species": "Passionfruit", "botanical": "Passiflora edulis", "strata": "high"}, {"species": "Passionfruit (Panama Gold)", "botanical": "Passiflora edulis", "strata": "high"}, {"species": "Pea", "botanical": "Pisum sativum", "strata": "low"}, {"species": "Pea-Snow", "botanical": "Pisum sativum", "strata": "low"}, {"species": "Pea-Snow (Yakumo)", "botanical": "Pisum sativum var. saccharatum", "strata": "low"}, {"species": "Pea-Sugar Snap", "botanical": "Pisum sativum", "strata": "low"}, {"species": "Peach", "botanical": "Prunus persica", "strata": "high"}, {"species": "Peanut", "botanical": "Arachis hypogaea", "strata": "low"}, {"species": "Pear", "botanical": "Pyrus communis", "strata": "high"}, {"species": "Pear (Flordahome)", "botanical": "Pyrus communis x Pyrus pyrifolia", "strata": "high"}, {"species": "Pear (Nashi)", "botanical": "Pyrus pyrifolia", "strata": "high"}, {"species": "Pear (Williams)", "botanical": "Pyrus communis", "strata": "high"}, {"species": "Pepino plant", "botanical": "Solanum muricatum", "strata": "medium"}, {"species": "Phacelia", "botanical": "Phacelia tanacetifolia", "strata": "low"}, {"species": "Pigeon Pea", "botanical": "Cajanus cajan", "strata": "high"}, {"species": "Plum", "botanical": "Prunus domestica", "strata": "medium"}, {"species": "Plum - Pluot (Black Adder)", "botanical": "Prunus salicina x Prunus armeniaca", "strata": "medium"}, {"species": "Prickly-leaved Paperbark", "botanical": "Melaleuca styphelioides", "strata": "high"}, {"species": "Pumpkin", "botanical": "Cucurbita maxima", "strata": "low"}, {"species": "Pumpkin (Golden Nugget)", "botanical": "Cucurbita maxima", "strata": "low"}, {"species": "Pumpkin (Queensland Blue)", "botanical": "Cucurbita maxima", "strata": "low"}, {"species": "Pyrethrum", "botanical": "Tanacetum cinerariifolium", "strata": "low"}, {"species": "Quince", "botanical": "Cydonia oblonga", "strata": "high"}, {"species": "Radish", "botanical": "Raphanus sativus", "strata": "low"}, {"species": "Radish (red - scarlett globe)", "botanical": "Raphanus sativus", "strata": "low"}, {"species": "Radish (red - Sparkler)", "botanical": "Raphanus sativus", "strata": "low"}, {"species": "Radish (Tillage)", "botanical": "Raphanus sativus", "strata": "low"}, {"species": "Raspberry", "botanical": "Rubus idaeus", "strata": "low"}, {"species": "Rocket", "botanical": "Eruca vesicaria", "strata": "low"}, {"species": "Rose Apple", "botanical": "Syzygium jambos", "strata": "high"}, {"species": "Rosemary", "botanical": "Salvia rosmarinus", "strata": "medium"}, {"species": "Rough Barked Apple", "botanical": "Angophora floribunda", "strata": "emergent"}, {"species": "Sage", "botanical": "Salvia officinalis", "strata": "medium"}, {"species": "Sage (Pineapple)", "botanical": "Salvia elegans", "strata": "medium"}, {"species": "Shallot", "botanical": "Allium fistulosum", "strata": "low"}, {"species": "Silver Dollar Gum", "botanical": "Eucalyptus cinerea", "strata": "emergent"}, {"species": "Silver Wattle (Dealbata)", "botanical": "Acacia dealbata", "strata": "emergent"}, {"species": "Silverbeet", "botanical": "Beta vulgaris var. cicla", "strata": "low"}, {"species": "Sorghum", "botanical": "Sorghum bicolor", "strata": "medium"}, {"species": "Spinach", "botanical": "Beta vulgaris", "strata": "low"}, {"species": "Spinach (Beet-Perpetual)", "botanical": "Beta vulgaris var. cicla", "strata": "low"}, {"species": "Spinach (English Mediana)", "botanical": "Beta vulgaris", "strata": "low"}, {"species": "Spinach (Matador)", "botanical": "Beta vulgaris", "strata": "low"}, {"species": "Spinach-Perennial (Okinawa Spinach)", "botanical": "Gynura crepioides", "strata": "low"}, {"species": "Spinach-Perpetual", "botanical": "Beta vulgaris var. cicla", "strata": "low"}, {"species": "Spring Onion", "botanical": "Allium fistulosum", "strata": "low"}, {"species": "Spring Onion (Lisbon)", "botanical": "Allium fistulosum", "strata": "low"}, {"species": "Squash (Yellow Scallop)", "botanical": "Cucurbita pepo", "strata": "low"}, {"species": "Strawberry", "botanical": "Fragaria × ananassa", "strata": "low"}, {"species": "Sturt Desert Pea", "botanical": "Swainsona formosa", "strata": "low"}, {"species": "Sugar Cane", "botanical": "Saccharum officinarum", "strata": "high"}, {"species": "Sunflower", "botanical": "Helianthus annuus", "strata": "medium"}, {"species": "Sunflower (Sun King)", "botanical": "Helianthus annuus", "strata": "medium"}, {"species": "Sunn Hemp", "botanical": "Crotalaria juncea", "strata": "medium"}, {"species": "Surinam Cherry", "botanical": "Eugenia uniflora", "strata": "medium"}, {"species": "Sweet Potato", "botanical": "Ipomoea batatas", "strata": "low"}, {"species": "Tagasaste - Tree Lucerne", "botanical": "Chamaecytisus palmensis", "strata": "emergent"}, {"species": "Tallowood (Gum)", "botanical": "Eucalyptus microcorys", "strata": "emergent"}, {"species": "Tansy", "botanical": "Tanacetum vulgare", "strata": "low"}, {"species": "Tarragon (Mexican)", "botanical": "Artemisia dracunculus", "strata": "low"}, {"species": "Tarragon (Russian)", "botanical": "Artemisia dracunculus", "strata": "low"}, {"species": "Tea Tree Oil (Melaleuca) (Alternifolia)", "botanical": "Melaleuca alternifolia", "strata": "medium"}, {"species": "Thyme", "botanical": "Thymus vulgaris", "strata": "low"}, {"species": "Tomato", "botanical": "Solanum lycopersicum", "strata": "low"}, {"species": "Tomato (Moneymaker)", "botanical": "Solanum lycopersicum", "strata": "low"}, {"species": "Tomato (Mortgage Lifter)", "botanical": "Solanum lycopersicum", "strata": "low"}, {"species": "Tomato (Oxheart)", "botanical": "Solanum lycopersicum", "strata": "low"}, {"species": "Tomato (Rouge de Marmande)", "botanical": "Solanum lycopersicum", "strata": "low"}, {"species": "Tree Fern", "botanical": "Cyathea spp.", "strata": "medium"}, {"species": "Tree Lucerne - Tagasaste", "botanical": "Chamaecytisus palmensis", "strata": "emergent"}, {"species": "Turmeric", "botanical": "Curcuma longa", "strata": "low"}, {"species": "Turnip (Purple top)", "botanical": "Brassica rapa", "strata": "low"}, {"species": "Vacoa (Pandanus)", "botanical": "Pandanus spp.", "strata": "high"}, {"species": "Vetch", "botanical": "Vicia sativa", "strata": "low"}, {"species": "Watercress", "botanical": "Nasturtium officinale", "strata": "low"}, {"species": "Watermelon (Sugar baby)", "botanical": "Citrullus lanatus", "strata": "low"}, {"species": "Wattle", "botanical": "Acacia spp.", "strata": "high"}, {"species": "Wattle (Acacia)", "botanical": "Acacia spp.", "strata": "high"}, {"species": "Wattle - Cootamundra (Baileyana)", "botanical": "Acacia baileyana", "strata": "high"}, {"species": "Winter Market Garden Mix", "botanical": "Mixed species", "strata": "low"}, {"species": "Yarrow", "botanical": "Achillea millefolium", "strata": "low"}, {"species": "Yarrow (White)", "botanical": "Achillea millefolium", "strata": "low"}, {"species": "Zucchini", "botanical": "Cucurbita pepo", "strata": "low"}, {"species": "Zucchini (Blackjack)", "botanical": "Cucurbita pepo", "strata": "low"}, {"species": "Zucchini (Green Skin)", "botanical": "Cucurbita pepo", "strata": "low"}, {"species": "Zucchini (Lebanese)", "botanical": "Cucurbita pepo", "strata": "low"}]
+;
+</script>
+<script src="harvest.js"></script>
+
+</body>
+</html>

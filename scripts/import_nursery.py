@@ -297,33 +297,33 @@ class NurseryImporter:
         process_label = f" ({process})" if process else ""
         return f"MAR 2026 - {farmos_name}{process_label} - {location_id}"
 
-    def build_notes(self, entry, cols):
+    def build_notes(self, entry):
         parts = []
-        process = entry.get(cols[17], '').strip()
+        process = entry.get('Process', '').strip()
         if process:
             parts.append(f"Growing process: {process}")
-        date = entry.get(cols[18], '').strip()
+        date = entry.get('Seeding/Planting Date', '').strip()
         if date:
             parts.append(f"Seeding/planting date: {date}")
-        pots = entry.get(cols[19], '').strip()
+        pots = entry.get('Pots Planted', '').strip()
         if pots:
             parts.append(f"Pots planted: {pots}")
-        viable = entry.get(cols[20], '').strip()
+        viable = entry.get('_viable_str', '').strip()
         if viable:
             parts.append(f"Viable plants: {viable}")
-        rate = entry.get(cols[21], '').strip()
+        rate = entry.get('Success Rate %', '').strip()
         if rate:
             parts.append(f"Success rate: {rate}%")
-        nrtt = entry.get(cols[22], '').strip()
+        nrtt = entry.get('Not RTT', '').strip()
         if nrtt:
             parts.append(f"Not ready to transplant: {nrtt}")
-        rtt = entry.get(cols[25], '').strip()
+        rtt = entry.get('RTT', '').strip()
         if rtt and rtt != '0':
             parts.append(f"Ready to transplant: {rtt}")
-        where = entry.get(cols[26], '').strip()
+        where = entry.get('Destination', '').strip()
         if where:
             parts.append(f"Destination: {where}")
-        source = entry.get('source', '').strip()
+        source = entry.get('Source', '').strip()
         if source:
             parts.append(f"Source: {source}")
         mix_note = entry.get('_mix_note', '')
@@ -342,30 +342,48 @@ class NurseryImporter:
         with open(csv_path) as f:
             entries = list(csv.DictReader(f))
 
-        cols = list(entries[0].keys())
+        # Detect CSV format: new enriched format has "Location ID" + "Species (farmOS)"
+        has_new_format = "Location ID" in entries[0] and "Species (farmOS)" in entries[0]
+        if has_new_format:
+            print("Detected enriched CSV format (March 2026+)")
+        else:
+            print("ERROR: Expected enriched CSV format with 'Location ID' and 'Species (farmOS)' columns.")
+            print("  Run scripts/transform_nursery_csv.py first to enrich the raw CSV.")
+            return False
+
+        # Find viable column (may be "Viable (Mar 20)" or "Viable (Mar 17)" etc.)
+        viable_col = None
+        for col in entries[0].keys():
+            if col.startswith("Viable"):
+                viable_col = col
+                break
+        if not viable_col:
+            print("ERROR: No 'Viable (...)' column found")
+            return False
+        print(f"Using viable column: '{viable_col}'")
 
         # Filter to entries with viable plants > 0 and a farmos_name
         # Special handling: split "Mix Guava+Lemon" into two separate assets
         importable = []
         for e in entries:
-            common = e.get('common name', '').strip()
-            farmos_name = e.get('farmos_name', '').strip()
+            common = e.get('Common Name', '').strip()
+            farmos_name = e.get('Species (farmOS)', '').strip()
 
-            # Handle mixed pot — create two entries (Option 1: separate assets, shared notes)
-            if common == 'Mix Guava+Lemon' and not farmos_name:
+            # Handle mixed pot — create two entries
+            if 'Mix' in common and '+' in common and not farmos_name:
                 try:
-                    viable = float(e.get(cols[20], '0') or '0')
+                    viable = float(e.get(viable_col, '0') or '0')
                 except ValueError:
                     viable = 0
                 if viable > 0:
-                    mix_note = f"Mixed pot with Guava + Lemon ({int(viable)} total viable). Shares pot — split TBD."
+                    mix_note = f"Mixed pot with {common} ({int(viable)} total viable). Shares pot — split TBD."
                     half = max(1, int(viable // 2))
                     remainder = int(viable) - half
                     for species, count in [("Guava (Strawberry)", half), ("Lemon", remainder)]:
                         clone = dict(e)
-                        clone['farmos_name'] = species
-                        clone[cols[20]] = str(count)
-                        # Store mix note for build_notes
+                        clone['Species (farmOS)'] = species
+                        clone[viable_col] = str(count)
+                        clone['_viable_str'] = str(count)
                         clone['_mix_note'] = mix_note
                         importable.append(clone)
                 continue
@@ -373,13 +391,14 @@ class NurseryImporter:
             if not farmos_name:
                 continue
             try:
-                viable = float(e.get(cols[20], '0') or '0')
+                viable = float(e.get(viable_col, '0') or '0')
             except ValueError:
                 viable = 0
             if viable <= 0:
                 continue
             if name_filter and name_filter.lower() not in farmos_name.lower():
                 continue
+            e['_viable_str'] = e.get(viable_col, '0')
             importable.append(e)
 
         print(f"Processing {len(importable)} entries with viable plants (skipped {len(entries) - len(importable)})")
@@ -389,7 +408,7 @@ class NurseryImporter:
                 return False
 
             # Pre-validate plant types
-            all_species = set(e['farmos_name'].strip() for e in importable)
+            all_species = set(e['Species (farmOS)'].strip() for e in importable)
             print(f"\nValidating {len(all_species)} plant types...")
             missing = []
             for name in sorted(all_species):
@@ -403,16 +422,16 @@ class NurseryImporter:
                 return False
             print(f"  All {len(all_species)} plant types verified.\n")
 
-        for entry in sorted(importable, key=lambda e: e['farmos_name']):
-            farmos_name = entry['farmos_name'].strip()
-            process = entry.get(cols[17], '').strip()
-            viable = float(entry.get(cols[20], '0') or '0')
-            shelves = entry.get(cols[23], '').strip()
-            floor_val = entry.get(cols[24], '').strip()
-            rtt = entry.get(cols[25], '').strip()
-            where = entry.get(cols[26], '').strip()
+        self.stats["obs_updated"] = 0
 
-            location_id = map_location(shelves, floor_val)
+        for entry in sorted(importable, key=lambda e: e['Species (farmOS)']):
+            farmos_name = entry['Species (farmOS)'].strip()
+            process = entry.get('Process', '').strip()
+            location_id = entry.get('Location ID', '').strip()
+            viable = float(entry.get(viable_col, '0') or '0')
+            rtt = entry.get('RTT', '').strip()
+            where = entry.get('Destination', '').strip()
+
             location_uuid = LOCATION_UUIDS.get(location_id)
             asset_name = self.build_asset_name(farmos_name, process, location_id)
 
@@ -431,20 +450,29 @@ class NurseryImporter:
                     self.stats["transplant_logs_created"] += 1
                 continue
 
-            # Idempotent: skip if exists
-            existing = self.plant_asset_exists(asset_name)
-            if existing:
-                print(f"  = {asset_name} (exists)")
-                self.stats["plants_skipped"] += 1
-                continue
-
             if not location_uuid:
                 print(f"  ! {asset_name} — unknown location {location_id}")
                 self.stats["failed"] += 1
                 continue
 
+            # Check if plant asset already exists
+            existing_id = self.plant_asset_exists(asset_name)
+
+            if existing_id:
+                # UPDATE: create new observation log with current count for existing plant
+                quantity_id = self.create_quantity(existing_id, viable)
+                obs_name = f"Nursery inventory Mar 20 — {farmos_name} — {location_id}"
+                obs_id = self.create_observation_log(existing_id, quantity_id, obs_name, location_uuid)
+                if obs_id:
+                    print(f"  ↻ {asset_name} (updated count: {int(viable)})")
+                    self.stats["obs_updated"] += 1
+                else:
+                    print(f"  ! {asset_name} (update failed)")
+                    self.stats["failed"] += 1
+                continue
+
             plant_type_uuid = self.get_plant_type_uuid(farmos_name)
-            notes = self.build_notes(entry, cols)
+            notes = self.build_notes(entry)
 
             # 1. Create plant asset
             plant_id = self.create_plant_asset(asset_name, plant_type_uuid, notes)
@@ -477,6 +505,7 @@ class NurseryImporter:
         print("IMPORT SUMMARY")
         print(f"{'='*60}")
         print(f"  Plant assets created:     {self.stats['plants_created']}")
+        print(f"  Plant assets updated:     {self.stats.get('obs_updated', 0)}")
         print(f"  Plant assets skipped:     {self.stats['plants_skipped']}")
         print(f"  Observation logs:         {self.stats['obs_logs_created']}")
         print(f"  Transplanting (pending):  {self.stats['transplant_logs_created']}")
@@ -492,8 +521,8 @@ class NurseryImporter:
 
 def main():
     parser = argparse.ArgumentParser(description="Import nursery inventory into farmOS")
-    parser.add_argument("--data", default="Downloads/Nursery_inventory_CORRECTED_17Mar2026.csv",
-                        help="Path to nursery inventory CSV")
+    parser.add_argument("--data", default="knowledge/nursery_inventory_sheet_march2026.csv",
+                        help="Path to enriched nursery inventory CSV")
     parser.add_argument("--filter", default=None,
                         help="Filter by species name (case-insensitive substring)")
     parser.add_argument("--dry-run", action="store_true",
