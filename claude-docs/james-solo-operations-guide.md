@@ -10,7 +10,8 @@
 ### Morning
 
 - [ ] **Water the nursery** — all shelves and ground areas, twice a day in warm weather. If nettle mulch on pots looks dry and pale, they definitely need water.
-- [ ] **Walk the nursery** — look for wilting, pests, or anything unusual. Bird eye chilli pots: check for rat damage (cover if needed).
+- [ ] **Walk the nursery** — look for wilting, pests, or anything unusual. Bird eye chilli pots: check for rat damage (cover if needed). Scan any shelf QR code to record observations directly on each plant card — just type what you see and hit Save.
+- [ ] **Check transplant readiness** — nursery pages show which plants are ready to transplant (green "Ready" badge with dates). Prioritise these for field planting.
 - [ ] **Check paddock rows** if time allows — scan for stressed plants, frost damage, or irrigation issues.
 
 ### During the Day
@@ -78,7 +79,7 @@ Scan these with your phone camera — no login needed.
 | QR Code | Where | What it does |
 |---|---|---|
 | **Paddock sections** (53) | On poles along each row | Shows what's planted, species details, plant counts |
-| **Nursery zones** (19) | On nursery shelves/areas | Shows nursery inventory per zone |
+| **Nursery zones** (18) | On nursery shelves/areas | Shows inventory per zone + inline observation fields per plant |
 | **Seed Bank** (1) | On the fridge in nursery | Search seeds, record seed usage |
 | **Harvest Station** (1) | Next to scales in nursery | Record harvest weight and species |
 
@@ -99,10 +100,29 @@ Scan these with your phone camera — no login needed.
 ## 5. What NOT to Worry About
 
 - **Data entry** — Claude handles all farmOS updates. Just tell it what happened in plain English.
-- **Website/QR pages** — they update when Agnes runs the pipeline. No action needed from you.
+- **Website/QR pages** — they update when Agnes runs the pipeline. No action needed from you. The index page at the farm guide URL shows all locations (Seed Bank, Nursery, Paddocks, Harvest) with collapsible drill-down.
 - **Technical details** — you never need to know about APIs, scripts, or databases. Claude is the interface.
 - **Getting it perfect** — logging approximate info is better than logging nothing. Claude can always be corrected later.
 - **Pigeon pea deaths** — they're pioneers, designed to die and make way for other species. That's succession working, not a failure.
+
+---
+
+## 6. Nursery QR Pages — How Inline Observations Work
+
+Each nursery zone page now has observation fields built into every plant card. No need to navigate to a separate page.
+
+1. **Scan the QR code** on any nursery shelf or zone
+2. **Enter your name** at the top (saved for next time)
+3. For each plant, you'll see:
+   - **"What do you see?"** — type any observation (health, pests, growth)
+   - **"What did you do?"** — type any action taken (watered, pruned, moved)
+   - **"Update count"** — tap to expand if the plant count changed (has a confirmation prompt)
+   - **Save** — sends the observation to the team
+4. **Transplant timing** — plants with known transplant windows show:
+   - 🟢 **Ready** — transplant window has arrived
+   - 🟡 **Window open** — in the transplant window now
+   - ⏳ **Waiting** — not ready yet, shows expected date
+5. **RTT badge** — shows how many plants are "Ready To Transplant" to the field
 
 ---
 
