@@ -1,9 +1,19 @@
 # Phase 1b Plan: Remote MCP Server on FA Framework
 
 > **Goal:** Replace 4 local STDIO Python MCP servers with 1 centrally deployed HTTP TypeScript server
-> **Deadline:** March 22, 2026 (Claire & Olivier departure)
+> **Deadline:** Saturday March 21, 2026 (Claire & Olivier departure — laptops must be updated before they leave)
 > **Framework:** Firefly Agents MCP Server Framework (v1.0.0-beta.0)
 > **Deploy target:** Railway ($5/month Hobby plan)
+>
+> **Updated March 19, 2026 (evening):**
+> - **TypeScript port COMPLETE**: All 29 tools built, 82 tests passing, build clean
+> - Tool count: 22 → **29** (added get_all_plant_types, archive_plant, 4 knowledge tools, get_farm_overview, regenerate_pages, hello)
+> - Clients: 5 total — FarmOSClient (native fetch, OAuth2) + 4 Apps Script clients (AxiosHttpClient via shared base)
+> - **Client architecture validated**: AppsScriptClient base class uses framework's AxiosHttpClient; FarmOSClient uses native fetch (OAuth2 state + pagination dedup). Lesley confirmed pattern is correct.
+> - Knowledge tools have `topics` parameter (multi-value farm domain field)
+> - New env vars needed: `KNOWLEDGE_ENDPOINT`, `OBSERVE_ENDPOINT`, `MEMORY_ENDPOINT`, `PLANT_TYPES_ENDPOINT`
+> - All 4 users confirmed: Agnes (macOS), James (macOS), Claire (Windows), Olivier (Windows)
+> - **Remaining**: Railway deployment (Steps 11-13), client config updates
 
 ---
 
@@ -148,7 +158,8 @@ fa-farm-mcp-server/
 │   │   │   ├── farmos-client.ts          # farmOS JSON:API + OAuth2 (port of farmos_client.py)
 │   │   │   ├── observe-client.ts         # Observation Sheet (port of observe_client.py)
 │   │   │   ├── memory-client.ts          # Team Memory Sheet (port of memory_client.py)
-│   │   │   └── plant-types-client.ts     # Plant Types Sheet (port of plant_types_client.py)
+│   │   │   ├── plant-types-client.ts     # Plant Types Sheet (port of plant_types_client.py)
+│   │   │   └── knowledge-client.ts      # Knowledge Base Sheet (port of knowledge_client.py)
 │   │   ├── helpers/
 │   │   │   ├── dates.ts                  # parse_date, format_planted_label, format_timestamp
 │   │   │   ├── formatters.ts             # format_plant_asset, format_log, format_plant_type
@@ -156,15 +167,16 @@ fa-farm-mcp-server/
 │   │   │   ├── plant-type-metadata.ts    # build/parse plant type descriptions
 │   │   │   └── index.ts                  # Barrel export
 │   │   ├── tools/
-│   │   │   ├── index.ts                  # Barrel: farmTools = [all 22 tools]
+│   │   │   ├── index.ts                  # Barrel: farmTools = [all 27 tools]
 │   │   │   │
-│   │   │   │── # READ TOOLS (6)
+│   │   │   │── # READ TOOLS (7)
 │   │   │   ├── query-plants.ts
 │   │   │   ├── query-sections.ts
 │   │   │   ├── get-plant-detail.ts
 │   │   │   ├── query-logs.ts
 │   │   │   ├── get-inventory.ts
 │   │   │   ├── search-plant-types.ts
+│   │   │   ├── get-all-plant-types.ts
 │   │   │   │
 │   │   │   │── # WRITE TOOLS (5)
 │   │   │   ├── create-observation.ts
@@ -188,7 +200,14 @@ fa-farm-mcp-server/
 │   │   │   ├── update-plant-type.ts
 │   │   │   ├── reconcile-plant-types.ts
 │   │   │   │
-│   │   │   │── # SITE GENERATION (1)
+│   │   │   │── # KNOWLEDGE BASE (4)
+│   │   │   ├── search-knowledge.ts
+│   │   │   ├── list-knowledge.ts
+│   │   │   ├── add-knowledge.ts          # includes topics param
+│   │   │   ├── update-knowledge.ts       # includes topics param
+│   │   │   │
+│   │   │   │── # OTHER (2)
+│   │   │   ├── get-farm-overview.ts      # Replaces farm://overview resource
 │   │   │   └── regenerate-pages.ts       # Deferred (server-only, needs git repo)
 │   │   │
 │   │   └── types/
@@ -394,108 +413,44 @@ Prompts can live in Claude Desktop project instructions instead.
 
 ## 5. IMPLEMENTATION STEPS (Ordered by Priority)
 
-### Step 1: Set Up Project Structure (30 min)
+### Step 1: Set Up Project Structure ✅ DONE
 
-Copy the FA Framework template from `/Users/agnes/Repos/FA MCP Framework/fa-farm-mcp-server/` into the FireflyCorner repo at `mcp-server-ts/` (keep Python `mcp-server/` as reference and STDIO fallback).
+Copied FA Framework template into `mcp-server-ts/`. Build verified.
 
-```bash
-cp -r "/Users/agnes/Repos/FA MCP Framework/fa-farm-mcp-server" mcp-server-ts
-cd mcp-server-ts
-npm install
-npm run build  # Verify template builds
-```
+### Step 2: Port Helpers ✅ DONE
 
-### Step 2: Port Helpers (1 hour)
+All 4 helper modules ported with 34 unit tests:
+- `helpers/dates.ts` — parseDate (7 formats), formatPlantedLabel, formatTimestamp
+- `helpers/names.ts` — parseAssetName with rsplit logic for species containing " - "
+- `helpers/formatters.ts` — formatPlantAsset, formatLog, formatPlantType
+- `helpers/plant-type-metadata.ts` — build/parse roundtrip
 
-These are pure functions with no dependencies — easiest to port and test first.
+### Step 3: Port FarmOS Client ✅ DONE
 
-1. `plugins/farm-plugin/src/helpers/dates.ts` — 4 functions
-2. `plugins/farm-plugin/src/helpers/names.ts` — 2 functions
-3. `plugins/farm-plugin/src/helpers/formatters.ts` — 4 functions
-4. `plugins/farm-plugin/src/helpers/plant-type-metadata.ts` — 2 functions
-5. `plugins/farm-plugin/src/helpers/index.ts` — Barrel export
+Native `fetch` with OAuth2, singleton pattern, pagination dedup. 18 client tests.
 
-Write unit tests alongside: `plugins/farm-plugin/src/helpers/__tests__/dates.test.ts` etc.
+### Step 4: Port Apps Script Clients ✅ DONE
 
-### Step 3: Port FarmOS Client (2 hours)
+`AppsScriptClient` base class uses framework's `AxiosHttpClient`. 4 subclasses (~30 lines each).
+Validated with Lesley — correct pattern: framework HTTP client for stateless, native fetch for stateful.
 
-The biggest piece. Port `farmos_client.py` → `clients/farmos-client.ts`.
+### Steps 5-9: Port All Tools ✅ DONE
 
-Key decisions:
-- Use native `fetch` (no axios needed — simpler, zero deps)
-- Singleton pattern keyed by farmUrl
-- Token refresh on 401/403 (re-connect and retry once)
-- Cache UUIDs in-memory (Map<string, string>)
-- Pagination with offset + dedup pattern
+29 tools across 7 categories. All build clean.
 
-Write client tests with fetch mocking.
+### Step 10: Test Suite ✅ DONE
 
-### Step 4: Port Simple Clients (45 min)
+**82 tests, all passing, <1.1 seconds, zero network calls.**
 
-Port the 3 Apps Script clients — these are simple HTTP wrappers.
-- `clients/observe-client.ts`
-- `clients/memory-client.ts`
-- `clients/plant-types-client.ts`
+| Test File | Tests | Layer |
+|-----------|-------|-------|
+| helpers.test.ts | 34 | Pure functions (dates, names, formatters, metadata) |
+| farmos-client.test.ts | 18 | HTTP client (OAuth2, pagination, entity creation) |
+| tools-read.test.ts | 7 | Read tool orchestration (mock client) |
+| tools-write.test.ts | 12 | Write tools + idempotency |
+| import-workflow.test.ts | 11 | Composite workflow (case routing, dry run, resilience) |
 
-Key: Apps Script POST uses `Content-Type: text/plain`. Port endpoints from env vars → auth context metadata.
-
-### Step 5: Port Read Tools (1.5 hours)
-
-6 read-only tools — straightforward port:
-1. `query-plants.ts`
-2. `query-sections.ts`
-3. `get-plant-detail.ts`
-4. `query-logs.ts`
-5. `get-inventory.ts`
-6. `search-plant-types.ts`
-
-Plus 1 new tool:
-7. `get-farm-overview.ts` (replaces resource)
-
-### Step 6: Port Write Tools (1.5 hours)
-
-5 write tools — test idempotency carefully:
-1. `create-observation.ts`
-2. `create-activity.ts`
-3. `update-inventory.ts`
-4. `create-plant.ts`
-5. `archive-plant.ts`
-
-### Step 7: Port Observation Management Tools (1.5 hours)
-
-3 tools, `import-observations` is the most complex:
-1. `list-observations.ts`
-2. `update-observation-status.ts`
-3. `import-observations.ts` (230+ lines of routing logic)
-
-### Step 8: Port Memory + Plant Type Tools (1 hour)
-
-6 tools, straightforward:
-1. `write-session-summary.ts`
-2. `read-team-activity.ts`
-3. `search-team-memory.ts`
-4. `add-plant-type.ts`
-5. `update-plant-type.ts`
-6. `reconcile-plant-types.ts`
-
-### Step 9: Handle `regenerate_pages` (15 min)
-
-Stub that returns "Pages need regeneration — run locally on Agnes's machine."
-
-### Step 10: Local Testing (1 hour)
-
-```bash
-cd mcp-server-ts
-npm run build
-npm run dev  # Starts HTTP server on localhost:3000
-```
-
-Test with:
-- `curl http://localhost:3000/health`
-- MCP Inspector or `mcp-remote` pointing to localhost
-- Claude Desktop with local config pointing to `http://localhost:3000/mcp`
-
-### Step 11: Deploy to Railway (30 min)
+### Step 11: Deploy to Railway (30 min) ⬜ NEXT
 
 1. Create Railway project, connect GitHub repo
 2. Set root directory to `mcp-server-ts/`
@@ -627,7 +582,8 @@ After March 22 deployment is confirmed:
 | Per-tenant metadata for userName | Tools need to know who's calling (session summaries, audit) |
 | Defer `regenerate_pages` | Needs git repo — Railway doesn't have one. Future: GitHub Actions |
 | Convert resources to tools | FA Framework plugin interface doesn't support MCP resources directly |
-| Native `fetch` over `AxiosHttpClient` | farmOS JSON:API needs precise header control; fetch is simpler for OAuth2 |
+| Native `fetch` for FarmOS, `AxiosHttpClient` for Apps Script | FarmOS needs OAuth2 state + pagination dedup (stateful); Apps Script clients are stateless → framework HTTP client fits perfectly |
+| `AppsScriptClient` base class pattern | 4 clients (observe, memory, plant-types, knowledge) inherit shared GET/POST logic via framework's `AxiosHttpClient`. Zero duplication, ~30 lines per subclass |
 | Keep Python mcp-server as fallback | Zero-risk transition — can revert any user to STDIO if HTTP fails |
 | Stay on Farmier for farmOS hosting | $75/yr, zero ops. Self-host only when Phase 4 (farm_syntropic module) requires it |
 
