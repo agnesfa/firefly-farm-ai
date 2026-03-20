@@ -987,6 +987,7 @@ def main():
     parser.add_argument("--output", default="site/public/", help="Output directory")
     parser.add_argument("--base-url", default="", help="Base URL prefix for links")
     parser.add_argument("--observe-endpoint", default="", help="Google Apps Script URL for observations")
+    parser.add_argument("--seedbank-endpoint", default="", help="Google Apps Script URL for seed bank")
     args = parser.parse_args()
     
     output_dir = Path(args.output)
@@ -1012,6 +1013,20 @@ def main():
     print(f"  Generated: styles-observe.css")
 
     observe_endpoint = args.observe_endpoint
+
+    # Update SEED.BANK.html endpoint if provided and file exists
+    seedbank_path = output_dir / "SEED.BANK.html"
+    if args.seedbank_endpoint and seedbank_path.exists():
+        seedbank_html = seedbank_path.read_text(encoding="utf-8")
+        # Replace any existing endpoint (placeholder or previous URL)
+        import re
+        seedbank_html = re.sub(
+            r'data-endpoint="[^"]*"',
+            f'data-endpoint="{args.seedbank_endpoint}"',
+            seedbank_html
+        )
+        seedbank_path.write_text(seedbank_html, encoding="utf-8")
+        print(f"  Updated: SEED.BANK.html endpoint")
 
     # Generate a page per section (view + observe)
     for section_id, section in sections.items():
@@ -1084,6 +1099,12 @@ def render_index(rows, sections, plant_db, base_url=""):
     <p>Syntropic agroforestry paddock guide. Scan a QR code on any row section pole, or browse below.</p>
   </div>
   {rows_html}
+  <div class="idx-tools">
+    <h2 class="idx-row-title">🧰 Farm Tools</h2>
+    <div class="idx-sections">
+      <a href="{base_url}SEED.BANK.html" class="idx-section">🌱 Seed Bank<span class="idx-count">inventory &amp; transactions</span></a>
+    </div>
+  </div>
   <div class="idx-footer">Firefly Corner Farm · Krambach, NSW · Syntropic Agroforestry</div>
 </div>
 </body>
