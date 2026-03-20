@@ -11,21 +11,22 @@
  * Sheet "Knowledge" columns (Row 1 headers — must match exactly):
  *   A: entry_id       — Auto-generated UUID
  *   B: title          — Article/guide title
- *   C: category       — Category tag (syntropic, composting, irrigation, etc.)
- *   D: tags           — Comma-separated search tags
- *   E: content        — Full text content
- *   F: author         — Who wrote this
- *   G: source_type    — tutorial, sop, guide, observation, recipe, reference
- *   H: media_links    — Comma-separated Drive file IDs or URLs
- *   I: related_plants — Comma-separated farmos_names
- *   J: related_sections — Comma-separated section IDs
- *   K: created        — ISO timestamp
- *   L: updated        — ISO timestamp (last update)
- *   M: status         — active or archived
+ *   C: category       — Content type: tutorial, sop, guide, reference, recipe, observation, source-material
+ *   D: topics         — Farm domains (multi-value, comma-separated): nursery, compost, irrigation, syntropic, seeds, harvest, paddock, equipment, cooking, infrastructure, camp
+ *   E: tags           — Free-form search keywords (species, techniques, tools)
+ *   F: content        — Full text content
+ *   G: author         — Who wrote this
+ *   H: source_type    — tutorial, sop, guide, observation, recipe, reference
+ *   I: media_links    — Comma-separated Drive file IDs or URLs
+ *   J: related_plants — Comma-separated farmos_names
+ *   K: related_sections — Comma-separated section IDs
+ *   L: created        — ISO timestamp
+ *   M: updated        — ISO timestamp (last update)
+ *   N: status         — active or archived
  *
  * Endpoints:
- *   GET  ?action=list[&category=...&limit=...&offset=...]  — list entries
- *   GET  ?action=search&query=...[&category=...]           — full-text search
+ *   GET  ?action=list[&category=...&topics=...&limit=...&offset=...]  — list entries
+ *   GET  ?action=search&query=...[&category=...&topics=...]           — full-text search
  *   GET  ?action=categories                                — list distinct categories
  *   POST {action: "add", title, content, category, ...}    — add new entry
  *   POST {action: "update", entry_id, ...fields}           — update existing entry
@@ -40,20 +41,21 @@ var COLS = {
   entry_id: 0,
   title: 1,
   category: 2,
-  tags: 3,
-  content: 4,
-  author: 5,
-  source_type: 6,
-  media_links: 7,
-  related_plants: 8,
-  related_sections: 9,
-  created: 10,
-  updated: 11,
-  status: 12
+  topics: 3,
+  tags: 4,
+  content: 5,
+  author: 6,
+  source_type: 7,
+  media_links: 8,
+  related_plants: 9,
+  related_sections: 10,
+  created: 11,
+  updated: 12,
+  status: 13
 };
 
 var COL_NAMES = [
-  "entry_id", "title", "category", "tags", "content", "author",
+  "entry_id", "title", "category", "topics", "tags", "content", "author",
   "source_type", "media_links", "related_plants", "related_sections",
   "created", "updated", "status"
 ];
@@ -130,6 +132,8 @@ function handleList(params) {
   var offset = parseInt(params.offset || "0", 10);
   var categoryFilter = (params.category || "").toLowerCase();
 
+  var topicsFilter = (params.topics || "").toLowerCase();
+
   var data = sheet.getRange(2, 1, lastRow - 1, COL_NAMES.length).getValues();
   var filtered = [];
 
@@ -141,6 +145,11 @@ function handleList(params) {
     if (categoryFilter) {
       var cat = String(row[COLS.category] || "").toLowerCase();
       if (cat !== categoryFilter) continue;
+    }
+
+    if (topicsFilter) {
+      var rowTopics = String(row[COLS.topics] || "").toLowerCase();
+      if (rowTopics.indexOf(topicsFilter) === -1) continue;
     }
 
     var entry = rowToEntry(row);
@@ -174,6 +183,7 @@ function handleSearch(params) {
   }
 
   var categoryFilter = (params.category || "").toLowerCase();
+  var topicsFilter = (params.topics || "").toLowerCase();
 
   var sheet = getSheet();
   var lastRow = sheet.getLastRow();
@@ -194,10 +204,16 @@ function handleSearch(params) {
       if (cat !== categoryFilter) continue;
     }
 
-    // Search across title, content, tags, related_plants, author
+    if (topicsFilter) {
+      var rowTopics = String(row[COLS.topics] || "").toLowerCase();
+      if (rowTopics.indexOf(topicsFilter) === -1) continue;
+    }
+
+    // Search across title, content, topics, tags, related_plants, author, category
     var searchable = [
       String(row[COLS.title] || ""),
       String(row[COLS.content] || ""),
+      String(row[COLS.topics] || ""),
       String(row[COLS.tags] || ""),
       String(row[COLS.related_plants] || ""),
       String(row[COLS.author] || ""),
@@ -327,7 +343,7 @@ function handleUpdate(body) {
   }
 
   // Updatable fields (not entry_id, created, status)
-  var updatable = ["title", "category", "tags", "content", "author",
+  var updatable = ["title", "category", "topics", "tags", "content", "author",
                     "source_type", "media_links", "related_plants", "related_sections"];
   var updatedFields = [];
 
