@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-20T12:44:39.120975+10:00",
+  "generated_at": "2026-03-20T13:26:13.062376+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -7732,40 +7732,6 @@
       "inventory_date": "2026-03-09",
       "plants": [
         {
-          "species": "Guava (Strawberry)",
-          "strata": "emergent",
-          "count": 1,
-          "notes": "",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Guava (Strawberry) - P2R2.0-3",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R2.0-3 — Guava (Strawberry)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-10-19",
-              "name": "Inventory Oct 2025 P2R2.0-3 — Guava (Strawberry)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-09",
-              "name": "Inventory P2R2.0-3 — Guava (Strawberry)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R2.0-3 — Guava (Strawberry)",
-              "notes": "Guava Purple (not strawberry)"
-            }
-          ]
-        },
-        {
           "species": "Rose Apple",
           "strata": "high",
           "count": 1,
@@ -8166,6 +8132,22 @@
               "date": "2026-03-09",
               "name": "Observation P2R2.0-3 — Jacaranda",
               "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Guava (Purple)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18.",
+          "first_planted": "2025-04-25",
+          "asset_name": "25 APR 2025 - Guava (Purple) - P2R2.0-3",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-04-24",
+              "name": "Inventory P2R2.0-3 — Guava (Purple)",
+              "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18."
             }
           ]
         }
@@ -9332,40 +9314,6 @@
           ]
         },
         {
-          "species": "Guava (Strawberry)",
-          "strata": "emergent",
-          "count": 2,
-          "notes": "1 Purple ok, 1 Thai White eaten",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Guava (Strawberry) - P2R2.23-26",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R2.23-26 — Guava (Strawberry)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.23-26 — Guava (Strawberry)",
-              "notes": "PURPLE ok, 1 THAI WHITE eaten"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-10",
-              "name": "Inventory P2R2.23-26 — Guava (Strawberry)",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-11",
-              "name": "Observation P2R2.23-26 — Guava (Strawberry)",
-              "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 1 → 2"
-            }
-          ]
-        },
-        {
           "species": "Quince",
           "strata": "high",
           "count": 1,
@@ -9410,13 +9358,13 @@
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.23-26 — Pigeon Pea",
+              "name": "Inventory P2R2.23-26 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory P2R2.23-26 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R2.23-26 — Pigeon Pea",
               "notes": ""
             },
             {
@@ -9444,13 +9392,13 @@
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.23-26 — Chilli (Jalapeño)",
+              "name": "Inventory P2R2.23-26 — Chilli (Jalapeño)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory P2R2.23-26 — Chilli (Jalapeño)",
+              "name": "Inventory Oct 2025 P2R2.23-26 — Chilli (Jalapeño)",
               "notes": ""
             },
             {
@@ -9630,6 +9578,38 @@
               "date": "2026-03-11",
               "name": "Observation P2R2.23-26 — Basil - Perennial (Thai)",
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 2 → 1"
+            }
+          ]
+        },
+        {
+          "species": "Guava (Purple)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18.",
+          "first_planted": "2025-04-25",
+          "asset_name": "25 APR 2025 - Guava (Purple) - P2R2.23-26",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-04-24",
+              "name": "Inventory P2R2.23-26 — Guava (Purple)",
+              "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18."
+            }
+          ]
+        },
+        {
+          "species": "Guava (Thai White)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18.",
+          "first_planted": "2025-04-25",
+          "asset_name": "25 APR 2025 - Guava (Thai White) - P2R2.23-26",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-04-24",
+              "name": "Inventory P2R2.23-26 — Guava (Thai White)",
+              "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18."
             }
           ]
         }
