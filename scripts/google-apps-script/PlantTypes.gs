@@ -28,11 +28,15 @@
  *   Q: source
  *
  * Endpoints:
+ *   GET  ?action=health                    — health check + usage stats
  *   GET  ?action=list                     — list all plant types
  *   GET  ?action=search&query=...         — search by name (partial match)
  *   GET  ?action=reconcile                — compare sheet against farmOS-reported data
  *   POST {action: "add", ...fields}       — add a new plant type row
  *   POST {action: "update", farmos_name, ...fields} — update existing row by farmos_name
+ *
+ * Usage tracking:
+ *   Requires UsageTracking.gs in the same project.
  */
 
 // ── Configuration ──────────────────────────────────────────────
@@ -75,16 +79,19 @@ function getSheet() {
 
 function doGet(e) {
   try {
+    trackExecution();
     var action = (e.parameter.action || "").toLowerCase();
 
-    if (action === "list") {
+    if (action === "health") {
+      return handleHealth();
+    } else if (action === "list") {
       return handleList(e.parameter);
     } else if (action === "search") {
       return handleSearch(e.parameter);
     } else if (action === "reconcile") {
       return handleReconcile(e.parameter);
     } else {
-      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: list, search, reconcile" });
+      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: health, list, search, reconcile" });
     }
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
@@ -95,6 +102,7 @@ function doGet(e) {
 
 function doPost(e) {
   try {
+    trackExecution();
     var body;
     if (e.postData && e.postData.contents) {
       body = JSON.parse(e.postData.contents);

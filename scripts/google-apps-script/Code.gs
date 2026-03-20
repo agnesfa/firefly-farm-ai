@@ -83,6 +83,7 @@ const HEADERS = [
  */
 function doPost(e) {
   try {
+    trackExecution();
     var payload = JSON.parse(e.postData.contents);
 
     // Route based on action
@@ -105,21 +106,20 @@ function doPost(e) {
  * Actions: list (return observations), health (default).
  */
 function doGet(e) {
+  trackExecution();
   var params = e ? (e.parameter || {}) : {};
   var action = params.action || "health";
 
-  if (action === "list") {
+  if (action === "health") {
+    return handleHealth();
+  } else if (action === "list") {
     return handleListObservations(params);
   } else if (action === "get_media") {
     return handleGetMedia(e.parameter);
   }
 
-  // Default: health check
-  return jsonResponse({
-    status: "ok",
-    version: "2",
-    service: "Firefly Corner Field Observations"
-  });
+  // Fallback: basic health
+  return handleHealth();
 }
 
 // ─── OBSERVATION SUBMISSION ──────────────────────────────────

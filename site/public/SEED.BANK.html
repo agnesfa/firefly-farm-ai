@@ -3,71 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Seed Bank — Firefly Corner Nursery</title>
+<title>Seed Bank — Firefly Corner Farm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
-.nursery-card .plant-process { font-size: 0.82rem; color: #6b7280; margin-top: 2px; }
-.rtt-badge { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.78rem; font-weight: 600;
-  padding: 3px 10px; border-radius: 12px; margin: 4px 0 0 0; }
-.nursery-tag { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.75rem;
-  padding: 2px 8px; border-radius: 8px; margin: 2px 4px 2px 0; }
-.nursery-tags { margin-top: 6px; }
-.transplant-plan { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; margin-top: 8px;
-  border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #78350f; }
-.transplant-title { font-weight: 600; margin-bottom: 4px; }
-.empty-zone { text-align: center; padding: 40px 20px; color: #9ca3af; font-style: italic; }
+/* Seed Bank specific styles */
+.sb-search-section { padding: 16px; background: #f8faf5; border-bottom: 1px solid #e5e5e0; }
+.sb-name-row { margin-bottom: 12px; }
+.sb-name-row label { display: block; font-size: 11px; font-weight: 600; color: #9ca3af;
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.sb-name-row input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db;
+  border-radius: 8px; font-size: 15px; font-family: 'DM Sans', sans-serif;
+  background: #fff; }
+.sb-name-row input:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.15); }
+
+.sb-search-row { position: relative; }
+.sb-search-row input { width: 100%; padding: 12px 12px 12px 38px; border: 1px solid #d1d5db;
+  border-radius: 8px; font-size: 16px; font-family: 'DM Sans', sans-serif;
+  background: #fff; }
+.sb-search-row input:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.15); }
+.sb-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 16px; color: #9ca3af; pointer-events: none; }
+
+#search-status { padding: 16px; font-size: 13px; color: #6b7280; text-align: center; display: none; }
+#search-results { padding: 0 0 100px 0; }
+
+/* Seed cards */
+.seed-card { padding: 16px; background: #fff; border-bottom: 1px solid #f0f0ec;
+  border-left: 3px solid #4a8c2e; }
+.seed-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.seed-info { flex: 1; min-width: 0; }
+.seed-name { font-family: 'Playfair Display', Georgia, serif; font-size: 16px;
+  font-weight: 600; color: #1a1a1a; line-height: 1.2; }
+.seed-source { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+.seed-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.seed-badge { display: inline-block; padding: 2px 8px; border-radius: 8px;
+  font-size: 11px; font-weight: 500; }
+.season-badge { background: #eff6ff; color: #1e40af; }
+.fn-badge { background: #f0fdf4; color: #166534; }
+
+.seed-stock-info { text-align: right; flex-shrink: 0; }
+.seed-stock { display: block; font-weight: 700; font-size: 15px; padding: 3px 12px;
+  border-radius: 12px; text-align: center; min-width: 48px; }
+.stock-full { background: #f0fdf4; color: #166534; }
+.stock-half { background: #fef3c7; color: #92400e; }
+.stock-empty { background: #fef2f2; color: #991b1b; }
+.seed-location { display: block; font-size: 11px; color: #9ca3af; margin-top: 4px; white-space: nowrap; }
+
+/* Enriched detail (collapsible) */
+.seed-botanical { font-size: 12px; color: #6b7280; font-style: italic; margin-top: 1px; }
+.seed-detail { padding: 10px 0 4px 0; }
+.seed-detail-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+.seed-detail-item { font-size: 11px; color: #374151; }
+.seed-strata { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.quality-good { color: #166534; }
+.quality-bad { color: #dc2626; }
+.seed-functions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.fn-pill { display: inline-block; padding: 2px 7px; border-radius: 6px; font-size: 10px;
+  font-weight: 500; background: #f3f4f6; color: #374151; }
+.fn-nitrogen-fixer { background: #fef3c7; color: #92400e; }
+.fn-edible-fruit, .fn-edible-greens, .fn-edible-seed, .fn-edible-root, .fn-edible-nut,
+.fn-edible-leaf, .fn-edible-flower { background: #fce7f3; color: #9d174d; }
+.fn-biomass-producer, .fn-green-manure { background: #dbeafe; color: #1e40af; }
+.fn-native-habitat { background: #d1fae5; color: #065f46; }
+.fn-nectar-source, .fn-beneficial-insects, .fn-pollinator-attractor { background: #fef3c7; color: #78350f; }
+.fn-pest-management, .fn-companion-plant, .fn-pest-deterrent { background: #ede9fe; color: #5b21b6; }
+.fn-medicinal, .fn-aromatic { background: #fce7f3; color: #831843; }
+.fn-erosion-control, .fn-living-mulch, .fn-groundcover { background: #d1fae5; color: #064e3b; }
+.fn-timber, .fn-windbreak { background: #e5e7eb; color: #374151; }
+.seed-header { cursor: pointer; }
+
+/* Transaction area */
+.seed-transaction { margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0ec; }
+.txn-row { margin-bottom: 10px; }
+.txn-label { display: block; font-size: 11px; font-weight: 600; color: #6b7280;
+  margin-bottom: 4px; }
+
+/* Sachet toggle */
+.sachet-toggle { display: flex; gap: 0; border-radius: 8px; overflow: hidden;
+  border: 1px solid #d1d5db; }
+.sachet-btn { flex: 1; padding: 10px 0; border: none; background: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  color: #6b7280; cursor: pointer; transition: all 0.15s;
+  border-right: 1px solid #d1d5db; }
+.sachet-btn:last-child { border-right: none; }
+.sachet-btn:hover { background: #f0fdf4; }
+.sachet-btn.active { background: #2d6b1a; color: #fff; }
+.sachet-btn[data-level="0.5"].active { background: #d97706; color: #fff; }
+.sachet-btn[data-level="0"].active { background: #dc2626; color: #fff; }
+
+/* Grams fields */
+.txn-grams-row { display: flex; gap: 12px; }
+.txn-grams-group { flex: 1; }
+.txn-grams { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db;
+  border-radius: 8px; font-size: 15px; font-family: 'DM Sans', sans-serif; }
+.txn-grams:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.15); }
+
+/* Replenish */
+.replenish-row { padding: 8px 12px; background: #fef3c7; border-radius: 8px; }
+.replenish-check { display: flex; align-items: center; gap: 8px; font-size: 13px;
+  font-weight: 500; color: #92400e; cursor: pointer; }
+.replenish-check input { width: 18px; height: 18px; accent-color: #d97706; }
+
+/* Notes */
+.txn-notes { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db;
+  border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; }
+.txn-notes:focus { outline: none; border-color: #4a8c2e; }
+
+/* Submit button */
+.txn-submit { width: 100%; padding: 12px; background: #2d6b1a; color: #fff;
+  border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.txn-submit:hover { background: #1a5010; }
+.txn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+
+/* Empty warning */
+.empty-warning { padding: 10px 12px; background: #fef2f2; border-left: 3px solid #dc2626;
+  border-radius: 0 6px 6px 0; font-size: 12px; color: #991b1b; margin-bottom: 10px; }
+
+/* Feedback toast */
+.feedback-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  padding: 12px 24px; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; z-index: 200; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: opacity 0.3s; max-width: 380px; text-align: center; }
+.feedback-success { background: #166534; color: #fff; }
+.feedback-error { background: #991b1b; color: #fff; }
+.feedback-toast.fade-out { opacity: 0; }
+
+/* Zone nav (reuse from nursery pages) */
 .zone-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 16px; background: #f8faf5; }
 .zone-nav-group { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; margin-bottom: 4px; }
-.zone-nav-label { font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;
-  width: 100%; padding: 2px 0; }
+.zone-nav-label { font-size: 0.7rem; color: #9ca3af; text-transform: uppercase;
+  letter-spacing: 0.05em; width: 100%; padding: 2px 0; }
 .zone-tab { font-size: 0.75rem; padding: 4px 8px; background: white; border: 1px solid #d1d5db;
   border-radius: 6px; text-decoration: none; color: #374151; white-space: nowrap; }
 .zone-tab:hover { background: #f0fdf4; border-color: #4a8c2e; }
 .zone-tab.active { background: #2d6b1a; color: white; border-color: #2d6b1a; font-weight: 600; }
-.obs-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
-  background: #2d6b1a; color: white; border: none; border-radius: 50%;
-  font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 100; display: flex; align-items: center; justify-content: center;
-  text-decoration: none; }
-.obs-fab:hover { background: #1a5010; transform: scale(1.05); }
+
+/* Info section */
+.sb-info { padding: 16px; background: #f7f6f0; margin: 0; font-size: 12px; color: #6b7280;
+  line-height: 1.5; border-bottom: 1px solid #e5e5e0; }
+.sb-info strong { color: #4b5563; }
 </style>
 </head>
-<body>
+<body data-endpoint="SEEDBANK_ENDPOINT_PLACEHOLDER">
 <div class="page">
 
-  <div class="section-header" style="background:linear-gradient(145deg, #3d6b2e 0%, #5a8a3c 60%, #6b9e4a 100%)">
-    <div class="breadcrumb">Firefly Corner · Seed Bank</div>
+  <div class="section-header" style="background:linear-gradient(145deg, #1a3a0a 0%, #2d5016 60%, #3d6a20 100%)">
+    <div class="breadcrumb">Firefly Corner · Plant Nursery · Storage</div>
     <div class="section-title-row">
       <h1 class="section-range">Seed Bank</h1>
-      <span class="section-type-badge">🌰 Seed Storage</span>
+      <span class="section-type-badge">Fridge & Freezer</span>
     </div>
-    
+    <div class="section-stats">
+      <div class="stat"><div class="stat-value">263</div><div class="stat-label">seed entries</div></div>
+      <div class="stat"><div class="stat-value">2</div><div class="stat-label">storage zones</div></div>
+    </div>
   </div>
 
   <div class="zone-nav">
-<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit I</span><a href="NURS.SH1-1.html" class="zone-tab">Shelf 1-1</a><a href="NURS.SH1-2.html" class="zone-tab">Shelf 1-2</a><a href="NURS.SH1-3.html" class="zone-tab">Shelf 1-3</a><a href="NURS.SH1-4.html" class="zone-tab">Shelf 1-4</a></div>
-<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit II</span><a href="NURS.SH2-1.html" class="zone-tab">Shelf 2-1</a><a href="NURS.SH2-2.html" class="zone-tab">Shelf 2-2</a><a href="NURS.SH2-3.html" class="zone-tab">Shelf 2-3</a><a href="NURS.SH2-4.html" class="zone-tab">Shelf 2-4</a></div>
-<div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit III</span><a href="NURS.SH3-1.html" class="zone-tab">Shelf 3-1</a><a href="NURS.SH3-2.html" class="zone-tab">Shelf 3-2</a><a href="NURS.SH3-3.html" class="zone-tab">Shelf 3-3</a><a href="NURS.SH3-4.html" class="zone-tab">Shelf 3-4</a></div>
-<div class="zone-nav-group"><span class="zone-nav-label">Ground & Zones</span><a href="NURS.GR.html" class="zone-tab">Ground Right</a><a href="NURS.GL.html" class="zone-tab">Ground Left</a><a href="NURS.FRT.html" class="zone-tab">Front Area</a><a href="NURS.BCK.html" class="zone-tab">Back Area</a><a href="NURS.HILL.html" class="zone-tab">Hillside</a><a href="NURS.STRB.html" class="zone-tab">Strawberry Area</a></div>
-<div class="zone-nav-group"><span class="zone-nav-label">Storage</span><a href="SEED.BANK.html" class="zone-tab active">Seed Bank</a></div>
-</div>
-
-
-  <div style="padding: 0 0 80px 0;">
-    <div class="empty-zone"><p>No plants recorded at this location yet.</p></div>
+    <div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit I</span><a href="NURS.SH1-1.html" class="zone-tab">Shelf 1-1</a><a href="NURS.SH1-2.html" class="zone-tab">Shelf 1-2</a><a href="NURS.SH1-3.html" class="zone-tab">Shelf 1-3</a><a href="NURS.SH1-4.html" class="zone-tab">Shelf 1-4</a></div>
+    <div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit II</span><a href="NURS.SH2-1.html" class="zone-tab">Shelf 2-1</a><a href="NURS.SH2-2.html" class="zone-tab">Shelf 2-2</a><a href="NURS.SH2-3.html" class="zone-tab">Shelf 2-3</a><a href="NURS.SH2-4.html" class="zone-tab">Shelf 2-4</a></div>
+    <div class="zone-nav-group"><span class="zone-nav-label">Shelving Unit III</span><a href="NURS.SH3-1.html" class="zone-tab">Shelf 3-1</a><a href="NURS.SH3-2.html" class="zone-tab">Shelf 3-2</a><a href="NURS.SH3-3.html" class="zone-tab">Shelf 3-3</a><a href="NURS.SH3-4.html" class="zone-tab">Shelf 3-4</a></div>
+    <div class="zone-nav-group"><span class="zone-nav-label">Ground & Zones</span><a href="NURS.GR.html" class="zone-tab">Ground Right</a><a href="NURS.GL.html" class="zone-tab">Ground Left</a><a href="NURS.FRT.html" class="zone-tab">Front Area</a><a href="NURS.BCK.html" class="zone-tab">Back Area</a><a href="NURS.HILL.html" class="zone-tab">Hillside</a><a href="NURS.STRB.html" class="zone-tab">Strawberry Area</a></div>
+    <div class="zone-nav-group"><span class="zone-nav-label">Storage</span><a href="SEED.BANK.html" class="zone-tab active">Seed Bank</a></div>
   </div>
 
-  <div class="footer">
-    <div class="footer-sub">Inventory date: March 17, 2026</div>
-    <div class="footer-sub">Firefly Corner Farm · Seed Bank</div>
+  <div class="sb-info">
+    <strong>How to use:</strong> Enter your name, then search for the seed you need.
+    Record grams taken (bulk seeds) or update the sachet status (Full / Half / Empty).
+    If a seed is running low, tick the replenishment flag.
+  </div>
+
+  <div class="sb-search-section">
+    <div class="sb-name-row">
+      <label for="user-name">Your name</label>
+      <input type="text" id="user-name" placeholder="Enter your name" autocomplete="name">
+    </div>
+    <div class="sb-search-row">
+      <span class="sb-search-icon">&#x1F50D;</span>
+      <input type="search" id="seed-search" placeholder="Search seeds (e.g. basil, tomato, pigeon pea)" autocomplete="off">
+    </div>
+  </div>
+
+  <div id="search-status"></div>
+  <div id="search-results"></div>
+
+  <div class="footer" style="padding-top: 40px;">
+    <div>Firefly Corner Farm &middot; Krambach, NSW</div>
+    <div class="footer-sub">Seed Bank Inventory &middot; Scan QR on fridge</div>
   </div>
 
 </div>
 
-<!-- Floating action button → observe page -->
-<a href="SEED.BANK-observe.html" class="obs-fab" title="Record Observation">📋</a>
-
+<script src="seedbank.js"></script>
 </body>
 </html>

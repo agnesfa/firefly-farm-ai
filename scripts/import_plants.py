@@ -204,7 +204,7 @@ class PlantTypeImporter:
             # Check if update needed (description changed)
             current_desc = existing[0].get("attributes", {}).get("description", {})
             current_value = current_desc.get("value", "") if isinstance(current_desc, dict) else ""
-            if "Syntropic Agriculture Data" in current_value:
+            if current_value.strip() == description.strip():
                 self.stats["skipped"] += 1
                 return True
             # UPDATE — include id to trigger PATCH

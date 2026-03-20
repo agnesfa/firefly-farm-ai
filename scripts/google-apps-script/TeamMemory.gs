@@ -20,10 +20,15 @@
  *   I: Acknowledged_By (JSON array of usernames, e.g. '["Agnes","Claire"]')
  *
  * Endpoints:
+ *   GET  ?action=health                                              — health check + usage stats
  *   GET  ?action=list[&days=7&user=...&limit=20&only_fresh_for=...]  — list recent summaries
  *   GET  ?action=search&query=...&days=30                           — search across text columns
  *   POST {action: "write_summary", user, topics, decisions, farmos_changes, questions, summary, skip}
  *   POST {action: "acknowledge", summary_id: <row_number>, user: "Claire"}
+ *
+ * Usage tracking:
+ *   Requires UsageTracking.gs in the same project.
+ *   Health check returns daily execution count, cell reads, and quota warnings.
  */
 
 // ── Configuration ──────────────────────────────────────────────
@@ -36,9 +41,12 @@ function getSheet() {
 
 function doGet(e) {
   try {
+    trackExecution();
     var action = (e.parameter.action || "").toLowerCase();
 
-    if (action === "list") {
+    if (action === "health") {
+      return handleHealth();
+    } else if (action === "list") {
       return handleList(e.parameter);
     } else if (action === "search") {
       return handleSearch(e.parameter);
@@ -54,6 +62,7 @@ function doGet(e) {
 
 function doPost(e) {
   try {
+    trackExecution();
     var body;
     if (e.postData && e.postData.contents) {
       body = JSON.parse(e.postData.contents);
