@@ -9,7 +9,7 @@
 //          weight_grams | location | notes | photo_url | status
 
 var SHEET_NAME = "Harvests";
-var DRIVE_FOLDER_ID = ""; // Set to Drive folder ID for "Firefly Corner Harvest Photos"
+var DRIVE_FOLDER_ID = "1vI_JxVYnTAcclFOT5ziN7wBTz6ofuskA";
 
 function doPost(e) {
   try {
