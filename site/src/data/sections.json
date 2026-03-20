@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-20T15:08:28.186270+10:00",
+  "generated_at": "2026-03-20T19:53:42.678704+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -172,14 +172,20 @@
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Mint",
+              "name": "Inventory Oct 2025 P2R1.0-3 — Mint",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory Oct 2025 P2R1.0-3 — Mint",
+              "name": "Inventory P2R1.0-3 — Mint",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-08",
+              "name": "Inventory P2R1.0-3 — Mint (Australian)",
+              "notes": "Found by Agnes, 9 Mar 2026. Claire confirmed variety is Australian Mint. Photo in Google Drive."
             },
             {
               "type": "observation",
@@ -220,6 +226,22 @@
               "notes": "Added via field observation"
             }
           ]
+        },
+        {
+          "species": "Mint (Australian)",
+          "strata": "low",
+          "count": 1,
+          "notes": "Found by Agnes, 9 Mar 2026. Claire confirmed variety is Australian Mint. Photo in Google Drive.",
+          "first_planted": "2026-03-09",
+          "asset_name": "9 MAR 2026 - Mint (Australian) - P2R1.0-3",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-08",
+              "name": "Inventory P2R1.0-3 — Mint (Australian)",
+              "notes": "Found by Agnes, 9 Mar 2026. Claire confirmed variety is Australian Mint. Photo in Google Drive."
+            }
+          ]
         }
       ]
     },
@@ -235,7 +257,7 @@
       "plants": [
         {
           "species": "Guava",
-          "strata": "emergent",
+          "strata": "medium",
           "count": 2,
           "notes": "",
           "first_planted": "2025-03-20",
@@ -607,7 +629,7 @@
         },
         {
           "species": "Guava (Hawaiian)",
-          "strata": "emergent",
+          "strata": "medium",
           "count": 1,
           "notes": "Purchased from Daleys Fruit Nursery. Planted March 2025.",
           "first_planted": "",
@@ -963,7 +985,7 @@
         },
         {
           "species": "Guava",
-          "strata": "emergent",
+          "strata": "medium",
           "count": 3,
           "notes": "",
           "first_planted": "2025-03-20",
@@ -1561,7 +1583,7 @@
       "plants": [
         {
           "species": "Guava (Strawberry)",
-          "strata": "emergent",
+          "strata": "medium",
           "count": 1,
           "notes": "good state",
           "first_planted": "2025-04-24",
@@ -8403,7 +8425,7 @@
         },
         {
           "species": "Pear (Nashi)",
-          "strata": "emergent",
+          "strata": "high",
           "count": 1,
           "notes": "Added via field observation",
           "first_planted": "",
@@ -9307,7 +9329,7 @@
       "length": "3m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-16",
+      "inventory_date": "2026-03-19",
       "plants": [
         {
           "species": "Ice Cream Bean",
@@ -9382,13 +9404,13 @@
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory P2R2.23-26 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R2.23-26 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-10",
-              "name": "Inventory Oct 2025 P2R2.23-26 — Pigeon Pea",
+              "name": "Inventory P2R2.23-26 — Pigeon Pea",
               "notes": ""
             },
             {
@@ -9498,7 +9520,7 @@
         {
           "species": "Sweet Potato",
           "strata": "low",
-          "count": 2,
+          "count": 1,
           "notes": "3 lost",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Sweet Potato - P2R2.23-26",
@@ -9526,6 +9548,12 @@
               "date": "2026-03-11",
               "name": "Observation P2R2.23-26 — Sweet Potato",
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 1 → 2"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-19",
+              "name": "Observation P2R2.23-26 — Sweet Potato — 2026-03-20",
+              "notes": "Inventory update: Field inventory by Hadrien, 11 Mar 2026. farmOS had 2, observer counted 1. Reviewed by Claire."
             }
           ]
         },
@@ -9560,7 +9588,7 @@
         {
           "species": "Tansy",
           "strata": "low",
-          "count": 2,
+          "count": 1,
           "notes": "1 existing + 1 planted Feb 2026",
           "first_planted": "2026-02-25",
           "asset_name": "25 FEB 2026 - Tansy - P2R2.23-26",
@@ -9570,6 +9598,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R2.23-26 — Tansy",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-19",
+              "name": "Observation P2R2.23-26 — Tansy — 2026-03-20",
+              "notes": "Inventory update: Field inventory by Hadrien, 11 Mar 2026. Was 2, now 1. Reviewed by Claire."
             }
           ]
         },
@@ -9636,6 +9670,38 @@
               "notes": "Corrected from Guava (Strawberry) — identified by Agnes March 18."
             }
           ]
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 1,
+          "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire.",
+          "first_planted": "2026-03-11",
+          "asset_name": "11 MAR 2026 - Geranium - P2R2.23-26",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Inventory P2R2.23-26 — Geranium",
+              "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire."
+            }
+          ]
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire.",
+          "first_planted": "2026-03-11",
+          "asset_name": "11 MAR 2026 - Jacaranda - P2R2.23-26",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-10",
+              "name": "Inventory P2R2.23-26 — Jacaranda",
+              "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire."
+            }
+          ]
         }
       ],
       "green_manure": [
@@ -9697,7 +9763,7 @@
         },
         {
           "species": "Guava (Strawberry)",
-          "strata": "emergent",
+          "strata": "medium",
           "count": 3,
           "notes": "1 Purple ok, 1 Strawberry Guava good",
           "first_planted": "2025-04-24",
@@ -10347,7 +10413,7 @@
       "plants": [
         {
           "species": "Guava (Strawberry)",
-          "strata": "emergent",
+          "strata": "medium",
           "count": 2,
           "notes": "1 Purple ok, 1 Hawaiian ok, 1 Thai White ok",
           "first_planted": "2025-04-24",
@@ -10659,7 +10725,7 @@
         },
         {
           "species": "Davidson Plum",
-          "strata": "medium",
+          "strata": "high",
           "count": 1,
           "notes": "Identified by Claire from Hadrien's photo",
           "first_planted": "2026-03-01",
