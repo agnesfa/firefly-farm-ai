@@ -95,27 +95,49 @@ describe('read tools', () => {
     expect(result.by_section).toHaveLength(2);
   });
 
-  it('query_sections groups by row', async () => {
+  it('query_sections groups by row (with row filter)', async () => {
     const sections = [
       makeSectionAsset({ name: 'P2R2.0-3' }),
       makeSectionAsset({ name: 'P2R2.3-7' }),
-      makeSectionAsset({ name: 'P2R3.15-21' }),
     ];
     mockClient.getSectionAssets.mockResolvedValue(sections);
-    // Plant count index
     mockClient.fetchAllPaginated.mockResolvedValue([
       makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R2.0-3' }),
       makePlantAsset({ name: '25 APR 2025 - Comfrey - P2R2.0-3' }),
-      makePlantAsset({ name: '25 APR 2025 - Macadamia - P2R3.15-21' }),
+    ]);
+
+    const result = parseResult(await querySectionsTool.handler({ row: 'P2R2' }));
+    expect(result.total_sections).toBe(2);
+    expect(result.rows.P2R2).toHaveLength(2);
+    const p2r2_03 = result.rows.P2R2.find((s: any) => s.section_id === 'P2R2.0-3');
+    expect(p2r2_03.plant_count).toBe(2);
+  });
+
+  it('query_sections returns all location types when no filter', async () => {
+    mockClient.getAllLocations.mockResolvedValue({
+      paddock: [
+        { name: 'P2R2.0-3', uuid: 'uuid-1' },
+        { name: 'P2R3.15-21', uuid: 'uuid-2' },
+      ],
+      nursery: [
+        { name: 'NURS.SH1-1', uuid: 'uuid-3' },
+      ],
+      compost: [
+        { name: 'COMP.BAY1', uuid: 'uuid-4' },
+      ],
+    });
+    mockClient.fetchAllPaginated.mockResolvedValue([
+      makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R2.0-3' }),
+      makePlantAsset({ name: '25 APR 2025 - Comfrey - NURS.SH1-1' }),
     ]);
 
     const result = parseResult(await querySectionsTool.handler({}));
-    expect(result.total_sections).toBe(3);
-    expect(result.rows.P2R2).toHaveLength(2);
+    expect(result.total_sections).toBe(4);
+    expect(result.rows.P2R2).toHaveLength(1);
     expect(result.rows.P2R3).toHaveLength(1);
-    // Check plant counts
-    const p2r2_03 = result.rows.P2R2.find((s: any) => s.section_id === 'P2R2.0-3');
-    expect(p2r2_03.plant_count).toBe(2);
+    expect(result.rows.NURS).toHaveLength(1);
+    expect(result.rows.COMP).toHaveLength(1);
+    expect(result.rows.NURS[0].plant_count).toBe(1);
   });
 
   it('search_plant_types is case-insensitive', async () => {

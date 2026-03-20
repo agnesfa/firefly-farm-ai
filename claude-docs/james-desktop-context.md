@@ -191,6 +191,52 @@ These are open questions that James needs to think about and decide:
 
 ---
 
+## Knowledge Base
+
+Use Knowledge Base tools to find or save farm knowledge (tutorials, guides, SOPs).
+
+| Tool | What it does |
+|------|-------------|
+| `search_knowledge(query, category, topics)` | Search for farm knowledge entries |
+| `list_knowledge(category, limit, topics)` | Browse all entries, optionally filtered |
+| `add_knowledge(title, content, category, ...)` | Save new knowledge |
+| `update_knowledge(entry_id, ...)` | Update existing entry |
+
+### Schema — IMPORTANT: 3 Metadata Dimensions
+
+When creating or searching Knowledge Base entries, there are THREE separate fields:
+
+1. **category** — the CONTENT TYPE (single value). What kind of document is this?
+   `tutorial`, `sop`, `guide`, `reference`, `recipe`, `observation`, `source-material`
+
+2. **topics** — the FARM DOMAINS (multi-value, comma-separated). What areas of the farm does it cover?
+   `nursery`, `compost`, `irrigation`, `syntropic`, `seeds`, `harvest`, `paddock`, `equipment`, `cooking`, `infrastructure`, `camp`
+
+3. **tags** — FREE-FORM KEYWORDS for search. Species names, techniques, tools, anything.
+
+Example: A tutorial about taking comfrey cuttings in the nursery:
+```
+category: tutorial
+topics: nursery, propagation
+tags: comfrey, root cutting, cuttings, potting
+related_plants: Comfrey
+related_sections: NURS.SH1-2
+```
+
+**CRITICAL RULE**: Do NOT use farm domains (nursery, compost, etc.) as the category.
+Category is ALWAYS the content type (tutorial, guide, sop, etc.).
+Farm domains go in `topics`. Specific keywords go in `tags`.
+
+### Sections — Expanded
+
+`query_sections` supports all farm location types:
+- `query_sections()` — ALL locations (paddock + nursery + compost)
+- `query_sections(row="P2R3")` — paddock sections for a specific row
+- `query_sections(row="NURS")` — all nursery locations
+- `query_sections(row="COMP")` — compost bay locations
+
+---
+
 ## Important Rules
 
 - farmOS is the source of truth. All data must end up there.

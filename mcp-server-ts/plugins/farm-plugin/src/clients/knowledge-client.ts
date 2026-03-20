@@ -6,15 +6,17 @@
 import { AppsScriptClient } from './apps-script-client.js';
 
 export class KnowledgeClient extends AppsScriptClient {
-  async listEntries(category?: string, limit = 50, offset = 0): Promise<any> {
+  async listEntries(category?: string, limit = 50, offset = 0, topics?: string): Promise<any> {
     const q: Record<string, string> = { action: 'list', limit: String(limit), offset: String(offset) };
     if (category) q.category = category;
+    if (topics) q.topics = topics;
     return this.get(q);
   }
 
-  async search(query: string, category?: string): Promise<any> {
+  async search(query: string, category?: string, topics?: string): Promise<any> {
     const q: Record<string, string> = { action: 'search', query };
     if (category) q.category = category;
+    if (topics) q.topics = topics;
     return this.get(q);
   }
 

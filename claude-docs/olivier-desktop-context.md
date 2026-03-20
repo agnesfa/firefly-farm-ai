@@ -222,6 +222,75 @@ Report findings to Claude after each counting session. A good report:
 
 ---
 
+## Knowledge Base
+
+Use Knowledge Base tools to find or save farm knowledge (tutorials, guides, SOPs).
+
+| Tool | What it does |
+|------|-------------|
+| `search_knowledge(query, category, topics)` | Search for farm knowledge entries |
+| `list_knowledge(category, limit, topics)` | Browse all entries, optionally filtered |
+| `add_knowledge(title, content, category, ...)` | Save new knowledge |
+| `update_knowledge(entry_id, ...)` | Update existing entry |
+
+### Schema — IMPORTANT: 3 Metadata Dimensions
+
+When creating or searching Knowledge Base entries, there are THREE separate fields:
+
+1. **category** — the CONTENT TYPE (single value). What kind of document is this?
+   `tutorial`, `sop`, `guide`, `reference`, `recipe`, `observation`, `source-material`
+
+2. **topics** — the FARM DOMAINS (multi-value, comma-separated). What areas of the farm does it cover?
+   `nursery`, `compost`, `irrigation`, `syntropic`, `seeds`, `harvest`, `paddock`, `equipment`, `cooking`, `infrastructure`, `camp`
+
+3. **tags** — FREE-FORM KEYWORDS for search. Species names, techniques, tools, anything.
+
+Example: A tutorial about taking comfrey cuttings in the nursery:
+```
+category: tutorial
+topics: nursery, propagation
+tags: comfrey, root cutting, cuttings, potting
+related_plants: Comfrey
+related_sections: NURS.SH1-2
+```
+
+**CRITICAL RULE**: Do NOT use farm domains (nursery, compost, etc.) as the category.
+Category is ALWAYS the content type (tutorial, guide, sop, etc.).
+Farm domains go in `topics`. Specific keywords go in `tags`.
+
+### Indexing Source Materials
+
+When Olivier asks you to index raw materials from Drive (audio, transcriptions, photos):
+```
+category: source-material
+topics: nursery, propagation (or whatever domain the materials cover)
+tags: audio, transcription, photos, [species names], [techniques]
+media_links: [Google Drive folder URL]
+related_plants: [species covered in the materials]
+```
+
+### ACTION REQUIRED: Recreate Ring Binder Entry
+
+The "FFC Nursery Working Guide Ring Binder" Knowledge Base entry was corrupted during a schema update and has been removed. Olivier should recreate it. When he asks, or at the start of his next session, prompt him:
+
+> "The Ring Binder Workflow entry in the Knowledge Base needs to be recreated — it was lost during a schema update. Want me to recreate it? I'll check team memory for the original content."
+
+Use `search_team_memory(query="ring binder")` to find the original content, then create the entry with:
+- category: `sop`
+- topics: `nursery`
+- tags: `ring binder, workflow, tutorial production, cuttings, seedlings, PDF, FFC Radio`
+- author: `Olivier`
+
+### Sections — Expanded
+
+`query_sections` supports all farm location types:
+- `query_sections()` — ALL locations (paddock + nursery + compost)
+- `query_sections(row="P2R3")` — paddock sections for a specific row
+- `query_sections(row="NURS")` — all nursery locations
+- `query_sections(row="COMP")` — compost bay locations
+
+---
+
 ## Important Rules
 
 - farmOS is the source of truth. Record everything there.

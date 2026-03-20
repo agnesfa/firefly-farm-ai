@@ -56,31 +56,37 @@ class KnowledgeClient:
         category: Optional[str] = None,
         limit: int = 50,
         offset: int = 0,
+        topics: Optional[str] = None,
     ) -> dict:
-        """Fetch knowledge base entries, optionally filtered by category.
+        """Fetch knowledge base entries, optionally filtered by category and/or topics.
 
         Returns dict with keys: success, entries (list), count (int), total (int).
         """
         params = {"action": "list", "limit": str(limit), "offset": str(offset)}
         if category:
             params["category"] = category
+        if topics:
+            params["topics"] = topics
 
         resp = requests.get(self.endpoint, params=params, timeout=30)
         resp.raise_for_status()
         return resp.json()
 
-    def search(self, query: str, category: Optional[str] = None) -> dict:
+    def search(self, query: str, category: Optional[str] = None, topics: Optional[str] = None) -> dict:
         """Search knowledge base by text (partial match on title, content, tags).
 
         Args:
             query: Text to search for.
             category: Optional category filter.
+            topics: Optional farm domain filter.
 
         Returns dict with keys: success, results (list), count (int).
         """
         params = {"action": "search", "query": query}
         if category:
             params["category"] = category
+        if topics:
+            params["topics"] = topics
 
         resp = requests.get(self.endpoint, params=params, timeout=30)
         resp.raise_for_status()

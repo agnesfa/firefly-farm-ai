@@ -310,12 +310,35 @@ def query_sections(row: Optional[str] = None) -> str:
         List of section IDs grouped by row with plant counts.
     """
     client = get_client()
-    sections = client.get_section_assets(row_filter=row)
+
+    # Use the enhanced get_all_locations for broader queries
+    if row and row.upper().startswith("NURS"):
+        # Nursery query — use new location method
+        locations = client.get_all_locations(type_filter="nursery")
+        sections_list = locations.get("nursery", [])
+    elif row and row.upper().startswith("COMP"):
+        # Compost query
+        locations = client.get_all_locations(type_filter="compost")
+        sections_list = locations.get("compost", [])
+    elif row is None:
+        # No filter — return paddock sections (backward compatible)
+        sections = client.get_section_assets()
+        sections_list = [
+            {"name": s.get("attributes", {}).get("name", ""), "uuid": s.get("id")}
+            for s in sections
+        ]
+    else:
+        # Paddock row filter (original behavior)
+        sections = client.get_section_assets(row_filter=row)
+        sections_list = [
+            {"name": s.get("attributes", {}).get("name", ""), "uuid": s.get("id")}
+            for s in sections
+        ]
 
     # Fetch ALL plant assets once (not per-section!)
     all_plants = client.fetch_all_paginated("asset/plant", filters={"status": "active"})
 
-    # Build section→plant count index
+    # Build section→plant count index from plant asset names
     plant_counts = {}
     for p in all_plants:
         pname = p.get("attributes", {}).get("name", "")
@@ -327,18 +350,18 @@ def query_sections(row: Optional[str] = None) -> str:
 
     # Build results using pre-counted index
     results = []
-    for s in sections:
-        name = s.get("attributes", {}).get("name", "")
+    for s in sections_list:
+        name = s.get("name", "")
         results.append({
             "section_id": name,
-            "uuid": s.get("id"),
+            "uuid": s.get("uuid"),
             "plant_count": plant_counts.get(name, 0),
         })
 
     # Sort by section ID
     results.sort(key=lambda x: x["section_id"])
 
-    # Group by row
+    # Group by prefix (row for paddocks, type for nursery/compost)
     rows = {}
     for r in results:
         row_prefix = r["section_id"].split(".")[0]
@@ -1871,6 +1894,7 @@ def reconcile_plant_types() -> str:
 def search_knowledge(
     query: str,
     category: Optional[str] = None,
+    topics: Optional[str] = None,
 ) -> str:
     """Search the farm knowledge base for articles, tutorials, guides, and SOPs.
 
@@ -1882,6 +1906,9 @@ def search_knowledge(
         query: Text to search for (e.g., "pigeon pea", "frost damage", "composting").
         category: Optional category filter (e.g., "syntropic", "composting",
                   "irrigation", "nursery", "pests", "harvest", "equipment", "general").
+        topics: Optional farm domain filter (e.g., "nursery", "compost", "syntropic").
+                Valid topics: nursery, compost, irrigation, syntropic, seeds,
+                harvest, paddock, equipment, cooking, infrastructure, camp.
     """
     kb_client = get_knowledge_client()
     if not kb_client:
@@ -1891,7 +1918,7 @@ def search_knowledge(
         })
 
     try:
-        result = kb_client.search(query=query, category=category)
+        result = kb_client.search(query=query, category=category, topics=topics)
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Knowledge search failed: {e}"})
@@ -1901,8 +1928,9 @@ def search_knowledge(
 def list_knowledge(
     category: Optional[str] = None,
     limit: int = 20,
+    topics: Optional[str] = None,
 ) -> str:
-    """List knowledge base entries, optionally filtered by category.
+    """List knowledge base entries, optionally filtered by category and/or topics.
 
     Use this to browse the farm knowledge library or see what's available
     in a specific category.
@@ -1910,6 +1938,9 @@ def list_knowledge(
     Args:
         category: Optional category filter (e.g., "syntropic", "composting").
         limit: Max entries to return (default 20).
+        topics: Optional farm domain filter (e.g., "nursery", "compost").
+                Valid topics: nursery, compost, irrigation, syntropic, seeds,
+                harvest, paddock, equipment, cooking, infrastructure, camp.
     """
     kb_client = get_knowledge_client()
     if not kb_client:
@@ -1919,7 +1950,7 @@ def list_knowledge(
         })
 
     try:
-        result = kb_client.list_entries(category=category, limit=limit)
+        result = kb_client.list_entries(category=category, limit=limit, topics=topics)
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to list knowledge entries: {e}"})
@@ -1936,6 +1967,7 @@ def add_knowledge(
     related_plants: str = "",
     related_sections: str = "",
     media_links: str = "",
+    topics: str = "",
 ) -> str:
     """Add a new entry to the farm knowledge base.
 
@@ -1947,15 +1979,18 @@ def add_knowledge(
         title: Article/guide title (e.g., "Pigeon Pea Chop-and-Drop Technique").
         content: Full text content of the knowledge entry.
         category: Category tag — one of: syntropic, composting, irrigation,
-                  nursery, pests, harvest, equipment, cooking, general.
+                  nursery, pests, harvest, equipment, general.
         author: Who wrote/contributed this (e.g., "Claire", "Olivier").
         tags: Comma-separated search tags (e.g., "nitrogen_fixer,biomass,pioneer").
-        source_type: Type of entry — tutorial, sop, guide, observation, recipe, reference.
+        source_type: Type of entry — tutorial, sop, guide, observation, recipe, reference, source-material.
         related_plants: Comma-separated farmos_names of related plant types
                         (e.g., "Pigeon Pea,Comfrey,Sweet Potato").
         related_sections: Comma-separated section IDs (e.g., "P2R3.15-21,P2R4.20-30").
         media_links: Comma-separated Google Drive file IDs or URLs for
                      photos, PDFs, or audio files related to this entry.
+        topics: Comma-separated farm domain topics (e.g., "nursery,propagation").
+                Valid topics: nursery, compost, irrigation, syntropic, seeds,
+                harvest, paddock, equipment, cooking, infrastructure, camp.
     """
     kb_client = get_knowledge_client()
     if not kb_client:
@@ -1971,6 +2006,7 @@ def add_knowledge(
             "category": category,
             "author": author,
             "tags": tags,
+            "topics": topics,
             "source_type": source_type,
             "related_plants": related_plants,
             "related_sections": related_sections,
@@ -1988,6 +2024,7 @@ def update_knowledge(
     content: Optional[str] = None,
     category: Optional[str] = None,
     tags: Optional[str] = None,
+    topics: Optional[str] = None,
     related_plants: Optional[str] = None,
     related_sections: Optional[str] = None,
     media_links: Optional[str] = None,
@@ -2002,6 +2039,9 @@ def update_knowledge(
         content: New/updated content (optional).
         category: New category (optional).
         tags: New comma-separated tags (optional).
+        topics: New comma-separated farm domain topics (optional).
+                Valid topics: nursery, compost, irrigation, syntropic, seeds,
+                harvest, paddock, equipment, cooking, infrastructure, camp.
         related_plants: New related plant types (optional).
         related_sections: New related sections (optional).
         media_links: New media links (optional).
@@ -2016,7 +2056,7 @@ def update_knowledge(
     fields = {}
     for key, val in {
         "title": title, "content": content, "category": category,
-        "tags": tags, "related_plants": related_plants,
+        "tags": tags, "topics": topics, "related_plants": related_plants,
         "related_sections": related_sections, "media_links": media_links,
     }.items():
         if val is not None:

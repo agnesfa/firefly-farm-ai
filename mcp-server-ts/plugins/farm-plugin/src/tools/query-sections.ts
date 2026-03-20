@@ -5,9 +5,9 @@ export const querySectionsTool: Tool = {
   namespace: 'fc',
   name: 'query_sections',
   title: 'List Sections',
-  description: 'List sections with optional row filter.\n\nArgs:\n    row: Filter by row prefix (e.g., "P2R1", "P2R3"). Optional.\n\nReturns:\n    List of section IDs grouped by row with plant counts.',
+  description: 'List sections with optional row filter.\n\nArgs:\n    row: Filter by row prefix (e.g., "P2R1", "P2R3"). Optional.\n         Also supports "NURS" for nursery locations and "COMP" for compost locations.\n         When omitted, returns ALL location types (paddock, nursery, compost).\n\nReturns:\n    List of section IDs grouped by row with plant counts.',
   paramsSchema: z.object({
-    row: z.string().optional().describe('Filter by row prefix (e.g., "P2R1", "P2R3")'),
+    row: z.string().optional().describe('Filter by row prefix (e.g., "P2R1", "P2R3"). Also supports "NURS" for nursery, "COMP" for compost. Omit for all locations.'),
   }).shape,
   options: { readOnlyHint: true },
   handler: async (params, extra) => {
@@ -23,8 +23,13 @@ export const querySectionsTool: Tool = {
       const locations = await client.getAllLocations('compost');
       sectionsList = (locations.compost ?? []).map((s: any) => ({ name: s.name, uuid: s.uuid }));
     } else if (!row) {
-      const sections = await client.getSectionAssets();
-      sectionsList = sections.map((s: any) => ({ name: s.attributes?.name ?? '', uuid: s.id }));
+      // Return ALL location types: paddock sections + nursery + compost
+      const allLocations = await client.getAllLocations();
+      sectionsList = [
+        ...(allLocations.paddock ?? []).map((s: any) => ({ name: s.name, uuid: s.uuid })),
+        ...(allLocations.nursery ?? []).map((s: any) => ({ name: s.name, uuid: s.uuid })),
+        ...(allLocations.compost ?? []).map((s: any) => ({ name: s.name, uuid: s.uuid })),
+      ];
     } else {
       const sections = await client.getSectionAssets(row);
       sectionsList = sections.map((s: any) => ({ name: s.attributes?.name ?? '', uuid: s.id }));
