@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-17T15:49:01.416576+10:00",
+  "generated_at": "2026-03-20T12:44:39.120975+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -1345,12 +1345,12 @@
       "length": "2m",
       "has_trees": false,
       "first_planted": "2025-04-25",
-      "inventory_date": "2025-10-24",
+      "inventory_date": "2026-03-16",
       "plants": [
         {
           "species": "Cabbage (Golden Acre)",
           "strata": "low",
-          "count": 10,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Cabbage (Golden Acre) - P2R3.0-2",
@@ -1358,13 +1358,13 @@
             {
               "type": "observation",
               "date": "2025-10-24",
-              "name": "Inventory P2R3.0-2 — Cabbage (Golden Acre)",
+              "name": "Inventory Oct 2025 P2R3.0-2 — Cabbage (Golden Acre)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-24",
-              "name": "Inventory Oct 2025 P2R3.0-2 — Cabbage (Golden Acre)",
+              "name": "Inventory P2R3.0-2 — Cabbage (Golden Acre)",
               "notes": ""
             },
             {
@@ -1372,13 +1372,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.0-2 — Cabbage (Golden Acre)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.0-2 — Cabbage (Golden Acre) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season en. maybe should self seed\nCount: 10 → 0"
             }
           ]
         },
         {
           "species": "Tomato (Marmande)",
           "strata": "low",
-          "count": 6,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.0-2",
@@ -1386,13 +1392,13 @@
             {
               "type": "observation",
               "date": "2025-10-24",
-              "name": "Inventory P2R3.0-2 — Tomato (Marmande)",
+              "name": "Inventory Oct 2025 P2R3.0-2 — Tomato (Marmande)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-24",
-              "name": "Inventory Oct 2025 P2R3.0-2 — Tomato (Marmande)",
+              "name": "Inventory P2R3.0-2 — Tomato (Marmande)",
               "notes": ""
             },
             {
@@ -1400,17 +1406,29 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.0-2 — Tomato (Marmande)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.0-2 — Tomato (Marmande) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season end\nCount: 6 → 0"
             }
           ]
         },
         {
           "species": "Zucchini (Blackjack)",
           "strata": "low",
-          "count": 5,
+          "count": 0,
           "notes": "seeded Nov 2025, 10g",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Zucchini (Blackjack) - P2R3.0-2",
           "logs": [
+            {
+              "type": "observation",
+              "date": "2025-10-24",
+              "name": "Inventory Oct 2025 P2R3.0-2 — Zucchini (Blackjack)",
+              "notes": ""
+            },
             {
               "type": "observation",
               "date": "2025-10-24",
@@ -1419,16 +1437,16 @@
             },
             {
               "type": "observation",
-              "date": "2025-10-24",
-              "name": "Inventory Oct 2025 P2R3.0-2 — Zucchini (Blackjack)",
-              "notes": ""
+              "date": "2026-03-16",
+              "name": "Observation P2R3.0-2 — Zucchini (Blackjack) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season end\nCount: 5 → 0"
             }
           ]
         },
         {
           "species": "Basil - Perennial (Thai)",
           "strata": "medium",
-          "count": 2,
+          "count": 0,
           "notes": "perennial; planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Basil - Perennial (Thai) - P2R3.0-2",
@@ -1444,13 +1462,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.0-2 — Basil - Perennial (Thai)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.0-2 — Basil - Perennial (Thai) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: died too dry\nCount: 2 → 0"
             }
           ]
         },
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 8,
+          "count": 1,
           "notes": "planted Oct/Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Comfrey - P2R3.0-2",
@@ -1458,13 +1482,13 @@
             {
               "type": "observation",
               "date": "2025-10-24",
-              "name": "Inventory P2R3.0-2 — Comfrey",
+              "name": "Inventory Oct 2025 P2R3.0-2 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-10-24",
-              "name": "Inventory Oct 2025 P2R3.0-2 — Comfrey",
+              "name": "Inventory P2R3.0-2 — Comfrey",
               "notes": ""
             },
             {
@@ -1472,13 +1496,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.0-2 — Comfrey",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.0-2 — Comfrey — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: very dry, died probably\nCount: 8 → 1"
             }
           ]
         },
         {
           "species": "Basil - Sweet (Classic)",
           "strata": "low",
-          "count": 2,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Basil - Sweet (Classic) - P2R3.0-2",
@@ -1494,6 +1524,12 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.0-2 — Basil - Sweet (Classic)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.0-2 — Basil - Sweet (Classic) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season end\nCount: 2 → 0"
             }
           ]
         }
@@ -1521,7 +1557,7 @@
       "length": "7m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2025-11-12",
+      "inventory_date": "2026-03-16",
       "plants": [
         {
           "species": "Guava (Strawberry)",
@@ -1548,6 +1584,12 @@
               "date": "2025-11-12",
               "name": "Inventory Oct 2025 P2R3.2-9 — Guava (Strawberry)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Guava (Strawberry) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nCount: 1 → 1"
             }
           ]
         },
@@ -1576,6 +1618,12 @@
               "date": "2025-11-12",
               "name": "Inventory Oct 2025 P2R3.2-9 — Pear (Williams)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Inventory P2R3.2-9 — Pear (Williams)",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T08:02:00\nMode: new_plant\nPlant notes: Good state was planted in automn 2025\nCount: 0 → 1\nNew plant added via field observation"
             }
           ]
         },
@@ -1590,21 +1638,27 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Ice Cream Bean",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Ice Cream Bean",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Ice Cream Bean",
+              "name": "Inventory P2R3.2-9 — Ice Cream Bean",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Ice Cream Bean — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: bad shape (drought and luck of canopy)\nCount: 1 → 1"
             }
           ]
         },
         {
           "species": "Tomato (Marmande)",
           "strata": "low",
-          "count": 6,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.2-9",
@@ -1620,13 +1674,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Tomato (Marmande)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Tomato (Marmande) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: objective 0 after chop and drop\nCount: 6 → 0"
             }
           ]
         },
         {
           "species": "Quince",
           "strata": "high",
-          "count": 4,
+          "count": 2,
           "notes": "FFC cuttings; 3 died, 2 replanted Oct 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Quince - P2R3.2-9",
@@ -1640,13 +1700,13 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Quince",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Quince",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Quince",
+              "name": "Inventory P2R3.2-9 — Quince",
               "notes": ""
             },
             {
@@ -1654,6 +1714,12 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Quince",
               "notes": "2025-10-25 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Quince — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: just 2 seen, before chop and drop.\nCount: 4 → 2"
             }
           ]
         },
@@ -1674,14 +1740,20 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Apple",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Apple",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Apple",
+              "name": "Inventory P2R3.2-9 — Apple",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Apple — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: should be part of the high strata but both apples here are dw"
             }
           ]
         },
@@ -1696,21 +1768,27 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Mulberry (White)",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Mulberry (White)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Mulberry (White)",
+              "name": "Inventory P2R3.2-9 — Mulberry (White)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Mulberry (White) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nCount: 1 → 1"
             }
           ]
         },
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": 2,
+          "count": 4,
           "notes": "2 lost",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Pigeon Pea - P2R3.2-9",
@@ -1724,21 +1802,27 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Pigeon Pea",
+              "name": "Inventory P2R3.2-9 — Pigeon Pea",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Pigeon Pea — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 2 sponteneous seedlings at the base of one of the 2 big Ones\n"
             }
           ]
         },
         {
           "species": "Jaboticaba",
           "strata": "medium",
-          "count": 5,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Jaboticaba - P2R3.2-9",
@@ -1748,13 +1832,19 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.2-9 — Jaboticaba",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Jaboticaba — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: mistake, not planted in that section\nCount: 5 → 0"
             }
           ]
         },
         {
           "species": "Lemon",
           "strata": "medium",
-          "count": 4,
+          "count": 1,
           "notes": "FFC seedlings, planted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Lemon - P2R3.2-9",
@@ -1768,13 +1858,13 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Lemon",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Lemon",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Lemon",
+              "name": "Inventory P2R3.2-9 — Lemon",
               "notes": ""
             },
             {
@@ -1782,13 +1872,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Lemon",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Lemon — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: just 1 seen before the chop and drop\nCount: 4 → 1"
             }
           ]
         },
         {
           "species": "Chilli (Jalapeño)",
           "strata": "medium",
-          "count": 7,
+          "count": 5,
           "notes": "1 Thai + 1 Jalapeño survived; 5 Jalapeño planted Nov",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Chilli (Jalapeño) - P2R3.2-9",
@@ -1802,27 +1898,33 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Chilli (Jalapeño)",
-              "notes": ""
+              "name": "Inventory Oct 2025 P2R3.2-9 — Chilli (Jalapeño)",
+              "notes": "1 THAI, 1 JALAPENO"
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Chilli (Jalapeño)",
-              "notes": "1 THAI, 1 JALAPENO"
+              "name": "Inventory P2R3.2-9 — Chilli (Jalapeño)",
+              "notes": ""
             },
             {
               "type": "transplanting",
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Chilli (Jalapeño)",
               "notes": "12/11/2025 JALAPENO"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Chilli (Jalapeño) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 4 Jalapeño (1 big, 3 small)+ 1 Chilli \"Thai\"\nCount: 7 → 5"
             }
           ]
         },
         {
           "species": "Cape Gooseberry",
           "strata": "medium",
-          "count": 2,
+          "count": 1,
           "notes": "planted Oct 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Cape Gooseberry - P2R3.2-9",
@@ -1838,13 +1940,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Cape Gooseberry",
               "notes": "2025-10-25 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Cape Gooseberry — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 1 seen before chop and drop\nCount: 2 → 1"
             }
           ]
         },
         {
           "species": "Basil - Perennial (Thai)",
           "strata": "medium",
-          "count": 6,
+          "count": 2,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Basil - Perennial (Thai) - P2R3.2-9",
@@ -1860,13 +1968,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Basil - Perennial (Thai)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Basil - Perennial (Thai) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 2 seen before chop and drop\nCount: 6 → 2"
             }
           ]
         },
         {
           "species": "Lavender",
           "strata": "medium",
-          "count": 6,
+          "count": 8,
           "notes": "1 lost; 1 replanted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Lavender - P2R3.2-9",
@@ -1880,13 +1994,13 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Lavender",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Lavender",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Lavender",
+              "name": "Inventory P2R3.2-9 — Lavender",
               "notes": ""
             },
             {
@@ -1894,6 +2008,12 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Lavender",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Lavender — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: Lavender is very happy in that section\nCount: 6 → 8"
             }
           ]
         },
@@ -1908,13 +2028,13 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Comfrey",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Comfrey",
+              "name": "Inventory P2R3.2-9 — Comfrey",
               "notes": ""
             },
             {
@@ -1922,6 +2042,12 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Comfrey",
               "notes": "2025-11-11 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Comfrey — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: suffering of drought but still alive\nCount: 4 → 4"
             }
           ]
         },
@@ -1944,13 +2070,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.2-9 — Basil - Sweet (Classic)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Basil - Sweet (Classic) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: senescent but still with leaves to collect\nCount: 2 → 2"
             }
           ]
         },
         {
           "species": "Garlic",
           "strata": "low",
-          "count": 32,
+          "count": 0,
           "notes": "established bed",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Garlic - P2R3.2-9",
@@ -1964,14 +2096,20 @@
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Garlic",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Garlic",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Garlic",
+              "name": "Inventory P2R3.2-9 — Garlic",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Garlic — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: collected but new sprouts\nCount: 32 → 0"
             }
           ]
         },
@@ -2004,6 +2142,12 @@
             {
               "type": "observation",
               "date": "2025-11-12",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Strawberry",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-12",
               "name": "Inventory P2R3.2-9 — Strawberry",
               "notes": ""
             },
@@ -2015,20 +2159,32 @@
             },
             {
               "type": "observation",
-              "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Strawberry",
-              "notes": ""
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Guava (Strawberry) — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nCount: 1 → 1"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Strawberry — 2026-03-17",
+              "notes": "Claire correction 17 Mar: 3 remaining, not 0. Original QR submission had 0 by mistake."
             }
           ]
         },
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 3,
+          "count": 4,
           "notes": "cuttings",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Geranium - P2R3.2-9",
           "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-12",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Geranium",
+              "notes": ""
+            },
             {
               "type": "observation",
               "date": "2025-11-12",
@@ -2037,9 +2193,75 @@
             },
             {
               "type": "observation",
+              "date": "2026-03-16",
+              "name": "Observation P2R3.2-9 — Geranium — 2026-03-17",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: spreading excessively, should be pruned correctly\nCount: 3 → "
+            }
+          ]
+        },
+        {
+          "species": "Pear (Williams)",
+          "strata": "high",
+          "count": 1,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-17T08:02:00\nMode: new_plant\nPlant notes: Good state was planted in automn 2025\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "2025-04-24",
+          "asset_name": "2026-03-17 - Pear (Williams) - P2R3.2-9",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.2-9 — Pear (Williams)",
+              "notes": "cut under graft"
+            },
+            {
+              "type": "observation",
               "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Geranium",
+              "name": "Inventory P2R3.2-9 — Pear (Williams)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-12",
+              "name": "Inventory Oct 2025 P2R3.2-9 — Pear (Williams)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Inventory P2R3.2-9 — Pear (Williams)",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T08:02:00\nMode: new_plant\nPlant notes: Good state was planted in automn 2025\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 4,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: new_plant\nPlant notes: developp well here\nCount: 0 → 4\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-17 - Tansy - P2R3.2-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Inventory P2R3.2-9 — Tansy",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: new_plant\nPlant notes: developp well here\nCount: 0 → 4\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 3,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: new_plant\nPlant notes: developp well here\nCount: 0 → 3\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-17 - Sweet Potato - P2R3.2-9",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-16",
+              "name": "Inventory P2R3.2-9 — Sweet Potato",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: new_plant\nPlant notes: developp well here\nCount: 0 → 3\nNew plant added via field observation"
             }
           ]
         }
@@ -2079,12 +2301,12 @@
       "length": "6m",
       "has_trees": false,
       "first_planted": "2025-04-24",
-      "inventory_date": "2025-11-12",
+      "inventory_date": "2026-03-17",
       "plants": [
         {
           "species": "Cabbage (Red)",
           "strata": "low",
-          "count": 50,
+          "count": 8,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Cabbage (Red) - P2R3.9-15",
@@ -2100,13 +2322,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Cabbage (Red)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Cabbage (Red) — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: are still here even with the drought\nCount: 50 → 8"
             }
           ]
         },
         {
           "species": "Tomato (Marmande)",
           "strata": "low",
-          "count": 20,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.9-15",
@@ -2122,13 +2350,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Tomato (Marmande)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Tomato (Marmande) — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: removed or to remove, production season end\nCount: 20 → 0"
             }
           ]
         },
         {
           "species": "Amaranth",
           "strata": "low",
-          "count": 2,
+          "count": 0,
           "notes": "Chinese amaranth, planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Amaranth - P2R3.9-15",
@@ -2144,13 +2378,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Amaranth",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Amaranth — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nCount: 2 → 0"
             }
           ]
         },
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 12,
+          "count": 3,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Comfrey - P2R3.9-15",
@@ -2166,13 +2406,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Comfrey",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Comfrey — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: some died because too dry\nCount: 12 → 3"
             }
           ]
         },
         {
           "species": "Sweet Potato",
           "strata": "low",
-          "count": 6,
+          "count": 4,
           "notes": "2 planted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Sweet Potato - P2R3.9-15",
@@ -2200,13 +2446,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Sweet Potato",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Sweet Potato — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: developing\nCount: 6 → 4"
             }
           ]
         },
         {
           "species": "Tansy",
           "strata": "low",
-          "count": 4,
+          "count": 2,
           "notes": "2 planted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Tansy - P2R3.9-15",
@@ -2234,13 +2486,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Tansy",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Tansy — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: 2 remain after summer\nCount: 4 → 2"
             }
           ]
         },
         {
           "species": "Basil - Sweet (Classic)",
           "strata": "low",
-          "count": 10,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Basil - Sweet (Classic) - P2R3.9-15",
@@ -2256,6 +2514,100 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.9-15 — Basil - Sweet (Classic)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Basil - Sweet (Classic) — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: season end\nCount: 10 → 0"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.9-15 — Basil - Sweet (Classic)",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: just planted 18 March 2026\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 1,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: Planted nov 2025 from Beck and Dan\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Mulberry (White) - P2R3.9-15",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.9-15 — Mulberry (White)",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: Planted nov 2025 from Beck and Dan\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Basil - Sweet (Classic)",
+          "strata": "low",
+          "count": 1,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: just planted 18 March 2026\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "2025-11-12",
+          "asset_name": "2026-03-18 - Basil - Sweet (Classic) - P2R3.9-15",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-12",
+              "name": "Inventory P2R3.9-15 — Basil - Sweet (Classic)",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-12",
+              "name": "Renovation P2R3.9-15 — Basil - Sweet (Classic)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R3.9-15 — Basil - Sweet (Classic) — 2026-03-18",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: season end\nCount: 10 → 0"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.9-15 — Basil - Sweet (Classic)",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: just planted 18 March 2026\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "high",
+          "count": 1,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: planted in May or Nov 2025 (?)\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Ice Cream Bean - P2R3.9-15",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.9-15 — Ice Cream Bean",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: planted in May or Nov 2025 (?)\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Quince",
+          "strata": "high",
+          "count": 1,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-18T03:33:00\nMode: new_plant\nPlant notes: planted in Nov 2025\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Quince - P2R3.9-15",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.9-15 — Quince",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T03:33:00\nMode: new_plant\nPlant notes: planted in Nov 2025\nCount: 0 → 1\nNew plant added via field observation"
             }
           ]
         }
@@ -2295,7 +2647,7 @@
       "length": "6m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2025-11-12",
+      "inventory_date": "2026-03-18",
       "plants": [
         {
           "species": "Jacaranda",
@@ -2322,13 +2674,19 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.15-21 — Jacaranda",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Jacaranda — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: good health"
             }
           ]
         },
         {
           "species": "Forest Red Gum",
           "strata": "emergent",
-          "count": 1,
+          "count": 0,
           "notes": "planted Oct 2025, FFC nursery",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Forest Red Gum - P2R3.15-21",
@@ -2338,13 +2696,19 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.15-21 — Forest Red Gum",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Forest Red Gum — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: not seen"
             }
           ]
         },
         {
           "species": "Ice Cream Bean",
           "strata": "high",
-          "count": 5,
+          "count": 0,
           "notes": "3 original + 1 planted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Ice Cream Bean - P2R3.15-21",
@@ -2372,13 +2736,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Ice Cream Bean",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Ice Cream Bean — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: not seen"
             }
           ]
         },
         {
           "species": "Tomato (Marmande)",
           "strata": "low",
-          "count": 14,
+          "count": 0,
           "notes": "planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.15-21",
@@ -2394,13 +2764,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Tomato (Marmande)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Tomato (Marmande) — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: removed or to remove, season end"
             }
           ]
         },
         {
           "species": "Quince",
           "strata": "high",
-          "count": 8,
+          "count": 1,
           "notes": "FFC cuttings, 4 replanted Oct 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Quince - P2R3.15-21",
@@ -2428,13 +2804,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Quince",
               "notes": "2025-10-25 00:00:00; NURSERY FFC"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Quince — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: just one seen"
             }
           ]
         },
         {
           "species": "Apple",
           "strata": "medium",
-          "count": 5,
+          "count": 4,
           "notes": "1 original + 2 FFC seedlings planted Oct 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Apple - P2R3.15-21",
@@ -2462,13 +2844,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Apple",
               "notes": "2025-10-27 00:00:00; 2 SEEDLINGS FROM NURSERY FFC"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Apple — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 4 total — 2 seedlings from FFC nursery, 1 Tropic Sweet nearly dead (not counted), 1 Dorsett Golden planted today 18 Mar from Daleys Fruit nursery. Count confirmed by Clai"
             }
           ]
         },
         {
           "species": "Mulberry (White)",
           "strata": "high",
-          "count": 2,
+          "count": 0,
           "notes": "from Beck & Dan, planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Mulberry (White) - P2R3.15-21",
@@ -2484,13 +2872,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Mulberry (White)",
               "notes": "last added 12/11/2025 FROM BECK AND DAN"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Mulberry (White) — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 2 black but 0 white"
             }
           ]
         },
         {
           "species": "Mulberry (Beenleigh Black)",
           "strata": "high",
-          "count": 5,
+          "count": 2,
           "notes": "3=DF (Daleys Fruit); 1 added Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Mulberry (Beenleigh Black) - P2R3.15-21",
@@ -2518,13 +2912,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Mulberry (Beenleigh Black)",
               "notes": "last added 12/11/2025 FROM BECK AND DAN"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Mulberry (Beenleigh Black) — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 2 black from Daleys planted May 2025"
             }
           ]
         },
         {
           "species": "Lemon",
           "strata": "medium",
-          "count": 4,
+          "count": 1,
           "notes": "FFC seedlings, planted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Lemon - P2R3.15-21",
@@ -2546,13 +2946,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Lemon",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Lemon — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 1 seen, good health"
             }
           ]
         },
         {
           "species": "Chilli (Jalapeño)",
           "strata": "medium",
-          "count": 10,
+          "count": 4,
           "notes": "Jalapeño + others, planted Nov 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Chilli (Jalapeño) - P2R3.15-21",
@@ -2568,13 +2974,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Chilli (Jalapeño)",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Chilli (Jalapeño) — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: died because of drought. 10→4"
             }
           ]
         },
         {
           "species": "Ginger",
           "strata": "low",
-          "count": 2,
+          "count": 1,
           "notes": "poor state",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Ginger - P2R3.15-21",
@@ -2596,6 +3008,12 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.15-21 — Ginger",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Ginger — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 1 native ginger"
             }
           ]
         },
@@ -2630,6 +3048,12 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Comfrey",
               "notes": "2025-11-11 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Comfrey — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 1 added today (18 March), 1 died. Net count stays 4. Some more can be added."
             }
           ]
         },
@@ -2658,6 +3082,12 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.15-21 — Turmeric",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Turmeric — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: healthy"
             }
           ]
         },
@@ -2680,13 +3110,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Sweet Potato",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Sweet Potato — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026"
             }
           ]
         },
         {
           "species": "Tansy",
           "strata": "low",
-          "count": 6,
+          "count": 3,
           "notes": "2 planted Nov 2025",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Tansy - P2R3.15-21",
@@ -2714,13 +3150,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Tansy",
               "notes": "2025-11-12 00:00:00"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Tansy — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: 2 big, 1 small. 6→3"
             }
           ]
         },
         {
           "species": "Garlic",
           "strata": "low",
-          "count": 12,
+          "count": 0,
           "notes": "3 lost",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Garlic - P2R3.15-21",
@@ -2742,6 +3184,12 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.15-21 — Garlic",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Garlic — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: collected, self seed?"
             }
           ]
         },
@@ -2770,7 +3218,7 @@
         {
           "species": "Strawberry",
           "strata": "low",
-          "count": 4,
+          "count": 2,
           "notes": "ordered GP Taree Oct 2025",
           "first_planted": "2025-11-12",
           "asset_name": "25 APR 2025 - Strawberry - P2R3.15-21",
@@ -2786,13 +3234,19 @@
               "date": "2025-11-12",
               "name": "Renovation P2R3.15-21 — Strawberry",
               "notes": "2025-11-01 00:00:00; 28/10/2025 GP TAREE ORDER"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Strawberry — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: survived drought, end of section"
             }
           ]
         },
         {
           "species": "Borage",
           "strata": "low",
-          "count": 10,
+          "count": 0,
           "notes": "",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Borage - P2R3.15-21",
@@ -2808,6 +3262,28 @@
               "date": "2025-11-12",
               "name": "Inventory P2R3.15-21 — Borage",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.15-21 — Borage — 2026-03-18",
+              "notes": "Claire field obs 18 Mar 2026: old borage plants gone. White Borage seeded next to apple tree (seeds from Greenpatch Organic Seeds) — seeding record to be created separately."
+            }
+          ]
+        },
+        {
+          "species": "Passionfruit",
+          "strata": "high",
+          "count": 3,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-18T03:36:00\nMode: new_plant\nPlant notes: added today from ffc nursery\nCount: 0 → 3\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Passionfruit - P2R3.15-21",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.15-21 — Passionfruit",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-18T03:36:00\nMode: new_plant\nPlant notes: added today from ffc nursery\nCount: 0 → 3\nNew plant added via field observation"
             }
           ]
         }
@@ -2847,7 +3323,7 @@
       "length": "12m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2025-11-12",
+      "inventory_date": "2026-03-17",
       "plants": [
         {
           "species": "Tallowood (Gum)",
@@ -3336,6 +3812,70 @@
               "notes": ""
             }
           ]
+        },
+        {
+          "species": "Passionfruit",
+          "strata": "high",
+          "count": 2,
+          "notes": "Reporter: James\nSubmitted: 2026-03-18T22:54:00\nMode: new_plant\nPlant notes: Plated during chop and drop 18/03/2026\nCount: 0 → 2\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Passionfruit - P2R3.26-38",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.26-38 — Passionfruit",
+              "notes": "Reporter: James\nSubmitted: 2026-03-18T22:54:00\nMode: new_plant\nPlant notes: Plated during chop and drop 18/03/2026\nCount: 0 → 2\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Ginger",
+          "strata": "low",
+          "count": 1,
+          "notes": "Reporter: James\nSubmitted: 2026-03-18T22:54:00\nMode: new_plant\nPlant notes: Plated during chop and drop 18/03/2026\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Ginger - P2R3.26-38",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.26-38 — Ginger",
+              "notes": "Reporter: James\nSubmitted: 2026-03-18T22:54:00\nMode: new_plant\nPlant notes: Plated during chop and drop 18/03/2026\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Coffee",
+          "strata": "medium",
+          "count": 4,
+          "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 4\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Coffee - P2R3.26-38",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.26-38 — Coffee",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 4\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Achiote",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "",
+          "asset_name": "2026-03-18 - Achiote - P2R3.26-38",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Inventory P2R3.26-38 — Achiote",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
         }
       ],
       "green_manure": [
@@ -3377,7 +3917,7 @@
       "length": "10m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-09",
+      "inventory_date": "2026-03-18",
       "plants": [
         {
           "species": "Forest Red Gum",
@@ -3392,13 +3932,19 @@
               "date": "2025-11-16",
               "name": "Inventory P2R3.40-50 — Forest Red Gum",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Forest Red Gum — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: beginning of the section\nCount: 1 → 1"
             }
           ]
         },
         {
           "species": "Ice Cream Bean",
           "strata": "high",
-          "count": 1,
+          "count": 0,
           "notes": "2 planted Nov 2025",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Ice Cream Bean - P2R3.40-50",
@@ -3426,6 +3972,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Ice Cream Bean",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Ice Cream Bean — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: not seen before chop and drop\nCount: 1 → 0"
             }
           ]
         },
@@ -3446,13 +3998,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Malabar Chestnut",
+              "name": "Inventory P2R3.40-50 — Malabar Chestnut",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Malabar Chestnut",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Malabar Chestnut",
               "notes": ""
             },
             {
@@ -3460,6 +4012,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Malabar Chestnut",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Malabar Chestnut — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 on that section / 1 dead already registered\nCount: 1 → 1"
             }
           ]
         },
@@ -3494,13 +4052,19 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Macadamia",
               "notes": "Major loss"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Macadamia — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 bush and 1 gouros\nCount: 2 → 2"
             }
           ]
         },
         {
           "species": "Tagasaste - Tree Lucerne",
           "strata": "emergent",
-          "count": 1,
+          "count": 6,
           "notes": "3 planted Nov 2025",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Tagasaste - Tree Lucerne - P2R3.40-50",
@@ -3516,13 +4080,19 @@
               "date": "2025-11-17",
               "name": "Renovation P2R3.40-50 — Tagasaste - Tree Lucerne",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Tagasaste - Tree Lucerne — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 5 added today on that section\nCount: 1 → 6"
             }
           ]
         },
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": 5,
+          "count": 3,
           "notes": "8 lost; seeded 70 seeds",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Pigeon Pea - P2R3.40-50",
@@ -3550,13 +4120,19 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Pigeon Pea",
               "notes": "2 very small + 3 high OK"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Pigeon Pea — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 3 remaining\nCount: 5 → 3"
             }
           ]
         },
         {
           "species": "Mulberry (White)",
           "strata": "high",
-          "count": 2,
+          "count": 0,
           "notes": "FFC nursery, planted Nov 2025",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Mulberry (White) - P2R3.40-50",
@@ -3572,13 +4148,19 @@
               "date": "2025-11-17",
               "name": "Renovation P2R3.40-50 — Mulberry (White)",
               "notes": "ffc nursery"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Mulberry (White) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 2 → 0"
             }
           ]
         },
         {
           "species": "Tomato (Marmande)",
           "strata": "low",
-          "count": 32,
+          "count": 0,
           "notes": "FFC nursery, 16 planted Nov 2025",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.40-50",
@@ -3594,13 +4176,19 @@
               "date": "2025-11-17",
               "name": "Renovation P2R3.40-50 — Tomato (Marmande)",
               "notes": "ffc nursery"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Tomato (Marmande) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: removed or to removed\nCount: 32 → 0"
             }
           ]
         },
         {
           "species": "Amaranth",
           "strata": "low",
-          "count": 2,
+          "count": 0,
           "notes": "FFC nursery, apparition",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Amaranth - P2R3.40-50",
@@ -3616,6 +4204,12 @@
               "date": "2025-11-17",
               "name": "Renovation P2R3.40-50 — Amaranth",
               "notes": "ffc nursery apparition"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Amaranth — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: not seen\nCount: 2 → 0"
             }
           ]
         },
@@ -3656,7 +4250,7 @@
         {
           "species": "Pak Choi",
           "strata": "medium",
-          "count": 25,
+          "count": 0,
           "notes": "11 pak choi + 3 red cabbage planted; eaten by caterpillars",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Pak Choi - P2R3.40-50",
@@ -3672,13 +4266,19 @@
               "date": "2025-11-17",
               "name": "Renovation P2R3.40-50 — Pak Choi",
               "notes": "&3; ffc nursery; eaten by caterpillar & aphids when transfered"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Pak Choi — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: harvested or dead end cycle\nCount: 25 → 0"
             }
           ]
         },
         {
           "species": "Zucchini (Blackjack)",
           "strata": "low",
-          "count": 10,
+          "count": 0,
           "notes": "FFC nursery",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Zucchini (Blackjack) - P2R3.40-50",
@@ -3694,6 +4294,12 @@
               "date": "2025-11-16",
               "name": "Inventory Oct 2025 P2R3.40-50 — Zucchini (Blackjack)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Zucchini (Blackjack) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: removed or to remove\nCount: 10 → 0"
             }
           ]
         },
@@ -3722,6 +4328,12 @@
               "date": "2025-11-16",
               "name": "Inventory Oct 2025 P2R3.40-50 — Peach",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Peach — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 2 Okinawa and 1 aztec gold from Daleys Fruit nursery\nCount: 3 → 3"
             }
           ]
         },
@@ -3742,14 +4354,20 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Apricot",
+              "name": "Inventory P2R3.40-50 — Apricot",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Apricot",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Apricot",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Apricot — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 Bentley from Daleys Fruit nursery\nCount: 1 → 1"
             }
           ]
         },
@@ -3790,7 +4408,7 @@
         {
           "species": "Acerola",
           "strata": "medium",
-          "count": 1,
+          "count": 0,
           "notes": "state ok",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Acerola - P2R3.40-50",
@@ -3812,6 +4430,12 @@
               "date": "2025-11-16",
               "name": "Inventory Oct 2025 P2R3.40-50 — Acerola",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Acerola — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 0"
             }
           ]
         },
@@ -3840,6 +4464,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Chilli (Jalapeño)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Chilli (Jalapeño) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ]
         },
@@ -3860,13 +4490,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Curry Leaf",
+              "name": "Inventory P2R3.40-50 — Curry Leaf",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Curry Leaf",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Curry Leaf",
               "notes": ""
             },
             {
@@ -3874,13 +4504,19 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Curry Leaf",
               "notes": "Reclassified: was previously identified as Tea Tree Oil"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Curry Leaf — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ]
         },
         {
           "species": "Eggplant",
           "strata": "medium",
-          "count": 6,
+          "count": 3,
           "notes": "3 planted Nov 2025",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Eggplant - P2R3.40-50",
@@ -3896,6 +4532,12 @@
               "date": "2025-11-17",
               "name": "Renovation P2R3.40-50 — Eggplant",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Eggplant — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: senescent (cycle end)\nCount: 6 → 3"
             }
           ]
         },
@@ -3924,6 +4566,12 @@
               "date": "2025-11-16",
               "name": "Inventory P2R3.40-50 — Galangal",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Galangal — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 2 → 2"
             }
           ]
         },
@@ -3952,6 +4600,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Cape Gooseberry",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Cape Gooseberry — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ]
         },
@@ -3972,13 +4626,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Comfrey",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Comfrey",
+              "name": "Inventory P2R3.40-50 — Comfrey",
               "notes": ""
             },
             {
@@ -3986,6 +4640,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Comfrey",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Comfrey — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: add more if possible\nCount: 4 → 4"
             }
           ]
         },
@@ -4014,6 +4674,12 @@
               "date": "2025-11-16",
               "name": "Inventory P2R3.40-50 — Turmeric",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Turmeric — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ]
         },
@@ -4054,6 +4720,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Tansy",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Tansy — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: add more if possible\nCount: 1 → 1"
             }
           ]
         },
@@ -4074,13 +4746,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Garlic",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Garlic",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Garlic",
+              "name": "Inventory P2R3.40-50 — Garlic",
               "notes": ""
             }
           ]
@@ -4098,6 +4770,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.40-50 — Sweet Potato",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.40-50 — Sweet Potato — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ]
         }
@@ -4153,296 +4831,26 @@
       "length": "12m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-09",
+      "inventory_date": "2026-03-18",
       "plants": [
         {
-          "species": "Apricot",
-          "strata": "high",
+          "species": "Forest Red Gum",
+          "strata": "emergent",
           "count": 0,
-          "notes": "1 Bentley",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Apricot - P2R3.50-62",
+          "notes": "FFC nursery, 1 planted Nov 2025; 2 original",
+          "first_planted": "2025-04-25",
+          "asset_name": "25 APR 2025 - Forest Red Gum - P2R3.50-62",
           "logs": [
             {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Apricot",
-              "notes": "1 bentley"
-            },
-            {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Apricot",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Apricot",
+              "name": "Inventory P2R3.50-62 — Forest Red Gum",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Apricot",
-              "notes": "Dead"
-            }
-          ]
-        },
-        {
-          "species": "Turmeric",
-          "strata": "low",
-          "count": 0,
-          "notes": "status uncertain",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Turmeric - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Turmeric",
-              "notes": "?"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Turmeric",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Turmeric",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Turmeric",
-              "notes": "Dead"
-            }
-          ]
-        },
-        {
-          "species": "Mulberry (White)",
-          "strata": "high",
-          "count": 2,
-          "notes": "FFC nursery, planted Nov 2025",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Mulberry (White) - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Mulberry (White)",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Mulberry (White)",
-              "notes": "ffc nursery"
-            }
-          ]
-        },
-        {
-          "species": "Amaranth",
-          "strata": "low",
-          "count": 2,
-          "notes": "FFC nursery, apparition",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Amaranth - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Amaranth",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Amaranth",
-              "notes": "ffc nursery apparition"
-            }
-          ]
-        },
-        {
-          "species": "Galangal",
-          "strata": "low",
-          "count": 0,
-          "notes": "1 lost",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Galangal - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Galangal",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Galangal",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Galangal",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Galangal",
-              "notes": "All dead"
-            }
-          ]
-        },
-        {
-          "species": "Lemon",
-          "strata": "medium",
-          "count": 0,
-          "notes": "FFC cuttings; 2 survivors at row end",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Lemon - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Lemon",
-              "notes": "2 survivors at the row end"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Lemon",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Lemon",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Lemon",
-              "notes": "All dead"
-            }
-          ]
-        },
-        {
-          "species": "Tomato (Marmande)",
-          "strata": "low",
-          "count": 32,
-          "notes": "FFC nursery, 16 planted Nov 2025",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Tomato (Marmande)",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Tomato (Marmande)",
-              "notes": "ffc nursery"
-            }
-          ]
-        },
-        {
-          "species": "Garlic",
-          "strata": "low",
-          "count": 0,
-          "notes": "7.5 lost",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Garlic - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Garlic",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Garlic",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Garlic",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Eggplant",
-          "strata": "medium",
-          "count": 1,
-          "notes": "3 planted Nov 2025",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Eggplant - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Eggplant",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Eggplant",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Eggplant",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Curry Leaf",
-          "strata": "medium",
-          "count": 0,
-          "notes": "Indian Curry tree",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Curry Leaf - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Curry Leaf",
-              "notes": "?"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Curry Leaf",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Curry Leaf",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Curry Leaf",
+              "name": "Observation P2R3.50-62 — Forest Red Gum",
               "notes": "Dead"
             }
           ]
@@ -4482,272 +4890,42 @@
           ]
         },
         {
-          "species": "Tansy",
-          "strata": "low",
-          "count": 2,
-          "notes": "3 planted Nov 2025; plant more",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Tansy - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Tansy",
-              "notes": "plant more"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Tansy",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Tansy",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Tansy",
-              "notes": "plant more"
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Tansy",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Peach",
+          "species": "Malabar Chestnut",
           "strata": "high",
-          "count": 0,
-          "notes": "2 Okinawa + 1 Aztec Gold",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Peach - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Peach",
-              "notes": "2 okinawa, 1 aztec gold"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Peach",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Peach",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Peach",
-              "notes": "All dead"
-            }
-          ]
-        },
-        {
-          "species": "Tagasaste - Tree Lucerne",
-          "strata": "emergent",
-          "count": 0,
-          "notes": "3 planted Nov 2025",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Tagasaste - Tree Lucerne - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Tagasaste - Tree Lucerne",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Tagasaste - Tree Lucerne",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Pigeon Pea",
-          "strata": "high",
-          "count": 8,
-          "notes": "8 lost; seeded 70 seeds",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Pigeon Pea - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Pigeon Pea",
-              "notes": "70 seeds"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Pigeon Pea",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Pigeon Pea",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Pigeon Pea",
-              "notes": "Growth from seeds"
-            }
-          ]
-        },
-        {
-          "species": "Comfrey",
-          "strata": "low",
-          "count": 4,
-          "notes": "4 lost; plant more",
-          "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Comfrey - P2R3.50-62",
-          "logs": [
-            {
-              "type": "transplanting",
-              "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Comfrey",
-              "notes": "plant more"
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Comfrey",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Comfrey",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Comfrey",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Acerola",
-          "strata": "medium",
           "count": 1,
-          "notes": "state ok",
+          "notes": "1 dead, 2 just alive",
           "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Acerola - P2R3.50-62",
+          "asset_name": "25 APR 2025 - Malabar Chestnut - P2R3.50-62",
           "logs": [
             {
               "type": "transplanting",
               "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Acerola",
-              "notes": "state ok"
+              "name": "Planted P2R3.50-62 — Malabar Chestnut",
+              "notes": "1 dead, 2 just alive"
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Acerola",
-              "notes": ""
-            },
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Acerola",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Zucchini (Blackjack)",
-          "strata": "low",
-          "count": 10,
-          "notes": "FFC nursery",
-          "first_planted": "2025-04-25",
-          "asset_name": "25 APR 2025 - Zucchini (Blackjack) - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Zucchini (Blackjack)",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Malabar Chestnut",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Zucchini (Blackjack)",
-              "notes": ""
-            }
-          ]
-        },
-        {
-          "species": "Cape Gooseberry",
-          "strata": "medium",
-          "count": 0,
-          "notes": "3 planted Nov 2025",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Cape Gooseberry - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Cape Gooseberry",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Cape Gooseberry",
+              "name": "Inventory P2R3.50-62 — Malabar Chestnut",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Cape Gooseberry",
-              "notes": "All dead"
-            }
-          ]
-        },
-        {
-          "species": "Chilli (Jalapeño)",
-          "strata": "medium",
-          "count": 0,
-          "notes": "3 planted Nov 2025",
-          "first_planted": "2025-11-17",
-          "asset_name": "25 APR 2025 - Chilli (Jalapeño) - P2R3.50-62",
-          "logs": [
-            {
-              "type": "observation",
-              "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Chilli (Jalapeño)",
-              "notes": ""
-            },
-            {
-              "type": "transplanting",
-              "date": "2025-11-17",
-              "name": "Renovation P2R3.50-62 — Chilli (Jalapeño)",
+              "name": "Observation P2R3.50-62 — Malabar Chestnut",
               "notes": ""
             },
             {
               "type": "observation",
-              "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Chilli (Jalapeño)",
-              "notes": "All dead"
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Malabar Chestnut — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 1 → 1"
             }
           ]
         },
@@ -4782,6 +4960,204 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.50-62 — Macadamia",
               "notes": "Major loss"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Macadamia — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: 2 bush variety from Daleys Fruit nursery\nCount: 2 → 2"
+            }
+          ]
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "emergent",
+          "count": 0,
+          "notes": "3 planted Nov 2025",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Tagasaste - Tree Lucerne - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Tagasaste - Tree Lucerne",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Tagasaste - Tree Lucerne",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Inventory P2R3.50-62 — Tagasaste - Tree Lucerne",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: new_plant\nPlant notes: added today from FFC nursery\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Pigeon Pea",
+          "strata": "high",
+          "count": 8,
+          "notes": "8 lost; seeded 70 seeds",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Pigeon Pea - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Pigeon Pea",
+              "notes": "70 seeds"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Pigeon Pea",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Pigeon Pea",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Pigeon Pea",
+              "notes": "Growth from seeds"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Pigeon Pea — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 8 → 8"
+            }
+          ]
+        },
+        {
+          "species": "Mulberry (White)",
+          "strata": "high",
+          "count": 0,
+          "notes": "FFC nursery, planted Nov 2025",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Mulberry (White) - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Mulberry (White)",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Mulberry (White)",
+              "notes": "ffc nursery"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Mulberry (White) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: maybe never planted here\nCount: 2 → 0"
+            }
+          ]
+        },
+        {
+          "species": "Tomato (Marmande)",
+          "strata": "low",
+          "count": 0,
+          "notes": "FFC nursery, 16 planted Nov 2025",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Tomato (Marmande) - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Tomato (Marmande)",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Tomato (Marmande)",
+              "notes": "ffc nursery"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Tomato (Marmande) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 32 → 0"
+            }
+          ]
+        },
+        {
+          "species": "Amaranth",
+          "strata": "low",
+          "count": 0,
+          "notes": "FFC nursery, apparition",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Amaranth - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Amaranth",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Amaranth",
+              "notes": "ffc nursery apparition"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Amaranth — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 2 → 0"
+            }
+          ]
+        },
+        {
+          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "oil variety; healthy",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Tea Tree Oil (Melaleuca) (Alternifolia) - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "notes": "healthy"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "notes": "All tea trees confirmed in this section"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: really in good health\nCount: 4 → 4"
             }
           ]
         },
@@ -4814,92 +5190,500 @@
           ]
         },
         {
-          "species": "Forest Red Gum",
-          "strata": "emergent",
+          "species": "Zucchini (Blackjack)",
+          "strata": "low",
           "count": 0,
-          "notes": "FFC nursery, 1 planted Nov 2025; 2 original",
+          "notes": "FFC nursery",
           "first_planted": "2025-04-25",
-          "asset_name": "25 APR 2025 - Forest Red Gum - P2R3.50-62",
+          "asset_name": "25 APR 2025 - Zucchini (Blackjack) - P2R3.50-62",
           "logs": [
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Forest Red Gum",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Zucchini (Blackjack)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Zucchini (Blackjack)",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Zucchini (Blackjack) — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: removed or to remove because lifecycle end\nCount: 10 → 0"
+            }
+          ]
+        },
+        {
+          "species": "Peach",
+          "strata": "high",
+          "count": 0,
+          "notes": "2 Okinawa + 1 Aztec Gold",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Peach - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Peach",
+              "notes": "2 okinawa, 1 aztec gold"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Peach",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Peach",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Forest Red Gum",
+              "name": "Observation P2R3.50-62 — Peach",
+              "notes": "All dead"
+            }
+          ]
+        },
+        {
+          "species": "Apricot",
+          "strata": "high",
+          "count": 0,
+          "notes": "1 Bentley",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Apricot - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Apricot",
+              "notes": "1 bentley"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Apricot",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Apricot",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Apricot",
               "notes": "Dead"
             }
           ]
         },
         {
-          "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
+          "species": "Lemon",
           "strata": "medium",
-          "count": 4,
-          "notes": "oil variety; healthy",
+          "count": 0,
+          "notes": "FFC cuttings; 2 survivors at row end",
           "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Tea Tree Oil (Melaleuca) (Alternifolia) - P2R3.50-62",
+          "asset_name": "25 APR 2025 - Lemon - P2R3.50-62",
           "logs": [
             {
               "type": "transplanting",
               "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
-              "notes": "healthy"
+              "name": "Planted P2R3.50-62 — Lemon",
+              "notes": "2 survivors at the row end"
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Lemon",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "name": "Inventory P2R3.50-62 — Lemon",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
-              "notes": "All tea trees confirmed in this section"
+              "name": "Observation P2R3.50-62 — Lemon",
+              "notes": "All dead"
             }
           ]
         },
         {
-          "species": "Malabar Chestnut",
-          "strata": "high",
+          "species": "Acerola",
+          "strata": "medium",
           "count": 1,
-          "notes": "1 dead, 2 just alive",
+          "notes": "state ok",
           "first_planted": "2025-04-24",
-          "asset_name": "25 APR 2025 - Malabar Chestnut - P2R3.50-62",
+          "asset_name": "25 APR 2025 - Acerola - P2R3.50-62",
           "logs": [
             {
               "type": "transplanting",
               "date": "2025-04-24",
-              "name": "Planted P2R3.50-62 — Malabar Chestnut",
-              "notes": "1 dead, 2 just alive"
+              "name": "Planted P2R3.50-62 — Acerola",
+              "notes": "state ok"
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Malabar Chestnut",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Acerola",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Malabar Chestnut",
+              "name": "Inventory P2R3.50-62 — Acerola",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Acerola — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: Acerola (florida sweet) from Daleys Fruit nursery\nCount: 1 → 1"
+            }
+          ]
+        },
+        {
+          "species": "Chilli (Jalapeño)",
+          "strata": "medium",
+          "count": 0,
+          "notes": "3 planted Nov 2025",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Chilli (Jalapeño) - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Chilli (Jalapeño)",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Chilli (Jalapeño)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2026-03-09",
-              "name": "Observation P2R3.50-62 — Malabar Chestnut",
+              "name": "Observation P2R3.50-62 — Chilli (Jalapeño)",
+              "notes": "All dead"
+            }
+          ]
+        },
+        {
+          "species": "Curry Leaf",
+          "strata": "medium",
+          "count": 0,
+          "notes": "Indian Curry tree",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Curry Leaf - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Curry Leaf",
+              "notes": "?"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Curry Leaf",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Curry Leaf",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Curry Leaf",
+              "notes": "Dead"
+            }
+          ]
+        },
+        {
+          "species": "Eggplant",
+          "strata": "medium",
+          "count": 0,
+          "notes": "3 planted Nov 2025",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Eggplant - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Eggplant",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Eggplant",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Eggplant",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Eggplant — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: not seen, to remove if existing because end of lifecycle\nCount: 1 → 0"
+            }
+          ]
+        },
+        {
+          "species": "Galangal",
+          "strata": "low",
+          "count": 0,
+          "notes": "1 lost",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Galangal - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Galangal",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Galangal",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Galangal",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Galangal",
+              "notes": "All dead"
+            }
+          ]
+        },
+        {
+          "species": "Cape Gooseberry",
+          "strata": "medium",
+          "count": 0,
+          "notes": "3 planted Nov 2025",
+          "first_planted": "2025-11-17",
+          "asset_name": "25 APR 2025 - Cape Gooseberry - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Cape Gooseberry",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Cape Gooseberry",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Cape Gooseberry",
+              "notes": "All dead"
+            }
+          ]
+        },
+        {
+          "species": "Comfrey",
+          "strata": "low",
+          "count": 4,
+          "notes": "4 lost; plant more",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Comfrey - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Comfrey",
+              "notes": "plant more"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Comfrey",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Comfrey",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Comfrey",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Comfrey — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 4 → 4"
+            }
+          ]
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 0,
+          "notes": "status uncertain",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Turmeric - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Turmeric",
+              "notes": "?"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Turmeric",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Turmeric",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Turmeric",
+              "notes": "Dead"
+            }
+          ]
+        },
+        {
+          "species": "Tansy",
+          "strata": "low",
+          "count": 0,
+          "notes": "3 planted Nov 2025; plant more",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Tansy - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Tansy",
+              "notes": "plant more"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Tansy",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Tansy",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Tansy",
+              "notes": "plant more"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Tansy",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Observation P2R3.50-62 — Tansy — 2026-03-19",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: add 2 around malabar chestnut and acerola\nCount: 2 → 0"
+            }
+          ]
+        },
+        {
+          "species": "Garlic",
+          "strata": "low",
+          "count": 0,
+          "notes": "7.5 lost",
+          "first_planted": "2025-04-24",
+          "asset_name": "25 APR 2025 - Garlic - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Garlic",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Garlic",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Garlic",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Tagasaste - Tree Lucerne",
+          "strata": "emergent",
+          "count": 1,
+          "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: new_plant\nPlant notes: added today from FFC nursery\nCount: 0 → 1\nNew plant added via field observation",
+          "first_planted": "2025-11-17",
+          "asset_name": "2026-03-19 - Tagasaste - Tree Lucerne - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Tagasaste - Tree Lucerne",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Tagasaste - Tree Lucerne",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-18",
+              "name": "Inventory P2R3.50-62 — Tagasaste - Tree Lucerne",
+              "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: new_plant\nPlant notes: added today from FFC nursery\nCount: 0 → 1\nNew plant added via field observation"
             }
           ]
         }
