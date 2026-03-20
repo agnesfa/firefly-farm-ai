@@ -182,39 +182,36 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 - **Auth:** OAuth2 (credentials in .env, never in repo)
 - **API base:** https://margregen.farmos.net/api
 
-### Current State (as of March 9, 2026 — all 5 rows imported + historical + field observations)
+### Current State (as of March 20, 2026 — all rows + nursery + field observations + Claire's corrections)
 
 | Entity | Count | Notes |
 |--------|-------|-------|
-| Plant type taxonomy | **223** | 222 in CSV (218 v7 + 5 field obs additions) + 1 extra in farmOS |
-| Plant assets | **415+** | 404 original + 11 new from field observations |
-| Observation logs | **~650** | 442 inventory + ~137 historical + ~70 from field obs imports |
+| Plant type taxonomy | **271** | 277 in CSV, 271 in farmOS (26 updated March 20 from Claire's corrections) |
+| Plant assets | **630+** | 596+ across 53 sections (P1+P2 paddocks + nursery) |
+| Observation logs | **~1200+** | Inventory + historical + field obs + nursery |
 | Transplanting logs | **~238** | 7 original + ~230 historical (planted + renovation) |
-| Activity logs | **63** | Various |
-| Land assets | 93 | Paddocks and rows fully mapped, including 37 sections (33 + 4 gap) |
-| Structure assets | 17 | Including nursery and sub-locations |
-| Seed assets | 0 | Not yet created |
+| Activity logs | **63+** | Various |
+| Land assets | 93+ | Paddocks, rows, 53 sections (37 P2 + nursery zones) |
+| Structure assets | 17+ | Including nursery and sub-locations |
+| Seed assets | 0 | Not yet created (244 records in CSV ready) |
 | Seeding logs | 8 | Not using proper Seed→Plant workflow |
 | Water assets | 11 | Dams, trenches |
 | Equipment assets | 3 | |
 | Compost assets | 5 | |
 
-**Note:** farmOS API pagination caps at ~250 entries per collection, so exact counts from API queries can undercount. The numbers above are derived from import script output.
+**Note:** farmOS API pagination caps at ~250 entries per collection, so exact counts from API queries can undercount. The numbers above are derived from import script output and page generation stats.
 
-**Plant type taxonomy status (v7 — updated March 9, 2026):**
-- **219 plant types** in farmOS (218 in CSV: 213 v7 + Citrus (Yuzu) + Hyssop + Barley + Dianella + Broad Bean)
+**Plant type taxonomy status (updated March 20, 2026):**
+- **271 plant types** in farmOS (277 in CSV), 26 updated with Claire's corrections (strata, botanical names, sources)
 - All terms have enriched descriptions with syntropic agriculture metadata
-- 16 v6 names renamed to v7 conventions
-- 15 obsolete v6 entries archived (prefixed `[ARCHIVED]`)
+- `import_plants.py` comparison bug fixed: now compares full description text (was silently skipping all updates)
 - Google Sheet shared with Claire: "Firefly Corner - Plant Types v7"
 
-**Import status (March 9, 2026):**
-- ✅ Live farmOS import complete: 404 plant assets across 33 sections, 109 unique species
-- R1-R3: 245 plants (77 species, 18 sections)
-- R4: 109 plants (31 species, 8 sections)
-- R5: 50 plants (19 species, 6 sections — P2R5.38-44 skipped, not yet inventoried)
+**Import status (March 20, 2026):**
+- ✅ All P1 + P2 paddock rows imported (53 sections, 630+ plants)
+- ✅ Nursery zones imported (86 plants across 19 zones)
 - ✅ Historical logs imported: 422 backdated logs (392 R1-R3 + 30 R4/R5)
-- ✅ 4 gap sections added (P2R4.2-6, P2R4.14-20, P2R5.8-14, P2R5.22-29) — 37 total sections
+- ✅ QR pages regenerated March 20: 107 pages from live farmOS (53 view + 53 observe + 1 index)
 - No Seed assets exist yet (244 records in CSV ready)
 - Seeding/transplanting logs don't use the native Seed→Plant workflow yet
 
@@ -350,9 +347,11 @@ firefly-farm-ai/
 ├── site/                      ← Public QR code landing pages (deployed to GitHub Pages)
 │   ├── public/                ← Generated HTML pages + static assets
 │   │   ├── index.html         ← Paddock overview entry point
-│   │   ├── P2R3.15-21.html   ← Section view page (one per section, 33 total)
-│   │   ├── P2R3.15-21-observe.html ← Section observe page (worker form, 33 total)
+│   │   ├── P2R3.15-21.html   ← Section view page (one per section, 53 total)
+│   │   ├── P2R3.15-21-observe.html ← Section observe page (worker form, 53 total)
+│   │   ├── SEED.BANK.html    ← Seed bank QR page (search + transactions)
 │   │   ├── observe.js         ← Vanilla JS: observation form logic + submission
+│   │   ├── seedbank.js        ← Vanilla JS: seed bank search + transactions
 │   │   └── qrcodes/          ← Generated QR code images (gitignored)
 │   └── src/
 │       └── data/
@@ -367,10 +366,17 @@ firefly-farm-ai/
 │   ├── clean_plant_types_v7.py ← Data transformation: v6 CSV → v7 CSV (completed)
 │   ├── parse_fieldsheets.py   ← DEMO SHORTCUT: spreadsheets → sections.json (Phase 0 only)
 │   ├── generate_site.py       ← sections.json + plant_types.csv → HTML pages
-│   └── generate_qrcodes.py    ← Generate QR images from sections.json
+│   ├── generate_qrcodes.py    ← Generate QR images from sections.json
+│   └── google-apps-script/    ← Apps Script backend code (reference copies)
+│       ├── Code.gs            ← Field observations (standalone, fireflyagents.com)
+│       ├── SeedBank.gs        ← Seed bank inventory (bound to Sheet)
+│       ├── TeamMemory.gs      ← Team session summaries (bound to Sheet)
+│       ├── PlantTypes.gs      ← Plant type Google Sheet sync (bound to Sheet)
+│       ├── KnowledgeBase.gs   ← Knowledge Base CRUD (bound to Sheet)
+│       └── UsageTracking.gs   ← Shared quota monitoring (pasted into each backend)
 │
 ├── knowledge/                 ← Farm knowledge base
-│   ├── plant_types.csv        ← Master plant database (v7, 218 species)
+│   ├── plant_types.csv        ← Master plant database (v7, 277 species)
 │   ├── plant_types_v6_archive.csv ← Previous v6 reference (180 species, archived)
 │   ├── plant_type_name_mapping.csv ← farmOS migration plan (v6→v7 name mapping)
 │   └── seed_bank.csv          ← Seed inventory (to be added)
@@ -653,31 +659,31 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 **Phase 1b (DEPLOYED — March 19, 2026):** Remote HTTP transport via FA Framework (TypeScript).
 - ✅ Ported all 29 tools from Python to TypeScript FA Framework plugin architecture
-- ✅ 98 tests passing (<1.1s): helpers (34), farmos-client (18), tools-read (7), tools-write (12), import-workflow (11), client-factory (16)
+- ✅ 99 tests passing (<1.1s): helpers (34), farmos-client (18), tools-read (7), tools-write (12), import-workflow (11), client-factory (16)
 - ✅ Deployed to Railway ($5/mo Hobby plan) with per-user API keys via credentials.json
 - ✅ Fixed auth: farmOS credentials from env vars (not extra.authInfo — framework limitation)
 - ✅ Fixed Apps Script: native fetch replaces AxiosHttpClient (Google redirect chain)
 - ✅ Added self-ping keep-alive (4-min interval) to prevent Railway container sleep
 - ✅ All 29 tools verified working from Claude Code (farmOS + all 4 Apps Script endpoints)
 - ✅ 9 env vars on Railway: FARMOS_URL/USERNAME/PASSWORD + 4 Apps Script endpoints + NODE_ENV + CREDENTIALS_PATH
-- ⬜ Pending: Update 4 client machines (Claire, James, Olivier, Agnes) to use `npx mcp-remote`
+- ✅ All 4 client machines migrated to `npx mcp-remote` (March 20)
 - ⬜ Pending: Stale session handling after deploys (investigating with Lesley)
 - Clients connect via `npx mcp-remote` — no Python/venv needed on client machines
 - farmOS stays on Farmier (margregen.farmos.net) — self-hosting deferred to Phase 4
 - Full plan: `claude-docs/phase1b-plan-fa-framework.md`
 
-### Phase KB: Knowledge Base Taxonomy & Cross-Referencing (DESIGNED — March 18, 2026)
+### Phase KB: Knowledge Base Taxonomy & Cross-Referencing (QUICK WINS DEPLOYED — March 20, 2026)
 **Goal:** Reliable cross-referencing between farmOS operational data and Knowledge Base, with proper taxonomy.
 
 **Trigger:** James's search failure (category mismatch), Olivier's query_sections gap, and the need for any AI (not just Claude) to reliably connect farm data with farm knowledge.
 
-**Design (6 items, implementation ready):**
-- ⬜ Item 1: Add `topics` field to KB schema (Apps Script column + MCP tools)
+**Design (6 items):**
+- ✅ Item 1: Add `topics` field to KB schema (Apps Script column + MCP tools) — March 20
 - ⬜ Item 2: Build `farm_context` composite MCP tool (cross-references farmOS + KB + plant types in one call)
-- ⬜ Item 3: Add `source-material` category + Drive folder convention
+- ✅ Item 3: Add `source-material` category + Drive folder convention — March 20
 - ⬜ Item 4: Add topic-to-farmOS mapping config (topics resolve to farmOS section prefixes)
-- ⬜ Item 5: Enhance `query_sections` to return all location types (nursery, compost, structures)
-- ⬜ Item 6: Update all 4 Claude system prompts with new schema guidance
+- ✅ Item 5: Enhance `query_sections` to return all location types (nursery, compost, structures) — March 20
+- ✅ Item 6: Update all 4 Claude system prompts with new schema guidance — March 20
 
 **Architecture:**
 - Three join keys: `farmos_name` (species), section IDs (locations), `topics` (farm domains)
@@ -689,11 +695,24 @@ These decisions have been made through extensive discussion. Don't revisit them 
 ### Phase 2: Claire's First Real Log (Weeks 3–4)
 Goal: Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.
 
+### Phase SB: Seed Bank QR System (IN PROGRESS — March 20, 2026)
+**Goal:** Workers can search, use, and flag seed bank inventory via QR code in nursery fridge.
+- ✅ Built `SeedBank.gs` — Apps Script backend for 27-column inventory Sheet
+- ✅ Built `seedbank.js` — enriched cards with strata, functions, germination/transplant data
+- ✅ Built `SEED.BANK.html` — mobile-first QR page with search + transactions
+- ✅ Built `UsageTracking.gs` — shared quota monitoring for all Apps Script backends
+- ✅ Deployed to fireflyagents.com, wired endpoint into QR page
+- ✅ Applied 32 plant type corrections from Claire's review to CSV + farmOS (26 taxonomy updates)
+- ✅ Fixed `import_plants.py` comparison bug (was silently skipping all description updates)
+- ⬜ Seed assets not yet created in farmOS (244 records in seed_bank.csv ready)
+- ⬜ Purchase order page (HTML + Apps Script — designed, not built)
+- ⬜ Harvest QR page (single page in nursery — designed, not built)
+
 ### Phase 3: Nursery & Seed Bank (Months 2–3)
-- Import seed bank data as Seed assets
-- Create Plant assets for tracked plantings
-- Nursery inventory workflow
-- Seed→Plant lifecycle tracking
+- Import seed bank data as Seed assets in farmOS
+- Seed→Plant lifecycle tracking (Seeding logs, Transplanting logs)
+- Supplier taxonomy (~18 suppliers from Claire's purchase orders)
+- Purchase order import (8 historical orders, ~$2,395)
 
 ### Phase 4: Custom farmOS Module (Month 3+)
 `farm_syntropic` Drupal module adding:
@@ -863,13 +882,13 @@ Output: site/src/data/sections.json (37 sections incl. 4 gap sections, 110 speci
 ### Site Generation Scripts (Permanent)
 
 **generate_site.py**
-Generates static HTML pages from sections.json + plant_types.csv. Produces view pages (visitor), observe pages (worker forms), and index page. Supports `--observe-endpoint URL` to bake in the Apps Script submission URL. Handles count=None (uninventoried) plants with "—" badges.
+Generates static HTML pages from sections.json + plant_types.csv. Produces view pages (visitor), observe pages (worker forms), and index page. Supports `--observe-endpoint` and `--seedbank-endpoint` to bake in Apps Script URLs. Handles count=None (uninventoried) plants with "—" badges. Index page includes Farm Tools section with Seed Bank link.
 ```bash
 python scripts/generate_site.py
-python scripts/generate_site.py --observe-endpoint https://script.google.com/macros/s/.../exec
+python scripts/generate_site.py --observe-endpoint https://script.google.com/macros/s/.../exec --seedbank-endpoint https://script.google.com/macros/s/.../exec
 ```
 Input: site/src/data/sections.json, knowledge/plant_types.csv
-Output: site/public/*.html (37 view + 37 observe + 1 index = 75 pages)
+Output: site/public/*.html (53 view + 53 observe + 1 index = 107 pages)
 
 **generate_qrcodes.py**
 Creates printable QR code images for section poles.
@@ -982,16 +1001,22 @@ These are the day-to-day processes that connect Claire's field work to the digit
 
 ## 17. WHAT'S NOT BUILT YET (And Shouldn't Be Built Prematurely)
 
-- MCP server HTTP transport for remote access (Phase 1b — currently STDIO on each machine: Agnes, Claire, James)
+- Harvest QR page (single page in nursery, species/weight/photo form — replaces WhatsApp input)
+- Purchase order page (HTML + Apps Script for replenishment ordering)
+- Nursery zone interface (James's full spec in team memory #76 — 14 QR codes, open text fields)
+- Seed Bank → farmOS Seed assets (244 records in CSV ready, native Seed→Plant lifecycle)
 - Dead plant asset creation (Phase H2 — 201 historical records without farmOS assets)
+- farm_context composite MCP tool (Phase KB Item 2 — cross-references farmOS + KB + plant types)
+- Auto-regenerate pages on farmOS changes (webhook/cron)
 - Multi-agent systems (one good agent first)
 - Custom farmOS views/dashboards (use the API, not the UI)
 - Weather integration
 - Photo/image logging (observe.js captures photos but they go to Drive, not farmOS)
 - Automated notifications
 - Custom mobile app (Claude mobile IS the app)
-- WhatsApp integration (harvest logs are there but parsing is Phase 5)
+- WhatsApp harvest log parsing (2-3 months of data → farmOS harvest logs)
 - farm_syntropic Drupal module (Phase 4 — current description-based approach works)
+- Supplier taxonomy in farmOS (~18 suppliers from Claire's purchase orders)
 
 ---
 
@@ -1409,6 +1434,32 @@ Part 3 — farmOS Import:
 - Windows Claude Desktop doesn't inherit system PATH for child processes — even with non-sandboxed winget install. The .bat wrapper with full path to `npx.cmd` is the reliable solution.
 - `forkpty: Resource temporarily unavailable` = Mac out of pseudo-TTY slots. Close terminals or restart.
 - Phase KB topics filter works end-to-end: MCP tool → Apps Script → filtered results. No client machine updates needed since it's the remote server.
+
+### March 20, 2026 (continued) — Seed Bank System + Plant Type Corrections + Documentation Overhaul
+
+**Session: Claire's seed bank review + plant type corrections + tooling**
+- Reviewed Claire's corrected 27-column seed bank inventory (263 rows) — combined plant_types.csv (17 cols) + seed_bank.csv (10 cols)
+- Found 71 differences from repo plant_types.csv: 5 strata, 3 botanical names, 1 crop family, 1 succession stage, 52 source changes
+- Applied 32 field corrections to `knowledge/plant_types.csv` across 12 species (strata, botanical names, descriptions)
+- Fixed `import_plants.py` comparison bug: was checking `if "Syntropic Agriculture Data" in current_value` (skipped ALL updates); now compares full description text
+- Synced 26 taxonomy updates to live farmOS (271/271 in sync)
+- Built `scripts/google-apps-script/SeedBank.gs` — rewritten for Claire's actual 27-column layout
+- Built `scripts/google-apps-script/UsageTracking.gs` — shared quota monitoring (daily counters, 80% warnings, 7-day history)
+- Enriched `site/public/seedbank.js` — collapsible detail panels with strata colors, germination time, transplant days, function pills
+- Updated `site/public/SEED.BANK.html` — enriched CSS for new card components
+- Added health check handlers to all 4 existing Apps Script backends (Code.gs, TeamMemory.gs, PlantTypes.gs, KnowledgeBase.gs)
+- Agnes deployed SeedBank.gs to fireflyagents.com Google Sheet
+- Wired live endpoint into SEED.BANK.html, added `--seedbank-endpoint` arg to generate_site.py
+- Added Farm Tools section to index page with Seed Bank link
+- Analyzed Claire's purchase orders spreadsheet: 8 historical orders, ~$2,395, 3 main suppliers
+- Designed purchase order page + harvest QR page architecture
+- Updated CLAUDE.md: current state, repo structure, Phase SB, Phase KB status, session log
+- Updated MEMORY.md: priorities, seed bank details, Apps Script endpoints
+
+**Key learnings:**
+- `import_plants.py` had a critical bug where `if "Syntropic Agriculture Data" in current_value` caused ALL existing taxonomy terms to be skipped on update, even when the description had changed. Fixed to compare full text.
+- Claire's seed bank file merges plant_types.csv + seed_bank.csv into one 27-column sheet — the "source of truth" for seed inventory includes plant enrichment data inline
+- Seed Bank Apps Script endpoint: `https://script.google.com/macros/s/AKfycbwm2YllQ0vi-vSz_aruKXGxVL3klbSE7F_85dS4qIlxoy3TP4DA0VkAPcI3izNgj7hMIg/exec`
 
 ---
 
