@@ -6,6 +6,63 @@
 <title>Firefly Corner Farm — Farm Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>
+.idx-location { border-bottom: 1px solid #e5e5e0; }
+.idx-location-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; cursor: pointer; user-select: none;
+  transition: background 0.15s;
+}
+.idx-location-header:hover { background: #f0fdf4; }
+.idx-location-header:active { background: #e8f5e0; }
+.idx-location-icon { font-size: 20px; margin-right: 10px; flex-shrink: 0; }
+.idx-location-info { flex: 1; min-width: 0; }
+.idx-location-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px; font-weight: 600; color: #1a1a1a;
+}
+.idx-location-meta { font-size: 12px; color: #9ca3af; margin-top: 1px; }
+.idx-location-chevron {
+  font-size: 14px; color: #9ca3af; transition: transform 0.2s;
+  flex-shrink: 0; margin-left: 8px;
+}
+.idx-location.open .idx-location-chevron { transform: rotate(90deg); }
+.idx-location-body { display: none; padding: 0 16px 12px 46px; }
+.idx-location.open .idx-location-body { display: block; }
+
+/* Direct link (no children) */
+.idx-location-link {
+  display: flex; align-items: center; padding: 14px 16px;
+  text-decoration: none; color: inherit; border-bottom: 1px solid #e5e5e0;
+  transition: background 0.15s;
+}
+.idx-location-link:hover { background: #f0fdf4; }
+.idx-location-link .idx-location-icon { margin-right: 10px; }
+.idx-location-link .idx-location-meta { font-size: 12px; color: #9ca3af; margin-top: 1px; }
+
+/* Sub-group inside collapsible */
+.idx-subgroup { margin-bottom: 8px; }
+.idx-subgroup-title {
+  font-size: 11px; font-weight: 600; color: #9ca3af;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.idx-subgroup-items { display: flex; flex-wrap: wrap; gap: 4px; }
+.idx-sub-link {
+  display: inline-block; padding: 5px 10px;
+  background: #fff; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 13px; color: #374151; text-decoration: none;
+  transition: all 0.15s;
+}
+.idx-sub-link:hover { background: #f0fdf4; border-color: #4a8c2e; }
+
+/* Row inside paddock */
+.idx-row-block { margin-bottom: 10px; }
+.idx-row-label {
+  font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;
+}
+.idx-row-label-meta { font-weight: 400; color: #9ca3af; font-size: 12px; }
+</style>
 </head>
 <body>
 <div class="page">
@@ -13,84 +70,211 @@
     <h1>Firefly Corner Farm</h1>
     <p>Syntropic agroforestry farm guide. Scan a QR code on any pole, or browse below.</p>
   </div>
-  
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 1 · End Drain 1</h2>
-          <div class="idx-row-meta">5m · 1 sections · Est. </div>
-          <div class="idx-sections"><a href="P1ED1.0-5.html" class="idx-section">☀️ 0–5<span class="idx-count">14 species</span></a></div>
+
+  <!-- SEED BANK -->
+  <a href="SEED.BANK.html" class="idx-location-link">
+    <span class="idx-location-icon">🌱</span>
+    <div class="idx-location-info">
+      <div class="idx-location-name">Seed Bank</div>
+      <div class="idx-location-meta">263 seed entries · Fridge &amp; Freezer · Search &amp; transactions</div>
+    </div>
+  </a>
+
+  <!-- NURSERY -->
+  <div class="idx-location" id="loc-nursery">
+    <div class="idx-location-header" onclick="toggleLocation('loc-nursery')">
+      <span class="idx-location-icon">🌿</span>
+      <div class="idx-location-info">
+        <div class="idx-location-name">Plant Nursery</div>
+        <div class="idx-location-meta">18 zones · 3 shelving units, ground areas &amp; more</div>
+      </div>
+      <span class="idx-location-chevron">&#9654;</span>
+    </div>
+    <div class="idx-location-body">
+      <div class="idx-subgroup">
+        <div class="idx-subgroup-title">Shelving Unit I</div>
+        <div class="idx-subgroup-items">
+          <a href="NURS.SH1-1.html" class="idx-sub-link">Shelf 1-1</a>
+          <a href="NURS.SH1-2.html" class="idx-sub-link">Shelf 1-2</a>
+          <a href="NURS.SH1-3.html" class="idx-sub-link">Shelf 1-3</a>
+          <a href="NURS.SH1-4.html" class="idx-sub-link">Shelf 1-4</a>
         </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 1 · Row 1</h2>
-          <div class="idx-row-meta">42m · 6 sections · Est. </div>
-          <div class="idx-sections"><a href="P1R1.0-5.html" class="idx-section">☀️ 0–5<span class="idx-count">10 species</span></a><a href="P1R1.5-9.html" class="idx-section">☀️ 5–9<span class="idx-count">4 species</span></a><a href="P1R1.9-19.html" class="idx-section">☀️ 9–19<span class="idx-count">16 species</span></a><a href="P1R1.19-29.html" class="idx-section">☀️ 19–29<span class="idx-count">15 species</span></a><a href="P1R1.29-39.html" class="idx-section">☀️ 29–39<span class="idx-count">9 species</span></a><a href="P1R1.39-42.html" class="idx-section">☀️ 39–42<span class="idx-count">0 species</span></a></div>
+      </div>
+      <div class="idx-subgroup">
+        <div class="idx-subgroup-title">Shelving Unit II</div>
+        <div class="idx-subgroup-items">
+          <a href="NURS.SH2-1.html" class="idx-sub-link">Shelf 2-1</a>
+          <a href="NURS.SH2-2.html" class="idx-sub-link">Shelf 2-2</a>
+          <a href="NURS.SH2-3.html" class="idx-sub-link">Shelf 2-3</a>
+          <a href="NURS.SH2-4.html" class="idx-sub-link">Shelf 2-4</a>
         </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 1 · Row 3</h2>
-          <div class="idx-row-meta">42m · 5 sections · Est. </div>
-          <div class="idx-sections"><a href="P1R3.0-3.html" class="idx-section">☀️ 0–3<span class="idx-count">15 species</span></a><a href="P1R3.3-13.html" class="idx-section">☀️ 3–13<span class="idx-count">12 species</span></a><a href="P1R3.13-23.html" class="idx-section">☀️ 13–23<span class="idx-count">10 species</span></a><a href="P1R3.23-33.html" class="idx-section">☀️ 23–33<span class="idx-count">9 species</span></a><a href="P1R3.33-42.html" class="idx-section">☀️ 33–42<span class="idx-count">14 species</span></a></div>
+      </div>
+      <div class="idx-subgroup">
+        <div class="idx-subgroup-title">Shelving Unit III</div>
+        <div class="idx-subgroup-items">
+          <a href="NURS.SH3-1.html" class="idx-sub-link">Shelf 3-1</a>
+          <a href="NURS.SH3-2.html" class="idx-sub-link">Shelf 3-2</a>
+          <a href="NURS.SH3-3.html" class="idx-sub-link">Shelf 3-3</a>
+          <a href="NURS.SH3-4.html" class="idx-sub-link">Shelf 3-4</a>
         </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 1 · Row 5</h2>
-          <div class="idx-row-meta">35m · 4 sections · Est. </div>
-          <div class="idx-sections"><a href="P1R5.0-10.html" class="idx-section">☀️ 0–10<span class="idx-count">15 species</span></a><a href="P1R5.10-20.html" class="idx-section">☀️ 10–20<span class="idx-count">0 species</span></a><a href="P1R5.20-30.html" class="idx-section">☀️ 20–30<span class="idx-count">0 species</span></a><a href="P1R5.30-35.html" class="idx-section">☀️ 30–35<span class="idx-count">3 species</span></a></div>
+      </div>
+      <div class="idx-subgroup">
+        <div class="idx-subgroup-title">Ground &amp; Zones</div>
+        <div class="idx-subgroup-items">
+          <a href="NURS.GR.html" class="idx-sub-link">Ground Right</a>
+          <a href="NURS.GL.html" class="idx-sub-link">Ground Left</a>
+          <a href="NURS.FRT.html" class="idx-sub-link">Front Area</a>
+          <a href="NURS.BCK.html" class="idx-sub-link">Back Area</a>
+          <a href="NURS.HILL.html" class="idx-sub-link">Hillside</a>
+          <a href="NURS.STRB.html" class="idx-sub-link">Strawberry Area</a>
         </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 2 · Row 1</h2>
-          <div class="idx-row-meta">25m · 4 sections · Est. 2025-03-20</div>
-          <div class="idx-sections"><a href="P2R1.0-3.html" class="idx-section">☀️ 0–3<span class="idx-count">7 species</span></a><a href="P2R1.3-9.html" class="idx-section">🌳 3–9<span class="idx-count">9 species</span></a><a href="P2R1.9-13.html" class="idx-section">☀️ 9–13<span class="idx-count">6 species</span></a><a href="P2R1.16-25.html" class="idx-section">🌳 16–25<span class="idx-count">12 species</span></a></div>
-        </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 2 · Row 2</h2>
-          <div class="idx-row-meta">46m · 7 sections · Est. 2025-04-25</div>
-          <div class="idx-sections"><a href="P2R2.0-3.html" class="idx-section">🌳 0–3<span class="idx-count">15 species</span></a><a href="P2R2.3-9.html" class="idx-section">☀️ 3–9<span class="idx-count">10 species</span></a><a href="P2R2.9-16.html" class="idx-section">🌳 9–16<span class="idx-count">18 species</span></a><a href="P2R2.16-23.html" class="idx-section">☀️ 16–23<span class="idx-count">5 species</span></a><a href="P2R2.23-26.html" class="idx-section">🌳 23–26<span class="idx-count">14 species</span></a><a href="P2R2.28-38.html" class="idx-section">🌳 28–38<span class="idx-count">18 species</span></a><a href="P2R2.38-46.html" class="idx-section">🌳 38–46<span class="idx-count">11 species</span></a></div>
-        </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 2 · Row 3</h2>
-          <div class="idx-row-meta">62m · 7 sections · Est. 2025-04-25</div>
-          <div class="idx-sections"><a href="P2R3.0-2.html" class="idx-section">☀️ 0–2<span class="idx-count">1 species</span></a><a href="P2R3.2-9.html" class="idx-section">🌳 2–9<span class="idx-count">18 species</span></a><a href="P2R3.9-15.html" class="idx-section">☀️ 9–15<span class="idx-count">8 species</span></a><a href="P2R3.15-21.html" class="idx-section">🌳 15–21<span class="idx-count">14 species</span></a><a href="P2R3.26-38.html" class="idx-section">🌳 26–38<span class="idx-count">24 species</span></a><a href="P2R3.40-50.html" class="idx-section">🌳 40–50<span class="idx-count">16 species</span></a><a href="P2R3.50-62.html" class="idx-section">🌳 50–62<span class="idx-count">7 species</span></a></div>
-        </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 2 · Row 4</h2>
-          <div class="idx-row-meta">77m · 10 sections · Est. 2025-10-01</div>
-          <div class="idx-sections"><a href="P2R4.0-2.html" class="idx-section">🌳 0–2<span class="idx-count">12 species</span></a><a href="P2R4.2-6.html" class="idx-section">☀️ 2–6<span class="idx-count">0 species</span></a><a href="P2R4.6-14.html" class="idx-section">🌳 6–14<span class="idx-count">15 species</span></a><a href="P2R4.14-20.html" class="idx-section">☀️ 14–20<span class="idx-count">0 species</span></a><a href="P2R4.20-30.html" class="idx-section">🌳 20–30<span class="idx-count">23 species</span></a><a href="P2R4.30-40.html" class="idx-section">🌳 30–40<span class="idx-count">19 species</span></a><a href="P2R4.40-49.html" class="idx-section">🌳 40–49<span class="idx-count">16 species</span></a><a href="P2R4.52-62.html" class="idx-section">🌳 52–62<span class="idx-count">0 species</span></a><a href="P2R4.62-72.html" class="idx-section">🌳 62–72<span class="idx-count">0 species</span></a><a href="P2R4.72-77.html" class="idx-section">🌳 72–77<span class="idx-count">0 species</span></a></div>
-        </div>
-        <div class="idx-row">
-          <h2 class="idx-row-title">Paddock 2 · Row 5</h2>
-          <div class="idx-row-meta">77m · 9 sections · Est. 2025-05-01</div>
-          <div class="idx-sections"><a href="P2R5.0-8.html" class="idx-section">🌳 0–8<span class="idx-count">10 species</span></a><a href="P2R5.8-14.html" class="idx-section">☀️ 8–14<span class="idx-count">0 species</span></a><a href="P2R5.14-22.html" class="idx-section">🌳 14–22<span class="idx-count">12 species</span></a><a href="P2R5.22-29.html" class="idx-section">☀️ 22–29<span class="idx-count">0 species</span></a><a href="P2R5.29-38.html" class="idx-section">🌳 29–38<span class="idx-count">10 species</span></a><a href="P2R5.38-44.html" class="idx-section">🌳 38–44<span class="idx-count">0 species</span></a><a href="P2R5.44-53.html" class="idx-section">🌳 44–53<span class="idx-count">6 species</span></a><a href="P2R5.55-66.html" class="idx-section">🌳 55–66<span class="idx-count">7 species</span></a><a href="P2R5.66-77.html" class="idx-section">🌳 66–77<span class="idx-count">10 species</span></a></div>
-        </div>
-  <div class="idx-row">
-    <h2 class="idx-row-title">Plant Nursery</h2>
-    <div class="idx-row-meta">19 zones · Shelves, ground areas &amp; storage</div>
-    <div class="idx-sections">
-      <a href="NURS.SH1-1.html" class="idx-section">🌱 Shelf 1-1</a>
-      <a href="NURS.SH1-2.html" class="idx-section">🌱 Shelf 1-2</a>
-      <a href="NURS.SH1-3.html" class="idx-section">🌱 Shelf 1-3</a>
-      <a href="NURS.SH1-4.html" class="idx-section">🌱 Shelf 1-4</a>
-      <a href="NURS.SH2-1.html" class="idx-section">🌱 Shelf 2-1</a>
-      <a href="NURS.SH2-2.html" class="idx-section">🌱 Shelf 2-2</a>
-      <a href="NURS.SH2-3.html" class="idx-section">🌱 Shelf 2-3</a>
-      <a href="NURS.SH2-4.html" class="idx-section">🌱 Shelf 2-4</a>
-      <a href="NURS.SH3-1.html" class="idx-section">🌱 Shelf 3-1</a>
-      <a href="NURS.SH3-2.html" class="idx-section">🌱 Shelf 3-2</a>
-      <a href="NURS.SH3-3.html" class="idx-section">🌱 Shelf 3-3</a>
-      <a href="NURS.SH3-4.html" class="idx-section">🌱 Shelf 3-4</a>
-      <a href="NURS.GR.html" class="idx-section">🌱 Ground Right</a>
-      <a href="NURS.GL.html" class="idx-section">🌱 Ground Left</a>
-      <a href="NURS.FRT.html" class="idx-section">🌱 Front Area</a>
-      <a href="NURS.BCK.html" class="idx-section">🌱 Back Area</a>
-      <a href="NURS.HILL.html" class="idx-section">🌱 Hillside</a>
-      <a href="NURS.STRB.html" class="idx-section">🌱 Strawberry Area</a>
+      </div>
     </div>
   </div>
-  <div class="idx-tools">
-    <h2 class="idx-row-title">Farm Tools</h2>
-    <div class="idx-sections">
-      <a href="SEED.BANK.html" class="idx-section">🌱 Seed Bank<span class="idx-count">inventory &amp; transactions</span></a>
-      <a href="HARVEST.html" class="idx-section">🥬 Harvest Log<span class="idx-count">record what you harvested</span></a>
+
+  <!-- PADDOCK 1 -->
+  <div class="idx-location" id="loc-p1">
+    <div class="idx-location-header" onclick="toggleLocation('loc-p1')">
+      <span class="idx-location-icon">🌾</span>
+      <div class="idx-location-info">
+        <div class="idx-location-name">Paddock 1</div>
+        <div class="idx-location-meta">4 rows · 16 sections · Annuals &amp; pioneer species</div>
+      </div>
+      <span class="idx-location-chevron">&#9654;</span>
+    </div>
+    <div class="idx-location-body">
+      <div class="idx-row-block">
+        <div class="idx-row-label">End Drain 1 <span class="idx-row-label-meta">· 5m · 1 section</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P1ED1.0-5.html" class="idx-sub-link">0–5m <small>14 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 1 <span class="idx-row-label-meta">· 42m · 6 sections</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P1R1.0-5.html" class="idx-sub-link">0–5m <small>10 sp</small></a>
+          <a href="P1R1.5-9.html" class="idx-sub-link">5–9m <small>4 sp</small></a>
+          <a href="P1R1.9-19.html" class="idx-sub-link">9–19m <small>16 sp</small></a>
+          <a href="P1R1.19-29.html" class="idx-sub-link">19–29m <small>15 sp</small></a>
+          <a href="P1R1.29-39.html" class="idx-sub-link">29–39m <small>9 sp</small></a>
+          <a href="P1R1.39-42.html" class="idx-sub-link">39–42m <small>0 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 3 <span class="idx-row-label-meta">· 42m · 5 sections</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P1R3.0-3.html" class="idx-sub-link">0–3m <small>15 sp</small></a>
+          <a href="P1R3.3-13.html" class="idx-sub-link">3–13m <small>12 sp</small></a>
+          <a href="P1R3.13-23.html" class="idx-sub-link">13–23m <small>10 sp</small></a>
+          <a href="P1R3.23-33.html" class="idx-sub-link">23–33m <small>9 sp</small></a>
+          <a href="P1R3.33-42.html" class="idx-sub-link">33–42m <small>14 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 5 <span class="idx-row-label-meta">· 35m · 4 sections</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P1R5.0-10.html" class="idx-sub-link">0–10m <small>15 sp</small></a>
+          <a href="P1R5.10-20.html" class="idx-sub-link">10–20m <small>0 sp</small></a>
+          <a href="P1R5.20-30.html" class="idx-sub-link">20–30m <small>0 sp</small></a>
+          <a href="P1R5.30-35.html" class="idx-sub-link">30–35m <small>3 sp</small></a>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- PADDOCK 2 -->
+  <div class="idx-location" id="loc-p2">
+    <div class="idx-location-header" onclick="toggleLocation('loc-p2')">
+      <span class="idx-location-icon">🌳</span>
+      <div class="idx-location-info">
+        <div class="idx-location-name">Paddock 2</div>
+        <div class="idx-location-meta">5 rows · 37 sections · Syntropic tree rows &amp; perennials</div>
+      </div>
+      <span class="idx-location-chevron">&#9654;</span>
+    </div>
+    <div class="idx-location-body">
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 1 <span class="idx-row-label-meta">· 25m · 4 sections · Est. Mar 2025</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P2R1.0-3.html" class="idx-sub-link">☀️ 0–3m <small>7 sp</small></a>
+          <a href="P2R1.3-9.html" class="idx-sub-link">🌳 3–9m <small>9 sp</small></a>
+          <a href="P2R1.9-13.html" class="idx-sub-link">☀️ 9–13m <small>6 sp</small></a>
+          <a href="P2R1.16-25.html" class="idx-sub-link">🌳 16–25m <small>12 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 2 <span class="idx-row-label-meta">· 46m · 7 sections · Est. Apr 2025</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P2R2.0-3.html" class="idx-sub-link">🌳 0–3m <small>15 sp</small></a>
+          <a href="P2R2.3-9.html" class="idx-sub-link">☀️ 3–9m <small>10 sp</small></a>
+          <a href="P2R2.9-16.html" class="idx-sub-link">🌳 9–16m <small>18 sp</small></a>
+          <a href="P2R2.16-23.html" class="idx-sub-link">☀️ 16–23m <small>5 sp</small></a>
+          <a href="P2R2.23-26.html" class="idx-sub-link">🌳 23–26m <small>14 sp</small></a>
+          <a href="P2R2.28-38.html" class="idx-sub-link">🌳 28–38m <small>18 sp</small></a>
+          <a href="P2R2.38-46.html" class="idx-sub-link">🌳 38–46m <small>11 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 3 <span class="idx-row-label-meta">· 62m · 7 sections · Est. Apr 2025</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P2R3.0-2.html" class="idx-sub-link">☀️ 0–2m <small>1 sp</small></a>
+          <a href="P2R3.2-9.html" class="idx-sub-link">🌳 2–9m <small>18 sp</small></a>
+          <a href="P2R3.9-15.html" class="idx-sub-link">☀️ 9–15m <small>8 sp</small></a>
+          <a href="P2R3.15-21.html" class="idx-sub-link">🌳 15–21m <small>14 sp</small></a>
+          <a href="P2R3.26-38.html" class="idx-sub-link">🌳 26–38m <small>24 sp</small></a>
+          <a href="P2R3.40-50.html" class="idx-sub-link">🌳 40–50m <small>16 sp</small></a>
+          <a href="P2R3.50-62.html" class="idx-sub-link">🌳 50–62m <small>7 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 4 <span class="idx-row-label-meta">· 77m · 10 sections · Est. Oct 2025</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P2R4.0-2.html" class="idx-sub-link">🌳 0–2m <small>12 sp</small></a>
+          <a href="P2R4.2-6.html" class="idx-sub-link">☀️ 2–6m <small>0 sp</small></a>
+          <a href="P2R4.6-14.html" class="idx-sub-link">🌳 6–14m <small>15 sp</small></a>
+          <a href="P2R4.14-20.html" class="idx-sub-link">☀️ 14–20m <small>0 sp</small></a>
+          <a href="P2R4.20-30.html" class="idx-sub-link">🌳 20–30m <small>23 sp</small></a>
+          <a href="P2R4.30-40.html" class="idx-sub-link">🌳 30–40m <small>19 sp</small></a>
+          <a href="P2R4.40-49.html" class="idx-sub-link">🌳 40–49m <small>16 sp</small></a>
+          <a href="P2R4.52-62.html" class="idx-sub-link">🌳 52–62m <small>0 sp</small></a>
+          <a href="P2R4.62-72.html" class="idx-sub-link">🌳 62–72m <small>0 sp</small></a>
+          <a href="P2R4.72-77.html" class="idx-sub-link">🌳 72–77m <small>0 sp</small></a>
+        </div>
+      </div>
+      <div class="idx-row-block">
+        <div class="idx-row-label">Row 5 <span class="idx-row-label-meta">· 77m · 9 sections · Est. May 2025</span></div>
+        <div class="idx-subgroup-items">
+          <a href="P2R5.0-8.html" class="idx-sub-link">🌳 0–8m <small>10 sp</small></a>
+          <a href="P2R5.8-14.html" class="idx-sub-link">☀️ 8–14m <small>0 sp</small></a>
+          <a href="P2R5.14-22.html" class="idx-sub-link">🌳 14–22m <small>12 sp</small></a>
+          <a href="P2R5.22-29.html" class="idx-sub-link">☀️ 22–29m <small>0 sp</small></a>
+          <a href="P2R5.29-38.html" class="idx-sub-link">🌳 29–38m <small>10 sp</small></a>
+          <a href="P2R5.38-44.html" class="idx-sub-link">🌳 38–44m <small>0 sp</small></a>
+          <a href="P2R5.44-53.html" class="idx-sub-link">🌳 44–53m <small>6 sp</small></a>
+          <a href="P2R5.55-66.html" class="idx-sub-link">🌳 55–66m <small>7 sp</small></a>
+          <a href="P2R5.66-77.html" class="idx-sub-link">🌳 66–77m <small>10 sp</small></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HARVEST -->
+  <a href="HARVEST.html" class="idx-location-link">
+    <span class="idx-location-icon">🥬</span>
+    <div class="idx-location-info">
+      <div class="idx-location-name">Harvest Station</div>
+      <div class="idx-location-meta">Record what you harvested · Nursery scales</div>
+    </div>
+  </a>
+
   <div class="idx-footer">Firefly Corner Farm · Krambach, NSW · Syntropic Agroforestry</div>
 </div>
+
+<script>
+function toggleLocation(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+</script>
 </body>
 </html>
