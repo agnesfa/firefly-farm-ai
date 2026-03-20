@@ -572,6 +572,12 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 12. **Test first, smart coverage, intelligent testing.** Every new feature or tool gets tests before or alongside implementation. The test harness uses 3 layers — unit tests for pure functions (highest ROI), HTTP-mocked client tests (contract verification), and integration tests with mock clients (orchestration logic). Tests target the highest-risk areas: name parsing edge cases, idempotency guards, import workflow branching, and error resilience. Coverage analysis drives where to invest test effort — focus on code paths that touch production data (farmOS writes, Sheet mutations), not boilerplate. Tests must run fast (<2s), require zero network access, and catch regressions before they corrupt the shared farm database.
 
+13. **Knowledge Base taxonomy: category + topics + tags.** The Knowledge Base uses three orthogonal dimensions for metadata: `category` is the content TYPE (tutorial, sop, guide, reference, recipe, observation, source-material); `topics` is a multi-value field of farm DOMAINS (nursery, compost, irrigation, syntropic, seeds, harvest, paddock, equipment, cooking, infrastructure, camp); `tags` is free-form keywords for search (species names, techniques, tools). Category answers "show me all tutorials", topics answers "show me everything about the nursery", tags answers "show me anything mentioning comfrey". Topics has a semi-controlled vocabulary — recommended list, not rigid enforcement.
+
+14. **Cross-referencing farmOS ↔ Knowledge Base via join keys.** Three natural join keys connect operational data to knowledge: `farmos_name` (species) links plant assets ↔ plant types ↔ KB entries via `related_plants`; section IDs link land assets ↔ KB entries via `related_sections`; topics link farm domains ↔ KB entries ↔ farmOS location prefixes. A composite `farm_context` tool will do cross-referencing in code (not in the AI's reasoning) to guarantee reliable joins. This is the embryo of the Farm Intelligence Layer.
+
+15. **Knowledge Drive folder convention.** Finished outputs live in category folders (tutorials/, guides/, sops/). Raw source materials (audio, transcriptions, photos) go in `sources/` subfolders alongside finished outputs, OR in a top-level `source-library/` if not yet processed. Source materials are indexed as `source-material` category KB entries for discoverability and provenance tracking.
+
 ---
 
 ## 11. IMPLEMENTATION PHASES
@@ -645,12 +651,40 @@ These decisions have been made through extensive discussion. Don't revisit them 
 - ✅ March 15: Plant Types Google Sheet sync + reconcile tool + archive_plant tool (22 tools)
 - ✅ Dynamic priorities system: context files pull priorities from Team Memory at session start
 
-**Phase 1b (PLANNED — must ship by March 22):** Remote HTTP transport via FA Framework (TypeScript).
-- Plan: Port Python MCP server to TypeScript using Firefly Agents MCP Framework
-- Deploy to Railway ($5/mo Hobby plan) with per-user API keys via credentials.json
+**Phase 1b (DEPLOYED — March 19, 2026):** Remote HTTP transport via FA Framework (TypeScript).
+- ✅ Ported all 29 tools from Python to TypeScript FA Framework plugin architecture
+- ✅ 98 tests passing (<1.1s): helpers (34), farmos-client (18), tools-read (7), tools-write (12), import-workflow (11), client-factory (16)
+- ✅ Deployed to Railway ($5/mo Hobby plan) with per-user API keys via credentials.json
+- ✅ Fixed auth: farmOS credentials from env vars (not extra.authInfo — framework limitation)
+- ✅ Fixed Apps Script: native fetch replaces AxiosHttpClient (Google redirect chain)
+- ✅ Added self-ping keep-alive (4-min interval) to prevent Railway container sleep
+- ✅ All 29 tools verified working from Claude Code (farmOS + all 4 Apps Script endpoints)
+- ✅ 9 env vars on Railway: FARMOS_URL/USERNAME/PASSWORD + 4 Apps Script endpoints + NODE_ENV + CREDENTIALS_PATH
+- ⬜ Pending: Update 4 client machines (Claire, James, Olivier, Agnes) to use `npx mcp-remote`
+- ⬜ Pending: Stale session handling after deploys (investigating with Lesley)
 - Clients connect via `npx mcp-remote` — no Python/venv needed on client machines
 - farmOS stays on Farmier (margregen.farmos.net) — self-hosting deferred to Phase 4
 - Full plan: `claude-docs/phase1b-plan-fa-framework.md`
+
+### Phase KB: Knowledge Base Taxonomy & Cross-Referencing (DESIGNED — March 18, 2026)
+**Goal:** Reliable cross-referencing between farmOS operational data and Knowledge Base, with proper taxonomy.
+
+**Trigger:** James's search failure (category mismatch), Olivier's query_sections gap, and the need for any AI (not just Claude) to reliably connect farm data with farm knowledge.
+
+**Design (6 items, implementation ready):**
+- ⬜ Item 1: Add `topics` field to KB schema (Apps Script column + MCP tools)
+- ⬜ Item 2: Build `farm_context` composite MCP tool (cross-references farmOS + KB + plant types in one call)
+- ⬜ Item 3: Add `source-material` category + Drive folder convention
+- ⬜ Item 4: Add topic-to-farmOS mapping config (topics resolve to farmOS section prefixes)
+- ⬜ Item 5: Enhance `query_sections` to return all location types (nursery, compost, structures)
+- ⬜ Item 6: Update all 4 Claude system prompts with new schema guidance
+
+**Architecture:**
+- Three join keys: `farmos_name` (species), section IDs (locations), `topics` (farm domains)
+- `farm_context(subject=...)` tool does cross-referencing in code, not in AI reasoning
+- Topic-to-farmOS mapping: `{"nursery": "NURS.", "compost": "COMP.", "paddock": "P"}` etc.
+- Raw source materials indexed as `source-material` KB entries for provenance tracking
+- Full design document: `claude-docs/phase-kb-knowledge-crossref.md`
 
 ### Phase 2: Claire's First Real Log (Weeks 3–4)
 Goal: Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.
@@ -1274,6 +1308,108 @@ Part 3 — farmOS Import:
 - Zero network calls — all mocked with `responses` library or `MagicMock`
 - Dependencies added: pytest>=8.0.0, responses>=0.25.0, pytest-cov>=5.0.0
 
+### March 18, 2026 — Knowledge Base Taxonomy & Cross-Referencing Design (Phase KB)
+
+**Session 1: Team activity review + Knowledge Base architecture**
+- Reviewed team memory: James (1 summary), Olivier (14 summaries over 3 days)
+- **James's finding**: Knowledge Base category schema mismatch — Olivier's Claude saved tutorials with `category="nursery"` (topic) instead of `category="tutorial"` (content type). Search by category failed.
+- **Olivier's finding**: `query_sections` only returns paddock sections, not nursery zones (NURS.*). Compiled full list of 17 nursery section IDs. Updated both tutorials with related_sections.
+- **Olivier's productivity**: Built complete tutorial production pipeline (audio → Whisper → Claude → PDF → KB). 14 team memory entries, 2 tutorials, 1 reference, FFC Radio documentation.
+- Listed Knowledge Base contents: 4 entries (Tutorial 01 Cuttings, Tutorial 02 Seedling Separation, Nursery Section IDs Reference, WWOOFer Waste Management Guide)
+
+**Architecture design session — Knowledge Base taxonomy:**
+- Designed 3 orthogonal metadata dimensions: `category` (content type: tutorial/sop/guide/reference/recipe/observation/source-material), `topics` (farm domains: nursery/compost/irrigation/syntropic/seeds/harvest/paddock/equipment/cooking/infrastructure/camp), `tags` (free-form keywords)
+- Designed cross-referencing architecture with 3 join keys: `farmos_name` (species), section IDs (locations), `topics` (farm domains)
+- Designed `farm_context` composite MCP tool for reliable cross-referencing in code
+- Designed topic-to-farmOS mapping config (topics resolve to farmOS section prefixes)
+- Designed raw materials indexing: `source-material` KB entries + Drive folder convention
+- Designed Farm Intelligence Layer vision: context engine that assembles farmOS + KB + plant types + temporal context
+
+**Implementation plan (6 items):**
+1. Add `topics` field to KB schema (Apps Script + MCP tools)
+2. Build `farm_context` composite MCP tool
+3. Add `source-material` category + Drive folder convention
+4. Add topic-to-farmOS mapping config
+5. Enhance `query_sections` for all location types (Olivier's request)
+6. Update all 4 Claude system prompts
+
+**Documents created:**
+- Added architecture decisions #13 (KB taxonomy), #14 (cross-referencing), #15 (Drive convention) to CLAUDE.md
+- Added Phase KB to implementation phases in CLAUDE.md
+- Created `claude-docs/phase-kb-knowledge-crossref.md` — full design + implementation plan
+
+**Strategic note:** Agnes decided to implement quick wins (Items 1, 3, 5, 6) in Python first, then Phase 1b remote server, then add farm_context (Items 2, 4) to remote server. "Can always enhance the MCP tools once the MCP server is remote — won't need to update their laptops."
+
+### March 19, 2026 — Phase 1b Deployed to Railway + 3 Production Fixes
+
+**Session: Railway deployment debugging + fixes**
+- Deployed TypeScript MCP server to Railway (all 29 tools, 98 tests)
+- Hit 3 production issues, all fixed and deployed:
+
+**Fix 1 — farmOS auth (commit `7bf4496`):**
+- All farmOS tools returned "FarmOS credentials not found in auth context"
+- Root cause: FA Framework only populates `extra.authInfo` when a platform OAuth handler is configured. Our FarmOSClient does its own OAuth2, so `authInfo` was always undefined.
+- Additionally, code used `extra.auth` (wrong path) instead of `extra.authInfo`
+- Fix: Read FARMOS_URL/USERNAME/PASSWORD from env vars (shared account). Auth context only for user identity.
+- Added 16 client-factory tests (98 total, was 82)
+
+**Fix 2 — Apps Script redirect (commit `a0cb4a8`):**
+- Team memory, observations, knowledge, plant types all returned Google sign-in HTML
+- Root cause: AxiosHttpClient doesn't follow Google Apps Script's 302 redirect chain (script.google.com → script.googleusercontent.com)
+- Fix: Replaced AxiosHttpClient with native `fetch` + `redirect: 'follow'` in AppsScriptClient base class. Added JSON parse validation with clear error for non-JSON responses.
+
+**Fix 3 — Cold start keep-alive (commit `197b8c5`):**
+- First request after inactivity timed out (Railway sleeps containers)
+- Fix: Self-ping to `/health` every 4 minutes keeps container warm
+- Note: Stale session issue after deploys remains — `mcp-remote` retries expired session IDs. Lesley investigating.
+
+**Additional:**
+- Knowledge endpoint env var was truncated on Railway (Agnes fixed manually)
+- Created FA MCP Framework skill: `skills/fa-mcp-framework.md` — 10-section reference guide
+- Created feedback memory: `feedback_fa_framework_auth.md`
+- Updated MEMORY.md with deployment checklist (9 env vars)
+
+**Key learnings:**
+- FA Framework `extra.authInfo` requires platform OAuth handler — use env vars for shared backend creds
+- AxiosHttpClient breaks on Google's redirect chain — use native fetch for Apps Script
+- `mcp-remote` doesn't cleanly reconnect after server restart (stale session ID → 404 loop)
+- Railway Hobby plan sleeps containers after ~15 min inactivity — self-ping prevents this
+- Railway boots Node.js container in ~1 second — cold start itself isn't the issue, stale sessions are
+
+### March 20, 2026 — Team Migration to Remote MCP + Phase KB Quick Wins + Page Regeneration
+
+**Session 1: Team machine migration to Railway remote MCP**
+- Migrated all 4 team machines from local Python MCP to remote Railway server via `npx mcp-remote`
+- James (Mac): `npx` directly in Claude Desktop config — worked immediately
+- Olivier (Windows): Node installed via `winget install OpenJS.NodeJS.LTS`. npx in PATH but Claude Desktop couldn't find it. Solved with .bat wrapper at `C:\firefly-mcp\mcp-remote.bat` containing `"C:\Program Files\nodejs\npx.cmd" %*`
+- Claire (Windows): Same .bat wrapper approach as Olivier
+- Old local Python MCP files (`C:\firefly-mcp\` venv, server.py, .env) can be deleted — only .bat file needed
+- Hit `forkpty: Resource temporarily unavailable` on James's Mac — too many Terminal sessions, restart fixed it
+- Team memory update posted about MCP timeout workaround (restart Claude Desktop after deploys)
+
+**Session 2: Phase KB quick wins deployed**
+- Added `topics` parameter to `search_knowledge` and `list_knowledge` (TypeScript + Python)
+- Updated `knowledge-client.ts` to pass topics in query params
+- Enhanced `query_sections`: when called with no filter, returns ALL location types (paddock + nursery + compost) instead of just paddock
+- Added `source-material` to add_knowledge source_type descriptions
+- Updated all 3 team context files (Claire, James, Olivier) with topics param and query_sections docs
+- Updated Apps Script `KnowledgeBase.gs` with topics filtering in handleList and handleSearch
+- Agnes redeployed Apps Script — verified working end-to-end
+- 99 TypeScript tests passing (was 98), 117 Python tests passing
+- Committed: `00b100f` (MCP tools) + `a62351f` (Apps Script)
+
+**Session 3: QR page regeneration**
+- Ran full pipeline: export_farmos.py → generate_site.py → git push
+- 53 sections, 631 plants, 1234 logs exported from live farmOS
+- 107 pages generated (53 view + 53 observe + index)
+- Includes all of Claire's P2R3 end-of-season imports
+- Committed: `7ad6f99` — live on GitHub Pages
+
+**Key learnings:**
+- Windows Claude Desktop doesn't inherit system PATH for child processes — even with non-sandboxed winget install. The .bat wrapper with full path to `npx.cmd` is the reliable solution.
+- `forkpty: Resource temporarily unavailable` = Mac out of pseudo-TTY slots. Close terminals or restart.
+- Phase KB topics filter works end-to-end: MCP tool → Apps Script → filtered results. No client machine updates needed since it's the remote server.
+
 ---
 
-*Last updated: March 13, 2026. This file should be updated as the project evolves.*
+*Last updated: March 20, 2026. This file should be updated as the project evolves.*
