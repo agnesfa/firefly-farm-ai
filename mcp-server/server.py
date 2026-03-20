@@ -1476,6 +1476,7 @@ def read_team_activity(
     days: int = 7,
     user: Optional[str] = None,
     limit: int = 20,
+    only_fresh_for: Optional[str] = None,
 ) -> str:
     """Read recent team session summaries from shared memory.
 
@@ -1485,6 +1486,8 @@ def read_team_activity(
         days: How many days back to look (default 7).
         user: Filter by team member name (optional).
         limit: Max results to return (default 20).
+        only_fresh_for: If set, exclude entries already acknowledged by this
+            user. Use at session start to see only new updates (e.g., "Claire").
     """
     try:
         mem_client = get_memory_client()
@@ -1492,7 +1495,9 @@ def read_team_activity(
         return json.dumps({"error": str(e), "hint": "MEMORY_ENDPOINT env var not set"})
 
     try:
-        result = mem_client.read_activity(days=days, user=user, limit=limit)
+        result = mem_client.read_activity(
+            days=days, user=user, limit=limit, only_fresh_for=only_fresh_for
+        )
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to read team activity: {e}"})
@@ -1521,6 +1526,32 @@ def search_team_memory(
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to search team memory: {e}"})
+
+
+@mcp.tool
+def acknowledge_memory(
+    summary_id: str,
+    user: str,
+) -> str:
+    """Mark a team memory entry as acknowledged (read and processed).
+
+    Call this after reading and acting on a team memory entry so it won't
+    appear again in fresh-only queries for this user.
+
+    Args:
+        summary_id: The summary/entry ID to acknowledge.
+        user: Who is acknowledging (e.g., "Claire", "Agnes", "James").
+    """
+    try:
+        mem_client = get_memory_client()
+    except ValueError as e:
+        return json.dumps({"error": str(e), "hint": "MEMORY_ENDPOINT env var not set"})
+
+    try:
+        result = mem_client.acknowledge_memory(summary_id=summary_id, user=user)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to acknowledge memory: {e}"})
 
 
 # ═══════════════════════════════════════════════════════════════

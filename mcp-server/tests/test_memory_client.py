@@ -148,3 +148,81 @@ def test_search_memory_params(client):
     assert "action=search" in req.url
     assert "query=pigeon" in req.url  # URL-encoded space may vary
     assert "days=60" in req.url
+
+
+# ── acknowledge_memory ────────────────────────────────────────
+
+
+@responses.activate
+def test_acknowledge_memory_payload(client):
+    """POST payload contains action=acknowledge, summary_id, and user."""
+    responses.add(
+        responses.POST,
+        FAKE_ENDPOINT,
+        json={"success": True, "message": "Acknowledged"},
+        status=200,
+    )
+
+    result = client.acknowledge_memory(summary_id="row-42", user="Claire")
+
+    assert result["success"] is True
+
+    req = responses.calls[0].request
+    assert req.headers["Content-Type"] == "text/plain"
+
+    body = json.loads(req.body)
+    assert body["action"] == "acknowledge"
+    assert body["summary_id"] == "row-42"
+    assert body["user"] == "Claire"
+
+
+@responses.activate
+def test_acknowledge_memory_error_propagates(client):
+    """HTTP errors from acknowledge are raised."""
+    responses.add(
+        responses.POST,
+        FAKE_ENDPOINT,
+        json={"error": "Not found"},
+        status=404,
+    )
+
+    with pytest.raises(Exception):
+        client.acknowledge_memory(summary_id="bad-id", user="Agnes")
+
+
+# ── read_activity with only_fresh_for ─────────────────────────
+
+
+@responses.activate
+def test_read_activity_with_only_fresh_for(client):
+    """GET includes only_fresh_for param when filtering fresh entries."""
+    responses.add(
+        responses.GET,
+        FAKE_ENDPOINT,
+        json={"success": True, "summaries": [{"user": "James", "summary": "New update"}], "count": 1},
+        status=200,
+    )
+
+    result = client.read_activity(days=7, only_fresh_for="Claire")
+
+    assert result["count"] == 1
+
+    req = responses.calls[0].request
+    assert "only_fresh_for=Claire" in req.url
+    assert "action=list" in req.url
+
+
+@responses.activate
+def test_read_activity_without_only_fresh_for(client):
+    """GET does not include only_fresh_for when not specified."""
+    responses.add(
+        responses.GET,
+        FAKE_ENDPOINT,
+        json={"success": True, "summaries": [], "count": 0},
+        status=200,
+    )
+
+    client.read_activity(days=7)
+
+    req = responses.calls[0].request
+    assert "only_fresh_for" not in req.url

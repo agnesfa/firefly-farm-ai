@@ -95,6 +95,7 @@ class MemoryClient:
         days: int = 7,
         user: Optional[str] = None,
         limit: int = 20,
+        only_fresh_for: Optional[str] = None,
     ) -> dict:
         """Fetch recent team session summaries.
 
@@ -102,12 +103,16 @@ class MemoryClient:
             days: How many days back to look (default 7)
             user: Filter by user name (optional)
             limit: Max results to return (default 20)
+            only_fresh_for: If set, exclude entries already acknowledged
+                by this user (e.g., "Claire"). Enables fresh-only filtering.
 
         Returns dict with keys: success, summaries (list), count (int).
         """
         params = {"action": "list", "days": str(days), "limit": str(limit)}
         if user:
             params["user"] = user
+        if only_fresh_for:
+            params["only_fresh_for"] = only_fresh_for
 
         resp = requests.get(self.endpoint, params=params, timeout=30)
         resp.raise_for_status()
@@ -132,5 +137,36 @@ class MemoryClient:
         params = {"action": "search", "query": query, "days": str(days)}
 
         resp = requests.get(self.endpoint, params=params, timeout=30)
+        resp.raise_for_status()
+        return resp.json()
+
+    def acknowledge_memory(
+        self,
+        summary_id: str,
+        user: str,
+    ) -> dict:
+        """Mark a team memory entry as acknowledged by a user.
+
+        After a Claude reads and processes a team memory entry, call this
+        to mark it as seen. Future read_team_activity calls with
+        only_fresh_for=user will exclude acknowledged entries.
+
+        Args:
+            summary_id: The row/entry ID to acknowledge
+            user: Who is acknowledging (e.g., "Claire", "Agnes")
+
+        Returns dict with keys: success, message.
+        """
+        payload = json.dumps({
+            "action": "acknowledge",
+            "summary_id": summary_id,
+            "user": user,
+        })
+        resp = requests.post(
+            self.endpoint,
+            data=payload,
+            headers={"Content-Type": "text/plain"},
+            timeout=30,
+        )
         resp.raise_for_status()
         return resp.json()

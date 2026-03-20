@@ -1,4 +1,4 @@
-// Barrel export — all 28 farm tools (27 ported + hello)
+// Barrel export — all 29 farm tools (28 ported + hello)
 import { helloTool } from './hello.js';
 
 // READ TOOLS (7)
@@ -22,10 +22,11 @@ import { listObservationsTool } from './list-observations.js';
 import { updateObservationStatusTool } from './update-observation-status.js';
 import { importObservationsTool } from './import-observations.js';
 
-// TEAM MEMORY (3)
+// TEAM MEMORY (4)
 import { writeSessionSummaryTool } from './write-session-summary.js';
 import { readTeamActivityTool } from './read-team-activity.js';
 import { searchTeamMemoryTool } from './search-team-memory.js';
+import { acknowledgeMemoryTool } from './acknowledge-memory.js';
 
 // PLANT TYPE MANAGEMENT (3)
 import { addPlantTypeTool } from './add-plant-type.js';
@@ -62,10 +63,11 @@ export const farmTools = [
   listObservationsTool,
   updateObservationStatusTool,
   importObservationsTool,
-  // Team memory (3)
+  // Team memory (4)
   writeSessionSummaryTool,
   readTeamActivityTool,
   searchTeamMemoryTool,
+  acknowledgeMemoryTool,
   // Plant type management (3)
   addPlantTypeTool,
   updatePlantTypeTool,
@@ -85,7 +87,7 @@ export { queryPlantsTool, querySectionsTool, getPlantDetailTool, queryLogsTool }
 export { getInventoryTool, searchPlantTypesTool, getAllPlantTypesTool };
 export { createObservationTool, createActivityTool, updateInventoryTool, createPlantTool, archivePlantTool };
 export { listObservationsTool, updateObservationStatusTool, importObservationsTool };
-export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool };
+export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool, acknowledgeMemoryTool };
 export { addPlantTypeTool, updatePlantTypeTool, reconcilePlantTypesTool };
 export { searchKnowledgeTool, listKnowledgeTool, addKnowledgeTool, updateKnowledgeTool };
 export { getFarmOverviewTool, regeneratePagesTool };

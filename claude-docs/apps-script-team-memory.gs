@@ -17,11 +17,13 @@
  *   F: Questions
  *   G: Summary
  *   H: Skip
+ *   I: Acknowledged_By (JSON array of usernames, e.g. '["Agnes","Claire"]')
  *
  * Endpoints:
- *   GET  ?action=list[&days=7&user=...&limit=20]  — list recent summaries
- *   GET  ?action=search&query=...&days=30         — search across text columns
+ *   GET  ?action=list[&days=7&user=...&limit=20&only_fresh_for=...]  — list recent summaries
+ *   GET  ?action=search&query=...&days=30                           — search across text columns
  *   POST {action: "write_summary", user, topics, decisions, farmos_changes, questions, summary, skip}
+ *   POST {action: "acknowledge", summary_id: <row_number>, user: "Claire"}
  */
 
 // ── Configuration ──────────────────────────────────────────────
@@ -63,6 +65,8 @@ function doPost(e) {
 
     if (action === "write_summary") {
       return handleWriteSummary(body);
+    } else if (action === "acknowledge") {
+      return handleAcknowledge(body);
     } else {
       return jsonResponse({ success: false, error: "Unknown action: " + action });
     }
@@ -87,7 +91,9 @@ function handleList(params) {
   var cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
 
-  var data = sheet.getRange(2, 1, lastRow - 1, 8).getValues();
+  var onlyFreshFor = (params.only_fresh_for || "").toLowerCase();
+
+  var data = sheet.getRange(2, 1, lastRow - 1, 9).getValues();
   var results = [];
 
   // Iterate from newest to oldest (bottom to top)
@@ -104,7 +110,15 @@ function handleList(params) {
     // Skip entries marked as "skip"
     if (String(row[7]).toLowerCase() === "true") continue;
 
+    // Skip entries already acknowledged by this user (fresh-only filtering)
+    if (onlyFreshFor) {
+      var acknowledgedBy = parseAcknowledgedBy(row[8]);
+      if (acknowledgedBy.indexOf(onlyFreshFor) !== -1) continue;
+    }
+
+    var rowNumber = i + 2; // 1-indexed, skip header
     results.push({
+      summary_id: String(rowNumber),
       timestamp: timestamp.toISOString(),
       user: String(row[1]),
       topics: String(row[2]),
@@ -138,7 +152,7 @@ function handleSearch(params) {
   var cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
 
-  var data = sheet.getRange(2, 1, lastRow - 1, 8).getValues();
+  var data = sheet.getRange(2, 1, lastRow - 1, 9).getValues();
   var results = [];
   var maxResults = 20;
 
@@ -159,7 +173,9 @@ function handleSearch(params) {
     ].join(" ").toLowerCase();
 
     if (searchable.indexOf(query) !== -1) {
+      var rowNumber = i + 2;
       results.push({
+        summary_id: String(rowNumber),
         timestamp: timestamp.toISOString(),
         user: String(row[1]),
         topics: String(row[2]),
@@ -190,6 +206,7 @@ function handleWriteSummary(body) {
     body.questions || "",                  // F: Questions
     body.summary || "",                    // G: Summary
     body.skip ? "true" : "false",         // H: Skip
+    "",                                   // I: Acknowledged_By (empty initially)
   ];
 
   sheet.appendRow(row);
@@ -198,6 +215,58 @@ function handleWriteSummary(body) {
     success: true,
     message: "Summary saved for " + (body.user || "Unknown"),
   });
+}
+
+// ── Acknowledge a memory entry ────────────────────────────────
+
+function handleAcknowledge(body) {
+  var summaryId = body.summary_id;
+  var user = (body.user || "").toLowerCase();
+
+  if (!summaryId || !user) {
+    return jsonResponse({ success: false, error: "Missing summary_id or user" });
+  }
+
+  var rowNum = parseInt(summaryId, 10);
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+
+  if (isNaN(rowNum) || rowNum < 2 || rowNum > lastRow) {
+    return jsonResponse({ success: false, error: "Invalid summary_id: " + summaryId });
+  }
+
+  // Read current acknowledged_by value (column I = 9)
+  var cell = sheet.getRange(rowNum, 9);
+  var current = parseAcknowledgedBy(cell.getValue());
+
+  // Add user if not already acknowledged
+  if (current.indexOf(user) === -1) {
+    current.push(user);
+    cell.setValue(JSON.stringify(current));
+  }
+
+  return jsonResponse({
+    success: true,
+    message: "Acknowledged by " + body.user,
+    summary_id: summaryId,
+    acknowledged_by: current,
+  });
+}
+
+// ── Parse acknowledged_by JSON array ─────────────────────────
+
+function parseAcknowledgedBy(value) {
+  var str = String(value || "").trim();
+  if (!str) return [];
+  try {
+    var arr = JSON.parse(str);
+    if (Array.isArray(arr)) {
+      return arr.map(function(u) { return String(u).toLowerCase(); });
+    }
+    return [];
+  } catch (e) {
+    return [];
+  }
 }
 
 // ── Utility ────────────────────────────────────────────────────
