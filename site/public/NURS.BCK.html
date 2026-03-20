@@ -31,7 +31,58 @@
   font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   z-index: 100; display: flex; align-items: center; justify-content: center;
   text-decoration: none; }
-.obs-fab:hover { background: #1a5010; transform: scale(1.05); }
+/* Observer name bar */
+.inline-name-bar { padding: 12px 16px; background: #f0fdf4; border-bottom: 1px solid #d1fae5;
+  display: flex; align-items: center; gap: 10px; }
+.inline-name-bar label { font-size: 11px; font-weight: 600; color: #4a8c2e;
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+.inline-name-bar input { flex: 1; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 14px; font-family: 'DM Sans', sans-serif; }
+.inline-name-bar input:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.15); }
+/* Inline observations per James's spec */
+.inline-obs { padding: 10px 0 0 0; border-top: 1px dashed #e5e7eb; margin-top: 8px; }
+.inline-obs-field { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 13px; font-family: 'DM Sans', sans-serif; margin-bottom: 6px; box-sizing: border-box; }
+.inline-obs-field:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.12); }
+.inline-count-toggle { font-size: 12px; color: #4a8c2e; cursor: pointer; padding: 4px 0;
+  font-weight: 600; user-select: none; }
+.inline-count-toggle:hover { text-decoration: underline; }
+.inline-count-row { padding: 8px; background: #fffbeb; border-radius: 6px; margin: 6px 0; }
+.count-warning { font-size: 11px; color: #92400e; margin-bottom: 8px; line-height: 1.4; }
+.count-input-row { display: flex; align-items: center; gap: 8px; }
+.count-input-row label { font-size: 12px; color: #374151; font-weight: 500; white-space: nowrap; }
+.inline-count-input { width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 14px; font-family: 'DM Sans', sans-serif; text-align: center; }
+.inline-obs-submit { width: 100%; padding: 10px; background: #2d6b1a; color: #fff; border: none;
+  border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 6px; transition: background 0.15s; }
+.inline-obs-submit:hover { background: #1a5010; }
+.inline-obs-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+.inline-obs-status { font-size: 12px; text-align: center; margin-top: 4px; min-height: 18px; }
+.inline-obs-status.success { color: #166534; }
+.inline-obs-status.error { color: #991b1b; }
+/* Action interstitial */
+.action-interstitial { position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
+.action-interstitial-box { background: #fff; padding: 24px; border-radius: 12px; max-width: 340px;
+  margin: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); text-align: center; }
+.action-interstitial-box p { font-size: 14px; color: #374151; margin: 0 0 16px 0; line-height: 1.5; }
+.action-interstitial-box button { padding: 10px 16px; border: none; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+  margin: 4px; min-width: 120px; }
+.action-btn-yes { background: #2d6b1a; color: #fff; }
+.action-btn-no { background: #f3f4f6; color: #374151; }
+.obs-fab { display: none; }
+.transplant-timing { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px;
+  margin: 6px 0 0 0; border-radius: 6px; font-size: 0.8rem; }
+.timing-ready { background: #f0fdf4; border-left: 3px solid #16a34a; }
+.timing-soon { background: #fefce8; border-left: 3px solid #eab308; }
+.timing-waiting { background: #f1f5f9; border-left: 3px solid #94a3b8; }
+.timing-icon { font-size: 1rem; line-height: 1; flex-shrink: 0; }
+.timing-info { display: flex; flex-direction: column; gap: 1px; }
+.timing-status { font-weight: 600; color: #1a1a1a; }
+.timing-range { color: #4b5563; font-size: 0.75rem; }
+.timing-days { color: #9ca3af; font-size: 0.7rem; }
 </style>
 </head>
 <body>
@@ -45,9 +96,9 @@
     </div>
     
     <div class="section-stats">
-      <div class="stat"><div class="stat-value">15</div><div class="stat-label">species</div></div>
-      <div class="stat"><div class="stat-value">380</div><div class="stat-label">viable plants</div></div>
-      <div class="stat"><div class="stat-value">87</div><div class="stat-label">ready to transplant</div></div>
+      <div class="stat"><div class="stat-value">10</div><div class="stat-label">species</div></div>
+      <div class="stat"><div class="stat-value">327</div><div class="stat-label">viable plants</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">ready to transplant</div></div>
     </div>
   </div>
 
@@ -60,6 +111,12 @@
 </div>
 
 
+  <!-- Observer name (required for submissions) -->
+  <div class="inline-name-bar">
+    <label for="observer-name">Your name</label>
+    <input type="text" id="observer-name" placeholder="Enter your name to record observations" autocomplete="name">
+  </div>
+
   <div style="padding: 0 0 80px 0;">
     <div class="plant-inventory">
 
@@ -68,30 +125,13 @@
         <span class="strata-icon">✂️</span>
         <div class="strata-label">
           <span class="strata-name" style="color:#2d5016">Cuttings</span>
-          <span class="strata-height">12 entries</span>
+          <span class="strata-height">8 entries</span>
         </div>
-        <span class="strata-count" style="background:#2d5016">346</span>
+        <span class="strata-count" style="background:#2d5016">302</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Banagrass</div>
-          <div class="plant-botanical">Cenchrus purpureus</div>
-          <div class="plant-process">✂️ cutting · 19/03/2026</div>
-        </div>
-        <span class="plant-count" style="background:#edf4e4;color:#2d5016">37</span>
-      </div>
-      
-      <div class="plant-detail">
-        <p class="plant-desc">Perennial tropical grass producing massive biomass for mulching. Also known as elephant grass or napier grass. Grows 3-4m tall. Excellent for erosion control and chop-and-drop.</p>
-        <div class="plant-meta">Seeded: 19/03/2026 · Pots: 37 · Success: 100% · Source: Greenpatch Organic (bought plant), FFC cutting plant</div>
-        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">pioneer</span></div>
-        
-      </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-e7aa64" style="border-left-color:#2d5016" data-species="Banagrass" data-count="56">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Banagrass</div>
           <div class="plant-botanical">Cenchrus purpureus</div>
@@ -99,67 +139,134 @@
         </div>
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">56</span>
       </div>
-      <span class="rtt-badge">📦 56 ready → P2R4</span>
+      
+      
       <div class="plant-detail">
         <p class="plant-desc">Perennial tropical grass producing massive biomass for mulching. Also known as elephant grass or napier grass. Grows 3-4m tall. Excellent for erosion control and chop-and-drop.</p>
-        <div class="plant-meta">Seeded: 25/02/2026 · Pots: 56 · Success: 100% · Source: Greenpatch Organic (bought plant), FFC cutting plant</div>
+        <div class="plant-meta">Seeded: 25/02/2026 · Pots: 11 · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">pioneer</span></div>
-        <div class="transplant-plan"><div class="transplant-title">📋 Transplant Plan</div><div>Destination: P2R4</div><div>When: Mar-26</div><div>Not ready yet: 56</div></div>
+        
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-e7aa64')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-e7aa64-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="56" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-e7aa64')">Save</button>
+        <div class="inline-obs-status" id="card-e7aa64-status"></div>
       </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-fae505" style="border-left-color:#2d5016" data-species="Basil - Perennial" data-count="10">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Basil - Perennial</div>
           <div class="plant-botanical">Ocimum basilicum</div>
-          <div class="plant-process">✂️ cutting · 03/01/2026</div>
+          <div class="plant-process">✂️ cutting · 01/03/2026</div>
         </div>
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">10</span>
       </div>
       
+      <div class="transplant-timing timing-waiting">
+                  <span class="timing-icon">&#x23f3;</span>
+                  <div class="timing-info">
+                    <span class="timing-status">~7 days</span>
+                    <span class="timing-range">Transplant window: Mar 29 – Apr 26, 2026</span>
+                    <span class="timing-days">(28-56 days from sowing)</span>
+                  </div>
+                </div>
       <div class="plant-detail">
         <p class="plant-desc">Thai basil variety with distinctive anise-like flavor and purple stems. Essential for Southeast Asian cuisine. Loves heat.</p>
-        <div class="plant-meta">Seeded: 03/01/2026 · Pots: bathtub · Source: Johnsons</div>
+        <div class="plant-meta">Seeded: 01/03/2026 · Pots: bathtub · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
         
       </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-fae505')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-fae505-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="10" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-fae505')">Save</button>
+        <div class="inline-obs-status" id="card-fae505-status"></div>
+      </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-68a24f" style="border-left-color:#2d5016" data-species="Lavender" data-count="5">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Lavender</div>
           <div class="plant-botanical">Lavandula</div>
-          <div class="plant-process">✂️ cutting · 03/01/2026</div>
+          <div class="plant-process">✂️ cutting · 01/03/2026</div>
         </div>
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">5</span>
       </div>
       
+      
       <div class="plant-detail">
         <p class="plant-desc">Fragrant Mediterranean shrub with purple flower spikes. Drought tolerant. Attracts bees and beneficial insects. Prune after flowering.</p>
-        <div class="plant-meta">Seeded: 03/01/2026 · Pots: bathtub · Source: FFC (farm saved)</div>
+        <div class="plant-meta">Seeded: 01/03/2026 · Pots: bathtub · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Olive</div>
-          <div class="plant-botanical">Olea europaea</div>
-          <div class="plant-process">✂️ cutting · 03/01/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-68a24f')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-68a24f-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="5" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#edf4e4;color:#2d5016">8</span>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-68a24f')">Save</button>
+        <div class="inline-obs-status" id="card-68a24f-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-21ede6" style="border-left-color:#2d5016" data-species="Lemon" data-count="25">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Lemon</div>
+          <div class="plant-botanical">Citrus limon</div>
+          <div class="plant-process">✂️ cutting · 15/02/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">25</span>
       </div>
       
+      
       <div class="plant-detail">
-        <p class="plant-desc">Long-lived Mediterranean tree producing table olives and oil. Kalamata variety renowned for large purple-black fruit. Drought tolerant once established. Needs winter chill for fruiting.</p>
-        <div class="plant-meta">Seeded: 03/01/2026 · Pots: 9 · Success: 89% · Source: FFC</div>
-        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">climax</span></div>
+        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
+        <div class="plant-meta">Seeded: 15/02/2026 · Pots: 19 · Source: FFC forest</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
         
       </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-21ede6')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-21ede6-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="25" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-21ede6')">Save</button>
+        <div class="inline-obs-status" id="card-21ede6-status"></div>
+      </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-e2f16d" style="border-left-color:#2d5016" data-species="Quince" data-count="36">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Quince</div>
           <div class="plant-botanical">Cydonia oblonga</div>
@@ -168,49 +275,62 @@
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">36</span>
       </div>
       
+      
       <div class="plant-detail">
         <p class="plant-desc">Deciduous fruit tree related to apples and pears. Fragrant golden fruit used for preserves, paste and cooking. Beautiful pink-white blossoms.</p>
         <div class="plant-meta">Seeded: 23/01/2026 · Pots: 13 · Success: 277% · Source: FFC (farm saved)</div>
         <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">secondary</span></div>
         
       </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-e2f16d')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-e2f16d-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="36" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-e2f16d')">Save</button>
+        <div class="inline-obs-status" id="card-e2f16d-status"></div>
+      </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-48e9ba" style="border-left-color:#2d5016" data-species="Rosemary" data-count="15">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Rosemary</div>
           <div class="plant-botanical">Salvia rosmarinus</div>
-          <div class="plant-process">✂️ cutting · 03/01/2026</div>
+          <div class="plant-process">✂️ cutting · 01/03/2026</div>
         </div>
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">15</span>
       </div>
       
+      
       <div class="plant-detail">
         <p class="plant-desc">Aromatic Mediterranean shrub with needle-like leaves. Drought tolerant once established. Blue flowers attract bees.</p>
-        <div class="plant-meta">Seeded: 03/01/2026 · Pots: bathtub · Source: FFC (farm saved)</div>
+        <div class="plant-meta">Seeded: 01/03/2026 · Pots: bathtub · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Sugar Cane</div>
-          <div class="plant-botanical">Saccharum officinarum</div>
-          <div class="plant-process">✂️ cutting · 23/02/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-48e9ba')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-48e9ba-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="15" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#edf4e4;color:#2d5016">3</span>
-      </div>
-      <span class="rtt-badge">📦 3 ready</span>
-      <div class="plant-detail">
-        <p class="plant-desc">Tall perennial grass grown for sugar and biomass. Excellent chop-and-drop material. Propagated from cuttings. Fast growing in subtropical conditions.</p>
-        <div class="plant-meta">Seeded: 23/02/2026 · Pots: 1T · Source: Various</div>
-        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">pioneer</span></div>
-        
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-48e9ba')">Save</button>
+        <div class="inline-obs-status" id="card-48e9ba-status"></div>
       </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-20eadc" style="border-left-color:#2d5016" data-species="Sugar Cane" data-count="5">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Sugar Cane</div>
           <div class="plant-botanical">Saccharum officinarum</div>
@@ -218,33 +338,31 @@
         </div>
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">5</span>
       </div>
-      <span class="rtt-badge">📦 5 ready</span>
+      
+      
       <div class="plant-detail">
         <p class="plant-desc">Tall perennial grass grown for sugar and biomass. Excellent chop-and-drop material. Propagated from cuttings. Fast growing in subtropical conditions.</p>
-        <div class="plant-meta">Seeded: 23/02/2026 · Pots: 3 · Success: 167% · Source: Various</div>
+        <div class="plant-meta">Seeded: 23/02/2026 · Pots: 1T · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">pioneer</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Sweet Potato</div>
-          <div class="plant-botanical">Ipomoea batatas</div>
-          <div class="plant-process">✂️ cutting · 03/07/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-20eadc')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-20eadc-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="5" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#edf4e4;color:#2d5016">21</span>
-      </div>
-      
-      <div class="plant-detail">
-        <p class="plant-desc">Tropical tuber with edible leaves. Excellent living mulch groundcover suppressing weeds. Plant slips in warm soil.</p>
-        <div class="plant-meta">Seeded: 03/07/2026 · Pots: 21 · Success: 100% · Source: FFC (farm saved)</div>
-        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
-        
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-20eadc')">Save</button>
+        <div class="inline-obs-status" id="card-20eadc-status"></div>
       </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-73c36b" style="border-left-color:#2d5016" data-species="Tansy" data-count="150">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Tansy</div>
           <div class="plant-botanical">Tanacetum vulgare</div>
@@ -253,28 +371,33 @@
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">150</span>
       </div>
       
+      <div class="transplant-timing timing-waiting">
+                  <span class="timing-icon">&#x23f3;</span>
+                  <div class="timing-info">
+                    <span class="timing-status">~1 days</span>
+                    <span class="timing-range">Transplant window: Mar 23 – Apr 06, 2026</span>
+                    <span class="timing-days">(28-42 days from sowing)</span>
+                  </div>
+                </div>
       <div class="plant-detail">
         <p class="plant-desc">Aromatic perennial herb with yellow button flowers. Strong scent repels insects - plant near fruit trees. CAUTION: Toxic if eaten. Attracts beneficial insects.</p>
-        <div class="plant-meta">Seeded: 23/02/2026 · Pots: 50 · Success: 300% · Source: EDEN SEEDS</div>
+        <div class="plant-meta">Seeded: 23/02/2026 · Pots: 1T · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#2d5016" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Tree Fern</div>
-          <div class="plant-botanical">Cyathea spp.</div>
-          <div class="plant-process">✂️ cutting · 15/02/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-73c36b')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-73c36b-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="150" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
-      </div>
-      
-      <div class="plant-detail">
-        <p class="plant-desc">Tree fern with trunk-like stem and large spreading fronds. Native to Australian rainforests. Prefers shade and moisture. Excellent understorey species.</p>
-        <div class="plant-meta">Seeded: 15/02/2026 · Pots: 1 · Success: 0% · Source: Various</div>
-        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">climax</span></div>
-        
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-73c36b')">Save</button>
+        <div class="inline-obs-status" id="card-73c36b-status"></div>
       </div>
     </div>
       </div>
@@ -285,13 +408,13 @@
         <span class="strata-icon">🎁</span>
         <div class="strata-label">
           <span class="strata-name" style="color:#6b21a8">Given Plants</span>
-          <span class="strata-height">2 entries</span>
+          <span class="strata-height">1 entry</span>
         </div>
-        <span class="strata-count" style="background:#6b21a8">2</span>
+        <span class="strata-count" style="background:#6b21a8">1</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" style="border-left-color:#6b21a8" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-1fed0b" style="border-left-color:#6b21a8" data-species="Aloe Vera" data-count="1">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Aloe Vera</div>
           <div class="plant-botanical">Aloe barbadensis</div>
@@ -300,28 +423,26 @@
         <span class="plant-count" style="background:#f3e8ff;color:#6b21a8">1</span>
       </div>
       
+      
       <div class="plant-detail">
         <p class="plant-desc">Succulent perennial with thick fleshy leaves containing medicinal gel. Drought tolerant, prefers well-drained soil. Used topically for burns and skin care.</p>
-        <div class="plant-meta">Seeded: 15/01/2025 · Pots: 1 · Success: 100% · Source: Various</div>
+        <div class="plant-meta">Seeded: 15/01/2025 · Pots: 1 · Source: Minimbah</div>
         <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#6b21a8" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Vacoa (Pandanus)</div>
-          <div class="plant-botanical">Pandanus spp.</div>
-          <div class="plant-process">🎁 given plant · 12/01/2025</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-1fed0b')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-1fed0b-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="1" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#f3e8ff;color:#6b21a8">1</span>
-      </div>
-      
-      <div class="plant-detail">
-        <p class="plant-desc">Screw Pine. Tropical tree with aerial prop roots and spirally arranged leaves. Drought tolerant once established. Leaves used for weaving, fruit edible in some species.</p>
-        <div class="plant-meta">Seeded: 12/01/2025 · Pots: 1 · Success: 100% · Source: Various</div>
-        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">secondary</span></div>
-        
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-1fed0b')">Save</button>
+        <div class="inline-obs-status" id="card-1fed0b-status"></div>
       </div>
     </div>
       </div>
@@ -337,8 +458,8 @@
         <span class="strata-count" style="background:#92400e">24</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" style="border-left-color:#92400e" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-e30f11" style="border-left-color:#92400e" data-species="Comfrey" data-count="24">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Comfrey</div>
           <div class="plant-botanical">Symphytum officinale</div>
@@ -346,72 +467,27 @@
         </div>
         <span class="plant-count" style="background:#fef3c7;color:#92400e">24</span>
       </div>
-      <span class="rtt-badge">📦 15 ready → P2R4</span>
+      
+      
       <div class="plant-detail">
         <p class="plant-desc">Deep-rooted nutrient accumulator bringing minerals from subsoil. Excellent for chop-and-drop mulching - produces massive biomass. Cut 4-5 times per season.</p>
-        <div class="plant-meta">Seeded: 15/02/2026 · Pots: 24 · Success: 100% · Source: FFC (farm saved)</div>
-        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
-        <div class="transplant-plan"><div class="transplant-title">📋 Transplant Plan</div><div>Destination: P2R4</div><div>When: Mar-26</div><div>Not ready yet: 9</div></div>
-      </div>
-    </div>
-      </div>
-    </div>
-
-    <div class="strata-group">
-      <div class="strata-header" style="background:#d1fae5;border-bottom-color:#065f46">
-        <span class="strata-icon">🪴</span>
-        <div class="strata-label">
-          <span class="strata-name" style="color:#065f46">Plants</span>
-          <span class="strata-height">1 entry</span>
-        </div>
-        <span class="strata-count" style="background:#065f46">2</span>
-      </div>
-      <div class="strata-plants">
-    <div class="plant-card nursery-card" style="border-left-color:#065f46" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Finger Lime</div>
-          <div class="plant-botanical">Citrus australasica</div>
-          <div class="plant-process">🪴 plant · Bought 04/2025</div>
-        </div>
-        <span class="plant-count" style="background:#d1fae5;color:#065f46">2</span>
-      </div>
-      <span class="rtt-badge">📦 2 ready</span>
-      <div class="plant-detail">
-        <p class="plant-desc">Australian native rainforest citrus producing unique caviar-like lime pearls. Thorny shrub to 6m. Fruit highly prized by chefs. Slow growing but very long-lived. Prefers part shade when young.</p>
-        <div class="plant-meta">Seeded: Bought 04/2025 · Pots: 2 · Success: 100% · Source: Daleys Fruit Nursery</div>
-        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
-        
-      </div>
-    </div>
-      </div>
-    </div>
-
-    <div class="strata-group">
-      <div class="strata-header" style="background:#f1f5f9;border-bottom-color:#475569">
-        <span class="strata-icon">🌾</span>
-        <div class="strata-label">
-          <span class="strata-name" style="color:#475569">Spontaneous</span>
-          <span class="strata-height">1 entry</span>
-        </div>
-        <span class="strata-count" style="background:#475569">6</span>
-      </div>
-      <div class="strata-plants">
-    <div class="plant-card nursery-card" style="border-left-color:#475569" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Nettle</div>
-          <div class="plant-botanical">Urtica dioica</div>
-          <div class="plant-process">🌾 spontaneous · 15/01/2026</div>
-        </div>
-        <span class="plant-count" style="background:#f1f5f9;color:#475569">6</span>
-      </div>
-      <span class="rtt-badge">📦 6 ready</span>
-      <div class="plant-detail">
-        <p class="plant-desc">Herbaceous perennial, 0.5-1.5m tall. Highly nutritious edible leaves (cooked). Excellent dynamic accumulator drawing minerals from deep soil. Valued for liquid fertiliser production and compost activation. In syntropic systems serves as low-strata nutrient cycling plant and beneficial insect habitat.</p>
-        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 6 · Success: 100% · Source: FFC, Greenpatch Organic Seeds</div>
+        <div class="plant-meta">Seeded: 15/02/2026 · Pots: 29 · Source: FFC</div>
         <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-e30f11')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-e30f11-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="24" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-e30f11')">Save</button>
+        <div class="inline-obs-status" id="card-e30f11-status"></div>
       </div>
     </div>
       </div>
@@ -421,14 +497,166 @@
   </div>
 
   <div class="footer">
-    <div class="footer-sub">Inventory date: March 20, 2026</div>
+    <div class="footer-sub">Inventory: farmOS live data</div>
     <div class="footer-sub">Firefly Corner Farm · Plant Nursery</div>
   </div>
 
 </div>
 
-<!-- Floating action button → observe page -->
-<a href="NURS.BCK-observe.html" class="obs-fab" title="Record Observation">📋</a>
+<script>
+var OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbwxz3n9MSH45tQ1KX1_MacGAheIP_KcFMmlX_AWnYMI4-wwQ0ZNjYO5U8DJqHebcGPa/exec";
+var SECTION_ID = "NURS.BCK";
+
+// Restore observer name
+(function() {
+  var saved = localStorage.getItem("firefly_observer_name") || "";
+  var input = document.getElementById("observer-name");
+  if (input && saved) input.value = saved;
+  if (input) input.addEventListener("change", function() {
+    localStorage.setItem("firefly_observer_name", this.value.trim());
+  });
+})();
+
+function toggleCountUpdate(cardId) {
+  var row = document.getElementById(cardId + "-count");
+  var toggle = row.previousElementSibling;
+  if (row.style.display === "none") {
+    row.style.display = "block";
+    toggle.innerHTML = "&#x25BC; Update count";
+  } else {
+    row.style.display = "none";
+    toggle.innerHTML = "&#x25B6; Update count";
+  }
+}
+
+function submitInlineObs(cardId) {
+  var card = document.getElementById(cardId);
+  var nameInput = document.getElementById("observer-name");
+  var name = (nameInput ? nameInput.value : "").trim();
+  if (!name) {
+    nameInput && nameInput.focus();
+    showCardStatus(cardId, "Please enter your name first.", "error");
+    return;
+  }
+
+  var obsField = card.querySelector('[data-type="observation"]');
+  var actionField = card.querySelector('[data-type="action"]');
+  var countRow = document.getElementById(cardId + "-count");
+  var countInput = card.querySelector(".inline-count-input");
+
+  var obsText = obsField ? obsField.value.trim() : "";
+  var actionText = actionField ? actionField.value.trim() : "";
+  var countVisible = countRow && countRow.style.display !== "none";
+  var newCount = countInput ? parseInt(countInput.value) : null;
+  var oldCount = parseInt(card.dataset.count) || 0;
+  var countChanged = countVisible && newCount !== null && newCount !== oldCount;
+
+  if (!obsText && !actionText && !countChanged) {
+    showCardStatus(cardId, "Add an observation, action, or count update.", "error");
+    return;
+  }
+
+  // If action text is filled and count NOT explicitly updated, show interstitial
+  if (actionText && !countChanged) {
+    showActionInterstitial(cardId, function(confirmed) {
+      if (confirmed) {
+        // User says they already updated — just submit
+        doSubmit(cardId, name, obsText, actionText, countChanged ? newCount : null);
+      } else {
+        // User says no change — submit without count
+        doSubmit(cardId, name, obsText, actionText, null);
+      }
+    });
+    return;
+  }
+
+  doSubmit(cardId, name, obsText, actionText, countChanged ? newCount : null);
+}
+
+function showActionInterstitial(cardId, callback) {
+  var overlay = document.createElement("div");
+  overlay.className = "action-interstitial";
+  overlay.innerHTML = '<div class="action-interstitial-box">' +
+    '<p>Did you change the number of plants in this location?<br><br>' +
+    'If you added, moved, or removed any plants, expand &ldquo;Update count&rdquo; and enter the new total before submitting.</p>' +
+    '<button class="action-btn-yes" onclick="this.closest(\'.action-interstitial\').remove()">Yes, I\'ve updated the count</button>' +
+    '<button class="action-btn-no">No change to plant numbers</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  overlay.querySelector(".action-btn-yes").addEventListener("click", function() {
+    overlay.remove();
+    callback(true);
+  });
+  overlay.querySelector(".action-btn-no").addEventListener("click", function() {
+    overlay.remove();
+    callback(false);
+  });
+}
+
+function doSubmit(cardId, name, obsText, actionText, newCount) {
+  var card = document.getElementById(cardId);
+  var species = card.dataset.species;
+  var btn = card.querySelector(".inline-obs-submit");
+  btn.disabled = true;
+  btn.textContent = "Saving...";
+
+  // Build notes combining observation + action
+  var notes = "";
+  if (obsText) notes += "Observation: " + obsText;
+  if (actionText) notes += (notes ? "\n" : "") + "Action: " + actionText;
+
+  var payload = {
+    action: "submit",
+    section_id: SECTION_ID,
+    observer: name,
+    timestamp: new Date().toISOString(),
+    mode: newCount !== null ? "quick" : "comment",
+    species: species,
+    count: newCount,
+    notes: notes,
+    condition: "alive"
+  };
+
+  fetch(OBSERVE_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload),
+    redirect: "follow"
+  })
+  .then(function(r) { return r.text().catch(function() { return '{"success":true}'; }); })
+  .then(function(text) {
+    showCardStatus(cardId, "Saved!", "success");
+    // Clear fields
+    var obsField = card.querySelector('[data-type="observation"]');
+    var actionField = card.querySelector('[data-type="action"]');
+    if (obsField) obsField.value = "";
+    if (actionField) actionField.value = "";
+    // Update count badge if changed
+    if (newCount !== null) {
+      var badge = card.querySelector(".plant-count");
+      if (badge) badge.textContent = newCount;
+      card.dataset.count = newCount;
+    }
+  })
+  .catch(function(err) {
+    showCardStatus(cardId, "Error: " + err.message, "error");
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = "Save";
+  });
+}
+
+function showCardStatus(cardId, msg, type) {
+  var el = document.getElementById(cardId + "-status");
+  if (el) {
+    el.textContent = msg;
+    el.className = "inline-obs-status " + type;
+    if (type === "success") setTimeout(function() { el.textContent = ""; }, 3000);
+  }
+}
+</script>
 
 </body>
 </html>

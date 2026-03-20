@@ -18,9 +18,16 @@ Usage:
 import argparse
 import csv
 import json
+import os
+import re
+import urllib.parse
 from collections import defaultdict
+from datetime import datetime, timedelta
 from html import escape
 from pathlib import Path
+
+import requests
+from dotenv import load_dotenv
 
 # ─── CONFIGURATION ───────────────────────────────────────────────────────────
 
@@ -68,6 +75,226 @@ PROCESS_STYLES = {
 }
 
 DEFAULT_PROCESS_STYLE = {"icon": "🌿", "label": "Other", "bg": "#f1f5f9", "color": "#475569"}
+
+
+def parse_seeding_date(date_str):
+    """Try to parse a seeding date string into a datetime. Returns None on failure."""
+    if not date_str:
+        return None
+    # Strip common prefixes
+    cleaned = re.sub(r'^(given on|Bought)\s*', '', date_str, flags=re.IGNORECASE).strip()
+    for fmt in ("%d/%m/%Y", "%d/%m/%y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(cleaned, fmt)
+        except ValueError:
+            continue
+    return None
+
+
+def compute_transplant_timing(seeding_date_str, transplant_days_str):
+    """Compute transplant readiness from seeding date + transplant_days.
+
+    Returns (min_date, max_date, days_str) or None if not computable.
+    transplant_days_str can be "28-56" (range) or "365" (single value).
+    """
+    if not transplant_days_str:
+        return None
+    sow_date = parse_seeding_date(seeding_date_str)
+    if not sow_date:
+        return None
+
+    parts = transplant_days_str.strip().split("-")
+    try:
+        min_days = int(parts[0])
+        max_days = int(parts[-1])
+    except (ValueError, IndexError):
+        return None
+
+    min_date = sow_date + timedelta(days=min_days)
+    max_date = sow_date + timedelta(days=max_days)
+    return (min_date, max_date, transplant_days_str)
+
+
+# ─── FARMOS EXPORT ───────────────────────────────────────────────────────────
+
+NURSERY_LOCATION_IDS = [loc[0] for loc in NURSERY_LOCATIONS if loc[0] != "SEED.BANK"]
+
+
+def farmos_connect():
+    """Connect to farmOS and return an authenticated session."""
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+    url = os.getenv("FARMOS_URL")
+    user = os.getenv("FARMOS_USERNAME")
+    pwd = os.getenv("FARMOS_PASSWORD")
+    if not all([url, user, pwd]):
+        print("ERROR: Missing FARMOS_URL, FARMOS_USERNAME, or FARMOS_PASSWORD")
+        return None, None
+
+    session = requests.Session()
+    resp = session.post(f"{url}/oauth/token", data={
+        "grant_type": "password",
+        "username": user,
+        "password": pwd,
+        "client_id": "farm",
+        "scope": "farm_manager",
+    })
+    if resp.status_code != 200:
+        print(f"ERROR: farmOS auth failed ({resp.status_code})")
+        return None, None
+
+    token = resp.json()["access_token"]
+    session.headers.update({
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/vnd.api+json",
+    })
+    return session, url
+
+
+def farmos_fetch_all(session, url, api_path, filters=""):
+    """Fetch all paginated results from farmOS API, deduplicating by UUID."""
+    results = {}
+    page_url = f"{url}/api/{api_path}?page[limit]=50{filters}"
+    while page_url:
+        resp = session.get(page_url)
+        if resp.status_code != 200:
+            print(f"  Warning: {api_path} returned {resp.status_code}")
+            break
+        data = resp.json()
+        for item in data.get("data", []):
+            results[item["id"]] = item
+        page_url = data.get("links", {}).get("next", {})
+        if isinstance(page_url, dict):
+            page_url = page_url.get("href")
+    return list(results.values())
+
+
+def parse_farmos_notes(notes_text):
+    """Parse structured notes from farmOS nursery plant assets.
+
+    Notes format:
+        Growing process: cutting
+        Seeding/planting date: 15/01/2026
+        Pots planted: 26
+        Viable plants: 26
+        Success rate: 100%
+        Not ready to transplant: 26
+        Ready to transplant: 3
+        Destination: P2R4
+        Source: FFC
+    """
+    fields = {}
+    if not notes_text:
+        return fields
+    for line in notes_text.strip().split("\n"):
+        if ":" in line:
+            key, _, val = line.partition(":")
+            fields[key.strip().lower()] = val.strip()
+    return fields
+
+
+def parse_asset_name(asset_name):
+    """Parse nursery asset name: 'MAR 2026 - Species (process) - NURS.LOC'
+
+    Returns (farmos_name, process) or (asset_name, "").
+    """
+    # Pattern: DATE - Species (process) - LOCATION
+    m = re.match(r'^.+?\s*-\s*(.+?)\s*\((\w[\w\s]*)\)\s*-\s*NURS\.', asset_name)
+    if m:
+        return m.group(1).strip(), m.group(2).strip()
+    # Fallback: DATE - Species - LOCATION
+    m = re.match(r'^.+?\s*-\s*(.+?)\s*-\s*NURS\.', asset_name)
+    if m:
+        return m.group(1).strip(), ""
+    return asset_name, ""
+
+
+def export_nursery_from_farmos(plant_db):
+    """Query farmOS for all nursery plant assets and return data in the same
+    format as load_nursery_inventory() for seamless page generation."""
+    session, base_url = farmos_connect()
+    if not session:
+        return defaultdict(list)
+
+    print("  Querying farmOS for nursery plant assets...")
+
+    # Query all active plant assets that contain "NURS." in the name
+    encoded = urllib.parse.quote("NURS.")
+    filters = f"&filter[status]=active&filter[name][operator]=CONTAINS&filter[name][value]={encoded}"
+    assets = farmos_fetch_all(session, base_url, "asset/plant", filters)
+    print(f"  Found {len(assets)} nursery plant assets")
+
+    by_location = defaultdict(list)
+
+    for asset in assets:
+        attrs = asset.get("attributes", {})
+        name = attrs.get("name", "")
+        notes_text = attrs.get("notes", {})
+        if isinstance(notes_text, dict):
+            notes_text = notes_text.get("value", "")
+
+        # Determine location from asset name
+        loc_match = re.search(r'(NURS\.\S+)', name)
+        if not loc_match:
+            continue
+        loc_id = loc_match.group(1)
+
+        # Parse species and process from asset name
+        farmos_name, process = parse_asset_name(name)
+
+        # Parse structured notes
+        fields = parse_farmos_notes(notes_text)
+
+        # Get inventory count from farmOS computed attribute
+        inv = attrs.get("inventory", [])
+        inventory_count = 0
+        if inv and isinstance(inv, list):
+            for i in inv:
+                try:
+                    inventory_count += int(float(i.get("value", 0)))
+                except (ValueError, TypeError):
+                    pass
+
+        # Look up enrichment from plant_db (strip process suffix for lookup)
+        # farmos_name from asset might be "Blueberry (cutting)" — strip the process
+        base_species = re.sub(r'\s*\(\w+\)\s*$', '', farmos_name).strip() if process else farmos_name
+        db_entry = plant_db.get(farmos_name) or plant_db.get(base_species) or {}
+
+        # Build the standard inventory row
+        seeding_date = fields.get("seeding/planting date", fields.get("seeding date", ""))
+        pots = fields.get("pots planted", "")
+        viable = str(inventory_count) if inventory_count > 0 else fields.get("viable plants", "0")
+        nrtt = fields.get("not ready to transplant", "")
+        rtt = fields.get("ready to transplant", "0")
+        destination = fields.get("destination", "")
+        source = fields.get("source", db_entry.get("source", ""))
+        success_rate_str = fields.get("success rate", "").replace("%", "").strip()
+
+        by_location[loc_id].append({
+            "species": farmos_name if not process else base_species,
+            "common_name": db_entry.get("common_name", base_species),
+            "variety": db_entry.get("variety", ""),
+            "botanical": db_entry.get("botanical_name", ""),
+            "strata": db_entry.get("strata", ""),
+            "succession": db_entry.get("succession_stage", ""),
+            "source": source,
+            "process": process or fields.get("growing process", ""),
+            "seeding_date": seeding_date,
+            "pots_planted": pots,
+            "viable": viable,
+            "success_rate": success_rate_str,
+            "nrtt": nrtt,
+            "rtt": rtt,
+            "destination": destination,
+            "how_many": "",
+            "when": "",
+            "farmos_asset_id": asset["id"],
+            "farmos_asset_name": name,
+        })
+
+    total = sum(len(v) for v in by_location.values())
+    locs = len(by_location)
+    print(f"  Exported {total} plants across {locs} locations from farmOS")
+    return by_location
 
 
 def load_plant_types(csv_path):
@@ -228,17 +455,52 @@ def render_plant_card(plant, plant_db):
         if parts:
             transplant_html = f'<div class="transplant-plan"><div class="transplant-title">\U0001f4cb Transplant Plan</div>{"".join(f"<div>{p}</div>" for p in parts)}</div>'
 
-    # Look up description from plant_db
+    # Look up description + transplant timing from plant_db
     desc_html = ""
+    timing_html = ""
     db_entry = plant_db.get(plant["species"])
     if db_entry:
         desc = db_entry.get("description", "")
         if desc:
             desc_html = f'<p class="plant-desc">{escape(desc)}</p>'
 
+        # Transplant timing (James's spec: show when transplant_days populated, silent when null)
+        td = db_entry.get("transplant_days", "").strip()
+        if td:
+            timing = compute_transplant_timing(plant["seeding_date"], td)
+            if timing:
+                min_date, max_date, days_str = timing
+                now = datetime.now()
+                if max_date < now:
+                    status = "ready"
+                    status_label = "Ready now"
+                    status_icon = "&#x2705;"
+                elif min_date < now:
+                    status = "soon"
+                    status_label = "Window open"
+                    status_icon = "&#x1f7e1;"
+                else:
+                    status = "waiting"
+                    days_left = (min_date - now).days
+                    status_label = f"~{days_left} days"
+                    status_icon = "&#x23f3;"
+
+                date_range = f"{min_date.strftime('%b %d')} – {max_date.strftime('%b %d, %Y')}"
+                timing_html = f'''<div class="transplant-timing timing-{status}">
+                  <span class="timing-icon">{status_icon}</span>
+                  <div class="timing-info">
+                    <span class="timing-status">{status_label}</span>
+                    <span class="timing-range">Transplant window: {date_range}</span>
+                    <span class="timing-days">({days_str} days from sowing)</span>
+                  </div>
+                </div>'''
+
+    # Unique card ID for inline observation JS
+    card_id = f"card-{hash(species + process + plant.get('seeding_date', '')) & 0xFFFFFF:06x}"
+
     return f"""
-    <div class="plant-card nursery-card" style="border-left-color:{ps['color']}" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="{card_id}" style="border-left-color:{ps['color']}" data-species="{species}" data-count="{viable_int}">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">{species}</div>
           <div class="plant-botanical">{botanical}</div>
@@ -247,11 +509,26 @@ def render_plant_card(plant, plant_db):
         <span class="plant-count" style="background:{count_bg};color:{count_color}">{viable_int if viable_int > 0 else '✝'}</span>
       </div>
       {rtt_html}
+      {timing_html}
       <div class="plant-detail">
         {desc_html}
         <div class="plant-meta">{meta_html}</div>
         <div class="nursery-tags">{tags_html}</div>
         {transplant_html}
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('{card_id}')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="{card_id}-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="{viable_int}" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('{card_id}')">Save</button>
+        <div class="inline-obs-status" id="{card_id}-status"></div>
       </div>
     </div>"""
 
@@ -377,7 +654,58 @@ def render_view_page(loc_id, display_name, breadcrumb, plants, plant_db):
   font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   z-index: 100; display: flex; align-items: center; justify-content: center;
   text-decoration: none; }}
-.obs-fab:hover {{ background: #1a5010; transform: scale(1.05); }}
+/* Observer name bar */
+.inline-name-bar {{ padding: 12px 16px; background: #f0fdf4; border-bottom: 1px solid #d1fae5;
+  display: flex; align-items: center; gap: 10px; }}
+.inline-name-bar label {{ font-size: 11px; font-weight: 600; color: #4a8c2e;
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }}
+.inline-name-bar input {{ flex: 1; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 14px; font-family: 'DM Sans', sans-serif; }}
+.inline-name-bar input:focus {{ outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.15); }}
+/* Inline observations per James's spec */
+.inline-obs {{ padding: 10px 0 0 0; border-top: 1px dashed #e5e7eb; margin-top: 8px; }}
+.inline-obs-field {{ width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 13px; font-family: 'DM Sans', sans-serif; margin-bottom: 6px; box-sizing: border-box; }}
+.inline-obs-field:focus {{ outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.12); }}
+.inline-count-toggle {{ font-size: 12px; color: #4a8c2e; cursor: pointer; padding: 4px 0;
+  font-weight: 600; user-select: none; }}
+.inline-count-toggle:hover {{ text-decoration: underline; }}
+.inline-count-row {{ padding: 8px; background: #fffbeb; border-radius: 6px; margin: 6px 0; }}
+.count-warning {{ font-size: 11px; color: #92400e; margin-bottom: 8px; line-height: 1.4; }}
+.count-input-row {{ display: flex; align-items: center; gap: 8px; }}
+.count-input-row label {{ font-size: 12px; color: #374151; font-weight: 500; white-space: nowrap; }}
+.inline-count-input {{ width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 14px; font-family: 'DM Sans', sans-serif; text-align: center; }}
+.inline-obs-submit {{ width: 100%; padding: 10px; background: #2d6b1a; color: #fff; border: none;
+  border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 6px; transition: background 0.15s; }}
+.inline-obs-submit:hover {{ background: #1a5010; }}
+.inline-obs-submit:disabled {{ background: #9ca3af; cursor: not-allowed; }}
+.inline-obs-status {{ font-size: 12px; text-align: center; margin-top: 4px; min-height: 18px; }}
+.inline-obs-status.success {{ color: #166534; }}
+.inline-obs-status.error {{ color: #991b1b; }}
+/* Action interstitial */
+.action-interstitial {{ position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }}
+.action-interstitial-box {{ background: #fff; padding: 24px; border-radius: 12px; max-width: 340px;
+  margin: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); text-align: center; }}
+.action-interstitial-box p {{ font-size: 14px; color: #374151; margin: 0 0 16px 0; line-height: 1.5; }}
+.action-interstitial-box button {{ padding: 10px 16px; border: none; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+  margin: 4px; min-width: 120px; }}
+.action-btn-yes {{ background: #2d6b1a; color: #fff; }}
+.action-btn-no {{ background: #f3f4f6; color: #374151; }}
+.obs-fab {{ display: none; }}
+.transplant-timing {{ display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px;
+  margin: 6px 0 0 0; border-radius: 6px; font-size: 0.8rem; }}
+.timing-ready {{ background: #f0fdf4; border-left: 3px solid #16a34a; }}
+.timing-soon {{ background: #fefce8; border-left: 3px solid #eab308; }}
+.timing-waiting {{ background: #f1f5f9; border-left: 3px solid #94a3b8; }}
+.timing-icon {{ font-size: 1rem; line-height: 1; flex-shrink: 0; }}
+.timing-info {{ display: flex; flex-direction: column; gap: 1px; }}
+.timing-status {{ font-weight: 600; color: #1a1a1a; }}
+.timing-range {{ color: #4b5563; font-size: 0.75rem; }}
+.timing-days {{ color: #9ca3af; font-size: 0.7rem; }}
 </style>
 </head>
 <body>
@@ -394,19 +722,177 @@ def render_view_page(loc_id, display_name, breadcrumb, plants, plant_db):
 
   {zone_nav}
 
+  <!-- Observer name (required for submissions) -->
+  <div class="inline-name-bar">
+    <label for="observer-name">Your name</label>
+    <input type="text" id="observer-name" placeholder="Enter your name to record observations" autocomplete="name">
+  </div>
+
   <div style="padding: 0 0 80px 0;">
     {inventory_html}
   </div>
 
   <div class="footer">
-    <div class="footer-sub">Inventory date: March 20, 2026</div>
+    <div class="footer-sub">Inventory: farmOS live data</div>
     <div class="footer-sub">{footer_label}</div>
   </div>
 
 </div>
 
-<!-- Floating action button → observe page -->
-<a href="{escaped_id}-observe.html" class="obs-fab" title="Record Observation">📋</a>
+<script>
+var OBSERVE_ENDPOINT = {json.dumps(OBSERVE_ENDPOINT)};
+var SECTION_ID = {json.dumps(loc_id)};
+
+// Restore observer name
+(function() {{
+  var saved = localStorage.getItem("firefly_observer_name") || "";
+  var input = document.getElementById("observer-name");
+  if (input && saved) input.value = saved;
+  if (input) input.addEventListener("change", function() {{
+    localStorage.setItem("firefly_observer_name", this.value.trim());
+  }});
+}})();
+
+function toggleCountUpdate(cardId) {{
+  var row = document.getElementById(cardId + "-count");
+  var toggle = row.previousElementSibling;
+  if (row.style.display === "none") {{
+    row.style.display = "block";
+    toggle.innerHTML = "&#x25BC; Update count";
+  }} else {{
+    row.style.display = "none";
+    toggle.innerHTML = "&#x25B6; Update count";
+  }}
+}}
+
+function submitInlineObs(cardId) {{
+  var card = document.getElementById(cardId);
+  var nameInput = document.getElementById("observer-name");
+  var name = (nameInput ? nameInput.value : "").trim();
+  if (!name) {{
+    nameInput && nameInput.focus();
+    showCardStatus(cardId, "Please enter your name first.", "error");
+    return;
+  }}
+
+  var obsField = card.querySelector('[data-type="observation"]');
+  var actionField = card.querySelector('[data-type="action"]');
+  var countRow = document.getElementById(cardId + "-count");
+  var countInput = card.querySelector(".inline-count-input");
+
+  var obsText = obsField ? obsField.value.trim() : "";
+  var actionText = actionField ? actionField.value.trim() : "";
+  var countVisible = countRow && countRow.style.display !== "none";
+  var newCount = countInput ? parseInt(countInput.value) : null;
+  var oldCount = parseInt(card.dataset.count) || 0;
+  var countChanged = countVisible && newCount !== null && newCount !== oldCount;
+
+  if (!obsText && !actionText && !countChanged) {{
+    showCardStatus(cardId, "Add an observation, action, or count update.", "error");
+    return;
+  }}
+
+  // If action text is filled and count NOT explicitly updated, show interstitial
+  if (actionText && !countChanged) {{
+    showActionInterstitial(cardId, function(confirmed) {{
+      if (confirmed) {{
+        // User says they already updated — just submit
+        doSubmit(cardId, name, obsText, actionText, countChanged ? newCount : null);
+      }} else {{
+        // User says no change — submit without count
+        doSubmit(cardId, name, obsText, actionText, null);
+      }}
+    }});
+    return;
+  }}
+
+  doSubmit(cardId, name, obsText, actionText, countChanged ? newCount : null);
+}}
+
+function showActionInterstitial(cardId, callback) {{
+  var overlay = document.createElement("div");
+  overlay.className = "action-interstitial";
+  overlay.innerHTML = '<div class="action-interstitial-box">' +
+    '<p>Did you change the number of plants in this location?<br><br>' +
+    'If you added, moved, or removed any plants, expand &ldquo;Update count&rdquo; and enter the new total before submitting.</p>' +
+    '<button class="action-btn-yes" onclick="this.closest(\\'.action-interstitial\\').remove()">Yes, I\\'ve updated the count</button>' +
+    '<button class="action-btn-no">No change to plant numbers</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  overlay.querySelector(".action-btn-yes").addEventListener("click", function() {{
+    overlay.remove();
+    callback(true);
+  }});
+  overlay.querySelector(".action-btn-no").addEventListener("click", function() {{
+    overlay.remove();
+    callback(false);
+  }});
+}}
+
+function doSubmit(cardId, name, obsText, actionText, newCount) {{
+  var card = document.getElementById(cardId);
+  var species = card.dataset.species;
+  var btn = card.querySelector(".inline-obs-submit");
+  btn.disabled = true;
+  btn.textContent = "Saving...";
+
+  // Build notes combining observation + action
+  var notes = "";
+  if (obsText) notes += "Observation: " + obsText;
+  if (actionText) notes += (notes ? "\\n" : "") + "Action: " + actionText;
+
+  var payload = {{
+    action: "submit",
+    section_id: SECTION_ID,
+    observer: name,
+    timestamp: new Date().toISOString(),
+    mode: newCount !== null ? "quick" : "comment",
+    species: species,
+    count: newCount,
+    notes: notes,
+    condition: "alive"
+  }};
+
+  fetch(OBSERVE_ENDPOINT, {{
+    method: "POST",
+    headers: {{ "Content-Type": "text/plain" }},
+    body: JSON.stringify(payload),
+    redirect: "follow"
+  }})
+  .then(function(r) {{ return r.text().catch(function() {{ return '{{"success":true}}'; }}); }})
+  .then(function(text) {{
+    showCardStatus(cardId, "Saved!", "success");
+    // Clear fields
+    var obsField = card.querySelector('[data-type="observation"]');
+    var actionField = card.querySelector('[data-type="action"]');
+    if (obsField) obsField.value = "";
+    if (actionField) actionField.value = "";
+    // Update count badge if changed
+    if (newCount !== null) {{
+      var badge = card.querySelector(".plant-count");
+      if (badge) badge.textContent = newCount;
+      card.dataset.count = newCount;
+    }}
+  }})
+  .catch(function(err) {{
+    showCardStatus(cardId, "Error: " + err.message, "error");
+  }})
+  .finally(function() {{
+    btn.disabled = false;
+    btn.textContent = "Save";
+  }});
+}}
+
+function showCardStatus(cardId, msg, type) {{
+  var el = document.getElementById(cardId + "-status");
+  if (el) {{
+    el.textContent = msg;
+    el.className = "inline-obs-status " + type;
+    if (type === "success") setTimeout(function() {{ el.textContent = ""; }}, 3000);
+  }}
+}}
+</script>
 
 </body>
 </html>"""
@@ -760,6 +1246,11 @@ def main():
         default="knowledge/nursery_inventory_sheet_march2026.csv",
         help="Path to nursery inventory CSV",
     )
+    parser.add_argument(
+        "--from-farmos",
+        action="store_true",
+        help="Load nursery data from live farmOS instead of CSV (requires .env credentials)",
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output)
@@ -779,15 +1270,24 @@ def main():
     # Load plant type descriptions
     plant_db = load_plant_db(plants_csv)
 
-    # Load nursery inventory
-    print(f"Loading nursery inventory from {inventory_csv}...")
-    nursery_data = load_nursery_inventory(inventory_csv)
-    total_entries = sum(len(v) for v in nursery_data.values())
-    print(f"  Loaded {total_entries} entries across {len(nursery_data)} locations")
+    # Load nursery inventory — from farmOS or CSV
+    if args.from_farmos:
+        print("Loading nursery inventory from live farmOS...")
+        nursery_data = export_nursery_from_farmos(plant_db)
+    else:
+        print(f"Loading nursery inventory from {inventory_csv}...")
+        nursery_data = load_nursery_inventory(inventory_csv)
+        total_entries = sum(len(v) for v in nursery_data.values())
+        print(f"  Loaded {total_entries} entries across {len(nursery_data)} locations")
 
     print(f"\nGenerating {len(NURSERY_LOCATIONS)} nursery pages (view + observe)...")
 
     for loc_id, display_name, breadcrumb in NURSERY_LOCATIONS:
+        # Skip SEED.BANK — it has a hand-crafted page (SEED.BANK.html + seedbank.js)
+        if is_seed_bank(loc_id):
+            print(f"  SEED.BANK.html — skipped (hand-crafted page)")
+            continue
+
         plants = nursery_data.get(loc_id, [])
 
         # VIEW page

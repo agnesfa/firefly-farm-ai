@@ -121,8 +121,10 @@ function doGet(e) {
       return handleSearch(e.parameter);
     } else if (action === "inventory") {
       return handleInventory(e.parameter);
+    } else if (action === "report") {
+      return handleReport(e.parameter);
     } else {
-      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: health, search, inventory" });
+      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: health, search, inventory, report" });
     }
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
@@ -383,4 +385,193 @@ function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ── Seed Bank Report (on-demand) ────────────────────────────────
+//
+// Two ways to trigger:
+//   1. GET ?action=report              → returns JSON report data
+//   2. GET ?action=report&email=true   → sends HTML email to recipients + returns JSON
+//
+// Can also be called from Claude via MCP or directly from the seed bank page.
+
+var REPORT_RECIPIENTS = ["agnes@fireflyagents.com", "james@fireflyagents.com"];
+
+function handleReport(params) {
+  var reportData = buildReportData();
+  var sendEmail = (params.email || "").toLowerCase() === "true";
+
+  if (sendEmail) {
+    sendReportEmail(reportData);
+    reportData.email_sent = true;
+    reportData.recipients = REPORT_RECIPIENTS;
+  }
+
+  return jsonResponse({ success: true, report: reportData });
+}
+
+function buildReportData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var invSheet = ss.getSheetByName(INV_TAB);
+  var txnSheet = ss.getSheetByName(TXN_TAB);
+
+  if (!invSheet) return;
+
+  var data = invSheet.getDataRange().getValues();
+  if (data.length < 2) return;
+
+  var rows = data.slice(1); // skip header
+
+  // Collect replenishment flags
+  var flagged = [];
+  var empty = [];
+  var lowStock = [];
+  var allSeeds = [];
+
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var name = String(row[INV.FARMOS_NAME] || "").trim();
+    if (!name) continue;
+
+    var unit = String(row[INV.UNIT] || "").toLowerCase();
+    var isSachet = unit === "sachet";
+    var grams = parseFloat(row[INV.QTY_GRAMS]) || 0;
+    var stockLevel = parseFloat(row[INV.STOCK_LEVEL]) || 0;
+    var replenish = String(row[INV.REPLENISH]).toLowerCase() === "true";
+    var location = String(row[INV.LOCATION] || "Fridge");
+
+    var stockDisplay = isSachet
+      ? (stockLevel >= 1 ? "Full" : stockLevel >= 0.5 ? "Half" : "Empty")
+      : grams + "g";
+
+    var entry = { name: name, unit: unit, stock: stockDisplay, location: location, replenish: replenish };
+    allSeeds.push(entry);
+
+    if (replenish) flagged.push(entry);
+    if (isSachet && stockLevel === 0) empty.push(entry);
+    if (!isSachet && grams === 0) empty.push(entry);
+    if (!isSachet && grams > 0 && grams <= 10) lowStock.push(entry);
+  }
+
+  // Recent transactions (last 7 days)
+  var recentTxns = [];
+  if (txnSheet) {
+    var txnData = txnSheet.getDataRange().getValues();
+    var oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    for (var t = 1; t < txnData.length; t++) {
+      var txnRow = txnData[t];
+      var txnDate = txnRow[0] ? new Date(txnRow[0]) : null;
+      if (txnDate && txnDate >= oneWeekAgo) {
+        recentTxns.push({
+          date: Utilities.formatDate(txnDate, Session.getScriptTimeZone(), "EEE d MMM HH:mm"),
+          user: String(txnRow[1] || ""),
+          seed: String(txnRow[2] || ""),
+          type: String(txnRow[3] || ""),
+          amount: String(txnRow[4] || ""),
+          notes: String(txnRow[8] || "")
+        });
+      }
+    }
+  }
+
+  return {
+    date: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd"),
+    flagged: flagged,
+    empty_unflagged: empty.filter(function(e) { return !e.replenish; }),
+    low_stock: lowStock,
+    recent_transactions: recentTxns,
+    total_seeds: allSeeds.length,
+    summary: {
+      flagged_count: flagged.length,
+      empty_count: empty.length,
+      low_stock_count: lowStock.length,
+      transaction_count: recentTxns.length
+    },
+    all_seeds: allSeeds
+  };
+}
+
+function sendReportEmail(reportData) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var flagged = reportData.flagged;
+  var emptyUnflagged = reportData.empty_unflagged;
+  var recentTxns = reportData.recent_transactions;
+  var allSeeds = reportData.all_seeds;
+
+  // Build email body (HTML)
+  var today = reportData.date;
+  var html = '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a;">';
+  html += '<h2 style="color:#2d5016;">Seed Bank Weekly Report</h2>';
+  html += '<p style="color:#6b7280;">' + today + '</p>';
+
+  // Section 1: Replenishment needed
+  html += '<h3 style="color:#dc2626;border-bottom:2px solid #dc2626;padding-bottom:4px;">Needs Replenishment (' + flagged.length + ')</h3>';
+  if (flagged.length === 0) {
+    html += '<p style="color:#6b7280;font-style:italic;">No seeds flagged for replenishment.</p>';
+  } else {
+    html += '<table style="width:100%;border-collapse:collapse;font-size:14px;">';
+    html += '<tr style="background:#fef2f2;"><th style="text-align:left;padding:6px;">Seed</th><th style="padding:6px;">Stock</th><th style="padding:6px;">Location</th></tr>';
+    for (var f = 0; f < flagged.length; f++) {
+      html += '<tr style="border-bottom:1px solid #eee;"><td style="padding:6px;">' + flagged[f].name + '</td><td style="padding:6px;text-align:center;">' + flagged[f].stock + '</td><td style="padding:6px;text-align:center;">' + flagged[f].location + '</td></tr>';
+    }
+    html += '</table>';
+  }
+
+  // Section 2: Empty seeds (not already flagged)
+  var emptyUnflagged = empty.filter(function(e) { return !e.replenish; });
+  if (emptyUnflagged.length > 0) {
+    html += '<h3 style="color:#d97706;border-bottom:2px solid #d97706;padding-bottom:4px;">Empty but NOT flagged (' + emptyUnflagged.length + ')</h3>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:14px;">';
+    for (var eu = 0; eu < emptyUnflagged.length; eu++) {
+      html += '<tr style="border-bottom:1px solid #eee;"><td style="padding:6px;">' + emptyUnflagged[eu].name + '</td><td style="padding:6px;text-align:center;">' + emptyUnflagged[eu].location + '</td></tr>';
+    }
+    html += '</table>';
+  }
+
+  // Section 3: Recent transactions
+  html += '<h3 style="color:#2d5016;border-bottom:2px solid #2d5016;padding-bottom:4px;">Transactions This Week (' + recentTxns.length + ')</h3>';
+  if (recentTxns.length === 0) {
+    html += '<p style="color:#6b7280;font-style:italic;">No seed transactions in the last 7 days.</p>';
+  } else {
+    html += '<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+    html += '<tr style="background:#f0fdf4;"><th style="text-align:left;padding:4px;">When</th><th style="padding:4px;">Who</th><th style="padding:4px;">Seed</th><th style="padding:4px;">Action</th></tr>';
+    for (var r = 0; r < recentTxns.length; r++) {
+      var txn = recentTxns[r];
+      html += '<tr style="border-bottom:1px solid #eee;"><td style="padding:4px;font-size:12px;">' + txn.date + '</td><td style="padding:4px;">' + txn.user + '</td><td style="padding:4px;">' + txn.seed + '</td><td style="padding:4px;">' + txn.type + (txn.amount ? ' ' + txn.amount + 'g' : '') + '</td></tr>';
+    }
+    html += '</table>';
+  }
+
+  // Section 4: Stock summary
+  html += '<h3 style="color:#374151;border-bottom:2px solid #374151;padding-bottom:4px;">Full Stock Summary (' + allSeeds.length + ' entries)</h3>';
+  html += '<details><summary style="cursor:pointer;color:#4a8c2e;font-weight:600;">Click to expand full inventory</summary>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;">';
+  html += '<tr style="background:#f1f5f9;"><th style="text-align:left;padding:4px;">Seed</th><th style="padding:4px;">Stock</th><th style="padding:4px;">Location</th></tr>';
+  for (var s = 0; s < allSeeds.length; s++) {
+    var bg = allSeeds[s].stock === "Empty" || allSeeds[s].stock === "0g" ? "#fef2f2" : "";
+    html += '<tr style="border-bottom:1px solid #eee;background:' + bg + '"><td style="padding:3px;">' + allSeeds[s].name + '</td><td style="padding:3px;text-align:center;">' + allSeeds[s].stock + '</td><td style="padding:3px;text-align:center;">' + allSeeds[s].location + '</td></tr>';
+  }
+  html += '</table></details>';
+
+  html += '<hr style="margin:24px 0;border:none;border-top:1px solid #e5e5e5;">';
+  html += '<p style="font-size:12px;color:#9ca3af;">Firefly Corner Farm · Automated seed bank report<br>Sheet: <a href="' + ss.getUrl() + '">Open Seed Bank Sheet</a></p>';
+  html += '</div>';
+
+  // Send email
+  var subject = "Seed Bank Report — " + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "d MMM yyyy");
+  if (flagged.length > 0) {
+    subject += " — " + flagged.length + " need replenishment";
+  }
+
+  for (var i = 0; i < REPORT_RECIPIENTS.length; i++) {
+    MailApp.sendEmail({
+      to: REPORT_RECIPIENTS[i],
+      subject: subject,
+      htmlBody: html
+    });
+  }
+
+  Logger.log("Seed bank report sent to " + REPORT_RECIPIENTS.join(", ") + " — " + flagged.length + " flagged, " + recentTxns.length + " transactions");
 }

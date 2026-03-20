@@ -31,7 +31,58 @@
   font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   z-index: 100; display: flex; align-items: center; justify-content: center;
   text-decoration: none; }
-.obs-fab:hover { background: #1a5010; transform: scale(1.05); }
+/* Observer name bar */
+.inline-name-bar { padding: 12px 16px; background: #f0fdf4; border-bottom: 1px solid #d1fae5;
+  display: flex; align-items: center; gap: 10px; }
+.inline-name-bar label { font-size: 11px; font-weight: 600; color: #4a8c2e;
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+.inline-name-bar input { flex: 1; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 14px; font-family: 'DM Sans', sans-serif; }
+.inline-name-bar input:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.15); }
+/* Inline observations per James's spec */
+.inline-obs { padding: 10px 0 0 0; border-top: 1px dashed #e5e7eb; margin-top: 8px; }
+.inline-obs-field { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 13px; font-family: 'DM Sans', sans-serif; margin-bottom: 6px; box-sizing: border-box; }
+.inline-obs-field:focus { outline: none; border-color: #4a8c2e; box-shadow: 0 0 0 2px rgba(74,140,46,0.12); }
+.inline-count-toggle { font-size: 12px; color: #4a8c2e; cursor: pointer; padding: 4px 0;
+  font-weight: 600; user-select: none; }
+.inline-count-toggle:hover { text-decoration: underline; }
+.inline-count-row { padding: 8px; background: #fffbeb; border-radius: 6px; margin: 6px 0; }
+.count-warning { font-size: 11px; color: #92400e; margin-bottom: 8px; line-height: 1.4; }
+.count-input-row { display: flex; align-items: center; gap: 8px; }
+.count-input-row label { font-size: 12px; color: #374151; font-weight: 500; white-space: nowrap; }
+.inline-count-input { width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 14px; font-family: 'DM Sans', sans-serif; text-align: center; }
+.inline-obs-submit { width: 100%; padding: 10px; background: #2d6b1a; color: #fff; border: none;
+  border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 6px; transition: background 0.15s; }
+.inline-obs-submit:hover { background: #1a5010; }
+.inline-obs-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+.inline-obs-status { font-size: 12px; text-align: center; margin-top: 4px; min-height: 18px; }
+.inline-obs-status.success { color: #166534; }
+.inline-obs-status.error { color: #991b1b; }
+/* Action interstitial */
+.action-interstitial { position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
+.action-interstitial-box { background: #fff; padding: 24px; border-radius: 12px; max-width: 340px;
+  margin: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); text-align: center; }
+.action-interstitial-box p { font-size: 14px; color: #374151; margin: 0 0 16px 0; line-height: 1.5; }
+.action-interstitial-box button { padding: 10px 16px; border: none; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+  margin: 4px; min-width: 120px; }
+.action-btn-yes { background: #2d6b1a; color: #fff; }
+.action-btn-no { background: #f3f4f6; color: #374151; }
+.obs-fab { display: none; }
+.transplant-timing { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px;
+  margin: 6px 0 0 0; border-radius: 6px; font-size: 0.8rem; }
+.timing-ready { background: #f0fdf4; border-left: 3px solid #16a34a; }
+.timing-soon { background: #fefce8; border-left: 3px solid #eab308; }
+.timing-waiting { background: #f1f5f9; border-left: 3px solid #94a3b8; }
+.timing-icon { font-size: 1rem; line-height: 1; flex-shrink: 0; }
+.timing-info { display: flex; flex-direction: column; gap: 1px; }
+.timing-status { font-weight: 600; color: #1a1a1a; }
+.timing-range { color: #4b5563; font-size: 0.75rem; }
+.timing-days { color: #9ca3af; font-size: 0.7rem; }
 </style>
 </head>
 <body>
@@ -45,8 +96,8 @@
     </div>
     
     <div class="section-stats">
-      <div class="stat"><div class="stat-value">3</div><div class="stat-label">species</div></div>
-      <div class="stat"><div class="stat-value">97</div><div class="stat-label">viable plants</div></div>
+      <div class="stat"><div class="stat-value">6</div><div class="stat-label">species</div></div>
+      <div class="stat"><div class="stat-value">182</div><div class="stat-label">viable plants</div></div>
       <div class="stat"><div class="stat-value">10</div><div class="stat-label">ready to transplant</div></div>
     </div>
   </div>
@@ -60,6 +111,12 @@
 </div>
 
 
+  <!-- Observer name (required for submissions) -->
+  <div class="inline-name-bar">
+    <label for="observer-name">Your name</label>
+    <input type="text" id="observer-name" placeholder="Enter your name to record observations" autocomplete="name">
+  </div>
+
   <div style="padding: 0 0 80px 0;">
     <div class="plant-inventory">
 
@@ -70,97 +127,160 @@
           <span class="strata-name" style="color:#1e40af">Seedlings</span>
           <span class="strata-height">6 entries</span>
         </div>
-        <span class="strata-count" style="background:#1e40af">97</span>
+        <span class="strata-count" style="background:#1e40af">182</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-c05297" style="border-left-color:#1e40af" data-species="Cabbage" data-count="16">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
-          <div class="plant-name">Lemon</div>
-          <div class="plant-botanical">Citrus limon</div>
-          <div class="plant-process">🌱 seedling · 05/02/2026</div>
+          <div class="plant-name">Cabbage</div>
+          <div class="plant-botanical">Brassica oleracea var. capitata</div>
+          <div class="plant-process">🌱 seedling · 07/03/2026</div>
         </div>
-        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">10</span>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">16</span>
       </div>
       
+      <div class="transplant-timing timing-waiting">
+                  <span class="timing-icon">&#x23f3;</span>
+                  <div class="timing-info">
+                    <span class="timing-status">~6 days</span>
+                    <span class="timing-range">Transplant window: Mar 28 – Apr 18, 2026</span>
+                    <span class="timing-days">(21-42 days from sowing)</span>
+                  </div>
+                </div>
       <div class="plant-detail">
-        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
-        <div class="plant-meta">Seeded: 05/02/2026 · Pots: 10 · Success: 100% · Source: Mr Fothergill&#x27;s</div>
-        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        <p class="plant-desc">Crinkled leaf savoy cabbage with mild sweet flavor. More tender than smooth-leaf varieties. Frost tolerant.</p>
+        <div class="plant-meta">Seeded: 07/03/2026 · Pots: 16 · Source: Greenpatch Organic Seeds</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Lemon</div>
-          <div class="plant-botanical">Citrus limon</div>
-          <div class="plant-process">🌱 seedling · 13/03/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-c05297')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-c05297-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="16" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-c05297')">Save</button>
+        <div class="inline-obs-status" id="card-c05297-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-300de7" style="border-left-color:#1e40af" data-species="Cabbage (Savoy Vertu)" data-count="16">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Cabbage (Savoy Vertu)</div>
+          <div class="plant-botanical">Brassica oleracea var. capitata</div>
+          <div class="plant-process">🌱 seedling · 07/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">16</span>
       </div>
       
+      <div class="transplant-timing timing-waiting">
+                  <span class="timing-icon">&#x23f3;</span>
+                  <div class="timing-info">
+                    <span class="timing-status">~6 days</span>
+                    <span class="timing-range">Transplant window: Mar 28 – Apr 18, 2026</span>
+                    <span class="timing-days">(21-42 days from sowing)</span>
+                  </div>
+                </div>
       <div class="plant-detail">
-        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
-        <div class="plant-meta">Seeded: 13/03/2026 · Pots: 38 · Success: 0% · Source: Mr Fothergill&#x27;s</div>
-        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        <p class="plant-desc">Crinkled leaf savoy cabbage with mild sweet flavor. More tender than smooth-leaf varieties. Frost tolerant.</p>
+        <div class="plant-meta">Seeded: 07/03/2026 · Pots: 16 · Source: Greenpatch Organic Seeds</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Lemon</div>
-          <div class="plant-botanical">Citrus limon</div>
-          <div class="plant-process">🌱 seedling · 01/03/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-300de7')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-300de7-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="16" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-300de7')">Save</button>
+        <div class="inline-obs-status" id="card-300de7-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-2872f7" style="border-left-color:#1e40af" data-species="Leek" data-count="16">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Leek</div>
+          <div class="plant-botanical">Allium ampeloprasum</div>
+          <div class="plant-process">🌱 seedling · 07/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">16</span>
       </div>
       
+      <div class="transplant-timing timing-waiting">
+                  <span class="timing-icon">&#x23f3;</span>
+                  <div class="timing-info">
+                    <span class="timing-status">~13 days</span>
+                    <span class="timing-range">Transplant window: Apr 04 – May 02, 2026</span>
+                    <span class="timing-days">(28-56 days from sowing)</span>
+                  </div>
+                </div>
       <div class="plant-detail">
-        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
-        <div class="plant-meta">Seeded: 01/03/2026 · Pots: 9 · Success: 0% · Source: Mr Fothergill&#x27;s</div>
-        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        <p class="plant-desc">Hardy onion relative grown for white stem. Hill soil around stems to blanch. Long growing season.</p>
+        <div class="plant-meta">Seeded: 07/03/2026 · Pots: 16 · Source: Mr Fothergill&#x27;s</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
       </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Lemon</div>
-          <div class="plant-botanical">Citrus limon</div>
-          <div class="plant-process">🌱 seedling · 12/03/2026</div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-2872f7')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-2872f7-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="16" inputmode="numeric">
+          </div>
         </div>
-        <span class="plant-count" style="background:#f3f4f6;color:#9ca3af">✝</span>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-2872f7')">Save</button>
+        <div class="inline-obs-status" id="card-2872f7-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-25a8d0" style="border-left-color:#1e40af" data-species="Onion (Gladalan Brown)" data-count="28">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Onion (Gladalan Brown)</div>
+          <div class="plant-botanical">Allium cepa</div>
+          <div class="plant-process">🌱 seedling · 07/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">28</span>
       </div>
       
-      <div class="plant-detail">
-        <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
-        <div class="plant-meta">Seeded: 12/03/2026 · Pots: 12 · Success: 0% · Source: Mr Fothergill&#x27;s</div>
-        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
-        
-      </div>
-    </div>
-    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
-        <div class="plant-info">
-          <div class="plant-name">Papaya</div>
-          <div class="plant-botanical">Carica papaya</div>
-          <div class="plant-process">🌱 seedling · 05/02/2026</div>
-        </div>
-        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">9</span>
-      </div>
       
       <div class="plant-detail">
-        <p class="plant-desc">Fast-growing tropical fruit tree producing within first year. Pioneer species providing quick shade and continuous fruit. Short-lived but very productive.</p>
-        <div class="plant-meta">Seeded: 05/02/2026 · Pots: 9 · Success: 100% · Source: Supermarket
-  SEEDS/STONES</div>
-        <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">pioneer</span></div>
+        <p class="plant-desc">Gladalan Brown onion variety. Brown-skinned, reliable Australian variety with good storage qualities. Long day type suited to NSW conditions.</p>
+        <div class="plant-meta">Seeded: 07/03/2026 · Pots: 28 · Source: Greenpatch Organic Seeds</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
         
       </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-25a8d0')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-25a8d0-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="28" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-25a8d0')">Save</button>
+        <div class="inline-obs-status" id="card-25a8d0-status"></div>
+      </div>
     </div>
-    <div class="plant-card nursery-card" style="border-left-color:#1e40af" onclick="this.classList.toggle('expanded')">
-      <div class="plant-header">
+    <div class="plant-card nursery-card" id="card-dba542" style="border-left-color:#1e40af" data-species="Passionfruit" data-count="78">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Passionfruit</div>
           <div class="plant-botanical">Passiflora edulis</div>
@@ -169,12 +289,65 @@
         <span class="plant-count" style="background:#e8f4fd;color:#1e40af">78</span>
       </div>
       <span class="rtt-badge">📦 10 ready</span>
+      
       <div class="plant-detail">
         <p class="plant-desc">Vigorous fruiting vine with golden fruit. Self-fertile variety producing abundant sweet-tart fruit. Needs support structure and good drainage.</p>
-        <div class="plant-meta">Seeded: 27/01/2026 · Pots: 78 · Success: 100% · Source: Supermarket
-  SEEDS/STONES</div>
+        <div class="plant-meta">Seeded: 27/01/2026 · Pots: 78 · Success: 100% · Source: Supermarket</div>
         <div class="nursery-tags"><span class="nursery-tag">high</span><span class="nursery-tag">secondary</span></div>
         <div class="transplant-plan"><div class="transplant-title">📋 Transplant Plan</div><div>Not ready yet: 68</div></div>
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-dba542')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-dba542-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="78" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-dba542')">Save</button>
+        <div class="inline-obs-status" id="card-dba542-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-205300" style="border-left-color:#1e40af" data-species="Spring Onion" data-count="28">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Spring Onion</div>
+          <div class="plant-botanical">Allium fistulosum</div>
+          <div class="plant-process">🌱 seedling · 07/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">28</span>
+      </div>
+      
+      <div class="transplant-timing timing-waiting">
+                  <span class="timing-icon">&#x23f3;</span>
+                  <div class="timing-info">
+                    <span class="timing-status">~6 days</span>
+                    <span class="timing-range">Transplant window: Mar 28 – Apr 11, 2026</span>
+                    <span class="timing-days">(21-35 days from sowing)</span>
+                  </div>
+                </div>
+      <div class="plant-detail">
+        <p class="plant-desc">Bunching onion with mild flavor. Perennial in mild climates. Also called Welsh onion or scallion. Harvest whole or cut leaves repeatedly.</p>
+        <div class="plant-meta">Seeded: 07/03/2026 · Pots: 28 · Source: Greenpatch Seeds</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-205300')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-205300-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="28" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-205300')">Save</button>
+        <div class="inline-obs-status" id="card-205300-status"></div>
       </div>
     </div>
       </div>
@@ -184,14 +357,166 @@
   </div>
 
   <div class="footer">
-    <div class="footer-sub">Inventory date: March 20, 2026</div>
+    <div class="footer-sub">Inventory: farmOS live data</div>
     <div class="footer-sub">Firefly Corner Farm · Plant Nursery</div>
   </div>
 
 </div>
 
-<!-- Floating action button → observe page -->
-<a href="NURS.SH1-4-observe.html" class="obs-fab" title="Record Observation">📋</a>
+<script>
+var OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbwxz3n9MSH45tQ1KX1_MacGAheIP_KcFMmlX_AWnYMI4-wwQ0ZNjYO5U8DJqHebcGPa/exec";
+var SECTION_ID = "NURS.SH1-4";
+
+// Restore observer name
+(function() {
+  var saved = localStorage.getItem("firefly_observer_name") || "";
+  var input = document.getElementById("observer-name");
+  if (input && saved) input.value = saved;
+  if (input) input.addEventListener("change", function() {
+    localStorage.setItem("firefly_observer_name", this.value.trim());
+  });
+})();
+
+function toggleCountUpdate(cardId) {
+  var row = document.getElementById(cardId + "-count");
+  var toggle = row.previousElementSibling;
+  if (row.style.display === "none") {
+    row.style.display = "block";
+    toggle.innerHTML = "&#x25BC; Update count";
+  } else {
+    row.style.display = "none";
+    toggle.innerHTML = "&#x25B6; Update count";
+  }
+}
+
+function submitInlineObs(cardId) {
+  var card = document.getElementById(cardId);
+  var nameInput = document.getElementById("observer-name");
+  var name = (nameInput ? nameInput.value : "").trim();
+  if (!name) {
+    nameInput && nameInput.focus();
+    showCardStatus(cardId, "Please enter your name first.", "error");
+    return;
+  }
+
+  var obsField = card.querySelector('[data-type="observation"]');
+  var actionField = card.querySelector('[data-type="action"]');
+  var countRow = document.getElementById(cardId + "-count");
+  var countInput = card.querySelector(".inline-count-input");
+
+  var obsText = obsField ? obsField.value.trim() : "";
+  var actionText = actionField ? actionField.value.trim() : "";
+  var countVisible = countRow && countRow.style.display !== "none";
+  var newCount = countInput ? parseInt(countInput.value) : null;
+  var oldCount = parseInt(card.dataset.count) || 0;
+  var countChanged = countVisible && newCount !== null && newCount !== oldCount;
+
+  if (!obsText && !actionText && !countChanged) {
+    showCardStatus(cardId, "Add an observation, action, or count update.", "error");
+    return;
+  }
+
+  // If action text is filled and count NOT explicitly updated, show interstitial
+  if (actionText && !countChanged) {
+    showActionInterstitial(cardId, function(confirmed) {
+      if (confirmed) {
+        // User says they already updated — just submit
+        doSubmit(cardId, name, obsText, actionText, countChanged ? newCount : null);
+      } else {
+        // User says no change — submit without count
+        doSubmit(cardId, name, obsText, actionText, null);
+      }
+    });
+    return;
+  }
+
+  doSubmit(cardId, name, obsText, actionText, countChanged ? newCount : null);
+}
+
+function showActionInterstitial(cardId, callback) {
+  var overlay = document.createElement("div");
+  overlay.className = "action-interstitial";
+  overlay.innerHTML = '<div class="action-interstitial-box">' +
+    '<p>Did you change the number of plants in this location?<br><br>' +
+    'If you added, moved, or removed any plants, expand &ldquo;Update count&rdquo; and enter the new total before submitting.</p>' +
+    '<button class="action-btn-yes" onclick="this.closest(\'.action-interstitial\').remove()">Yes, I\'ve updated the count</button>' +
+    '<button class="action-btn-no">No change to plant numbers</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  overlay.querySelector(".action-btn-yes").addEventListener("click", function() {
+    overlay.remove();
+    callback(true);
+  });
+  overlay.querySelector(".action-btn-no").addEventListener("click", function() {
+    overlay.remove();
+    callback(false);
+  });
+}
+
+function doSubmit(cardId, name, obsText, actionText, newCount) {
+  var card = document.getElementById(cardId);
+  var species = card.dataset.species;
+  var btn = card.querySelector(".inline-obs-submit");
+  btn.disabled = true;
+  btn.textContent = "Saving...";
+
+  // Build notes combining observation + action
+  var notes = "";
+  if (obsText) notes += "Observation: " + obsText;
+  if (actionText) notes += (notes ? "\n" : "") + "Action: " + actionText;
+
+  var payload = {
+    action: "submit",
+    section_id: SECTION_ID,
+    observer: name,
+    timestamp: new Date().toISOString(),
+    mode: newCount !== null ? "quick" : "comment",
+    species: species,
+    count: newCount,
+    notes: notes,
+    condition: "alive"
+  };
+
+  fetch(OBSERVE_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload),
+    redirect: "follow"
+  })
+  .then(function(r) { return r.text().catch(function() { return '{"success":true}'; }); })
+  .then(function(text) {
+    showCardStatus(cardId, "Saved!", "success");
+    // Clear fields
+    var obsField = card.querySelector('[data-type="observation"]');
+    var actionField = card.querySelector('[data-type="action"]');
+    if (obsField) obsField.value = "";
+    if (actionField) actionField.value = "";
+    // Update count badge if changed
+    if (newCount !== null) {
+      var badge = card.querySelector(".plant-count");
+      if (badge) badge.textContent = newCount;
+      card.dataset.count = newCount;
+    }
+  })
+  .catch(function(err) {
+    showCardStatus(cardId, "Error: " + err.message, "error");
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = "Save";
+  });
+}
+
+function showCardStatus(cardId, msg, type) {
+  var el = document.getElementById(cardId + "-status");
+  if (el) {
+    el.textContent = msg;
+    el.className = "inline-obs-status " + type;
+    if (type === "success") setTimeout(function() { el.textContent = ""; }, 3000);
+  }
+}
+</script>
 
 </body>
 </html>
