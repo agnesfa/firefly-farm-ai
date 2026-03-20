@@ -161,6 +161,42 @@ describe('FarmOSClient', () => {
       expect(callUrl).toContain('P2R3.15-21');
       expect(callUrl).toContain('filter[status]=active');
     });
+
+    it('uses exact species match to avoid partial matches (Strawberry bug)', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      // Server CONTAINS filter returns both Strawberry and Guava (Strawberry) for section
+      fetchSpy.mockResolvedValueOnce(mockResponse({
+        data: [
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Strawberry - P2R3.15-21', status: 'active' } },
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Guava (Strawberry) - P2R3.15-21', status: 'active' } },
+        ],
+      }));
+
+      const result = await client.getPlantAssets('P2R3.15-21', 'Strawberry');
+      expect(result).toHaveLength(1);
+      expect(result[0].attributes.name).toContain('- Strawberry -');
+      expect(result[0].attributes.name).not.toContain('Guava');
+    });
+
+    it('exact match handles species with dashes (Basil - Sweet)', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      fetchSpy.mockResolvedValueOnce(mockResponse({
+        data: [
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet - P2R3.15-21', status: 'active' } },
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21', status: 'active' } },
+        ],
+      }));
+
+      const result = await client.getPlantAssets('P2R3.15-21', 'Basil - Sweet');
+      expect(result).toHaveLength(1);
+      expect(result[0].attributes.name).toBe('25 APR 2025 - Basil - Sweet - P2R3.15-21');
+    });
   });
 
   // ── Quantity merging ──────────────────────────────────────

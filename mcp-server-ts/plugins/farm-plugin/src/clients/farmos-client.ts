@@ -408,9 +408,14 @@ export class FarmOSClient {
   async getPlantAssets(sectionId?: string, species?: string, status = 'active'): Promise<any[]> {
     if (species && sectionId) {
       const plants = await this.fetchPlantsContains(sectionId, status);
-      return plants.filter((p) =>
-        (p.attributes?.name ?? '').toLowerCase().includes(species.toLowerCase()),
-      );
+      // Exact species match using parsed asset name to avoid partial matches
+      // e.g., "Strawberry" must NOT match "Guava (Strawberry)"
+      return plants.filter((p) => {
+        const name = p.attributes?.name ?? '';
+        const parts = name.split(' - ');
+        const extractedSpecies = parts.length >= 3 ? parts.slice(1, -1).join(' - ') : name;
+        return extractedSpecies.toLowerCase() === species.toLowerCase();
+      });
     }
     if (species) return this.fetchPlantsContains(species, status);
     if (sectionId) return this.fetchPlantsContains(sectionId, status);

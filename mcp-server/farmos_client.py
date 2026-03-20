@@ -438,11 +438,17 @@ class FarmOSClient:
         """
         if species and section_id:
             # Use section_id as the server filter (more specific), then filter by species
+            # Exact species match using parsed asset name to avoid partial matches
+            # e.g., "Strawberry" must NOT match "Guava (Strawberry)"
             plants = self._fetch_plants_contains(section_id, status)
-            return [
-                p for p in plants
-                if species.lower() in p.get("attributes", {}).get("name", "").lower()
-            ]
+            result = []
+            for p in plants:
+                name = p.get("attributes", {}).get("name", "")
+                parts = name.split(" - ")
+                extracted = " - ".join(parts[1:-1]) if len(parts) >= 3 else name
+                if extracted.lower() == species.lower():
+                    result.append(p)
+            return result
 
         if species:
             return self._fetch_plants_contains(species, status)
@@ -455,7 +461,7 @@ class FarmOSClient:
         )
 
     def get_section_assets(self, row_filter: Optional[str] = None) -> list:
-        """Get land assets (sections) with optional row filter."""
+        """Get land assets (paddock sections) with optional row filter."""
         all_sections = self.fetch_all_paginated("asset/land")
         section_pattern = re.compile(r"^P\dR\d\.\d+-\d+$")
 
@@ -469,6 +475,73 @@ class FarmOSClient:
             s for s in all_sections
             if section_pattern.match(s.get("attributes", {}).get("name", ""))
         ]
+
+    def get_all_locations(self, type_filter: Optional[str] = None) -> dict:
+        """Get all farm locations grouped by type.
+
+        Returns land assets AND structure assets, classified by naming pattern:
+        - paddock: P{n}R{n}.{start}-{end} (e.g., P2R3.15-21)
+        - nursery: NURS.* (e.g., NURS.SH1-2, NURS.GR, NURS.FRDG)
+        - compost: COMP.* (e.g., COMP.BAY1)
+        - other: everything else (dams, paddock-level land, etc.)
+
+        Args:
+            type_filter: Optional — return only one type (paddock, nursery, compost, other).
+
+        Returns:
+            Dict with keys: paddock, nursery, compost, other — each a list of
+            {name, uuid, asset_type} dicts. Plus total counts.
+        """
+        grouped = {"paddock": [], "nursery": [], "compost": [], "other": []}
+
+        paddock_pattern = re.compile(r"^P\dR\d\.\d+-\d+$")
+        nursery_pattern = re.compile(r"^NURS\.")
+        compost_pattern = re.compile(r"^COMP\.")
+
+        # Fetch land assets
+        land_assets = self.fetch_all_paginated("asset/land")
+        for asset in land_assets:
+            name = asset.get("attributes", {}).get("name", "")
+            entry = {
+                "name": name,
+                "uuid": asset.get("id"),
+                "asset_type": "land",
+                "status": asset.get("attributes", {}).get("status", "active"),
+            }
+            if paddock_pattern.match(name):
+                grouped["paddock"].append(entry)
+            elif nursery_pattern.match(name):
+                grouped["nursery"].append(entry)
+            elif compost_pattern.match(name):
+                grouped["compost"].append(entry)
+            else:
+                grouped["other"].append(entry)
+
+        # Fetch structure assets (nursery shelves, buildings, etc.)
+        structure_assets = self.fetch_all_paginated("asset/structure")
+        for asset in structure_assets:
+            name = asset.get("attributes", {}).get("name", "")
+            entry = {
+                "name": name,
+                "uuid": asset.get("id"),
+                "asset_type": "structure",
+                "status": asset.get("attributes", {}).get("status", "active"),
+            }
+            if nursery_pattern.match(name):
+                grouped["nursery"].append(entry)
+            elif compost_pattern.match(name):
+                grouped["compost"].append(entry)
+            else:
+                grouped["other"].append(entry)
+
+        # Sort each group by name
+        for key in grouped:
+            grouped[key].sort(key=lambda x: x["name"])
+
+        if type_filter and type_filter in grouped:
+            return {type_filter: grouped[type_filter]}
+
+        return grouped
 
     @staticmethod
     def _merge_included_quantities(data: dict, items: list) -> list:

@@ -50,7 +50,7 @@ class TestCreateObservation:
         assert result["log_id"] == log_id
         assert result["count"] == 3
         assert result["notes"] == "lost 1 to frost"
-        assert result["log_name"] == "Observation P2R2.0-3 \u2014 Pigeon Pea"
+        assert result["log_name"] == "Observation P2R2.0-3 \u2014 Pigeon Pea \u2014 2026-03-09"
 
         mock_farmos_client.create_quantity.assert_called_once_with(
             plant["id"], 3, adjustment="reset",
@@ -97,6 +97,39 @@ class TestCreateObservation:
         assert result["existing_log_id"] == existing_log_id
         mock_farmos_client.create_quantity.assert_not_called()
         mock_farmos_client.create_observation_log.assert_not_called()
+
+    def test_create_observation_different_date_allowed(self, mock_farmos_client, monkeypatch):
+        """A new observation on a different date is NOT blocked by an older one."""
+        import server
+
+        plant = make_plant_asset(
+            name="25 APR 2025 - Pigeon Pea - P2R2.0-3",
+            inventory_count=4,
+        )
+        section_uuid = make_uuid()
+        qty_id = make_uuid()
+        log_id = make_uuid()
+
+        mock_farmos_client.fetch_by_name.return_value = [plant]
+        mock_farmos_client.get_section_uuid.return_value = section_uuid
+        # No existing log for this date — older observation exists but with different name
+        mock_farmos_client.log_exists.return_value = None
+        mock_farmos_client.create_quantity.return_value = qty_id
+        mock_farmos_client.create_observation_log.return_value = log_id
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_observation(
+            plant_name="25 APR 2025 - Pigeon Pea - P2R2.0-3",
+            count=2,
+            notes="updated count after new observation",
+            date="2026-03-17",
+        ))
+
+        assert result["status"] == "created"
+        assert result["log_name"] == "Observation P2R2.0-3 \u2014 Pigeon Pea \u2014 2026-03-17"
+        mock_farmos_client.create_quantity.assert_called_once()
+        mock_farmos_client.create_observation_log.assert_called_once()
 
 
 # ── create_activity ───────────────────────────────────────────

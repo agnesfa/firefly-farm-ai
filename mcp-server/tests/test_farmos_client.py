@@ -207,6 +207,51 @@ class TestPagination:
         assert "P2R3.15-21" in request_url
         assert "filter%5Bstatus%5D=active" in request_url
 
+    @responses.activate
+    def test_exact_species_match_avoids_partial_strawberry_bug(self, env_vars):
+        """Strawberry must NOT match Guava (Strawberry) — exact species match."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={
+                "data": [
+                    {"id": "uuid-1", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Strawberry - P2R3.15-21", "status": "active"}},
+                    {"id": "uuid-2", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Guava (Strawberry) - P2R3.15-21", "status": "active"}},
+                ],
+                "links": {},
+            },
+        )
+
+        result = client.get_plant_assets(section_id="P2R3.15-21", species="Strawberry")
+        assert len(result) == 1
+        assert "- Strawberry -" in result[0]["attributes"]["name"]
+        assert "Guava" not in result[0]["attributes"]["name"]
+
+    @responses.activate
+    def test_exact_match_handles_species_with_dashes(self, env_vars):
+        """Species with dashes like 'Basil - Sweet' must match exactly."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={
+                "data": [
+                    {"id": "uuid-1", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Basil - Sweet - P2R3.15-21", "status": "active"}},
+                    {"id": "uuid-2", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21", "status": "active"}},
+                ],
+                "links": {},
+            },
+        )
+
+        result = client.get_plant_assets(section_id="P2R3.15-21", species="Basil - Sweet")
+        assert len(result) == 1
+        assert result[0]["attributes"]["name"] == "25 APR 2025 - Basil - Sweet - P2R3.15-21"
+
 
 # ── Quantity merging tests ───────────────────────────────────
 
