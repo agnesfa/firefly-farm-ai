@@ -122,21 +122,89 @@
     <div class="harvest-section">
       <div class="obs-field-group">
         <label class="obs-label" for="harvest-location">Harvested from</label>
+        <p class="obs-hint" style="margin:0 0 6px 0;font-size:0.8rem;color:#6b7280;">Be as precise as you can — select the row section if you know it.</p>
         <select id="harvest-location" class="obs-select">
           <option value="">Select location...</option>
-          <optgroup label="Paddock 1">
-            <option value="P1R1">P1 Row 1</option>
-            <option value="P1R2">P1 Row 2</option>
-            <option value="P1R3">P1 Row 3</option>
-            <option value="P1R4">P1 Row 4</option>
-            <option value="P1R5">P1 Row 5</option>
+          <optgroup label="Paddock 1 — Row 1">
+            <option value="P1R1">P1R1 (whole row)</option>
+            <option value="P1R1.0-5">P1R1 · 0–5m</option>
+            <option value="P1R1.5-9">P1R1 · 5–9m</option>
+            <option value="P1R1.9-19">P1R1 · 9–19m</option>
+            <option value="P1R1.19-29">P1R1 · 19–29m</option>
+            <option value="P1R1.29-39">P1R1 · 29–39m</option>
+            <option value="P1R1.39-42">P1R1 · 39–42m</option>
           </optgroup>
-          <optgroup label="Paddock 2">
-            <option value="P2R1">P2 Row 1</option>
-            <option value="P2R2">P2 Row 2</option>
-            <option value="P2R3">P2 Row 3</option>
-            <option value="P2R4">P2 Row 4</option>
-            <option value="P2R5">P2 Row 5</option>
+          <optgroup label="Paddock 1 — Row 3">
+            <option value="P1R3">P1R3 (whole row)</option>
+            <option value="P1R3.0-3">P1R3 · 0–3m</option>
+            <option value="P1R3.3-13">P1R3 · 3–13m</option>
+            <option value="P1R3.13-23">P1R3 · 13–23m</option>
+            <option value="P1R3.23-33">P1R3 · 23–33m</option>
+            <option value="P1R3.33-42">P1R3 · 33–42m</option>
+          </optgroup>
+          <optgroup label="Paddock 1 — Row 5">
+            <option value="P1R5">P1R5 (whole row)</option>
+            <option value="P1R5.0-10">P1R5 · 0–10m</option>
+            <option value="P1R5.10-20">P1R5 · 10–20m</option>
+            <option value="P1R5.20-30">P1R5 · 20–30m</option>
+            <option value="P1R5.30-35">P1R5 · 30–35m</option>
+          </optgroup>
+          <optgroup label="Paddock 1 — Other">
+            <option value="P1R2">P1R2 (whole row)</option>
+            <option value="P1R4">P1R4 (whole row)</option>
+            <option value="P1ED1.0-5">P1 Edge 1 · 0–5m</option>
+          </optgroup>
+          <optgroup label="Paddock 2 — Row 1">
+            <option value="P2R1">P2R1 (whole row)</option>
+            <option value="P2R1.0-3">P2R1 · 0–3m</option>
+            <option value="P2R1.3-9">P2R1 · 3–9m</option>
+            <option value="P2R1.9-13">P2R1 · 9–13m</option>
+            <option value="P2R1.16-25">P2R1 · 16–25m</option>
+          </optgroup>
+          <optgroup label="Paddock 2 — Row 2">
+            <option value="P2R2">P2R2 (whole row)</option>
+            <option value="P2R2.0-3">P2R2 · 0–3m</option>
+            <option value="P2R2.3-9">P2R2 · 3–9m</option>
+            <option value="P2R2.9-16">P2R2 · 9–16m</option>
+            <option value="P2R2.16-23">P2R2 · 16–23m</option>
+            <option value="P2R2.23-26">P2R2 · 23–26m</option>
+            <option value="P2R2.28-38">P2R2 · 28–38m</option>
+            <option value="P2R2.38-46">P2R2 · 38–46m</option>
+          </optgroup>
+          <optgroup label="Paddock 2 — Row 3">
+            <option value="P2R3">P2R3 (whole row)</option>
+            <option value="P2R3.0-2">P2R3 · 0–2m</option>
+            <option value="P2R3.2-9">P2R3 · 2–9m</option>
+            <option value="P2R3.9-15">P2R3 · 9–15m</option>
+            <option value="P2R3.15-21">P2R3 · 15–21m</option>
+            <option value="P2R3.26-38">P2R3 · 26–38m</option>
+            <option value="P2R3.40-50">P2R3 · 40–50m</option>
+            <option value="P2R3.50-62">P2R3 · 50–62m</option>
+          </optgroup>
+          <optgroup label="Paddock 2 — Row 4">
+            <option value="P2R4">P2R4 (whole row)</option>
+            <option value="P2R4.0-2">P2R4 · 0–2m</option>
+            <option value="P2R4.2-6">P2R4 · 2–6m</option>
+            <option value="P2R4.6-14">P2R4 · 6–14m</option>
+            <option value="P2R4.14-20">P2R4 · 14–20m</option>
+            <option value="P2R4.20-30">P2R4 · 20–30m</option>
+            <option value="P2R4.30-40">P2R4 · 30–40m</option>
+            <option value="P2R4.40-49">P2R4 · 40–49m</option>
+            <option value="P2R4.52-62">P2R4 · 52–62m</option>
+            <option value="P2R4.62-72">P2R4 · 62–72m</option>
+            <option value="P2R4.72-77">P2R4 · 72–77m</option>
+          </optgroup>
+          <optgroup label="Paddock 2 — Row 5">
+            <option value="P2R5">P2R5 (whole row)</option>
+            <option value="P2R5.0-8">P2R5 · 0–8m</option>
+            <option value="P2R5.8-14">P2R5 · 8–14m</option>
+            <option value="P2R5.14-22">P2R5 · 14–22m</option>
+            <option value="P2R5.22-29">P2R5 · 22–29m</option>
+            <option value="P2R5.29-38">P2R5 · 29–38m</option>
+            <option value="P2R5.38-44">P2R5 · 38–44m</option>
+            <option value="P2R5.44-53">P2R5 · 44–53m</option>
+            <option value="P2R5.55-66">P2R5 · 55–66m</option>
+            <option value="P2R5.66-77">P2R5 · 66–77m</option>
           </optgroup>
           <optgroup label="Other">
             <option value="Nursery">Nursery</option>
