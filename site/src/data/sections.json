@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-20T13:26:13.062376+10:00",
+  "generated_at": "2026-03-20T15:08:28.186270+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -7729,7 +7729,7 @@
       "length": "3m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-09",
+      "inventory_date": "2026-03-17",
       "plants": [
         {
           "species": "Rose Apple",
@@ -7994,6 +7994,12 @@
               "date": "2025-11-09",
               "name": "Inventory P2R2.0-3 — Cape Gooseberry",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R2.0-3 — Cape Gooseberry — 2026-03-18",
+              "notes": "Suffers from pest because of lack of canopy. Observed by Agnes March 18."
             }
           ]
         },
@@ -8100,6 +8106,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R2.0-3 — Pluot (Black Adder)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R2.0-3 — Pluot (Black Adder) — 2026-03-18",
+              "notes": "Confirmed present. Agnes noted \"this was missing\" from earlier records. March 18."
             }
           ]
         },
@@ -8487,7 +8499,7 @@
       "length": "7m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-11",
+      "inventory_date": "2026-03-17",
       "plants": [
         {
           "species": "Forest Red Gum",
@@ -8730,7 +8742,7 @@
         {
           "species": "Ginger",
           "strata": "low",
-          "count": 3,
+          "count": 0,
           "notes": "5 lost",
           "first_planted": "2025-04-24",
           "asset_name": "25 APR 2025 - Ginger - P2R2.9-16",
@@ -8758,6 +8770,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R2.9-16 — Ginger",
               "notes": "2 more appeared from previous plantation"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R2.9-16 — Ginger — 2026-03-18",
+              "notes": "Not seen any. All 3 plants lost. Observed by Agnes March 18."
             }
           ]
         },
@@ -9091,7 +9109,7 @@
       "length": "7m",
       "has_trees": false,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-11",
+      "inventory_date": "2026-03-17",
       "plants": [
         {
           "species": "Comfrey",
@@ -9158,6 +9176,12 @@
               "date": "2025-11-10",
               "name": "Inventory P2R2.16-23 — Sweet Potato",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R2.16-23 — Sweet Potato — 2026-03-18",
+              "notes": "Count confirmed at 4. Agnes asks: are the sweet potatoes ready for harvest? March 18."
             }
           ]
         },
@@ -11720,12 +11744,12 @@
       "length": "11m",
       "has_trees": true,
       "first_planted": "2025-12-30",
-      "inventory_date": "2026-03-10",
+      "inventory_date": "2026-03-17",
       "plants": [
         {
           "species": "Papaya",
           "strata": "high",
-          "count": 6,
+          "count": 4,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Papaya - P2R5.66-77",
@@ -11735,6 +11759,12 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.66-77 — Papaya",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R5.66-77 — Papaya — 2026-03-18",
+              "notes": "4 doing well, 2 missing — just gone. Observed by James March 18."
             }
           ]
         },
@@ -11785,7 +11815,7 @@
         {
           "species": "Jacaranda",
           "strata": "medium",
-          "count": 6,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-12-30",
           "asset_name": "30 DEC 2025 - Jacaranda - P2R5.66-77",
@@ -11795,6 +11825,12 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.66-77 — Jacaranda",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-17",
+              "name": "Observation P2R5.66-77 — Jacaranda — 2026-03-18",
+              "notes": "Can only find 2 of 6. Observed by James March 18."
             }
           ]
         },
