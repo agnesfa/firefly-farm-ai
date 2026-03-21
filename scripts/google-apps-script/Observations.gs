@@ -23,12 +23,14 @@
  *   - rejected: Observation was incorrect, will not be imported
  *
  * Deployment:
- *   1. Create a new Google Apps Script project at script.google.com
- *   2. Paste this code into Code.gs
- *   3. Deploy → New deployment → Web app
+ *   1. Open the "Firefly Corner - Field Observations" Google Sheet
+ *   2. Extensions → Apps Script
+ *   3. Paste this code (rename to Observations.gs if desired)
+ *   4. Also paste UsageTracking.gs as a separate file
+ *   5. Deploy → New deployment → Web app
  *      - Execute as: Me (your account)
  *      - Who has access: Anyone
- *   4. Copy the deployment URL → use as OBSERVE_ENDPOINT
+ *   6. Copy the deployment URL → use as OBSERVE_ENDPOINT
  *
  * The deployed URL looks like:
  *   https://script.google.com/macros/s/AKfycb.../exec
@@ -36,8 +38,16 @@
 
 // ─── CONFIGURATION ──────────────────────────────────────────
 
-/** ID of the "Firefly Corner - Field Observations" Google Sheet */
-const SHEET_ID = "11EUdwJkvvYZ8wXZSYYeudmLHO6dOs2iUIL4uZC-Gf8Q";
+/**
+ * Get the spreadsheet this script is bound to.
+ * When bound to the "Firefly Corner - Field Observations" Sheet,
+ * getActiveSpreadsheet() returns it directly — no hardcoded ID needed.
+ *
+ * Legacy standalone ID (for reference): 11EUdwJkvvYZ8wXZSYYeudmLHO6dOs2iUIL4uZC-Gf8Q
+ */
+function getSpreadsheet_() {
+  return SpreadsheetApp.getActiveSpreadsheet();
+}
 
 /** ID of the "Firefly Corner AI Observations" Google Drive folder */
 const DRIVE_FOLDER_ID = "1_c1w_TLQMddsbDRg06er5_88c8hUCtgW";
@@ -170,7 +180,7 @@ function handleObservation(payload) {
  *   submission_id — filter by submission ID (exact match)
  */
 function handleListObservations(params) {
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
   if (!sheet) {
     return jsonResponse({ success: true, observations: [], count: 0 });
   }
@@ -270,7 +280,7 @@ function handleUpdateStatus(payload) {
     return jsonResponse({ success: false, error: "No updates provided" });
   }
 
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
   if (!sheet) {
     return jsonResponse({ success: false, error: "Sheet not found" });
   }
@@ -331,11 +341,11 @@ function handleUpdateStatus(payload) {
  * Creates one row per observed plant species.
  */
 function appendToSheet(payload) {
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
 
   // Create sheet with headers if it doesn't exist
   if (!sheet) {
-    sheet = SpreadsheetApp.openById(SHEET_ID).insertSheet(SHEET_NAME);
+    sheet = getSpreadsheet_().insertSheet(SHEET_NAME);
     sheet.appendRow(HEADERS);
     sheet.getRange("1:1").setFontWeight("bold");
     sheet.setFrozenRows(1);
@@ -397,7 +407,7 @@ function appendToSheet(payload) {
  * Check if a submission_id already exists in the sheet.
  */
 function isDuplicate(submissionId) {
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
   if (!sheet) return false;
 
   var data = sheet.getDataRange().getValues();
@@ -423,7 +433,7 @@ function isDuplicate(submissionId) {
  *   Reviewed=true  → Status="reviewed"
  */
 function migrateV1ToV2() {
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
   if (!sheet) {
     Logger.log("No Observations sheet found");
     return;
@@ -570,7 +580,7 @@ function handleDeleteImported(body) {
     return jsonResponse({ success: false, error: "Missing submission_id" });
   }
 
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
     return jsonResponse({ success: true, deleted: 0 });
@@ -614,7 +624,7 @@ function handleGetMedia(params) {
   }
 
   // Find the submission in the Sheet to get date and section
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  var sheet = getSpreadsheet_().getSheetByName(SHEET_NAME);
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
     return jsonResponse({ success: true, files: [] });

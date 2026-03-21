@@ -1147,7 +1147,7 @@ Part 3 — farmOS Import:
 
 **Apps Script deployment details:**
 - Account: fireflyagents.com (switched from fireflycorner.com.au due to 403 on anonymous POST)
-- Endpoint: `https://script.google.com/macros/s/AKfycbzTFMAmf0JIMb2PNWBG_SNSP0WpXj_VG5VFiUHMNpRyFJpHIYVqaa2WLIkT4pGDWYwB/exec`
+- Endpoint: `https://script.google.com/macros/s/AKfycbxwWorskdbg8ZFpkYAzpo4ILGUNRhTi7HtQbxtYI38ws9vKSIlASAZHvpGIPrbHVBVY/exec`
 - Sheet: "Firefly Corner - Field Observations" (ID: 1wLAIxcSE_DNWjZdhlmPtQacvxg1VxHkA70hvX6nGqRs)
 - Drive: "Firefly Corner AI Observations" (ID: 1WE1eMNEn--xW6RT7lAGnh0MFfJh4WCPX)
 
