@@ -712,6 +712,7 @@ def render_view_page(loc_id, display_name, breadcrumb, plants, plant_db):
 <div class="page">
 
   <div class="section-header" style="background:{gradient}">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
     <div class="breadcrumb">{escaped_breadcrumb}</div>
     <div class="section-title-row">
       <h1 class="section-range">{escaped_name}</h1>

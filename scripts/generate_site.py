@@ -419,6 +419,7 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
 <div class="page">
 
   <div class="section-header" style="background:{grad}">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
     <div class="breadcrumb">Firefly Corner · {esc(row_info.get('paddock',''))} · {esc(row_info.get('row',''))}</div>
     <div class="section-title-row">
       <h1 class="section-range">{esc(section.get('range', ''))}</h1>
@@ -471,7 +472,7 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .page { max-width: 430px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 60px rgba(0,0,0,0.06); }
 
 /* Header */
-.section-header { padding: 20px 20px 18px; color: #fff; }
+.section-header { padding: 20px 20px 18px; color: #fff; position: relative; }
 .breadcrumb { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; opacity: 0.75; margin-bottom: 6px; }
 .section-title-row { display: flex; align-items: baseline; gap: 10px; }
 .section-range { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; line-height: 1; }
@@ -573,6 +574,19 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .observe-fab { position: fixed; bottom: 24px; right: max(24px, calc((100vw - 430px)/2 + 16px)); background: #e67e22; color: #fff; padding: 12px 20px; border-radius: 28px; text-decoration: none; font-weight: 600; font-size: 13px; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 8px; z-index: 100; transition: transform 0.15s, box-shadow 0.15s; }
 .observe-fab:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .observe-fab-icon { font-size: 16px; }
+
+/* Home button */
+.home-btn {
+  position: absolute; top: 14px; right: 14px; z-index: 30;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; transition: background 0.15s;
+  overflow: hidden; border: 1.5px solid rgba(255,255,255,0.3);
+}
+.home-btn:hover { background: rgba(255,255,255,0.35); }
+.home-btn:active { transform: scale(0.92); }
+.home-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 """
 
 
@@ -681,6 +695,7 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
 <div class="page">
 
   <div class="section-header" style="background:{grad}">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
     <div class="breadcrumb">Firefly Corner · {esc(row_info.get('paddock',''))} · {esc(row_info.get('row',''))} · Field Observation</div>
     <div class="section-title-row">
       <h1 class="section-range">{esc(section.get('range', ''))}</h1>
@@ -1001,11 +1016,15 @@ def main():
     sections, rows = load_sections(args.data)
     print(f"  {len(sections)} sections across {len(rows)} rows")
     
-    # Write shared CSS files
+    # Write shared CSS files (skip if hand-managed version exists with home-btn)
     css_path = output_dir / "styles.css"
-    with open(css_path, "w", encoding="utf-8") as f:
-        f.write(get_css())
-    print(f"  Generated: styles.css")
+    existing_css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+    if "home-btn" not in existing_css:
+        with open(css_path, "w", encoding="utf-8") as f:
+            f.write(get_css())
+        print(f"  Generated: styles.css")
+    else:
+        print(f"  Skipped: styles.css (hand-managed)")
 
     obs_css_path = output_dir / "styles-observe.css"
     with open(obs_css_path, "w", encoding="utf-8") as f:
@@ -1052,11 +1071,16 @@ def main():
             f.write(observe_html)
         print(f"  Generated: {section_id}-observe.html")
 
-    # Generate index page
-    index_html = render_index(rows, sections, plant_db, args.base_url)
-    with open(output_dir / "index.html", "w", encoding="utf-8") as f:
-        f.write(index_html)
-    print(f"  Generated: index.html")
+    # Generate index page (skip if hand-managed collapsible version exists)
+    idx_path = output_dir / "index.html"
+    existing_idx = idx_path.read_text(encoding="utf-8") if idx_path.exists() else ""
+    if "toggleLocation" not in existing_idx:
+        index_html = render_index(rows, sections, plant_db, args.base_url)
+        with open(idx_path, "w", encoding="utf-8") as f:
+            f.write(index_html)
+        print(f"  Generated: index.html")
+    else:
+        print(f"  Skipped: index.html (hand-managed)")
 
     total = len(sections) * 2 + 1  # view + observe + index
     print(f"\nDone! {total} pages in {output_dir} ({len(sections)} view + {len(sections)} observe + index)")
