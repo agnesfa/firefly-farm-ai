@@ -70,6 +70,17 @@ Open Claude Desktop and type (or paste) any of these. Claude talks to farmOS for
 | Check submitted observations | *"Are there any pending observations?"* |
 | Review and approve observations | *"List pending observations and let me review them"* |
 
+### Seeing What's Happened Recently
+
+| What you want | What to say |
+|---|---|
+| Recent activity on a section | *"What are the latest logs for P2R3.15-21?"* |
+| Recent nursery activity | *"Show me recent logs for NURS.SH1-1"* |
+| All recent observation logs | *"Query logs for the last week — observations only"* |
+| What WWOOFers recorded | *"List observations from the last 3 days"* |
+
+The nursery QR pages now show the **last logged date** on each plant card, so you can see at a glance which plants have been recently checked. Tap a plant card to expand and see the full history.
+
 ---
 
 ## 3. QR Code Pages
