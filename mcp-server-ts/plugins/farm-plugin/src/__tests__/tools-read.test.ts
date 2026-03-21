@@ -17,6 +17,7 @@ const mockClient = {
   getPlantTypeDetails: vi.fn(),
   getAllPlantTypesCached: vi.fn(),
   getSectionUuid: vi.fn(),
+  getSectionType: vi.fn().mockResolvedValue('asset--land'),
   getPlantTypeUuid: vi.fn(),
   connect: vi.fn(),
   isConnected: true,

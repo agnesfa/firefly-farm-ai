@@ -248,15 +248,36 @@ class FarmOSClient:
         return None
 
     def get_section_uuid(self, section_id: str) -> Optional[str]:
-        """Get section land asset UUID by name (cached)."""
+        """Get section asset UUID by name (cached).
+
+        Searches land assets first (paddock sections), then structure assets
+        (nursery zones like NURS.SH1-1) as fallback.
+        """
         if section_id in self._section_cache:
             return self._section_cache[section_id]
+        # Try land assets first (paddock sections: P1R1.0-5, P2R3.15-21, etc.)
         assets = self.fetch_by_name("asset/land", section_id)
         if assets:
             uuid = assets[0]["id"]
             self._section_cache[section_id] = uuid
             return uuid
+        # Fallback: try structure assets (nursery zones: NURS.SH1-1, etc.)
+        assets = self.fetch_by_name("asset/structure", section_id)
+        if assets:
+            uuid = assets[0]["id"]
+            self._section_cache[section_id] = uuid
+            return uuid
         return None
+
+    def get_section_type(self, section_id: str) -> str:
+        """Get the farmOS asset type for a section (land or structure)."""
+        assets = self.fetch_by_name("asset/land", section_id)
+        if assets:
+            return "asset--land"
+        assets = self.fetch_by_name("asset/structure", section_id)
+        if assets:
+            return "asset--structure"
+        return "asset--land"  # default
 
     def plant_asset_exists(self, asset_name: str) -> Optional[str]:
         """Check if a plant asset with this name exists. Returns UUID or None."""
@@ -334,7 +355,8 @@ class FarmOSClient:
 
     def create_activity_log(self, section_uuid: str, timestamp: int,
                              name: str, notes: str = "",
-                             asset_ids: Optional[list] = None) -> Optional[str]:
+                             asset_ids: Optional[list] = None,
+                             location_type: str = "asset--land") -> Optional[str]:
         """Create an activity log for a field activity."""
         log_data = {
             "attributes": {
@@ -344,7 +366,7 @@ class FarmOSClient:
             },
             "relationships": {
                 "location": {
-                    "data": [{"type": "asset--land", "id": section_uuid}]
+                    "data": [{"type": location_type, "id": section_uuid}]
                 },
             },
         }

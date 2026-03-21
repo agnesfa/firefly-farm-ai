@@ -696,6 +696,7 @@ def create_activity(
     if not section_uuid:
         return json.dumps({"error": f"Section '{section_id}' not found in farmOS"})
 
+    location_type = client.get_section_type(section_id)
     timestamp = parse_date(date) if date else parse_date(None)
     log_name = f"{activity_type.title()} — {section_id}"
 
@@ -704,6 +705,7 @@ def create_activity(
         timestamp=timestamp,
         name=log_name,
         notes=notes,
+        location_type=location_type,
     )
 
     return json.dumps({
@@ -1176,12 +1178,29 @@ def import_observations(
             # Build notes — preserve all raw data from the field observation
             combined_notes = _build_import_notes(obs)
 
+            # Split observation + action text into separate farmOS logs
+            # Nursery inline forms send "Observation: X\nAction: Y" in plant_notes
+            obs_text = ""
+            action_text = ""
+            if plant_notes:
+                for line in plant_notes.split("\n"):
+                    line = line.strip()
+                    if line.startswith("Observation:"):
+                        obs_text = line[len("Observation:"):].strip()
+                    elif line.startswith("Action:"):
+                        action_text = line[len("Action:"):].strip()
+
             # Only update if count changed or there are meaningful notes
             count_val = int(new_count) if new_count is not None else None
             prev_val = int(previous_count) if previous_count is not None else None
             count_changed = count_val is not None and count_val != prev_val
 
             if count_changed or combined_notes:
+                # 1. Observation log (inventory count + observation text)
+                obs_notes = _build_import_notes(obs)
+                if obs_text:
+                    obs_notes += f"\nObservation: {obs_text}"
+
                 action = {
                     "type": "observation",
                     "plant_name": plant_name,
@@ -1189,14 +1208,14 @@ def import_observations(
                     "section": obs_section,
                     "previous_count": prev_val,
                     "new_count": count_val,
-                    "notes": combined_notes,
+                    "notes": obs_notes,
                 }
                 if not dry_run and count_val is not None:
                     try:
                         result_json = json.loads(create_observation(
                             plant_name=plant_name,
                             count=count_val,
-                            notes=combined_notes,
+                            notes=obs_notes,
                             date=obs_date or None,
                         ))
                         action["result"] = result_json.get("status", "unknown")
@@ -1204,13 +1223,13 @@ def import_observations(
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Observation for {species} in {obs_section}: {e}")
-                elif not dry_run and count_val is None:
-                    # Notes-only observation — create activity instead
+                elif not dry_run and count_val is None and not action_text:
+                    # Notes-only, no action text — create activity
                     try:
                         result_json = json.loads(create_activity(
                             section_id=obs_section,
                             activity_type="observation",
-                            notes=combined_notes,
+                            notes=obs_notes,
                             date=obs_date or None,
                         ))
                         action["result"] = result_json.get("status", "unknown")
@@ -1221,6 +1240,33 @@ def import_observations(
                 else:
                     action["result"] = "dry_run"
                 actions.append(action)
+
+                # 2. Separate activity log for action text (if present)
+                if action_text:
+                    act_action = {
+                        "type": "activity",
+                        "plant_name": plant_name,
+                        "species": species,
+                        "section": obs_section,
+                        "notes": f"Action: {action_text}",
+                    }
+                    if not dry_run:
+                        try:
+                            act_notes = f"Reporter: {obs.get('observer', '')}\nAction: {action_text}"
+                            result_json = json.loads(create_activity(
+                                section_id=obs_section,
+                                activity_type="nursery action",
+                                notes=act_notes,
+                                date=obs_date or None,
+                            ))
+                            act_action["result"] = result_json.get("status", "unknown")
+                            act_action["log_id"] = result_json.get("log_id")
+                        except Exception as e:
+                            act_action["result"] = "error"
+                            errors.append(f"Activity for {species} in {obs_section}: {e}")
+                    else:
+                        act_action["result"] = "dry_run"
+                    actions.append(act_action)
 
     # Update Sheet status to imported (unless dry_run or all failed)
     imported_count = sum(1 for a in actions if a.get("result") == "created")

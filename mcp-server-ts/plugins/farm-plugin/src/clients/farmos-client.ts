@@ -258,13 +258,29 @@ export class FarmOSClient {
     if (this.sectionCache.has(sectionId)) {
       return this.sectionCache.get(sectionId)!;
     }
-    const assets = await this.fetchByName('asset/land', sectionId);
-    if (assets.length > 0) {
-      const uuid = assets[0].id;
+    // Try land assets first (paddock sections: P1R1.0-5, P2R3.15-21, etc.)
+    const landAssets = await this.fetchByName('asset/land', sectionId);
+    if (landAssets.length > 0) {
+      const uuid = landAssets[0].id;
+      this.sectionCache.set(sectionId, uuid);
+      return uuid;
+    }
+    // Fallback: try structure assets (nursery zones: NURS.SH1-1, etc.)
+    const structAssets = await this.fetchByName('asset/structure', sectionId);
+    if (structAssets.length > 0) {
+      const uuid = structAssets[0].id;
       this.sectionCache.set(sectionId, uuid);
       return uuid;
     }
     return null;
+  }
+
+  async getSectionType(sectionId: string): Promise<string> {
+    const landAssets = await this.fetchByName('asset/land', sectionId);
+    if (landAssets.length > 0) return 'asset--land';
+    const structAssets = await this.fetchByName('asset/structure', sectionId);
+    if (structAssets.length > 0) return 'asset--structure';
+    return 'asset--land'; // default
   }
 
   async plantAssetExists(assetName: string): Promise<string | null> {
@@ -335,6 +351,7 @@ export class FarmOSClient {
     name: string,
     notes = '',
     assetIds?: string[],
+    locationType = 'asset--land',
   ): Promise<string | null> {
     const logData: any = {
       attributes: {
@@ -343,7 +360,7 @@ export class FarmOSClient {
         status: 'done',
       },
       relationships: {
-        location: { data: [{ type: 'asset--land', id: sectionUuid }] },
+        location: { data: [{ type: locationType, id: sectionUuid }] },
       },
     };
     if (notes) logData.attributes.notes = { value: notes, format: 'default' };

@@ -10,6 +10,7 @@ const mockClient = {
   fetchByName: vi.fn(),
   getPlantAssets: vi.fn(),
   getSectionUuid: vi.fn(),
+  getSectionType: vi.fn().mockResolvedValue('asset--land'),
   getPlantTypeUuid: vi.fn(),
   plantAssetExists: vi.fn(),
   logExists: vi.fn(),

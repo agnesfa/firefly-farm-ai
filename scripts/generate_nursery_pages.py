@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 
 # ─── CONFIGURATION ───────────────────────────────────────────────────────────
 
-OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbwxz3n9MSH45tQ1KX1_MacGAheIP_KcFMmlX_AWnYMI4-wwQ0ZNjYO5U8DJqHebcGPa/exec"
+OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxwWorskdbg8ZFpkYAzpo4ILGUNRhTi7HtQbxtYI38ws9vKSIlASAZHvpGIPrbHVBVY/exec"
 
 # Nursery locations — same as in generate_nursery_qrcodes.py
 # Format: (id, display_name, breadcrumb)
@@ -223,6 +223,42 @@ def export_nursery_from_farmos(plant_db):
     assets = farmos_fetch_all(session, base_url, "asset/plant", filters)
     print(f"  Found {len(assets)} nursery plant assets")
 
+    # Fetch all nursery logs (observations + activities) for latest-log display
+    print("  Querying farmOS for nursery logs...")
+    obs_logs = farmos_fetch_all(session, base_url, "log/observation",
+        f"&filter[name][operator]=CONTAINS&filter[name][value]={encoded}&sort=-timestamp")
+    act_logs = farmos_fetch_all(session, base_url, "log/activity",
+        f"&filter[name][operator]=CONTAINS&filter[name][value]={encoded}&sort=-timestamp")
+    all_logs = obs_logs + act_logs
+    print(f"  Found {len(all_logs)} nursery logs ({len(obs_logs)} obs, {len(act_logs)} activity)")
+
+    # Build map: asset UUID → latest log (by timestamp, most recent first)
+    # First build asset-name → [logs] from log names that reference asset names
+    latest_log_by_asset = {}
+    for log in sorted(all_logs, key=lambda l: l.get("attributes", {}).get("timestamp", ""), reverse=True):
+        log_attrs = log.get("attributes", {})
+        log_name = log_attrs.get("name", "")
+        log_notes = log_attrs.get("notes", {})
+        if isinstance(log_notes, dict):
+            log_notes = log_notes.get("value", "")
+        log_ts = log_attrs.get("timestamp", "")
+        log_type = log.get("type", "").replace("log--", "")
+
+        # Match log to assets via relationships
+        rels = log.get("relationships", {})
+        asset_refs = rels.get("asset", {}).get("data", [])
+        if isinstance(asset_refs, dict):
+            asset_refs = [asset_refs]
+        for ref in asset_refs:
+            aid = ref.get("id", "")
+            if aid and aid not in latest_log_by_asset:
+                latest_log_by_asset[aid] = {
+                    "type": log_type,
+                    "notes": log_notes,
+                    "timestamp": log_ts,
+                    "name": log_name,
+                }
+
     by_location = defaultdict(list)
 
     for asset in assets:
@@ -269,6 +305,9 @@ def export_nursery_from_farmos(plant_db):
         source = fields.get("source", db_entry.get("source", ""))
         success_rate_str = fields.get("success rate", "").replace("%", "").strip()
 
+        # Get latest log for this asset
+        latest = latest_log_by_asset.get(asset["id"], {})
+
         by_location[loc_id].append({
             "species": farmos_name if not process else base_species,
             "common_name": db_entry.get("common_name", base_species),
@@ -289,6 +328,9 @@ def export_nursery_from_farmos(plant_db):
             "when": "",
             "farmos_asset_id": asset["id"],
             "farmos_asset_name": name,
+            "latest_log_type": latest.get("type", ""),
+            "latest_log_notes": latest.get("notes", ""),
+            "latest_log_date": latest.get("timestamp", ""),
         })
 
     total = sum(len(v) for v in by_location.values())
@@ -495,6 +537,30 @@ def render_plant_card(plant, plant_db):
                   </div>
                 </div>'''
 
+    # Latest log display
+    last_log_html = ""
+    log_notes = (plant.get("latest_log_notes") or "").strip()
+    log_date = plant.get("latest_log_date") or ""
+    log_type = plant.get("latest_log_type") or ""
+    if log_notes or log_date:
+        # Format the date
+        date_label = ""
+        if log_date:
+            try:
+                dt = datetime.fromisoformat(log_date.replace("Z", "+00:00"))
+                date_label = dt.strftime("%d %b %Y")
+            except (ValueError, TypeError):
+                date_label = log_date[:10] if len(log_date) >= 10 else log_date
+        # Truncate long notes
+        note_preview = log_notes[:80] + ("..." if len(log_notes) > 80 else "") if log_notes else ""
+        # Strip HTML tags from notes
+        note_preview = re.sub(r'<[^>]+>', '', note_preview).strip()
+        type_icon = "📊" if log_type == "observation" else "🔧" if log_type == "activity" else "📝"
+        if note_preview:
+            last_log_html = f'<div class="last-log">{type_icon} <span class="last-log-date">{date_label}</span> {escape(note_preview)}</div>'
+        elif date_label:
+            last_log_html = f'<div class="last-log">{type_icon} Last logged: <span class="last-log-date">{date_label}</span></div>'
+
     # Unique card ID for inline observation JS
     card_id = f"card-{hash(species + process + plant.get('seeding_date', '')) & 0xFFFFFF:06x}"
 
@@ -510,6 +576,7 @@ def render_plant_card(plant, plant_db):
       </div>
       {rtt_html}
       {timing_html}
+      {last_log_html}
       <div class="plant-detail">
         {desc_html}
         <div class="plant-meta">{meta_html}</div>
@@ -637,6 +704,8 @@ def render_view_page(loc_id, display_name, breadcrumb, plants, plant_db):
 .nursery-tag {{ display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.75rem;
   padding: 2px 8px; border-radius: 8px; margin: 2px 4px 2px 0; }}
 .nursery-tags {{ margin-top: 6px; }}
+.last-log {{ font-size: 0.78rem; color: #6b7280; padding: 4px 0 0 0; line-height: 1.4; }}
+.last-log-date {{ font-weight: 600; color: #4b5563; }}
 .transplant-plan {{ background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; margin-top: 8px;
   border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #78350f; }}
 .transplant-title {{ font-weight: 600; margin-bottom: 4px; }}

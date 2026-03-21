@@ -14,6 +14,8 @@
 .nursery-tag { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.75rem;
   padding: 2px 8px; border-radius: 8px; margin: 2px 4px 2px 0; }
 .nursery-tags { margin-top: 6px; }
+.last-log { font-size: 0.78rem; color: #6b7280; padding: 4px 0 0 0; line-height: 1.4; }
+.last-log-date { font-weight: 600; color: #4b5563; }
 .transplant-plan { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; margin-top: 8px;
   border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #78350f; }
 .transplant-title { font-weight: 600; margin-bottom: 4px; }
@@ -131,7 +133,7 @@
         <span class="strata-count" style="background:#2d5016">90</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" id="card-f8542c" style="border-left-color:#2d5016" data-species="Lemon" data-count="90">
+    <div class="plant-card nursery-card" id="card-98cd2e" style="border-left-color:#2d5016" data-species="Lemon" data-count="90">
       <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Lemon</div>
@@ -142,6 +144,7 @@
       </div>
       <span class="rtt-badge">📦 90 ready</span>
       
+      <div class="last-log">📊 Last logged: <span class="last-log-date">20 Mar 2026</span></div>
       <div class="plant-detail">
         <p class="plant-desc">Citrus fruit tree producing year-round in subtropical conditions. Needs regular water and feeding. Frost sensitive when young.</p>
         <div class="plant-meta">Seeded: 15/02/2025 · Pots: 33 · Success: 273% · Source: Mr Fothergill&#x27;s</div>
@@ -151,16 +154,16 @@
       <div class="inline-obs">
         <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
         <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
-        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-f8542c')">&#x25B6; Update count</div>
-        <div class="inline-count-row" id="card-f8542c-count" style="display:none" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-98cd2e')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-98cd2e-count" style="display:none" onclick="event.stopPropagation()">
           <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
           <div class="count-input-row">
             <label>New total count:</label>
             <input type="number" class="inline-count-input" min="0" value="90" inputmode="numeric">
           </div>
         </div>
-        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-f8542c')">Save</button>
-        <div class="inline-obs-status" id="card-f8542c-status"></div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-98cd2e')">Save</button>
+        <div class="inline-obs-status" id="card-98cd2e-status"></div>
       </div>
     </div>
       </div>
@@ -177,7 +180,7 @@
 </div>
 
 <script>
-var OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbwxz3n9MSH45tQ1KX1_MacGAheIP_KcFMmlX_AWnYMI4-wwQ0ZNjYO5U8DJqHebcGPa/exec";
+var OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxwWorskdbg8ZFpkYAzpo4ILGUNRhTi7HtQbxtYI38ws9vKSIlASAZHvpGIPrbHVBVY/exec";
 var SECTION_ID = "NURS.SH3-1";
 
 // Restore observer name

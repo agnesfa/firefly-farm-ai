@@ -20,9 +20,10 @@ export const createActivityTool: Tool = {
     if (!sectionUuid) {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ error: `Section '${params.section_id}' not found in farmOS` }) }] };
     }
+    const locationType = await client.getSectionType(params.section_id);
     const timestamp = parseDate(params.date);
     const logName = `${params.activity_type.charAt(0).toUpperCase() + params.activity_type.slice(1)} — ${params.section_id}`;
-    const logId = await client.createActivityLog(sectionUuid, timestamp, logName, params.notes);
+    const logId = await client.createActivityLog(sectionUuid, timestamp, logName, params.notes, undefined, locationType);
     return {
       content: [{ type: 'text' as const, text: JSON.stringify({
         status: 'created', log_id: logId, log_name: logName,
