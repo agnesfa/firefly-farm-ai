@@ -1,4 +1,4 @@
-// Barrel export — all 29 farm tools (28 ported + hello)
+// Barrel export — all 30 farm tools (29 ported + hello)
 import { helloTool } from './hello.js';
 
 // READ TOOLS (7)
@@ -10,9 +10,10 @@ import { getInventoryTool } from './get-inventory.js';
 import { searchPlantTypesTool } from './search-plant-types.js';
 import { getAllPlantTypesTool } from './get-all-plant-types.js';
 
-// WRITE TOOLS (5)
+// WRITE TOOLS (6)
 import { createObservationTool } from './create-observation.js';
 import { createActivityTool } from './create-activity.js';
+import { completeTaskTool } from './complete-task.js';
 import { updateInventoryTool } from './update-inventory.js';
 import { createPlantTool } from './create-plant.js';
 import { archivePlantTool } from './archive-plant.js';
@@ -53,9 +54,10 @@ export const farmTools = [
   getInventoryTool,
   searchPlantTypesTool,
   getAllPlantTypesTool,
-  // Write (5)
+  // Write (6)
   createObservationTool,
   createActivityTool,
+  completeTaskTool,
   updateInventoryTool,
   createPlantTool,
   archivePlantTool,
@@ -85,7 +87,7 @@ export const farmTools = [
 export { helloTool };
 export { queryPlantsTool, querySectionsTool, getPlantDetailTool, queryLogsTool };
 export { getInventoryTool, searchPlantTypesTool, getAllPlantTypesTool };
-export { createObservationTool, createActivityTool, updateInventoryTool, createPlantTool, archivePlantTool };
+export { createObservationTool, createActivityTool, completeTaskTool, updateInventoryTool, createPlantTool, archivePlantTool };
 export { listObservationsTool, updateObservationStatusTool, importObservationsTool };
 export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool, acknowledgeMemoryTool };
 export { addPlantTypeTool, updatePlantTypeTool, reconcilePlantTypesTool };

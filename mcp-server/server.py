@@ -427,6 +427,7 @@ def query_logs(
     log_type: Optional[str] = None,
     section_id: Optional[str] = None,
     species: Optional[str] = None,
+    status: Optional[str] = None,
     max_results: int = 20,
 ) -> str:
     """Search logs by type, section, or species.
@@ -435,6 +436,7 @@ def query_logs(
         log_type: Filter by log type: observation, activity, transplanting, harvest, seeding. Optional.
         section_id: Filter by section ID in log name. Optional.
         species: Filter by species name in log name. Optional.
+        status: Filter by log status: "done" or "pending". Use "pending" to find TODO tasks. Optional.
         max_results: Maximum number of results (default 20, max 50).
 
     Returns:
@@ -446,6 +448,7 @@ def query_logs(
         log_type=log_type,
         section_id=section_id,
         species=species,
+        status=status,
         max_results=max_results,
     )
     formatted = [format_log(l) for l in logs]
@@ -455,6 +458,7 @@ def query_logs(
             "log_type": log_type,
             "section_id": section_id,
             "species": species,
+            "status": status,
         },
         "logs": formatted,
     }, indent=2)
@@ -678,6 +682,7 @@ def create_activity(
     activity_type: str,
     notes: str,
     date: Optional[str] = None,
+    status: str = "done",
 ) -> str:
     """Log a field activity (watering, weeding, mulching, etc.) for a section.
 
@@ -686,6 +691,7 @@ def create_activity(
         activity_type: Type of activity (e.g., "watering", "weeding", "mulching", "pruning").
         notes: Description of the activity.
         date: Activity date in ISO format. Defaults to today.
+        status: Log status — "done" (completed activity) or "pending" (action needed/TODO).
 
     Returns:
         Created log details or error message.
@@ -706,6 +712,7 @@ def create_activity(
         name=log_name,
         notes=notes,
         location_type=location_type,
+        status=status,
     )
 
     return json.dumps({
@@ -715,8 +722,48 @@ def create_activity(
         "section": section_id,
         "activity_type": activity_type,
         "notes": notes,
+        "log_status": status,
         "timestamp": format_timestamp(timestamp),
     }, indent=2)
+
+
+@mcp.tool
+def complete_task(
+    log_name: str,
+    notes: Optional[str] = None,
+) -> str:
+    """Mark a pending activity log as done (complete a TODO task).
+
+    Use query_logs(log_type="activity", status="pending") to find pending tasks first.
+
+    Args:
+        log_name: The exact log name to mark as done (from query_logs results).
+        notes: Optional completion notes (e.g., "Done — separated 12 seedlings into pots").
+
+    Returns:
+        Confirmation or error message.
+    """
+    client = get_client()
+
+    # Find the log by name
+    log_id = client.log_exists(log_name, log_type="activity")
+    if not log_id:
+        return json.dumps({"error": f"Activity log '{log_name}' not found in farmOS"})
+
+    success = client.update_log_status(log_id, "activity", "done")
+    if not success:
+        return json.dumps({"error": f"Failed to update status for '{log_name}'"})
+
+    result = {
+        "status": "completed",
+        "log_id": log_id,
+        "log_name": log_name,
+        "new_status": "done",
+    }
+    if notes:
+        result["completion_notes"] = notes
+
+    return json.dumps(result, indent=2)
 
 
 @mcp.tool
@@ -1258,6 +1305,7 @@ def import_observations(
                                 activity_type="nursery action",
                                 notes=act_notes,
                                 date=obs_date or None,
+                                status="pending",
                             ))
                             act_action["result"] = result_json.get("status", "unknown")
                             act_action["log_id"] = result_json.get("log_id")

@@ -356,13 +356,18 @@ class FarmOSClient:
     def create_activity_log(self, section_uuid: str, timestamp: int,
                              name: str, notes: str = "",
                              asset_ids: Optional[list] = None,
-                             location_type: str = "asset--land") -> Optional[str]:
-        """Create an activity log for a field activity."""
+                             location_type: str = "asset--land",
+                             status: str = "done") -> Optional[str]:
+        """Create an activity log for a field activity.
+
+        Args:
+            status: Log status — "done" (completed) or "pending" (action needed).
+        """
         log_data = {
             "attributes": {
                 "name": name,
                 "timestamp": str(timestamp),
-                "status": "done",
+                "status": status,
             },
             "relationships": {
                 "location": {
@@ -659,6 +664,7 @@ class FarmOSClient:
     def get_logs(self, log_type: Optional[str] = None,
                   section_id: Optional[str] = None,
                   species: Optional[str] = None,
+                  status: Optional[str] = None,
                   max_results: int = 50) -> list:
         """Get logs with optional filtering.
 
@@ -690,13 +696,20 @@ class FarmOSClient:
             except Exception:
                 continue
 
-        # Apply additional Python-side filter if both section_id AND species
+        # Apply additional Python-side filters
         filtered = all_logs
         if section_id and species:
             # API already filtered by section_id, now also filter by species
             filtered = [
                 l for l in filtered
                 if species.lower() in l.get("attributes", {}).get("name", "").lower()
+            ]
+
+        # Filter by status if specified (pending, done)
+        if status:
+            filtered = [
+                l for l in filtered
+                if l.get("attributes", {}).get("status", "") == status
             ]
 
         # Sort by timestamp descending
@@ -706,6 +719,24 @@ class FarmOSClient:
         )
 
         return filtered[:max_results]
+
+    def update_log_status(self, log_id: str, log_type: str,
+                           new_status: str) -> bool:
+        """Update the status of a log (e.g., pending → done)."""
+        payload = {
+            "data": {
+                "type": f"log--{log_type}",
+                "id": log_id,
+                "attributes": {
+                    "status": new_status,
+                },
+            }
+        }
+        resp = self.session.patch(
+            f"{self.hostname}/api/log/{log_type}/{log_id}",
+            json=payload
+        )
+        return resp.status_code in (200, 201)
 
     def get_plant_type_details(self, name: Optional[str] = None) -> list:
         """Get plant type taxonomy terms, optionally filtered by name."""

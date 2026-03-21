@@ -352,12 +352,13 @@ export class FarmOSClient {
     notes = '',
     assetIds?: string[],
     locationType = 'asset--land',
+    logStatus = 'done',
   ): Promise<string | null> {
     const logData: any = {
       attributes: {
         name,
         timestamp: String(timestamp),
-        status: 'done',
+        status: logStatus,
       },
       relationships: {
         location: { data: [{ type: locationType, id: sectionUuid }] },
@@ -552,6 +553,7 @@ export class FarmOSClient {
     sectionId?: string,
     species?: string,
     maxResults = 50,
+    status?: string,
   ): Promise<any[]> {
     const logTypes = logType
       ? [logType]
@@ -576,9 +578,14 @@ export class FarmOSClient {
 
     let filtered = allLogs;
     if (sectionId && species) {
-      filtered = allLogs.filter((l) =>
+      filtered = filtered.filter((l) =>
         (l.attributes?.name ?? '').toLowerCase().includes(species.toLowerCase()),
       );
+    }
+
+    // Filter by status if specified (pending, done)
+    if (status) {
+      filtered = filtered.filter((l) => l.attributes?.status === status);
     }
 
     filtered.sort((a, b) => {
@@ -588,6 +595,18 @@ export class FarmOSClient {
     });
 
     return filtered.slice(0, maxResults);
+  }
+
+  async updateLogStatus(logId: string, logType: string, newStatus: string): Promise<boolean> {
+    const payload = {
+      data: {
+        type: `log--${logType}`,
+        id: logId,
+        attributes: { status: newStatus },
+      },
+    };
+    const resp = await this._patch(`/api/log/${logType}/${logId}`, payload);
+    return !!resp?.data?.id;
   }
 
   async getPlantTypeDetails(name?: string): Promise<any[]> {

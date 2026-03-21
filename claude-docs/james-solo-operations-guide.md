@@ -81,6 +81,38 @@ Open Claude Desktop and type (or paste) any of these. Claude talks to farmOS for
 
 The nursery QR pages now show the **last logged date** on each plant card, so you can see at a glance which plants have been recently checked. Tap a plant card to expand and see the full history.
 
+### Managing Tasks (Pending Activity Logs)
+
+When workers or observers report something that needs doing (like "seedling separation needed" or "pest protection required"), it creates a **pending activity log** in farmOS — essentially a TODO item.
+
+**Checking your TODO list:**
+
+| What you want | What to say |
+|---|---|
+| See all pending tasks | *"Show me all pending activity logs"* |
+| Pending tasks for nursery | *"What pending tasks are there for the nursery?"* |
+| Pending tasks for a section | *"Any pending tasks for NURS.SH1-2?"* |
+
+**Completing a task:**
+
+When you've done the work, tell Claude to mark it done:
+
+| What you want | What to say |
+|---|---|
+| Mark a task done | *"Mark the seedling separation task for NURS.SH1-2 as done"* |
+| Complete with notes | *"I completed the pest protection on Shelf 1-3 — installed wire mesh around the shelf"* |
+
+**Creating a new task:**
+
+You can also create pending tasks for yourself or WWOOFers:
+
+| What you want | What to say |
+|---|---|
+| Create a nursery TODO | *"Create a pending task for NURS.GR: need to transplant the tagasaste to P2R4"* |
+| Create a paddock TODO | *"Add a pending task for P2R3.15-21: pigeon peas need chop-and-drop"* |
+
+The system uses farmOS native log status — "pending" means action needed, "done" means completed. This gives you a reliable task list that persists across sessions.
+
 ---
 
 ## 3. QR Code Pages
