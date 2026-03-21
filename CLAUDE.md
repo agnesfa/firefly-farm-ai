@@ -182,18 +182,18 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 - **Auth:** OAuth2 (credentials in .env, never in repo)
 - **API base:** https://margregen.farmos.net/api
 
-### Current State (as of March 20, 2026 — all rows + nursery + field observations + Claire's corrections)
+### Current State (as of March 21, 2026 — all rows + nursery + harvest + seed bank + all Apps Scripts deployed)
 
 | Entity | Count | Notes |
 |--------|-------|-------|
-| Plant type taxonomy | **271** | 277 in CSV, 271 in farmOS (26 updated March 20 from Claire's corrections) |
-| Plant assets | **630+** | 596+ across 53 sections (P1+P2 paddocks + nursery) |
-| Observation logs | **~1200+** | Inventory + historical + field obs + nursery |
+| Plant type taxonomy | **272** | 278 in CSV, 272 in farmOS (53 source corrections in CSV March 21, not yet synced to farmOS) |
+| Plant assets | **635+** | Across 53 sections (P1+P2 paddocks + nursery) |
+| Observation logs | **~1260+** | Inventory + historical + field obs + nursery |
 | Transplanting logs | **~238** | 7 original + ~230 historical (planted + renovation) |
-| Activity logs | **63+** | Various |
+| Activity logs | **73+** | Various |
 | Land assets | 93+ | Paddocks, rows, 53 sections (37 P2 + nursery zones) |
 | Structure assets | 17+ | Including nursery and sub-locations |
-| Seed assets | 0 | Not yet created (244 records in CSV ready) |
+| Seed assets | 0 | Not yet created (263 records in seed_bank.csv ready) |
 | Seeding logs | 8 | Not using proper Seed→Plant workflow |
 | Water assets | 11 | Dams, trenches |
 | Equipment assets | 3 | |
@@ -201,17 +201,19 @@ farmOS is an **open-source, Drupal-based farm management web application**. It t
 
 **Note:** farmOS API pagination caps at ~250 entries per collection, so exact counts from API queries can undercount. The numbers above are derived from import script output and page generation stats.
 
-**Plant type taxonomy status (updated March 20, 2026):**
-- **271 plant types** in farmOS (277 in CSV), 26 updated with Claire's corrections (strata, botanical names, sources)
+**Plant type taxonomy status (updated March 21, 2026):**
+- **272 plant types** in farmOS (278 in CSV — 6 exist only in CSV, not yet created in farmOS)
+- 53 source corrections applied to CSV March 21 (not yet synced to farmOS taxonomy)
 - All terms have enriched descriptions with syntropic agriculture metadata
-- `import_plants.py` comparison bug fixed: now compares full description text (was silently skipping all updates)
+- `import_plants.py` comparison bug fixed March 20: now compares full description text
 - Google Sheet shared with Claire: "Firefly Corner - Plant Types v7"
 
-**Import status (March 20, 2026):**
-- ✅ All P1 + P2 paddock rows imported (53 sections, 630+ plants)
-- ✅ Nursery zones imported (86 plants across 19 zones)
+**Import status (March 21, 2026):**
+- ✅ All P1 + P2 paddock rows imported (53 sections, 635+ plants)
+- ✅ Nursery zones imported (86 plants across 18 zones)
 - ✅ Historical logs imported: 422 backdated logs (392 R1-R3 + 30 R4/R5)
-- ✅ QR pages regenerated March 20: 107 pages from live farmOS (53 view + 53 observe + 1 index)
+- ✅ QR pages: 131 pages total (53 view + 53 observe + 18 nursery + SEED.BANK + HARVEST + index)
+- ✅ All pages have home button (frog logo) linking to index.html
 - No Seed assets exist yet (244 records in CSV ready)
 - Seeding/transplanting logs don't use the native Seed→Plant workflow yet
 
@@ -605,11 +607,11 @@ These decisions have been made through extensive discussion. Don't revisit them 
 ### Phase A: Field Observation System (WORKING — March 7–9, 2026)
 **Goal:** Workers can log observations from QR code pages → Google Sheet → (future) farmOS.
 - ✅ Built observe.js — vanilla JS form with Quick Report + Full Inventory modes
-- ✅ Built Code.gs — Apps Script backend (Sheet append, Drive JSON save, media handling)
-- ✅ Generated 37 observe pages with floating action button on view pages
+- ✅ Built Observations.gs (was Code.gs) — Apps Script backend (Sheet append, Drive JSON save, media handling)
+- ✅ Generated 53 observe pages with floating action button on view pages
 - ✅ Fixed: fireflycorner.com.au Workspace account returned 403 for anonymous POST → switched to fireflyagents.com
-- ✅ Deployed Code.gs to fireflyagents.com Google account (March 9)
-- ✅ Wired all 37 observe pages to live endpoint
+- ✅ Converted from standalone to bound-script (March 21) — bound to Field Observations Sheet
+- ✅ Wired all 53 observe pages to live endpoint
 - ✅ Google Sheet: "Firefly Corner - Field Observations" (ID: 1wLAIxcSE_DNWjZdhlmPtQacvxg1VxHkA70hvX6nGqRs)
 - ✅ Drive folder: "Firefly Corner AI Observations" (ID: 1WE1eMNEn--xW6RT7lAGnh0MFfJh4WCPX)
 - ✅ End-to-end tested March 9: 14 observations from Claire and James (7 sections, with photos)
@@ -695,18 +697,21 @@ These decisions have been made through extensive discussion. Don't revisit them 
 ### Phase 2: Claire's First Real Log (Weeks 3–4)
 Goal: Claire uses Claude + MCP to log a field activity in natural language, and it lands in farmOS correctly.
 
-### Phase SB: Seed Bank QR System (IN PROGRESS — March 20, 2026)
-**Goal:** Workers can search, use, and flag seed bank inventory via QR code in nursery fridge.
+### Phase SB: Seed Bank + Harvest QR System (WORKING — March 21, 2026)
+**Goal:** Workers can search/use seed inventory and log harvests via QR codes in nursery.
 - ✅ Built `SeedBank.gs` — Apps Script backend for 27-column inventory Sheet
 - ✅ Built `seedbank.js` — enriched cards with strata, functions, germination/transplant data
 - ✅ Built `SEED.BANK.html` — mobile-first QR page with search + transactions
+- ✅ Built `Harvest.gs` — Apps Script backend for harvest logging (bound to Sheet)
+- ✅ Built `HARVEST.html` — species dropdown, weight (kg/g), location (paddock→row→section + whole-paddock), photo, notes
 - ✅ Built `UsageTracking.gs` — shared quota monitoring for all Apps Script backends
-- ✅ Deployed to fireflyagents.com, wired endpoint into QR page
-- ✅ Applied 32 plant type corrections from Claire's review to CSV + farmOS (26 taxonomy updates)
-- ✅ Fixed `import_plants.py` comparison bug (was silently skipping all description updates)
-- ⬜ Seed assets not yet created in farmOS (244 records in seed_bank.csv ready)
+- ✅ All 6 Apps Scripts deployed as bound scripts with health handlers (March 21)
+- ✅ Applied 32 plant type corrections + 53 source corrections from Claire's review
+- ✅ `seed_bank.csv` updated to 263-entry 11-column format (March 21)
+- ✅ Home button (frog logo) on all 131 QR pages linking to collapsible index
+- ⬜ Seed assets not yet created in farmOS (263 records in seed_bank.csv ready)
 - ⬜ Purchase order page (HTML + Apps Script — designed, not built)
-- ⬜ Harvest QR page (single page in nursery — designed, not built)
+- ⬜ 53 source corrections not yet synced to farmOS taxonomy (CSV updated, farmOS pending)
 
 ### Phase 3: Nursery & Seed Bank (Months 2–3)
 - Import seed bank data as Seed assets in farmOS
@@ -1461,6 +1466,55 @@ Part 3 — farmOS Import:
 - Claire's seed bank file merges plant_types.csv + seed_bank.csv into one 27-column sheet — the "source of truth" for seed inventory includes plant enrichment data inline
 - Seed Bank Apps Script endpoint: `https://script.google.com/macros/s/AKfycbwm2YllQ0vi-vSz_aruKXGxVL3klbSE7F_85dS4qIlxoy3TP4DA0VkAPcI3izNgj7hMIg/exec`
 
+### March 21, 2026 — Harvest Page + Home Button + Source Corrections + Apps Script Cleanup
+
+**Session: Full sprint — 12 commits (`bc2ad6c` → `d5f8f0e`)**
+
+Part 1 — Nursery + Harvest QR pages:
+- Built nursery inline observations with farmOS data flow + transplant timing badges
+- Built HARVEST.html + harvest.js — species dropdown, weight (kg/g), photo, notes, precise location (paddock→row→section)
+- Built Harvest.gs — Apps Script backend bound to "Firefly Corner - Harvest Log" Sheet
+- Drive folder: `1vI_JxVYnTAcclFOT5ziN7wBTz6ofuskA`
+- Harvest endpoint: `https://script.google.com/macros/s/AKfycbwsNstKLN3o1r-ccvJn9wA2DZXx_3P7IbMK7Akl2AgUpOOxX1x7frMzyv_5d2lQxhZZsQ/exec`
+- Added whole-paddock location options per James's request
+
+Part 2 — Index page redesign:
+- Collapsible sections: Seed Bank → Plant Nursery → Paddock 1 → Paddock 2 → Harvest Station
+- `toggleLocation()` JS for expand/collapse
+- Nursery sub-groups: Shelving I/II/III, Ground & Zones
+- Paddock sub-groups: individual rows with section counts
+
+Part 3 — Home button on all QR pages:
+- Frog logo (`logo-sm.png`, 68x68, 12KB) as circular button top-right
+- Applied to all 131 pages (53 paddock view, 53 observe, 18 nursery, SEED.BANK, HARVEST, index)
+- Added to both generators (generate_site.py, generate_nursery_pages.py)
+- Skip logic: generate_site.py won't overwrite hand-managed index.html or styles.css
+
+Part 4 — Source corrections + seed_bank.csv:
+- Applied 53 source/provenance corrections from Claire's seed bank review to plant_types.csv
+- Preserved 2 blanked sources (Basil Perennial Greek, Fennel) and 8 species with blanked data
+- Updated seed_bank.csv: 263 entries, new 11-column format with farmos_name as join key
+
+Part 5 — Apps Script cleanup:
+- Renamed Code.gs → Observations.gs (matches naming pattern)
+- Converted Observations from standalone to bound-script (getActiveSpreadsheet)
+- New observe endpoint: `AKfycbxwWorskdbg8ZFpkYAzpo4ILGUNRhTi7HtQbxtYI38ws9vKSIlASAZHvpGIPrbHVBVY`
+- Updated all 53 observe pages + Railway + local .env with new endpoint
+- Agnes deployed all 6 Apps Scripts with health handlers + UsageTracking.gs:
+  - Observations.gs, TeamMemory.gs, KnowledgeBase.gs, PlantTypes.gs (redeployed March 21)
+  - SeedBank.gs, Harvest.gs (already deployed)
+
+Part 6 — James ops guide:
+- Added transplant readiness check to daily routine
+- New Section 6: nursery inline observations + farmOS data flow
+- Updated nursery zone count, added collapsible index note
+
+**Key learnings:**
+- macOS `sips -z 68 68` for image resizing (95KB → 12KB)
+- Skip logic pattern: check content markers ("home-btn", "toggleLocation") to detect hand-managed files
+- All 6 Apps Scripts now use consistent bound-script pattern on fireflyagents.com
+- Standalone Apps Script deployments persist as snapshots even when source is deleted, but eventually stop working
+
 ---
 
-*Last updated: March 20, 2026. This file should be updated as the project evolves.*
+*Last updated: March 21, 2026. This file should be updated as the project evolves.*
