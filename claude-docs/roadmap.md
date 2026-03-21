@@ -1,6 +1,6 @@
 # Firefly Corner — Roadmap & Plan
 
-> Updated March 20, 2026. Reflects Phase 1b remote deployment, all 4 machines migrated, Phase KB quick wins, Claire/Olivier departure.
+> Updated March 21, 2026. Reflects nursery zone interface, harvest station, seed bank, all 6 Apps Scripts deployed, 131 QR pages.
 
 ---
 
@@ -89,64 +89,68 @@
 
 ---
 
-## Current State — What Works Today (March 20, 2026)
+## Current State — What Works Today (March 21, 2026)
 
 | Capability | Status | How |
 |---|---|---|
-| View planted sections (P2) | ✅ Working | QR code → GitHub Pages landing page |
-| Log field observations | ✅ Working | QR observe page → Apps Script → Google Sheet |
-| Query farmOS (plants, sections, logs) | ✅ Working | Claude Desktop + remote MCP (29 tools, 4 users via Railway) |
-| Create observations/activities in farmOS | ✅ Working | Claude Desktop + remote MCP |
-| Review & import observations to farmOS | ✅ Working | Claude Desktop + MCP tools |
-| Generate pages from farmOS | ✅ Working | export_farmos.py → generate_site.py |
+| View planted sections (P1+P2) | ✅ Working | 53 QR view pages on GitHub Pages |
+| Log field observations (paddock) | ✅ Working | 53 QR observe pages → Apps Script → Sheet |
+| Nursery inline observations | ✅ Working | 18 nursery pages with obs/action fields per plant card |
+| Nursery transplant timing | ✅ Working | Badges showing ready/soon/waiting from taxonomy data |
+| Nursery last-log display | ✅ Working | Each plant card shows date of last farmOS log |
+| Seed bank search + transactions | ✅ Working | SEED.BANK.html → SeedBank.gs → Sheet |
+| Harvest logging | ✅ Working | HARVEST.html → Harvest.gs → Sheet + Drive |
+| Query farmOS (plants, sections, logs) | ✅ Working | Claude Desktop + remote MCP (29 tools via Railway) |
+| Create observations/activities in farmOS | ✅ Working | MCP tools — supports both paddock + nursery locations |
+| Review & import observations to farmOS | ✅ Working | Claude Desktop + MCP tools (obs/action split into separate logs) |
+| Generate pages from farmOS | ✅ Working | export_farmos.py + generate_site.py + generate_nursery_pages.py |
 | Manage plant types (add/update/reconcile) | ✅ Working | MCP tools, dual-write to farmOS + Google Sheet |
 | Team coordination | ✅ Working | Team Memory (write summaries, read activity, search) |
-| Knowledge capture (field tutorials) | ✅ Working | Olivier's workflow: phone → Dropbox → Whisper → Claude → PDF |
-| Farm knowledge library | ✅ Working | Knowledge Base (search, browse, add, update) via MCP + Apps Script |
+| Farm knowledge library | ✅ Working | Knowledge Base with topics filter via MCP + Apps Script |
+| Navigation across all pages | ✅ Working | Home button (frog logo) on all 131 pages → collapsible index |
 
-### farmOS Data Snapshot (March 17, 2026)
+### farmOS Data Snapshot (March 21, 2026)
 
 | Entity | Count | Notes |
 |--------|-------|-------|
-| Plant assets | 441 | +37 since March 9 (field obs imports + team work) |
-| Land assets | 96 | +3: P1 sections (15), P1ED1, P2 transects |
-| Structure assets | 37 | +20: nursery zones (NURS.*) |
-| Material assets | 14 | New category |
-| Group assets | 11 | New category |
-| Observation logs | 772 | +120: ongoing field observations |
-| Transplanting logs | 307 | +69 |
-| Activity logs | 78 | +15 |
-| Plant types | 224 | +1 since March 9 |
-| Total logs | 1,173 | Up from ~1,033 |
-| Sections (land) | 54 | 37 P2 + 15 P1 + P1ED1 + new P2 |
+| Plant assets | 635+ | Across 53 sections (P1+P2 paddocks + nursery) |
+| Land assets | 96 | P1 (15) + P2 (37) + paddocks + transects |
+| Structure assets | 37 | 20 nursery zones (NURS.*) + others |
+| Observation logs | 1,260+ | Inventory + historical + field obs + nursery |
+| Transplanting logs | 238 | Historical + original |
+| Activity logs | 73+ | Field activities + nursery observations |
+| Plant types | 272 | 278 in CSV (6 pending creation) |
+| Sections (land) | 54 | 37 P2 + 15 P1 + P1ED1 + transects |
 
 ---
 
 ## This Week — March 17–22 (Claire & Olivier Departure Week)
 
-> Claire and Olivier depart March 21 (Saturday). Last working day was March 19.
+> Claire and Olivier departed March 21 (Saturday). Last working day was March 19.
 
 ### Completed This Week
 - [x] Fix duplicate observation log bug (server.py) ✅
 - [x] Apply Claire's 9 pending inventory corrections ✅
 - [x] Ship Phase 1b remote MCP on Railway ✅ (March 19)
 - [x] All 4 team machines migrated to remote MCP ✅ (March 20)
-- [x] Phase KB quick wins deployed ✅ (March 20: topics filter, query_sections all locations)
+- [x] Phase KB quick wins deployed ✅ (March 20)
 - [x] Knowledge Base Apps Script + 4 MCP tools ✅
+- [x] Seed Bank QR page live ✅ (March 20)
+- [x] Harvest QR page live ✅ (March 21)
+- [x] Nursery zone interface: inline obs + transplant timing + last-log display ✅ (March 21)
+- [x] Home button on all 131 QR pages ✅ (March 21)
+- [x] Collapsible index page ✅ (March 21)
+- [x] All 6 Apps Scripts deployed as bound scripts with health handlers ✅ (March 21)
+- [x] 53 source corrections in plant_types.csv ✅ (March 21)
+- [x] seed_bank.csv updated (263 entries) ✅ (March 21)
+- [x] MCP servers support nursery locations in create_activity ✅ (March 21)
+- [x] Obs+action split into separate farmOS logs ✅ (March 21)
+- [x] 5 pending nursery observations imported ✅ (March 21)
+- [x] James ops guide updated ✅ (March 21)
 
-### Agnes — Remaining
-- [ ] Review Claire's P1 data answers → build P1 import pipeline
-- [ ] Import P1 planting data to farmOS (once Claire answers 16 questions)
-- [ ] Import nursery inventory from Claire's session data
-- [ ] Import seed bank data as Seed assets (location: NURS.FRDG)
-- [ ] Regenerate pages (P2 updates + P1 new pages)
-- [ ] Review pending observations (29 pending from March 17-18)
-
-### James — Remaining
-- [ ] Daily team activity review
-- [ ] Knowledge transfer sessions (Mon–Sat schedule)
-- [ ] Operational flow documentation
-- [ ] Post-March 22: primary non-technical farm operator
+### Post-Departure Status
+- James: primary field operator with Claude Desktop + remote MCP + QR pages
+- Agnes: system development, remote support
 
 ---
 

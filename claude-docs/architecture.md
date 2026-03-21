@@ -1,6 +1,6 @@
 # Firefly Corner — Technical Architecture
 
-> Updated March 20, 2026. Reflects Phase 1b remote MCP on Railway, all 4 machines migrated, Phase KB quick wins deployed.
+> Updated March 21, 2026. Reflects Phase 1b remote MCP on Railway, nursery location support, all 6 Apps Scripts bound-pattern, 131 QR pages.
 
 ---
 
@@ -13,13 +13,13 @@
                                     │  Hosted on Farmier ($75/yr)  │
                                     │                              │
                                     │  Source of truth for:        │
-                                    │  - Plant assets (441)        │
+                                    │  - Plant assets (635+)       │
                                     │  - Land assets (96)          │
                                     │  - Structure assets (37)     │
                                     │  - Material assets (14)      │
                                     │  - Group assets (11)         │
-                                    │  - Logs (1,173)              │
-                                    │  - Plant types (224)         │
+                                    │  - Logs (1,260+)             │
+                                    │  - Plant types (272)         │
                                     │  - Inventory (computed)      │
                                     └──────────┬───────────────────┘
                                                │
@@ -29,55 +29,50 @@
                     ┌──────────────────────────┼──────────────────────────┐
                     │                          │                          │
           ┌─────────▼─────────┐    ┌───────────▼──────────┐    ┌─────────▼─────────┐
-          │  MCP Server       │    │  Python Scripts       │    │  farmOS Web UI    │
-          │  (FastMCP/STDIO)  │    │  (import/export)      │    │  (Drupal admin)   │
+          │  MCP Server (TS)  │    │  Python Scripts       │    │  farmOS Web UI    │
+          │  Railway (remote) │    │  (import/export)      │    │  (Drupal admin)   │
           │                   │    │                       │    │                   │
-          │  23 tools         │    │  export_farmos.py     │    │  Direct access    │
-          │  5 resources      │    │  import_fieldsheets   │    │  (Agnes only)     │
-          │  3 prompts        │    │  import_historical    │    │                   │
-          │                   │    │  import_plants        │    └───────────────────┘
-          │  Deployed to:     │    │                       │
-          │  - Agnes (macOS)  │    │  Runs in: main venv   │
-          │  - Claire (Win)   │    │  (Python 3.13 +       │
-          │  - James (macOS)  │    │   farmOS.py/pydantic  │
-          │  - Olivier (Win)  │    │   v1)                 │
+          │  29 tools         │    │  export_farmos.py     │    │  Direct access    │
+          │  101 tests        │    │  import_fieldsheets   │    │  (Agnes only)     │
+          │                   │    │  import_historical    │    │                   │
+          │  + Python local   │    │  import_plants        │    └───────────────────┘
+          │  (26 tools, STDIO │    │                       │
+          │   Agnes fallback) │    │  Runs in: main venv   │
+          │                   │    │  (Python 3.13 +       │
+          │  All users via    │    │   farmOS.py/pydantic  │
+          │  npx mcp-remote   │    │   v1)                 │
           │                   │    │                       │
-          │  Runs in: mcp     │    └───────────┬───────────┘
-          │  venv (pydantic   │                │
-          │  v2, raw HTTP)    │                │
-          └────────┬──────────┘         ┌──────▼──────┐
-                   │                    │ sections    │
-            Claude Desktop              │ .json       │
-            (STDIO transport)           │ (generated) │
-                   │                    └──────┬──────┘
-          ┌────────▼──────────┐                │
-          │  Claude AI        │         ┌──────▼──────────────┐
-          │                   │         │  generate_site.py   │
-          │  Agnes: Claude    │         │  + plant_types.csv  │
-          │    Code + Desktop │         │  (enrichment)       │
-          │  Claire: Desktop  │         └──────┬──────────────┘
-          │  James: Desktop   │                │
-          │  Olivier: Desktop │         ┌──────▼──────┐
-          │                   │         │  75 HTML    │
-          │  "Claude IS       │         │  pages (P2) │
-          │   the UI"         │         │  (static)   │
-          └───────────────────┘         └──────┬──────┘
+          └────────┬──────────┘    └───────────┬───────────┘
+                   │                           │
+            Claude Desktop              ┌──────▼──────┐
+            (HTTP transport)            │ sections    │
+                   │                    │ .json       │
+          ┌────────▼──────────┐         └──────┬──────┘
+          │  Claude AI        │                │
+          │                   │   ┌────────────▼─────────────┐
+          │  Agnes: Claude    │   │  generate_site.py        │
+          │    Code + Desktop │   │  generate_nursery_pages  │
+          │  James: Desktop   │   │  + plant_types.csv       │
+          │                   │   └────────────┬─────────────┘
+          │  "Claude IS       │                │
+          │   the UI"         │         ┌──────▼────────┐
+          └───────────────────┘         │  131 HTML     │
+                                        │  pages        │
+                                        └──────┬────────┘
                                                │
                                           GitHub Pages
                                      (auto-deploy on push)
                                                │
-                              ┌────────────────┼────────────────┐
-                              │                │                │
-                    ┌─────────▼───┐   ┌────────▼────┐   ┌──────▼──────┐
-                    │ QR View     │   │ QR Observe  │   │ Index Page  │
-                    │ Pages (37)  │   │ Pages (37)  │   │             │
-                    │             │   │             │   │ Paddock     │
-                    │ What's      │   │ Log field   │   │ overview    │
-                    │ planted     │   │ observations│   │             │
-                    │ here?       │   │             │   └─────────────┘
-                    │             │   │ POST to     │
-                    │ Visitors    │   │ Apps Script  │
-                    │ Farmhands   │   │             │
+                    ┌──────────────┬────────────┼───────────────┬──────────────┐
+                    │              │            │               │              │
+              ┌─────▼───┐   ┌─────▼───┐  ┌─────▼─────┐  ┌─────▼────┐  ┌──────▼──────┐
+              │ View    │   │ Observe │  │ Nursery   │  │ Seed     │  │ Harvest     │
+              │ (53)    │   │ (53)    │  │ (18)      │  │ Bank     │  │ Station     │
+              │         │   │         │  │           │  │          │  │             │
+              │ What's  │   │ Field   │  │ Inline    │  │ Search + │  │ Log weight  │
+              │ planted │   │ obs     │  │ obs +     │  │ stock    │  │ + species   │
+              │         │   │         │  │ count     │  │ txns     │  │ + location  │
+              │ Visitors│   │ Workers │  │ Workers   │  │ Workers  │  │ Workers     │
                     └─────────────┘   └──────┬──────┘
                                              │
                                         HTTPS POST
@@ -89,14 +84,20 @@
                     │       Google Apps Script Endpoints          │
                     │       (fireflyagents.com account)           │
                     │                                            │
-                    │  1. Observation Code.gs (v3)               │
+                    │  1. Observations.gs (bound to Sheet)       │
                     │     → Field Observations Sheet + Drive     │
-                    │                                            │
                     │  2. TeamMemory.gs (bound to Sheet)         │
                     │     → Team Memory Sheet                    │
-                    │                                            │
                     │  3. PlantTypes.gs (bound to Sheet)         │
                     │     → Plant Types v7 Sheet                 │
+                    │  4. KnowledgeBase.gs (bound to Sheet)      │
+                    │     → Knowledge Base Sheet                 │
+                    │  5. SeedBank.gs (bound to Sheet)           │
+                    │     → Seed Bank Inventory Sheet            │
+                    │  6. Harvest.gs (bound to Sheet)            │
+                    │     → Harvest Log Sheet + Drive            │
+                    │                                            │
+                    │  All with UsageTracking.gs (health+quota)  │
                     └────────────────────────────────────────────┘
 ```
 
@@ -115,10 +116,10 @@
 | **Auth** | OAuth2 password grant |
 | **Users** | Agnes (farm_manager scope) |
 
-**Data model (March 17, 2026):**
-- **Assets**: Plant (441), Land (96), Structure (37), Material (14), Group (11), Water (11), Equipment (3), Compost (5)
-- **Logs**: Observation (772), Transplanting (307), Activity (78), Seeding (8), Harvest (8)
-- **Taxonomy**: plant_type (224 terms with syntropic metadata in descriptions)
+**Data model (March 21, 2026):**
+- **Assets**: Plant (635+), Land (96), Structure (37), Material (14), Group (11), Water (11), Equipment (3), Compost (5)
+- **Logs**: Observation (1,260+), Transplanting (238), Activity (73+), Seeding (8), Harvest (8)
+- **Taxonomy**: plant_type (272 terms with syntropic metadata in descriptions)
 - **Inventory**: Computed attribute on assets, derived from Quantity entities on logs
 
 **Land hierarchy:**
