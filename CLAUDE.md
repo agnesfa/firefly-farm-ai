@@ -586,6 +586,10 @@ These decisions have been made through extensive discussion. Don't revisit them 
 
 15. **Knowledge Drive folder convention.** Finished outputs live in category folders (tutorials/, guides/, sops/). Raw source materials (audio, transcriptions, photos) go in `sources/` subfolders alongside finished outputs, OR in a top-level `source-library/` if not yet processed. Source materials are indexed as `source-material` category KB entries for discoverability and provenance tracking.
 
+16. **Pagination: offset-based for all collection fetches.** farmOS JSON:API `links.next` pagination is unreliable beyond ~250 results — the server has a hidden cap, and archived records consume pagination slots even with `status=active` filter. All CONTAINS and full-collection queries must use explicit `page[offset]` stepping with stable `sort` ordering (not `links.next`). Write tools use `fetchByName` (direct exact-name query, unaffected by pagination) for existence checks before creating or archiving. CONTAINS queries are for bulk reads only, never for determining completeness. See `claude-docs/pagination-fix-plan.md` for full implementation plan.
+
+17. **Bulk imports are deprecated — MCP tools are the only write path.** As of March 29, 2026, the farm has officially switched to farmOS + Claude + QR pages workflow. The import scripts (`import_fieldsheets.py`, `import_nursery.py`, `import_historical.py`) are kept for reference but will not be used again. All future data entry flows through MCP tools (via Claude Desktop or Claude Code), which include farmOS API expertise, pagination safety, and idempotency guards.
+
 ---
 
 ## 11. IMPLEMENTATION PHASES
@@ -1515,6 +1519,52 @@ Part 6 — James ops guide:
 - All 6 Apps Scripts now use consistent bound-script pattern on fireflyagents.com
 - Standalone Apps Script deployments persist as snapshots even when source is deleted, but eventually stop working
 
+### March 29, 2026 — MCP Tool Improvements + Nursery Data Cleanup + Pagination Plan
+
+**Session 1: Nursery watering task revealed 4 tool pain points**
+- Agnes asked for nursery watering guidance and current inventory for James's daily tasks
+- KB search "watering nursery" returned 0 results despite perfect SOP match (exact phrase matching bug)
+- Nursery inventory required 16 separate `get_inventory` calls (no batch query)
+- `list_knowledge` returned 64KB blob (no summary mode)
+- First `query_sections` call got 401 auth expired (no retry in Python client)
+- Nursery inventory in farmOS didn't match physical shelves — triggered data investigation
+
+**4 MCP tool fixes implemented (225 tests green: 124 Python + 101 TypeScript):**
+
+1. **Batch inventory** — Added `section_prefix` param to `get_inventory` in Python + TypeScript. `get_inventory(section_prefix="NURS")` returns all nursery zones in 1 call instead of 16. Works for any prefix (NURS, COMP, P2R3).
+
+2. **KB search OR matching** — Rewrote `handleSearch` in KnowledgeBase.gs. Splits query into words, matches ANY word in ANY field (title, content, tags, topics, related_plants). Scores by match count for relevance ranking. Agnes redeployed Apps Script same session.
+
+3. **KB summary mode** — Added `summary_only=true` param to `search_knowledge` and `list_knowledge` in Python + TypeScript. Returns only: entry_id, title, category, topics, tags, author, content_preview (first 100 chars).
+
+4. **401 auto-retry** — Added `_retry_on_auth_error()` helper to Python farmos_client.py. On 401/403: reconnects with fresh OAuth2 token, retries once. All 6 HTTP methods covered. (TypeScript already had this pattern.)
+
+**Nursery data investigation and cleanup:**
+- Root cause: Two CSV imports ran — `CORRECTED_17Mar` (120 rows, `map_location()` mapped SHELVES+FLOOR columns incorrectly) and enriched March 20 CSV (86 rows, correct Location IDs). Both created plants because asset names include location (different location = different name = bypasses idempotency).
+- Built `scripts/cleanup_nursery.py`: compares farmOS vs enriched CSV (source of truth)
+- Phase 1: Archived 58 misplaced plant assets from old import (wrong zones)
+- Phase 2: Created 30 correct plant assets in proper zones
+- Phase 3: Cleaned duplicate assets caused by CONTAINS pagination missing entries during multi-pass cleanup
+- Final state: farmOS nursery has 65 active plant assets matching the enriched CSV exactly
+- Regenerated all 15 nursery QR pages from clean farmOS data
+
+**Pagination investigation:**
+- CONTAINS filter on "NURS." returned 85/90 assets — 5 missed due to `links.next` ceiling (~250 results)
+- Duplicates from previous runs consumed pagination slots, causing valid assets to fall off the end
+- Confirmed: direct `fetchByName` queries found all 5 "missing" assets — they existed but weren't returned by CONTAINS pagination
+- Created comprehensive fix plan: `claude-docs/pagination-fix-plan.md`
+- Core strategy: switch all CONTAINS methods from `links.next` to offset-based pagination (matching `fetchAllPaginated` pattern), add stable sort ordering, add `fetchByName` fallback for write safety
+- Added architecture decisions #16 (pagination safety) and #17 (MCP tools as only write path)
+
+**Key learnings:**
+- farmOS JSON:API `links.next` disappears after ~250 results — NEVER rely on it for completeness
+- Archived records consume pagination slots even with `filter[status]=active`
+- Write tools that check "not found in list" before creating MUST use `fetchByName` (direct name query), not CONTAINS result sets
+- Running MCP servers don't pick up code changes until restart (STDIO) / redeploy (Railway)
+- KnowledgeBase.gs search was doing exact phrase matching (`indexOf(query)`) — word-level OR matching is the correct approach
+
+**Commits:** `4d988cf` (main push with all fixes + nursery pages)
+
 ---
 
-*Last updated: March 21, 2026. This file should be updated as the project evolves.*
+*Last updated: March 29, 2026. This file should be updated as the project evolves.*
