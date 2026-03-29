@@ -99,9 +99,9 @@
     </div>
     
     <div class="section-stats">
-      <div class="stat"><div class="stat-value">3</div><div class="stat-label">species</div></div>
-      <div class="stat"><div class="stat-value">35</div><div class="stat-label">viable plants</div></div>
-      <div class="stat"><div class="stat-value">35</div><div class="stat-label">ready to transplant</div></div>
+      <div class="stat"><div class="stat-value">5</div><div class="stat-label">species</div></div>
+      <div class="stat"><div class="stat-value">42</div><div class="stat-label">viable plants</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">ready to transplant</div></div>
     </div>
   </div>
 
@@ -128,12 +128,45 @@
         <span class="strata-icon">✂️</span>
         <div class="strata-label">
           <span class="strata-name" style="color:#2d5016">Cuttings</span>
-          <span class="strata-height">3 entries</span>
+          <span class="strata-height">5 entries</span>
         </div>
-        <span class="strata-count" style="background:#2d5016">35</span>
+        <span class="strata-count" style="background:#2d5016">40</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" id="card-289aea" style="border-left-color:#2d5016" data-species="Lavender" data-count="24">
+    <div class="plant-card nursery-card" id="card-ff3b10" style="border-left-color:#2d5016" data-species="Grape Vine" data-count="4">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Grape Vine</div>
+          <div class="plant-botanical">Vitis vinifera</div>
+          <div class="plant-process">✂️ cutting · 01/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">4</span>
+      </div>
+      
+      
+      
+      <div class="plant-detail">
+        <p class="plant-desc">French-American red wine grape variety. Disease resistant and productive. Deep colored wine. Needs trellising. Prefers warm dry autumn for ripening.</p>
+        <div class="plant-meta">Seeded: 01/03/2026 · Pots: 4 · Success: 100% · Source: FFC (farm saved)</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-ff3b10')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-ff3b10-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="4" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-ff3b10')">Save</button>
+        <div class="inline-obs-status" id="card-ff3b10-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-f3a098" style="border-left-color:#2d5016" data-species="Lavender" data-count="24">
       <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Lavender</div>
@@ -142,31 +175,31 @@
         </div>
         <span class="plant-count" style="background:#edf4e4;color:#2d5016">24</span>
       </div>
-      <span class="rtt-badge">📦 35 ready</span>
       
-      <div class="last-log">📊 Last logged: <span class="last-log-date">20 Mar 2026</span></div>
+      
+      
       <div class="plant-detail">
         <p class="plant-desc">Fragrant Mediterranean shrub with purple flower spikes. Drought tolerant. Attracts bees and beneficial insects. Prune after flowering.</p>
-        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 35 · Source: FFC</div>
+        <div class="plant-meta">Seeded: 15/01/2026 · Pots: 24 · Success: 100% · Source: FFC (farm saved)</div>
         <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
         
       </div>
       <div class="inline-obs">
         <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
         <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
-        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-289aea')">&#x25B6; Update count</div>
-        <div class="inline-count-row" id="card-289aea-count" style="display:none" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-f3a098')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-f3a098-count" style="display:none" onclick="event.stopPropagation()">
           <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
           <div class="count-input-row">
             <label>New total count:</label>
             <input type="number" class="inline-count-input" min="0" value="24" inputmode="numeric">
           </div>
         </div>
-        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-289aea')">Save</button>
-        <div class="inline-obs-status" id="card-289aea-status"></div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-f3a098')">Save</button>
+        <div class="inline-obs-status" id="card-f3a098-status"></div>
       </div>
     </div>
-    <div class="plant-card nursery-card" id="card-9556bf" style="border-left-color:#2d5016" data-species="Oregano" data-count="2">
+    <div class="plant-card nursery-card" id="card-a16202" style="border-left-color:#2d5016" data-species="Oregano" data-count="2">
       <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Oregano</div>
@@ -177,7 +210,7 @@
       </div>
       
       
-      <div class="last-log">📊 Last logged: <span class="last-log-date">20 Mar 2026</span></div>
+      
       <div class="plant-detail">
         <p class="plant-desc">Perennial Mediterranean herb with aromatic leaves. Essential for Italian and Greek cooking. Attracts beneficial insects.</p>
         <div class="plant-meta">Seeded: 15/02/2026 · Pots: 11 · Success: 18% · Source: Mr Fothergill&#x27;s</div>
@@ -187,19 +220,19 @@
       <div class="inline-obs">
         <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
         <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
-        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-9556bf')">&#x25B6; Update count</div>
-        <div class="inline-count-row" id="card-9556bf-count" style="display:none" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-a16202')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-a16202-count" style="display:none" onclick="event.stopPropagation()">
           <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
           <div class="count-input-row">
             <label>New total count:</label>
             <input type="number" class="inline-count-input" min="0" value="2" inputmode="numeric">
           </div>
         </div>
-        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-9556bf')">Save</button>
-        <div class="inline-obs-status" id="card-9556bf-status"></div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-a16202')">Save</button>
+        <div class="inline-obs-status" id="card-a16202-status"></div>
       </div>
     </div>
-    <div class="plant-card nursery-card" id="card-a3f2c9" style="border-left-color:#2d5016" data-species="Rosemary" data-count="9">
+    <div class="plant-card nursery-card" id="card-1f2b74" style="border-left-color:#2d5016" data-species="Rosemary" data-count="9">
       <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Rosemary</div>
@@ -210,7 +243,7 @@
       </div>
       
       
-      <div class="last-log">📊 Last logged: <span class="last-log-date">20 Mar 2026</span></div>
+      
       <div class="plant-detail">
         <p class="plant-desc">Aromatic Mediterranean shrub with needle-like leaves. Drought tolerant once established. Blue flowers attract bees.</p>
         <div class="plant-meta">Seeded: 20/03/2025 · Pots: 9 · Success: 100% · Source: FFC (farm saved)</div>
@@ -220,16 +253,95 @@
       <div class="inline-obs">
         <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
         <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
-        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-a3f2c9')">&#x25B6; Update count</div>
-        <div class="inline-count-row" id="card-a3f2c9-count" style="display:none" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-1f2b74')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-1f2b74-count" style="display:none" onclick="event.stopPropagation()">
           <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
           <div class="count-input-row">
             <label>New total count:</label>
             <input type="number" class="inline-count-input" min="0" value="9" inputmode="numeric">
           </div>
         </div>
-        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-a3f2c9')">Save</button>
-        <div class="inline-obs-status" id="card-a3f2c9-status"></div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-1f2b74')">Save</button>
+        <div class="inline-obs-status" id="card-1f2b74-status"></div>
+      </div>
+    </div>
+    <div class="plant-card nursery-card" id="card-cb822f" style="border-left-color:#2d5016" data-species="Thyme" data-count="1">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Thyme</div>
+          <div class="plant-botanical">Thymus vulgaris</div>
+          <div class="plant-process">✂️ cutting · 18/03/2026</div>
+        </div>
+        <span class="plant-count" style="background:#edf4e4;color:#2d5016">1</span>
+      </div>
+      
+      
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Low-growing aromatic herb with tiny leaves. Drought tolerant groundcover. Essential culinary herb. Attracts bees.</p>
+        <div class="plant-meta">Seeded: 18/03/2026 · Pots: 1 · Success: 100% · Source: FFC (farm saved)</div>
+        <div class="nursery-tags"><span class="nursery-tag">low</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-cb822f')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-cb822f-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="1" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-cb822f')">Save</button>
+        <div class="inline-obs-status" id="card-cb822f-status"></div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <div class="strata-group">
+      <div class="strata-header" style="background:#e8f4fd;border-bottom-color:#1e40af">
+        <span class="strata-icon">🌱</span>
+        <div class="strata-label">
+          <span class="strata-name" style="color:#1e40af">Seedlings</span>
+          <span class="strata-height">1 entry</span>
+        </div>
+        <span class="strata-count" style="background:#1e40af">2</span>
+      </div>
+      <div class="strata-plants">
+    <div class="plant-card nursery-card" id="card-629b36" style="border-left-color:#1e40af" data-species="Oregano" data-count="2">
+      <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="plant-info">
+          <div class="plant-name">Oregano</div>
+          <div class="plant-botanical">Origanum vulgare</div>
+          <div class="plant-process">🌱 seedling · 29/01/2026</div>
+        </div>
+        <span class="plant-count" style="background:#e8f4fd;color:#1e40af">2</span>
+      </div>
+      
+      
+      
+      <div class="plant-detail">
+        <p class="plant-desc">Perennial Mediterranean herb with aromatic leaves. Essential for Italian and Greek cooking. Attracts beneficial insects.</p>
+        <div class="plant-meta">Seeded: 29/01/2026 · Pots: 17 · Success: 12% · Source: Mr Fothergill&#x27;s</div>
+        <div class="nursery-tags"><span class="nursery-tag">medium</span><span class="nursery-tag">secondary</span></div>
+        
+      </div>
+      <div class="inline-obs">
+        <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
+        <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-629b36')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-629b36-count" style="display:none" onclick="event.stopPropagation()">
+          <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
+          <div class="count-input-row">
+            <label>New total count:</label>
+            <input type="number" class="inline-count-input" min="0" value="2" inputmode="numeric">
+          </div>
+        </div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-629b36')">Save</button>
+        <div class="inline-obs-status" id="card-629b36-status"></div>
       </div>
     </div>
       </div>

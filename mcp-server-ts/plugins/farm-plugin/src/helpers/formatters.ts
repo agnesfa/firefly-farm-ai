@@ -157,6 +157,22 @@ export function formatPlantType(term: Record<string, any>): Record<string, any> 
 }
 
 /**
+ * Trim KB entries to summary: entry_id, title, category, topics, tags, author, content preview.
+ */
+export function summarizeKbEntries(entries: Record<string, any>[]): Record<string, any>[] {
+  const summaryKeys = ['entry_id', 'title', 'category', 'topics', 'tags', 'author'];
+  return entries.map((entry) => {
+    const item: Record<string, any> = {};
+    for (const key of summaryKeys) {
+      item[key] = entry[key] ?? '';
+    }
+    const content = entry.content ?? '';
+    item.content_preview = content.length > 100 ? content.slice(0, 100) + '...' : content;
+    return item;
+  });
+}
+
+/**
  * Build a section summary from a land asset and its associated plant assets.
  */
 export function formatSectionFromAssets(

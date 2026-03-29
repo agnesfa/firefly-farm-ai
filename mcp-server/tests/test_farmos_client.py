@@ -85,14 +85,37 @@ class TestOAuth2:
 class TestErrorHandling:
 
     @responses.activate
-    def test_get_401_disconnects(self, env_vars):
+    def test_get_401_retries_then_fails(self, env_vars):
         client = _connect(env_vars)
+        # First request returns 401
+        responses.add(responses.GET, f"{BASE_URL}/api/asset/plant", status=401)
+        # Reconnect token request succeeds
+        _add_token_mock()
+        # Retry also returns 401
         responses.add(responses.GET, f"{BASE_URL}/api/asset/plant", status=401)
 
         assert client._connected is True
-        with pytest.raises(ConnectionError, match="authentication expired"):
+        with pytest.raises(ConnectionError, match="authentication failed after token refresh"):
             client._get("/api/asset/plant")
         assert client._connected is False
+
+    @responses.activate
+    def test_get_401_retries_and_succeeds(self, env_vars):
+        client = _connect(env_vars)
+        # First request returns 401
+        responses.add(responses.GET, f"{BASE_URL}/api/asset/plant", status=401)
+        # Reconnect token request succeeds
+        _add_token_mock()
+        # Retry succeeds
+        responses.add(
+            responses.GET, f"{BASE_URL}/api/asset/plant",
+            json={"data": [{"id": "abc", "attributes": {"name": "test"}}]},
+            status=200,
+        )
+
+        result = client._get("/api/asset/plant")
+        assert result["data"][0]["id"] == "abc"
+        assert client._connected is True
 
     @responses.activate
     def test_get_500_raises(self, env_vars):

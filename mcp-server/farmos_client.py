@@ -96,18 +96,46 @@ class FarmOSClient:
 
     # ── Low-level HTTP helpers ──────────────────────────────────
 
+    def _retry_on_auth_error(self, method: str, url: str, **kwargs) -> requests.Response:
+        """Make an HTTP request, retrying once with a fresh token on 401/403.
+
+        Args:
+            method: HTTP method ("GET", "POST", "PATCH")
+            url: Full URL
+            **kwargs: Passed to requests (json, data, headers, timeout, etc.)
+
+        Returns:
+            requests.Response on success.
+
+        Raises:
+            ConnectionError: If retry also returns 401/403 or reconnect fails.
+        """
+        resp = self.session.request(method, url, **kwargs)
+        if resp.status_code in (401, 403):
+            # Token expired — refresh and retry once
+            try:
+                self._connected = False
+                self.connect()
+            except Exception as e:
+                raise ConnectionError(
+                    f"farmOS authentication expired (HTTP {resp.status_code}) "
+                    f"and reconnect failed: {e}"
+                )
+            resp = self.session.request(method, url, **kwargs)
+            if resp.status_code in (401, 403):
+                self._connected = False
+                raise ConnectionError(
+                    f"farmOS authentication failed after token refresh "
+                    f"(HTTP {resp.status_code})."
+                )
+        return resp
+
     def _get(self, path: str) -> dict:
         """GET request to farmOS API. Returns parsed JSON or raises on error."""
         if not self._connected:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
         url = f"{self.hostname}{path}"
-        resp = self.session.get(url, timeout=30)
-        if resp.status_code in (401, 403):
-            self._connected = False
-            raise ConnectionError(
-                f"farmOS authentication expired (HTTP {resp.status_code}). "
-                "Restart the MCP server to reconnect."
-            )
+        resp = self._retry_on_auth_error("GET", url, timeout=30)
         if resp.status_code != 200:
             raise RuntimeError(f"farmOS API error: HTTP {resp.status_code} for {path}")
         return resp.json()
@@ -124,13 +152,7 @@ class FarmOSClient:
         if not self._connected:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
         url = f"{self.hostname}{path}"
-        resp = self.session.patch(url, json=payload, timeout=30)
-        if resp.status_code in (401, 403):
-            self._connected = False
-            raise ConnectionError(
-                f"farmOS authentication expired (HTTP {resp.status_code}). "
-                "Restart the MCP server to reconnect."
-            )
+        resp = self._retry_on_auth_error("PATCH", url, json=payload, timeout=30)
         resp.raise_for_status()
         return resp.json()
 
@@ -187,11 +209,22 @@ class FarmOSClient:
 
             resp = self.session.get(url, timeout=30)
             if resp.status_code in (401, 403):
-                self._connected = False
-                raise ConnectionError(
-                    f"farmOS authentication expired (HTTP {resp.status_code}). "
-                    "Restart the MCP server to reconnect."
-                )
+                # Token expired — refresh and retry once
+                try:
+                    self._connected = False
+                    self.connect()
+                except Exception as e:
+                    raise ConnectionError(
+                        f"farmOS authentication expired (HTTP {resp.status_code}) "
+                        f"and reconnect failed: {e}"
+                    )
+                resp = self.session.get(url, timeout=30)
+                if resp.status_code in (401, 403):
+                    self._connected = False
+                    raise ConnectionError(
+                        f"farmOS authentication failed after token refresh "
+                        f"(HTTP {resp.status_code})."
+                    )
             if resp.status_code != 200:
                 raise RuntimeError(
                     f"farmOS API error: HTTP {resp.status_code} fetching {api_path}"
@@ -431,11 +464,22 @@ class FarmOSClient:
         while url:
             resp = self.session.get(url, timeout=30)
             if resp.status_code in (401, 403):
-                self._connected = False
-                raise ConnectionError(
-                    f"farmOS authentication expired (HTTP {resp.status_code}). "
-                    "Restart the MCP server to reconnect."
-                )
+                # Token expired — refresh and retry once
+                try:
+                    self._connected = False
+                    self.connect()
+                except Exception as e:
+                    raise ConnectionError(
+                        f"farmOS authentication expired (HTTP {resp.status_code}) "
+                        f"and reconnect failed: {e}"
+                    )
+                resp = self.session.get(url, timeout=30)
+                if resp.status_code in (401, 403):
+                    self._connected = False
+                    raise ConnectionError(
+                        f"farmOS authentication failed after token refresh "
+                        f"(HTTP {resp.status_code})."
+                    )
             if resp.status_code != 200:
                 raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
             data = resp.json()
@@ -628,11 +672,22 @@ class FarmOSClient:
         while url:
             resp = self.session.get(url, timeout=30)
             if resp.status_code in (401, 403):
-                self._connected = False
-                raise ConnectionError(
-                    f"farmOS authentication expired (HTTP {resp.status_code}). "
-                    "Restart the MCP server to reconnect."
-                )
+                # Token expired — refresh and retry once
+                try:
+                    self._connected = False
+                    self.connect()
+                except Exception as e:
+                    raise ConnectionError(
+                        f"farmOS authentication expired (HTTP {resp.status_code}) "
+                        f"and reconnect failed: {e}"
+                    )
+                resp = self.session.get(url, timeout=30)
+                if resp.status_code in (401, 403):
+                    self._connected = False
+                    raise ConnectionError(
+                        f"farmOS authentication failed after token refresh "
+                        f"(HTTP {resp.status_code})."
+                    )
             if resp.status_code != 200:
                 raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
 
@@ -868,10 +923,23 @@ class FarmOSClient:
         }
         resp = requests.post(url, data=binary_data, headers=headers, timeout=60)
         if resp.status_code in (401, 403):
-            self._connected = False
-            raise ConnectionError(
-                f"farmOS authentication expired (HTTP {resp.status_code}). "
-                "Restart the MCP server to reconnect."
-            )
+            # Token expired — refresh and retry once
+            try:
+                self._connected = False
+                self.connect()
+            except Exception as e:
+                raise ConnectionError(
+                    f"farmOS authentication expired (HTTP {resp.status_code}) "
+                    f"and reconnect failed: {e}"
+                )
+            # Update auth header with fresh token
+            headers["Authorization"] = self.session.headers["Authorization"]
+            resp = requests.post(url, data=binary_data, headers=headers, timeout=60)
+            if resp.status_code in (401, 403):
+                self._connected = False
+                raise ConnectionError(
+                    f"farmOS authentication failed after token refresh "
+                    f"(HTTP {resp.status_code})."
+                )
         resp.raise_for_status()
         return resp.json().get("data", {}).get("id")

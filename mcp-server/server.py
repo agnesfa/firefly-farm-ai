@@ -465,24 +465,59 @@ def query_logs(
 
 
 @mcp.tool
-def get_inventory(section_id: Optional[str] = None, species: Optional[str] = None) -> str:
+def get_inventory(section_id: Optional[str] = None, species: Optional[str] = None, section_prefix: Optional[str] = None) -> str:
     """Get current inventory (plant counts) for a section or specific species.
 
     Args:
         section_id: Section to check inventory for (e.g., "P2R3.15-21"). Optional.
         species: Species to check across all sections (e.g., "Pigeon Pea"). Optional.
-        At least one of section_id or species should be provided.
+        section_prefix: Prefix to query all matching sections in one call (e.g., "NURS",
+            "P2R3", "COMP"). Fetches inventory for every section matching the prefix.
+            Mutually exclusive with section_id.
+        At least one of section_id, species, or section_prefix should be provided.
 
     Returns:
         Plant inventory with current counts.
     """
     client = get_client()
 
-    if not section_id and not species:
-        return json.dumps({"error": "Please provide section_id or species (or both)"})
+    if not section_id and not species and not section_prefix:
+        return json.dumps({"error": "Please provide section_id, species, section_prefix (or a combination)"})
 
-    plants = client.get_plant_assets(section_id=section_id, species=species)
-    formatted = [format_plant_asset(p) for p in plants]
+    # --- section_prefix mode: resolve prefix to section list, aggregate ---
+    if section_prefix:
+        prefix_upper = section_prefix.upper()
+        if prefix_upper.startswith("NURS"):
+            locations = client.get_all_locations(type_filter="nursery")
+            sections_list = [s["name"] for s in locations.get("nursery", [])]
+        elif prefix_upper.startswith("COMP"):
+            locations = client.get_all_locations(type_filter="compost")
+            sections_list = [s["name"] for s in locations.get("compost", [])]
+        else:
+            # Paddock row prefix (e.g., "P2R3")
+            sections = client.get_section_assets(row_filter=section_prefix)
+            sections_list = [
+                s.get("attributes", {}).get("name", "") for s in sections
+            ]
+
+        if not sections_list:
+            return json.dumps({"error": f"No sections found matching prefix '{section_prefix}'"})
+
+        # Fetch plants for each section and aggregate
+        all_formatted = []
+        for sec_id in sorted(sections_list):
+            plants = client.get_plant_assets(section_id=sec_id, species=species)
+            all_formatted.extend([format_plant_asset(p) for p in plants])
+
+        formatted = all_formatted
+        query_info = {"section_prefix": section_prefix}
+        if species:
+            query_info["species"] = species
+    else:
+        # --- original single-section / species mode ---
+        plants = client.get_plant_assets(section_id=section_id, species=species)
+        formatted = [format_plant_asset(p) for p in plants]
+        query_info = {"section_id": section_id, "species": species}
 
     # Build inventory summary with actual counts
     inventory_items = []
@@ -517,7 +552,7 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
             section_totals[sec]["plant_count"] += item["inventory_count"]
 
     result = {
-        "query": {"section_id": section_id, "species": species},
+        "query": query_info,
         "summary": {
             "total_species_entries": len(inventory_items),
             "total_plant_count": total_plant_count,
@@ -528,8 +563,8 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
     if unknown_count > 0:
         result["summary"]["entries_without_count"] = unknown_count
 
-    # Add section breakdown when querying by species across sections
-    if species and not section_id and len(section_totals) > 1:
+    # Add section breakdown for multi-section results
+    if len(section_totals) > 1:
         result["by_section"] = sorted(
             section_totals.values(), key=lambda s: s["section"]
         )
@@ -2015,11 +2050,24 @@ def reconcile_plant_types() -> str:
 # ═══════════════════════════════════════════════════════════════
 
 
+def _summarize_kb_entries(entries: list) -> list:
+    """Trim KB entries to summary: entry_id, title, category, topics, tags, author, content preview."""
+    summary_keys = ("entry_id", "title", "category", "topics", "tags", "author")
+    summarized = []
+    for entry in entries:
+        item = {k: entry.get(k, "") for k in summary_keys}
+        content = entry.get("content", "")
+        item["content_preview"] = content[:100] + ("..." if len(content) > 100 else "")
+        summarized.append(item)
+    return summarized
+
+
 @mcp.tool
 def search_knowledge(
     query: str,
     category: Optional[str] = None,
     topics: Optional[str] = None,
+    summary_only: bool = False,
 ) -> str:
     """Search the farm knowledge base for articles, tutorials, guides, and SOPs.
 
@@ -2034,6 +2082,8 @@ def search_knowledge(
         topics: Optional farm domain filter (e.g., "nursery", "compost", "syntropic").
                 Valid topics: nursery, compost, irrigation, syntropic, seeds,
                 harvest, paddock, equipment, cooking, infrastructure, camp.
+        summary_only: If true, return only entry_id, title, category, topics, tags,
+                      author, and first 100 chars of content. Default false.
     """
     kb_client = get_knowledge_client()
     if not kb_client:
@@ -2044,6 +2094,8 @@ def search_knowledge(
 
     try:
         result = kb_client.search(query=query, category=category, topics=topics)
+        if summary_only and result.get("results"):
+            result["results"] = _summarize_kb_entries(result["results"])
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Knowledge search failed: {e}"})
@@ -2054,6 +2106,7 @@ def list_knowledge(
     category: Optional[str] = None,
     limit: int = 20,
     topics: Optional[str] = None,
+    summary_only: bool = False,
 ) -> str:
     """List knowledge base entries, optionally filtered by category and/or topics.
 
@@ -2066,6 +2119,8 @@ def list_knowledge(
         topics: Optional farm domain filter (e.g., "nursery", "compost").
                 Valid topics: nursery, compost, irrigation, syntropic, seeds,
                 harvest, paddock, equipment, cooking, infrastructure, camp.
+        summary_only: If true, return only entry_id, title, category, topics, tags,
+                      author, and first 100 chars of content. Default false.
     """
     kb_client = get_knowledge_client()
     if not kb_client:
@@ -2076,6 +2131,8 @@ def list_knowledge(
 
     try:
         result = kb_client.list_entries(category=category, limit=limit, topics=topics)
+        if summary_only and result.get("entries"):
+            result["entries"] = _summarize_kb_entries(result["entries"])
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to list knowledge entries: {e}"})

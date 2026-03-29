@@ -217,29 +217,54 @@ function handleSearch(params) {
       if (rowTopics.indexOf(topicsFilter) === -1) continue;
     }
 
-    // Search across title, content, topics, tags, related_plants, author, category
-    var searchable = [
-      String(row[COLS.title] || ""),
-      String(row[COLS.content] || ""),
-      String(row[COLS.topics] || ""),
-      String(row[COLS.tags] || ""),
-      String(row[COLS.related_plants] || ""),
-      String(row[COLS.author] || ""),
-      String(row[COLS.category] || ""),
-    ].join(" ").toLowerCase();
+    // Split query into words and do OR matching — a result matches if ANY word
+    // appears in ANY searchable field. Score by number of matching words.
+    var words = query.split(/\s+/).filter(function(w) { return w.length > 0; });
+    if (words.length === 0) continue;
 
-    if (searchable.indexOf(query) !== -1) {
-      results.push(rowToEntry(row));
+    var fields = [
+      String(row[COLS.title] || "").toLowerCase(),
+      String(row[COLS.content] || "").toLowerCase(),
+      String(row[COLS.topics] || "").toLowerCase(),
+      String(row[COLS.tags] || "").toLowerCase(),
+      String(row[COLS.related_plants] || "").toLowerCase(),
+      String(row[COLS.author] || "").toLowerCase(),
+      String(row[COLS.category] || "").toLowerCase(),
+    ];
+    var searchable = fields.join(" ");
+
+    var matchCount = 0;
+    var titleText = fields[0]; // title is first field
+    var titleMatches = 0;
+    for (var w = 0; w < words.length; w++) {
+      if (searchable.indexOf(words[w]) !== -1) {
+        matchCount++;
+      }
+      if (titleText.indexOf(words[w]) !== -1) {
+        titleMatches++;
+      }
+    }
+
+    if (matchCount > 0) {
+      var entry = rowToEntry(row);
+      entry._score = matchCount;
+      entry._titleMatches = titleMatches;
+      results.push(entry);
     }
   }
 
-  // Sort by relevance (title match first, then by recency)
+  // Sort by relevance: most matching words first, then title matches, then recency
   results.sort(function(a, b) {
-    var aTitle = (a.title || "").toLowerCase().indexOf(query) !== -1 ? 1 : 0;
-    var bTitle = (b.title || "").toLowerCase().indexOf(query) !== -1 ? 1 : 0;
-    if (aTitle !== bTitle) return bTitle - aTitle;
+    if (a._score !== b._score) return b._score - a._score;
+    if (a._titleMatches !== b._titleMatches) return b._titleMatches - a._titleMatches;
     return (b.updated || b.created || "").localeCompare(a.updated || a.created || "");
   });
+
+  // Remove internal scoring fields from output
+  for (var r = 0; r < results.length; r++) {
+    delete results[r]._score;
+    delete results[r]._titleMatches;
+  }
 
   return jsonResponse({ success: true, results: results, count: results.length });
 }

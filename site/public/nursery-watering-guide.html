@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nursery Watering Guide — Firefly Corner Farm</title>
+<style>
+  @media print {
+    body { margin: 0; padding: 8px; }
+    .no-print { display: none; }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 9.5pt; color: #1a1a1a; max-width: 210mm; margin: 0 auto; padding: 10px; line-height: 1.3; }
+  h1 { font-size: 16pt; color: #2d5016; text-align: center; margin-bottom: 2px; }
+  .subtitle { text-align: center; font-size: 8pt; color: #666; margin-bottom: 8px; }
+  h2 { font-size: 10pt; color: #fff; background: #2d5016; padding: 3px 8px; margin: 6px 0 3px 0; border-radius: 3px; }
+  h3 { font-size: 9pt; color: #2d5016; margin: 4px 0 2px 0; }
+
+  .two-col { display: flex; gap: 10px; }
+  .col { flex: 1; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-bottom: 4px; }
+  th { background: #e8f0e0; color: #2d5016; text-align: left; padding: 2px 4px; font-weight: 600; }
+  td { padding: 2px 4px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8faf6; }
+
+  .badge { display: inline-block; padding: 0 5px; border-radius: 8px; font-size: 7.5pt; font-weight: 700; color: #fff; }
+  .high { background: #c0392b; }
+  .medium { background: #e67e22; }
+  .low { background: #27ae60; }
+  .mist { background: #2980b9; }
+  .monitor { background: #8e44ad; }
+  .twice { background: #7f8c8d; }
+
+  .temp-box { display: flex; gap: 6px; margin-bottom: 4px; }
+  .temp-item { flex: 1; padding: 3px 6px; border-radius: 4px; font-size: 8pt; text-align: center; }
+  .temp-ok { background: #e8f5e9; border: 1px solid #4caf50; }
+  .temp-warm { background: #fff3e0; border: 1px solid #ff9800; }
+  .temp-hot { background: #ffebee; border: 1px solid #f44336; }
+
+  .warning { background: #fff8e1; border-left: 3px solid #ff9800; padding: 3px 6px; font-size: 8pt; margin: 3px 0; }
+  .tip { background: #e8f5e9; border-left: 3px solid #4caf50; padding: 3px 6px; font-size: 8pt; margin: 3px 0; }
+
+  .method-list { padding-left: 16px; font-size: 8.5pt; margin: 2px 0; }
+  .method-list li { margin-bottom: 1px; }
+
+  .inventory-section { margin-top: 2px; }
+  .shelf-label { font-weight: 700; color: #2d5016; font-size: 8pt; }
+  .plant-row { font-size: 8pt; color: #444; }
+  .count { font-weight: 700; color: #2d5016; }
+  .ready { color: #c0392b; font-weight: 600; font-size: 7pt; }
+
+  .footer { text-align: center; font-size: 7pt; color: #999; margin-top: 6px; border-top: 1px solid #ddd; padding-top: 3px; }
+  .print-btn { display: block; margin: 10px auto; padding: 10px 30px; background: #2d5016; color: #fff; border: none; border-radius: 6px; font-size: 14pt; cursor: pointer; }
+  .print-btn:hover { background: #3a6b1e; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Print This Guide</button>
+
+<h1>Nursery Watering Guide</h1>
+<p class="subtitle">Firefly Corner Farm &mdash; 29 March 2026 &mdash; 1,042 plants across 10 zones</p>
+
+<div class="two-col">
+<div class="col">
+
+<h2>Temperature Triggers</h2>
+<div class="temp-box">
+  <div class="temp-item temp-ok"><b>&lt;25&deg;C</b><br>Normal</div>
+  <div class="temp-item temp-warm"><b>25&deg;C</b><br>Start misting</div>
+  <div class="temp-item temp-hot"><b>30&deg;C+</b><br>Mist NOW<br>Small pots first</div>
+</div>
+
+<h2>Watering Levels</h2>
+<table>
+  <tr><th>Level</th><th>Method</th></tr>
+  <tr><td><span class="badge high">HIGH</span></td><td>3 slow passes with hose gun</td></tr>
+  <tr><td><span class="badge medium">MED</span></td><td>2 slow passes with hose gun</td></tr>
+  <tr><td><span class="badge low">LOW</span></td><td>1 slow pass with hose gun</td></tr>
+  <tr><td><span class="badge mist">MIST</span></td><td>30 min (autumn/winter), 60 min (summer)</td></tr>
+  <tr><td><span class="badge monitor">MONITOR</span></td><td>Check soil — water only if dry 2-3cm down</td></tr>
+</table>
+
+<h2>Watering Method</h2>
+<ul class="method-list">
+  <li>Water <b>root zone</b>, not leaves — from beneath foliage</li>
+  <li>Gentle flow — no splashing (dislodges seeds)</li>
+  <li>Seedlings &amp; cuttings: water at pot edge, never blast</li>
+  <li><b>Johnsons pump:</b> open bypass valve into tank FIRST</li>
+  <li>Check rose fitting isn't sun-hot — run briefly first</li>
+</ul>
+
+<h2>Pest Watch (while watering)</h2>
+<ul class="method-list">
+  <li><b>Rats</b> — check gabion guards, love sweet shoots</li>
+  <li><b>White butterflies</b> — eggs on brassicas, check caterpillars</li>
+  <li><b>Spiders</b> — olive trees especially; heavy = kills tree</li>
+</ul>
+
+<div class="tip"><b>Nettle tip:</b> Dried nettle layer on pots = watering indicator. When it lightens, pot needs water.</div>
+
+<div class="warning"><b>5 senses check first:</b> LOOK (wilting?), LISTEN (pump OK?), SMELL (ammonia = overwatering), TOUCH (soil moisture), TEMPERATURE (thermometer).</div>
+
+</div>
+<div class="col">
+
+<h2>Zones &amp; Current Inventory</h2>
+
+<div class="inventory-section">
+<table>
+  <tr><th>Zone</th><th>Level</th><th>Plants</th><th>Key Species (count)</th></tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 1-1</span></td>
+    <td><span class="badge high">HIGH</span></td>
+    <td class="count">51</td>
+    <td class="plant-row">Avocado (23), Chilli Devil's Brew (10), Basil Perennial (7), Lavender (7), Rosemary (4)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 1-2</span></td>
+    <td><span class="badge high">HIGH</span></td>
+    <td class="count">235</td>
+    <td class="plant-row">Passionfruit (78), Banagrass (33), Chilli Cayenne (26), Chilli Bird Eye (23), Cabbage Red (16), Cabbage Savoy (16), Lemongrass (11) <span class="ready">+11 ready</span>, Blueberry (10), Mint (9), Leek (10), Sugar Cane (2), Finger Lime (1)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 1-3</span></td>
+    <td><span class="badge high">HIGH</span></td>
+    <td class="count">187</td>
+    <td class="plant-row">Pigeon Pea (56), Spring Onion (28), Onion (28), Chilli Cayenne (26), Capsicum Red (23), Black She-oak (10), Mango (9), Lemon Balm (6), Tagasaste (1) <span class="ready">ready!</span></td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 1-4</span></td>
+    <td><span class="badge high">HIGH</span></td>
+    <td class="count">203</td>
+    <td class="plant-row">Passionfruit (78) <span class="ready">10 ready</span>, Spring Onion (28), Onion (28), Cabbage Red (16), Cabbage Savoy (16), Leek (16), Lemon (10), Papaya (9), Oregano (2)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 2-1</span></td>
+    <td><span class="badge medium">MED</span></td>
+    <td class="count">96</td>
+    <td class="plant-row">Tansy (66), Tagasaste (12) <span class="ready">11 ready</span>, Mint (9), Black She-oak (6), Grape Vine (3)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 2-2</span></td>
+    <td><span class="badge medium">MED</span></td>
+    <td class="count">100</td>
+    <td class="plant-row">Blueberry (21), Mint (21), Lemon Balm (15), Basil Sweet (11) <span class="ready">ready!</span>, Guava Straw. (8), Lemon (8), Basil Thai (7), Pear Williams (5), Guava (3), Melaleuca (1)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 2-3</span></td>
+    <td><span class="badge low">LOW</span></td>
+    <td class="count">42</td>
+    <td class="plant-row">Lavender (24) <span class="ready">ready!</span>, Rosemary (9), Grape Vine (4), Oregano seed (2), Oregano cut (2), Thyme (1)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 3-1</span></td>
+    <td><span class="badge medium">MED</span></td>
+    <td class="count">90</td>
+    <td class="plant-row">Lemon cuttings (90) <span class="ready">all ready!</span></td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Shelf 3-2</span></td>
+    <td><span class="badge medium">MED</span></td>
+    <td class="count">38</td>
+    <td class="plant-row">Apple (20), Pear Williams (6), Pear Nashi (4), Guava Straw. (3), Peach (3) <span class="ready">ready</span>, Melaleuca (2)</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Johnsons</span></td>
+    <td><span class="badge mist">MIST</span></td>
+    <td>&mdash;</td>
+    <td class="plant-row">Misting bay. Open bypass valve first!</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Ground Right</span></td>
+    <td><span class="badge medium">MED</span></td>
+    <td>&mdash;</td>
+    <td class="plant-row">Pre-transplant staging area</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Alley</span></td>
+    <td><span class="badge low">LOW</span></td>
+    <td>&mdash;</td>
+    <td class="plant-row">Succulents, drought-tolerant</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">Strawberry Tent</span></td>
+    <td><span class="badge monitor">MON</span></td>
+    <td>&mdash;</td>
+    <td class="plant-row">Mostly self-sufficient</td>
+  </tr>
+  <tr>
+    <td><span class="shelf-label">The Hill</span></td>
+    <td><span class="badge twice">2x/WK</span></td>
+    <td>&mdash;</td>
+    <td class="plant-row">Geraniums, aromatics, excess cuttings</td>
+  </tr>
+</table>
+</div>
+
+</div>
+</div>
+
+<div class="footer">
+  Firefly Corner Farm &bull; Nursery Watering Guide &bull; Generated 29 March 2026 from farmOS live data &bull; Knowledge Base SOP: "Nursery Operations Guide"
+</div>
+
+</body>
+</html>
