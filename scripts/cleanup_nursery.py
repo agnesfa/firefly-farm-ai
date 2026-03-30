@@ -94,25 +94,47 @@ class NurseryCleanup:
         return resp.json().get("data", [])
 
     def fetch_all_nursery_plants(self):
-        """Fetch all active plant assets in nursery zones."""
+        """Fetch all active plant assets in nursery zones using offset-based pagination.
+
+        Uses explicit page[offset] stepping instead of links.next, which is unreliable
+        beyond ~250 results (archived records consume pagination slots even with
+        filter[status]=active). See architecture decision #16.
+        """
         plants = []
-        url = (
-            f"{self.config['url']}/api/asset/plant"
-            f"?filter[status]=active"
-            f"&filter[name][operator]=CONTAINS&filter[name][value]=NURS."
-            f"&page[limit]=50"
-        )
-        while url:
+        page_limit = 50
+        offset = 0
+        max_pages = 100  # safety cap (100 * 50 = 5000 plants max)
+
+        for _ in range(max_pages):
+            url = (
+                f"{self.config['url']}/api/asset/plant"
+                f"?filter[status]=active"
+                f"&filter[name][operator]=CONTAINS&filter[name][value]=NURS."
+                f"&page[limit]={page_limit}"
+                f"&page[offset]={offset}"
+                f"&sort=name"  # stable ordering required for offset pagination
+            )
             resp = self.session.get(url)
             if resp.status_code != 200:
-                print(f"Error fetching plants: {resp.status_code}")
+                print(f"Error fetching plants (offset={offset}): {resp.status_code}")
                 break
             data = resp.json()
-            plants.extend(data.get("data", []))
-            url = data.get("links", {}).get("next", {})
-            if isinstance(url, dict):
-                url = url.get("href")
-        return plants
+            batch = data.get("data", [])
+            if not batch:
+                break  # no more results
+            plants.extend(batch)
+            if len(batch) < page_limit:
+                break  # last page
+            offset += page_limit
+
+        # Deduplicate by UUID (defensive — should not occur with offset pagination)
+        seen = set()
+        unique = []
+        for p in plants:
+            if p["id"] not in seen:
+                seen.add(p["id"])
+                unique.append(p)
+        return unique
 
     def archive_plant(self, plant_id, plant_name, reason):
         """Archive a plant asset (set status to archived)."""
@@ -339,6 +361,21 @@ class NurseryCleanup:
                     print(f"  ❌ FAILED: {name}")
                     self.stats["failed"] += 1
 
+        # Re-fetch farmOS state after Phase 1 archiving so Phase 2 sees the current
+        # active set — not the stale pre-archive snapshot. This prevents the bug where
+        # Phase 1 archived an asset, but farmos_lookup still showed it as "existing",
+        # causing Phase 2 to skip creating the correct replacement.
+        if not self.dry_run and self.stats["archived"] > 0:
+            print(f"\nRe-fetching farmOS nursery state after {self.stats['archived']} archives...")
+            farmos_plants = self.fetch_all_nursery_plants()
+            farmos_lookup = {}
+            for p in farmos_plants:
+                name = p["attributes"]["name"]
+                inv = p["attributes"].get("inventory", [])
+                count = int(float(inv[0]["value"])) if inv else 0
+                farmos_lookup[name] = {"id": p["id"], "count": count}
+            print(f"  Active nursery assets now: {len(farmos_lookup)}")
+
         # Phase 2: Create missing plants
         print(f"\nPhase 2: CREATE missing plants")
         print("-" * 50)
@@ -369,25 +406,76 @@ class NurseryCleanup:
                     print(f"  ❌ FAILED: {name}")
                     self.stats["failed"] += 1
 
-        # Phase 3: Count matching
-        matching = sum(1 for n in csv_lookup if n in farmos_lookup)
-        self.stats["already_correct"] = matching
+        # Phase 3: Post-run verification — re-fetch and compare row by row
+        print(f"\nPhase 3: VERIFICATION — re-fetch farmOS and compare against CSV")
+        print("-" * 50)
 
-        # Summary
+        if self.dry_run:
+            # In dry-run, use the snapshot we already have
+            final_farmos_lookup = farmos_lookup
+        else:
+            # Always re-fetch to get the true post-cleanup state
+            final_plants = self.fetch_all_nursery_plants()
+            final_farmos_lookup = {}
+            for p in final_plants:
+                name = p["attributes"]["name"]
+                inv = p["attributes"].get("inventory", [])
+                count = int(float(inv[0]["value"])) if inv else 0
+                final_farmos_lookup[name] = {"id": p["id"], "count": count}
+
+        missing_after = []
+        count_mismatch = []
+        correct = 0
+
+        for name, csv_data in sorted(csv_lookup.items()):
+            if name not in final_farmos_lookup:
+                missing_after.append((name, csv_data["count"]))
+            else:
+                farmos_count = final_farmos_lookup[name]["count"]
+                if farmos_count != csv_data["count"]:
+                    count_mismatch.append((name, csv_data["count"], farmos_count))
+                else:
+                    correct += 1
+
+        # Assets in farmOS not in CSV (should only be from other sources, not a problem)
+        extra_in_farmos = [n for n in final_farmos_lookup if n not in csv_lookup]
+
+        print(f"\n  CSV entries expected:  {len(csv_lookup)}")
+        print(f"  ✅ Correct in farmOS:  {correct}")
+        if count_mismatch:
+            print(f"  ⚠️  Count mismatch:    {len(count_mismatch)}")
+            for name, csv_count, farmos_count in count_mismatch:
+                print(f"      {name}")
+                print(f"        CSV={csv_count}, farmOS={farmos_count}")
+        else:
+            print(f"  ✅ Count mismatches:   0")
+        if missing_after:
+            print(f"  ❌ Still missing:      {len(missing_after)}")
+            for name, count in missing_after:
+                print(f"      {name}  (count={count})")
+        else:
+            print(f"  ✅ Still missing:      0")
+        if extra_in_farmos:
+            print(f"  ℹ️  Extra in farmOS (not in CSV): {len(extra_in_farmos)}")
+            for name in extra_in_farmos:
+                print(f"      {name}")
+
         print(f"\n{'='*60}")
         print("CLEANUP SUMMARY")
         print(f"{'='*60}")
         print(f"  Plants archived:      {self.stats['archived']}")
         print(f"  Plants created:       {self.stats['created']}")
-        print(f"  Already correct:      {self.stats['already_correct']}")
-        print(f"  Failed:               {self.stats['failed']}")
+        print(f"  Plants failed:        {self.stats['failed']}")
         if self.dry_run:
             print(f"\n  ** DRY RUN — run without --dry-run to apply changes **")
+            return True  # dry-run always succeeds; missing items are expected
         else:
-            total_after = len(csv_lookup) + matching - self.stats["already_correct"] + self.stats["created"]
-            print(f"\n  farmOS nursery should now have {len(csv_lookup)} active plant assets")
-            print(f"  matching the enriched CSV exactly.")
-        return True
+            if missing_after or count_mismatch:
+                print(f"\n  ⚠️  INCOMPLETE — {len(missing_after)} missing, {len(count_mismatch)} count mismatches")
+                print(f"  Re-run the script to retry failed items.")
+            else:
+                print(f"\n  ✅ COMPLETE — farmOS nursery matches CSV exactly ({correct} assets)")
+            return len(missing_after) == 0 and len(count_mismatch) == 0
 
 
 def main():
