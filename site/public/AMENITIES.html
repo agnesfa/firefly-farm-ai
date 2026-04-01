@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Camp Amenities — Firefly Corner Farm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.amenity-section { border-bottom: 1px solid #e5e5e0; }
+.amenity-header {
+  display: flex; align-items: center; padding: 16px;
+  cursor: pointer; user-select: none; transition: background 0.15s;
+}
+.amenity-header:hover { background: #f7f6f0; }
+.amenity-header:active { background: #f0ede4; }
+.amenity-icon { font-size: 28px; margin-right: 14px; flex-shrink: 0; }
+.amenity-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px; font-weight: 600; color: #1a1a1a; flex: 1;
+}
+.amenity-chevron {
+  font-size: 14px; color: #9ca3af; transition: transform 0.2s;
+  flex-shrink: 0; margin-left: 8px;
+}
+.amenity-section.open .amenity-chevron { transform: rotate(90deg); }
+.amenity-body { display: none; padding: 0 16px 20px 58px; }
+.amenity-section.open .amenity-body { display: block; }
+.amenity-body p {
+  font-size: 14px; line-height: 1.7; color: #374151; margin: 0 0 12px 0;
+}
+.amenity-body .step {
+  display: flex; align-items: baseline; margin-bottom: 8px;
+}
+.step-num {
+  font-weight: 700; font-size: 13px; color: #2d5016;
+  min-width: 22px; flex-shrink: 0;
+}
+.step-text { font-size: 14px; line-height: 1.6; color: #374151; }
+.amenity-warning {
+  background: #fef3c7; border-left: 3px solid #f59e0b;
+  padding: 10px 12px; border-radius: 0 6px 6px 0;
+  font-size: 13px; color: #92400e; margin: 12px 0; line-height: 1.5;
+}
+.amenity-tip {
+  background: #ecfdf5; border-left: 3px solid #10b981;
+  padding: 10px 12px; border-radius: 0 6px 6px 0;
+  font-size: 13px; color: #065f46; margin: 12px 0; line-height: 1.5;
+}
+.sub-heading {
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  color: #1a1a1a; margin: 16px 0 8px 0;
+}
+.photos-link {
+  display: block; text-align: center; margin: 20px 16px;
+  padding: 14px 20px; background: #2d5016; color: #fff;
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: background 0.15s;
+}
+.photos-link:active { background: #1a3a0a; }
+.intro-text {
+  padding: 16px; font-size: 14px; line-height: 1.6; color: #6b7280;
+  border-bottom: 1px solid #e5e5e0;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #5c4a32 0%, #6b5a3e 60%, #7d6b4a 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner &middot; WWOOFer Camp</div>
+    <div class="section-title-row">
+      <h1 class="section-range">Camp Amenities</h1>
+      <span class="section-type-badge">&#127961;&#65039; Guest Guide</span>
+    </div>
+    <div class="obs-subtitle">Shower, dry toilet &amp; water supply</div>
+  </div>
+
+  <div class="intro-text">
+    Welcome to Firefly Corner! This guide covers the three shared camp facilities. Tap each section below for step-by-step instructions.
+  </div>
+
+  <!-- WATER SUPPLY -->
+  <div class="amenity-section open" id="sec-water">
+    <div class="amenity-header" onclick="toggleSection('sec-water')">
+      <span class="amenity-icon">💧</span>
+      <span class="amenity-title">Water Supply</span>
+      <span class="amenity-chevron">&#9654;</span>
+    </div>
+    <div class="amenity-body">
+      <div class="step"><span class="step-num">1.</span><span class="step-text">Open the main tank valve — located on the tank near the shower entrance.</span></div>
+      <div class="step"><span class="step-num">2.</span><span class="step-text">Switch on the water pump — at knee height, right side of the shower entrance.</span></div>
+      <div class="amenity-warning">
+        <strong>Conservation:</strong> We have one tank and low rainfall. Please use water sparingly — short showers, turn off taps between use.
+      </div>
+    </div>
+  </div>
+
+  <!-- DRY TOILET -->
+  <div class="amenity-section" id="sec-toilet">
+    <div class="amenity-header" onclick="toggleSection('sec-toilet')">
+      <span class="amenity-icon">🚽</span>
+      <span class="amenity-title">Dry Toilet</span>
+      <span class="amenity-chevron">&#9654;</span>
+    </div>
+    <div class="amenity-body">
+      <div class="sub-heading">Daily Use</div>
+      <div class="step"><span class="step-num">1.</span><span class="step-text">Use the toilet as normal.</span></div>
+      <div class="step"><span class="step-num">2.</span><span class="step-text">Cover with straw from the container — stored under the hinged panel on the left.</span></div>
+      <div class="step"><span class="step-num">3.</span><span class="step-text"><strong>1 scoop</strong> after pee, <strong>2 scoops</strong> after poo.</span></div>
+      <div class="amenity-tip">
+        The straw cover material keeps things dry and odour-free. Always cover after use.
+      </div>
+
+      <div class="sub-heading">When the Bucket is Full</div>
+      <div class="step"><span class="step-num">1.</span><span class="step-text">Lift the hinged seat panel from the front.</span></div>
+      <div class="step"><span class="step-num">2.</span><span class="step-text">Remove the bucket carefully.</span></div>
+      <div class="step"><span class="step-num">3.</span><span class="step-text">Carry to the creek paddock.</span></div>
+      <div class="step"><span class="step-num">4.</span><span class="step-text">Empty into the <strong>green compost compound</strong> (the right-hand one).</span></div>
+      <div class="step"><span class="step-num">5.</span><span class="step-text">Return bucket and replace the seat panel.</span></div>
+    </div>
+  </div>
+
+  <!-- SHOWER -->
+  <div class="amenity-section" id="sec-shower">
+    <div class="amenity-header" onclick="toggleSection('sec-shower')">
+      <span class="amenity-icon">🚿</span>
+      <span class="amenity-title">Shower</span>
+      <span class="amenity-chevron">&#9654;</span>
+    </div>
+    <div class="amenity-body">
+      <div class="sub-heading">Cold Shower (Default)</div>
+      <div class="step"><span class="step-num">1.</span><span class="step-text">Locate the white control box on the left wall.</span></div>
+      <div class="step"><span class="step-num">2.</span><span class="step-text">Follow the blue hose to the orange connector.</span></div>
+      <div class="step"><span class="step-num">3.</span><span class="step-text">Turn the black switch to start the water flow.</span></div>
+
+      <div class="sub-heading">Warm Shower (Optional)</div>
+      <div class="step"><span class="step-num">1.</span><span class="step-text">Open the gas bottle valve — turn anti-clockwise.</span></div>
+      <div class="step"><span class="step-num">2.</span><span class="step-text">Then turn the black switch on the orange connector to start flow.</span></div>
+      <div class="amenity-warning">
+        <strong>Do not</strong> adjust the black knob settings on the white shower box.
+      </div>
+
+      <div class="sub-heading">After Use</div>
+      <div class="step"><span class="step-num">1.</span><span class="step-text">Close the gas valve (if used) — turn clockwise.</span></div>
+      <div class="step"><span class="step-num">2.</span><span class="step-text">Turn off the black switch on the orange connector.</span></div>
+      <div class="step"><span class="step-num">3.</span><span class="step-text">Switch off the water pump.</span></div>
+    </div>
+  </div>
+
+  <!-- Illustrated guide link -->
+  <a href="https://drive.google.com/file/d/1weur5lhav9WJmiWIHBP0chZq4g1qZMDJ/view?usp=share_link" class="photos-link" target="_blank" rel="noopener">
+    📸 View Illustrated Guide with Photos
+  </a>
+
+  <div class="footer" style="padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e5e0;">
+    Firefly Corner Farm &middot; Krambach, NSW<br>
+    <span style="font-size: 11px;">farmOS Asset: Amenities (WWOOFer Camp)</span>
+  </div>
+
+</div>
+
+<script>
+function toggleSection(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
