@@ -20,6 +20,8 @@ from dotenv import load_dotenv
 
 
 PLANT_UNIT_UUID = "2371b79e-a87b-4152-b6e4-ea6a9ed37fd0"
+GRAMS_UNIT_UUID = "e7bad672-9c33-4138-9fc3-1b0548a33aca"
+STOCK_LEVEL_UNIT_UUID = "51960965-dc18-4e52-8ef9-702afd1fb603"
 
 
 class FarmOSClient:
@@ -353,6 +355,80 @@ class FarmOSClient:
             }
         }
         result = self._post("/api/quantity/standard", payload)
+        return result.get("data", {}).get("id")
+
+    def create_seed_quantity(self, seed_id: str, value: float,
+                             unit_type: str = "grams",
+                             adjustment: str = "reset") -> Optional[str]:
+        """Create a quantity entity for seed inventory tracking.
+
+        Args:
+            seed_id: UUID of the seed asset
+            value: Quantity value (grams for bulk, 0/0.5/1 for sachets)
+            unit_type: "grams" for bulk seeds, "stock_level" for sachets
+            adjustment: "reset" to set absolute value, "increment"/"decrement" for relative
+        """
+        if unit_type == "grams":
+            unit_uuid = GRAMS_UNIT_UUID
+            measure = "weight"
+            label = "grams"
+        else:
+            unit_uuid = STOCK_LEVEL_UNIT_UUID
+            measure = "rating"
+            label = "stock_level"
+
+        payload = {
+            "data": {
+                "type": "quantity--standard",
+                "attributes": {
+                    "value": {"decimal": str(value)},
+                    "measure": measure,
+                    "label": label,
+                    "inventory_adjustment": adjustment,
+                },
+                "relationships": {
+                    "units": {
+                        "data": {
+                            "type": "taxonomy_term--unit",
+                            "id": unit_uuid,
+                        }
+                    },
+                    "inventory_asset": {
+                        "data": {
+                            "type": "asset--seed",
+                            "id": seed_id,
+                        }
+                    },
+                },
+            }
+        }
+        result = self._post("/api/quantity/standard", payload)
+        return result.get("data", {}).get("id")
+
+    def create_seed_observation_log(self, seed_id: str, quantity_id: str,
+                                     timestamp: int, name: str,
+                                     notes: str = "") -> Optional[str]:
+        """Create an observation log for a seed inventory change."""
+        log_data = {
+            "attributes": {
+                "name": name,
+                "timestamp": str(timestamp),
+                "status": "done",
+            },
+            "relationships": {
+                "asset": {
+                    "data": [{"type": "asset--seed", "id": seed_id}]
+                },
+            },
+        }
+        if notes:
+            log_data["attributes"]["notes"] = {"value": notes, "format": "default"}
+        if quantity_id:
+            log_data["relationships"]["quantity"] = {
+                "data": [{"type": "quantity--standard", "id": quantity_id}]
+            }
+        payload = {"data": {"type": "log--observation", **log_data}}
+        result = self._post("/api/log/observation", payload)
         return result.get("data", {}).get("id")
 
     def create_observation_log(self, plant_id: str, section_uuid: str,

@@ -661,6 +661,178 @@ def get_seed_transactions(
 
 
 @mcp.tool
+def sync_seed_transactions(days: int = 7, dry_run: bool = False) -> str:
+    """Sync seed bank transactions from Google Sheet to farmOS seed assets.
+
+    Fetches recent transactions from the SeedBank.gs Transactions tab,
+    finds the corresponding farmOS seed asset for each, and creates an
+    observation log with quantity to update the farmOS inventory.
+
+    This closes the loop: QR page → Sheet → farmOS.
+
+    Args:
+        days: How many days of transactions to sync (default 7).
+        dry_run: If true, show what would be synced without making changes.
+
+    Returns:
+        Summary of synced/skipped/failed transactions.
+    """
+    import requests as req
+    from farmos_client import GRAMS_UNIT_UUID, STOCK_LEVEL_UNIT_UUID
+
+    endpoint = _get_seedbank_endpoint()
+    if not endpoint:
+        return json.dumps({"error": "SEEDBANK_ENDPOINT not configured"})
+
+    # Step 1: Fetch transactions from Sheet
+    try:
+        resp = req.get(endpoint, params={"action": "transactions", "days": str(days)},
+                       timeout=30, allow_redirects=True)
+        data = resp.json()
+        if not data.get("success"):
+            return json.dumps({"error": data.get("error", "Failed to fetch transactions")})
+        transactions = data.get("transactions", [])
+    except Exception as e:
+        return json.dumps({"error": f"Failed to fetch transactions: {e}"})
+
+    if not transactions:
+        return json.dumps({"message": f"No transactions in the last {days} days", "synced": 0})
+
+    client = get_client()
+    results = {"synced": [], "skipped": [], "failed": []}
+
+    for txn in transactions:
+        seed_species = txn.get("seed", "")
+        txn_type = txn.get("type", "")
+        amount = txn.get("amount", "")
+        txn_user = txn.get("user", "")
+        txn_date = txn.get("date", "")
+        txn_notes = txn.get("notes", "")
+
+        if not seed_species:
+            results["skipped"].append({"reason": "No seed name", "txn": txn})
+            continue
+
+        # Step 2: Find the farmOS seed asset
+        # Seed assets are named "{Species} Seeds" or with source suffix
+        seed_name = f"{seed_species} Seeds"
+        try:
+            seed_assets = client.fetch_by_name("asset/seed", seed_name)
+            if not seed_assets:
+                # Try partial match
+                seed_assets = client.get_seed_assets(species=seed_species)
+            if not seed_assets:
+                results["failed"].append({
+                    "seed": seed_species,
+                    "reason": f"Seed asset not found in farmOS for '{seed_species}'",
+                    "txn_date": txn_date,
+                })
+                continue
+
+            seed_asset = seed_assets[0]
+            seed_id = seed_asset.get("id", "")
+
+            # Step 3: Determine new inventory value
+            # We need to get current farmOS inventory, then apply the transaction
+            current_inv = seed_asset.get("attributes", {}).get("inventory", [])
+            current_value = 0
+            for q in current_inv:
+                v = q.get("value")
+                if v is not None:
+                    try:
+                        current_value = float(v)
+                    except (ValueError, TypeError):
+                        pass
+
+            try:
+                txn_amount = float(amount) if amount else 0
+            except (ValueError, TypeError):
+                txn_amount = 0
+
+            if txn_type == "take":
+                new_value = max(0, current_value - abs(txn_amount))
+            elif txn_type == "add":
+                new_value = current_value + abs(txn_amount)
+            else:
+                # status_change — use new_stock from txn
+                new_stock = txn.get("new_stock", "")
+                try:
+                    new_value = float(new_stock) if new_stock else current_value
+                except (ValueError, TypeError):
+                    new_value = current_value
+
+            # Determine unit type based on amount size
+            # Stock levels are 0, 0.5, 1 — anything > 1 is grams
+            unit_type = "stock_level" if new_value <= 1 and txn_type == "status_change" else "grams"
+
+            if dry_run:
+                results["synced"].append({
+                    "seed": seed_species,
+                    "txn_type": txn_type,
+                    "amount": txn_amount,
+                    "current_farmos": current_value,
+                    "new_value": new_value,
+                    "unit_type": unit_type,
+                    "txn_date": txn_date,
+                    "dry_run": True,
+                })
+                continue
+
+            # Step 4: Create quantity + observation log in farmOS
+            from datetime import datetime
+            from helpers import AEST
+            try:
+                ts_dt = datetime.strptime(txn_date, "%Y-%m-%d %H:%M")
+            except (ValueError, TypeError):
+                ts_dt = datetime.now(tz=AEST)
+            timestamp = int(ts_dt.replace(tzinfo=AEST).timestamp()) if ts_dt.tzinfo is None else int(ts_dt.timestamp())
+
+            qty_id = client.create_seed_quantity(seed_id, new_value, unit_type, "reset")
+            log_name = f"Seed {txn_type} — {seed_species} — {txn_date}"
+
+            # Check idempotency — don't create duplicate logs
+            existing = client.log_exists(log_name, "observation")
+            if existing:
+                results["skipped"].append({
+                    "seed": seed_species,
+                    "reason": "Log already exists (idempotent skip)",
+                    "log_name": log_name,
+                })
+                continue
+
+            notes = f"{txn_type.title()} {txn_amount}{'g' if unit_type == 'grams' else ''} by {txn_user}. {txn_notes}".strip()
+            log_id = client.create_seed_observation_log(seed_id, qty_id, timestamp, log_name, notes)
+
+            results["synced"].append({
+                "seed": seed_species,
+                "txn_type": txn_type,
+                "amount": txn_amount,
+                "new_farmos_value": new_value,
+                "log_id": log_id,
+                "log_name": log_name,
+                "txn_date": txn_date,
+            })
+
+        except Exception as e:
+            results["failed"].append({
+                "seed": seed_species,
+                "reason": str(e),
+                "txn_date": txn_date,
+            })
+
+    summary = {
+        "days": days,
+        "dry_run": dry_run,
+        "total_transactions": len(transactions),
+        "synced": len(results["synced"]),
+        "skipped": len(results["skipped"]),
+        "failed": len(results["failed"]),
+        "details": results,
+    }
+    return json.dumps(summary, indent=2, default=str)
+
+
+@mcp.tool
 def search_plant_types(query: str) -> str:
     """Search plant types by name (partial match).
 
