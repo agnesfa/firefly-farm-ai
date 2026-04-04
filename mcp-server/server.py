@@ -464,6 +464,15 @@ def query_logs(
     }, indent=2)
 
 
+def _get_seedbank_endpoint() -> Optional[str]:
+    """Get the SeedBank Apps Script endpoint URL."""
+    endpoint = os.environ.get("SEEDBANK_ENDPOINT")
+    if endpoint:
+        return endpoint
+    # Fallback: hardcoded known endpoint (same as SEED.BANK.html)
+    return "https://script.google.com/macros/s/AKfycbwm2YllQ0vi-vSz_aruKXGxVL3klbSE7F_85dS4qIlxoy3TP4DA0VkAPcI3izNgj7hMIg/exec"
+
+
 def _format_seed_asset(seed: dict) -> dict:
     """Format a farmOS seed asset into a standard inventory dict."""
     attrs = seed.get("attributes", {})
@@ -604,6 +613,51 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
         )
 
     return json.dumps(result, indent=2)
+
+
+@mcp.tool
+def get_seed_transactions(
+    days: int = 30,
+    species: Optional[str] = None,
+    user: Optional[str] = None,
+    transaction_type: Optional[str] = None,
+) -> str:
+    """Query seed bank transactions (withdrawals, additions, stock changes).
+
+    Reads from the Seed Bank Google Sheet Transactions tab via Apps Script.
+
+    Args:
+        days: How many days back to search (default 30).
+        species: Filter by species name (partial match, e.g., "pigeon", "winter").
+        user: Filter by who made the transaction (e.g., "james").
+        transaction_type: Filter by type: "take" or "add".
+
+    Returns:
+        List of transactions with date, user, seed, type, amount, notes.
+    """
+    import requests as req
+
+    endpoint = _get_seedbank_endpoint()
+    if not endpoint:
+        return json.dumps({"error": "SEEDBANK_ENDPOINT not configured"})
+
+    params = {"action": "transactions", "days": str(days)}
+    if species:
+        params["species"] = species
+    if user:
+        params["user"] = user
+    if transaction_type:
+        params["type"] = transaction_type
+
+    try:
+        resp = req.get(endpoint, params=params, timeout=30, allow_redirects=True)
+        # Apps Script returns JSON after redirect
+        data = resp.json()
+        if not data.get("success"):
+            return json.dumps({"error": data.get("error", "Unknown error from SeedBank endpoint")})
+        return json.dumps(data, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to query seed transactions: {e}"})
 
 
 @mcp.tool

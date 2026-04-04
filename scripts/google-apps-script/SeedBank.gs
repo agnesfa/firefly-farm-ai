@@ -123,8 +123,10 @@ function doGet(e) {
       return handleInventory(e.parameter);
     } else if (action === "report") {
       return handleReport(e.parameter);
+    } else if (action === "transactions") {
+      return handleTransactions(e.parameter);
     } else {
-      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: health, search, inventory, report" });
+      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: health, search, inventory, report, transactions" });
     }
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
@@ -394,6 +396,81 @@ function jsonResponse(obj) {
 //   2. GET ?action=report&email=true   → sends HTML email to recipients + returns JSON
 //
 // Can also be called from Claude via MCP or directly from the seed bank page.
+
+// ── Transactions query ────────────────────────────────────────
+//
+// GET ?action=transactions                          → last 30 days
+// GET ?action=transactions&days=7                   → last 7 days
+// GET ?action=transactions&species=pigeon           → filter by species name
+// GET ?action=transactions&user=james               → filter by user
+// GET ?action=transactions&type=take                → filter by type (take/add)
+// Filters can be combined.
+
+function handleTransactions(params) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var txnSheet = ss.getSheetByName(TXN_TAB);
+  if (!txnSheet) {
+    return jsonResponse({ success: true, transactions: [], count: 0, message: "No transactions tab found" });
+  }
+
+  var txnData = txnSheet.getDataRange().getValues();
+  trackCellReads(txnData.length * 9);
+
+  if (txnData.length < 2) {
+    return jsonResponse({ success: true, transactions: [], count: 0 });
+  }
+
+  // Parse filters
+  var days = parseInt(params.days || "30", 10);
+  var speciesFilter = (params.species || "").toLowerCase().trim();
+  var userFilter = (params.user || "").toLowerCase().trim();
+  var typeFilter = (params.type || "").toLowerCase().trim();
+
+  var cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+
+  var results = [];
+  for (var t = 1; t < txnData.length; t++) {
+    var row = txnData[t];
+    var txnDate = row[0] ? new Date(row[0]) : null;
+    if (!txnDate || txnDate < cutoff) continue;
+
+    var user = String(row[1] || "").trim();
+    var seed = String(row[2] || "").trim();
+    var txnType = String(row[3] || "").trim();
+    var amount = String(row[4] || "");
+    var newStock = String(row[5] || "");
+    var prevValue = String(row[6] || "");
+    var replenish = String(row[7] || "");
+    var notes = String(row[8] || "");
+
+    // Apply filters
+    if (speciesFilter && seed.toLowerCase().indexOf(speciesFilter) === -1) continue;
+    if (userFilter && user.toLowerCase().indexOf(userFilter) === -1) continue;
+    if (typeFilter && txnType.toLowerCase() !== typeFilter) continue;
+
+    results.push({
+      date: Utilities.formatDate(txnDate, Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm"),
+      user: user,
+      seed: seed,
+      type: txnType,
+      amount: amount,
+      new_stock: newStock,
+      previous_value: prevValue,
+      replenish: replenish.toLowerCase() === "true",
+      notes: notes
+    });
+  }
+
+  return jsonResponse({
+    success: true,
+    transactions: results,
+    count: results.length,
+    filters: { days: days, species: speciesFilter || null, user: userFilter || null, type: typeFilter || null }
+  });
+}
+
+// ── Weekly report ─────────────────────────────────────────────
 
 var REPORT_RECIPIENTS = ["agnes@fireflyagents.com", "james@fireflyagents.com"];
 
