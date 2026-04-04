@@ -148,7 +148,7 @@ def build_document():
     story.append(hr())
     story.append(Spacer(1, 6*mm))
     story.append(Paragraph(
-        "Agnes Fanning &amp; Claude  |  Firefly Corner Farm  |  April 2026",
+        "Agnes Schliebitz &amp; Claude  |  Firefly Corner Farm  |  April 2026",
         styles["WPAuthor"]
     ))
     story.append(Spacer(1, 15*mm))
