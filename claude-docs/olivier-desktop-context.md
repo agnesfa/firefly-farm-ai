@@ -169,6 +169,16 @@ farmOS (margregen.farmos.net) is the source of truth.
 | `read_team_activity(days, user)` | See team's recent work |
 | `search_team_memory(query, days)` | Search past sessions |
 
+### Farm Intelligence (use this FIRST for any section/species/topic question)
+
+| Tool | What it does |
+|------|-------------|
+| `farm_context(section="P2R3.15-21")` | Section health: strata coverage, activity recency, succession balance, pending tasks, KB gaps |
+| `farm_context(subject="Pigeon Pea")` | Species distribution across all sections + KB coverage + metadata |
+| `farm_context(topic="nursery")` | Domain overview: inventory, transplant readiness, KB entries |
+
+**ALWAYS use `farm_context` before answering questions about sections, species, or farm domains.** It gives governed, consistent health metrics. If `data_integrity.requires_confirmation = true`, tell the user — team memory records changes that don't exist in farmOS.
+
 ---
 
 ## Seed Bank Inventory Guide

@@ -171,6 +171,39 @@ farmOS (margregen.farmos.net) is the source of truth.
 | `add_plant_type(name, strata, ...)` | Add new species |
 | `update_plant_type(name, ...)` | Update species details |
 
+### Farm Intelligence (use this FIRST for any section/species/topic question)
+
+| Tool | What it does | When to use |
+|------|-------------|-------------|
+| `farm_context(section="P2R3.15-21")` | Section health: strata coverage, activity recency, succession balance, pending tasks, KB gaps, data integrity check | "How is this section doing?" |
+| `farm_context(subject="Pigeon Pea")` | Species distribution across all sections + KB coverage + metadata | "Where is pigeon pea? How is it doing?" |
+| `farm_context(topic="nursery")` | Domain overview: inventory, transplant readiness, KB entries | "What's happening in the nursery?" |
+
+**ALWAYS use `farm_context` before answering questions about sections, species, or farm domains.** It gives governed, consistent metrics instead of improvised answers. Every Claude on the team gets the same definitions.
+
+**Data integrity gate:** If `farm_context` returns `data_integrity.requires_confirmation = true`, it means team memory records changes that don't exist in farmOS (silent API failure). **Do NOT trust the facts.** Tell James what the discrepancy is and ask him to verify before proceeding.
+
+### Pending Tasks
+
+Check your pending tasks regularly:
+```
+query_logs(log_type="activity", status="pending")
+```
+Complete tasks when done:
+```
+complete_task(log_name="Review — P2R5.0-8", notes="Verified counts, all correct")
+```
+
+### Processing Field Walk Transcripts
+
+When a WWOOFer provides an audio transcript from a field walk, the system has a complete workflow:
+1. Parse transcript into section-by-section observations
+2. Resolve species against taxonomy (handle phonetic variations: "waddle" = wattle)
+3. Cross-reference each section via `farm_context` for the full picture
+4. Trace source origin (self-seeded? nursery transplant? direct seeded?)
+5. Create farmOS entries with pending review tasks
+6. Flag missing transplanting logs for tree species in unexpected locations
+
 ---
 
 ## Key Design Questions (for James to resolve)
