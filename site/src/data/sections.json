@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-30T10:24:51.420050+10:00",
+  "generated_at": "2026-04-04T19:32:34.653278+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -6121,7 +6121,7 @@
       "length": "8m",
       "has_trees": true,
       "first_planted": "2025-10-01",
-      "inventory_date": "2026-03-05",
+      "inventory_date": "2026-04-04",
       "plants": [
         {
           "species": "Papaya",
@@ -6338,7 +6338,7 @@
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 2,
+          "count": 4,
           "notes": "ADD 2 GERANIUM",
           "first_planted": "2025-12-11",
           "asset_name": "1 OCT 2025 - Geranium - P2R4.6-14",
@@ -6354,6 +6354,12 @@
               "date": "2026-03-05",
               "name": "Inventory P2R4.6-14 — Geranium",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-04-04",
+              "name": "Observation P2R4.6-14 — Geranium — 2026-04-04",
+              "notes": "Updated from 2 to 4. James transplanted 2 additional geranium from nursery on 24 Mar 2026. Originally missed from farmOS due to silent API failure detected by data integrity gate."
             }
           ]
         },
@@ -6408,6 +6414,22 @@
               "date": "2026-03-05",
               "name": "Inventory P2R4.6-14 — Marigold",
               "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 5,
+          "notes": "Transplanted by James on 24 Mar 2026 from nursery. Originally missed from farmOS due to silent API failure detected by farm_context data integrity gate.",
+          "first_planted": "2026-03-24",
+          "asset_name": "24 MAR 2026 - Lavender - P2R4.6-14",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-23",
+              "name": "Inventory P2R4.6-14 — Lavender",
+              "notes": "Transplanted by James on 24 Mar 2026 from nursery. Originally missed from farmOS due to silent API failure detected by farm_context data integrity gate."
             }
           ]
         }
@@ -11059,7 +11081,7 @@
       "length": "8m",
       "has_trees": true,
       "first_planted": "2025-04-30",
-      "inventory_date": "2026-01-12",
+      "inventory_date": "2026-04-04",
       "plants": [
         {
           "species": "Papaya",
@@ -11096,7 +11118,7 @@
         {
           "species": "Mulberry (White)",
           "strata": "high",
-          "count": 2,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-05-01",
           "asset_name": "1 MAY 2025 - Mulberry (White) - P2R5.0-8",
@@ -11106,6 +11128,12 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.0-8 — Mulberry (White)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-04-04",
+              "name": "Observation P2R5.0-8 — Mulberry (White) — 2026-04-04",
+              "notes": "Maverick field walk transcript 4 Apr 2026: counted 3 mulberry (farmOS had 2). One additional — possible self-rooted or unlogged nursery transplant. Pending James verification."
             }
           ]
         },
@@ -11128,7 +11156,7 @@
         {
           "species": "Wattle - Cootamundra (Baileyana)",
           "strata": "high",
-          "count": 1,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-05-01",
           "asset_name": "1 MAY 2025 - Wattle - Cootamundra (Baileyana) - P2R5.0-8",
@@ -11138,6 +11166,12 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.0-8 — Wattle - Cootamundra (Baileyana)",
               "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-04-04",
+              "name": "Observation P2R5.0-8 — Wattle - Cootamundra (Baileyana) — 2026-04-04",
+              "notes": "Maverick field walk transcript 4 Apr 2026: counted 3 wattles (farmOS had 1). Two additional plants — self-seeded or unlogged transplant. Pending James recount to verify."
             }
           ]
         },
@@ -11230,6 +11264,54 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.0-8 — Prickly-leaved Paperbark",
               "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Sunflower",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Maverick transcript 4 Apr 2026. Likely self-seeded or winter garden mix. Pending James verification.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Sunflower - P2R5.0-8",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.0-8 — Sunflower",
+              "notes": "Maverick transcript 4 Apr 2026. Likely self-seeded or winter garden mix. Pending James verification."
+            }
+          ]
+        },
+        {
+          "species": "Pumpkin",
+          "strata": "low",
+          "count": 2,
+          "notes": "Maverick transcript 4 Apr 2026. Self-seeded from compost/scattered seeds. Pending James verification.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Pumpkin - P2R5.0-8",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.0-8 — Pumpkin",
+              "notes": "Maverick transcript 4 Apr 2026. Self-seeded from compost/scattered seeds. Pending James verification."
+            }
+          ]
+        },
+        {
+          "species": "Jacaranda",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Maverick transcript 4 Apr 2026. Tree species — not self-seeded. Possible unlogged transplant or section boundary error (Jacaranda exists in P2R5.29-38). Needs James investigation.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Jacaranda - P2R5.0-8",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.0-8 — Jacaranda",
+              "notes": "Maverick transcript 4 Apr 2026. Tree species — not self-seeded. Possible unlogged transplant or section boundary error (Jacaranda exists in P2R5.29-38). Needs James investigation."
             }
           ]
         }
@@ -11459,7 +11541,7 @@
       "length": "9m",
       "has_trees": true,
       "first_planted": "2025-05-14",
-      "inventory_date": "2026-01-12",
+      "inventory_date": "2026-04-03",
       "plants": [
         {
           "species": "Papaya",
@@ -11624,6 +11706,38 @@
               "date": "2026-01-12",
               "name": "Inventory P2R5.29-38 — Ginger",
               "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Okra",
+          "strata": "medium",
+          "count": 6,
+          "notes": "Maverick transcript 4 Apr 2026: ~6 okra across section, some with \"decent sized fruits.\" Origin: likely direct-seeded, no transplanting log exists. Pending James recount.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Okra - P2R5.29-38",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.29-38 — Okra",
+              "notes": "Maverick transcript 4 Apr 2026: ~6 okra across section, some with \"decent sized fruits.\" Origin: likely direct-seeded, no transplanting log exists. Pending James recount."
+            }
+          ]
+        },
+        {
+          "species": "Pumpkin",
+          "strata": "low",
+          "count": 3,
+          "notes": "Maverick transcript 4 Apr 2026: ~3 pumpkin plants including \"growing out into the walking path.\" Self-seeded. Pending James recount.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Pumpkin - P2R5.29-38",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.29-38 — Pumpkin",
+              "notes": "Maverick transcript 4 Apr 2026: ~3 pumpkin plants including \"growing out into the walking path.\" Self-seeded. Pending James recount."
             }
           ]
         }
@@ -12196,9 +12310,74 @@
       "range": "22–29",
       "length": "7m",
       "has_trees": false,
-      "first_planted": "2025-05-28",
-      "inventory_date": "",
-      "plants": [],
+      "first_planted": "2026-04-04",
+      "inventory_date": "2026-04-03",
+      "plants": [
+        {
+          "species": "Okra",
+          "strata": "medium",
+          "count": 10,
+          "notes": "Maverick transcript 4 Apr 2026: ~3 green okra + 2 red okra + ~5 more throughout section. Established plants with fruit. Origin: likely direct-seeded, no transplanting log exists. Red variety noted but kept as generic Okra. Pending James recount.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Okra - P2R5.22-29",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.22-29 — Okra",
+              "notes": "Maverick transcript 4 Apr 2026: ~3 green okra + 2 red okra + ~5 more throughout section. Established plants with fruit. Origin: likely direct-seeded, no transplanting log exists. Red variety noted but"
+            }
+          ]
+        },
+        {
+          "species": "Sunflower",
+          "strata": "medium",
+          "count": 10,
+          "notes": "Maverick transcript 4 Apr 2026: \"5 or 10 sunflowers halfway through\" + 2 more earlier. Zero Sunflower assets in entire farmOS — systematic logging gap. Pending James recount.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Sunflower - P2R5.22-29",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.22-29 — Sunflower",
+              "notes": "Maverick transcript 4 Apr 2026: \"5 or 10 sunflowers halfway through\" + 2 more earlier. Zero Sunflower assets in entire farmOS — systematic logging gap. Pending James recount."
+            }
+          ]
+        },
+        {
+          "species": "Radish",
+          "strata": "low",
+          "count": 3,
+          "notes": "Maverick transcript 4 Apr 2026: \"big radishes growing on the south side.\" Variety unknown — kept as generic Radish. Pending James recount.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Radish - P2R5.22-29",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.22-29 — Radish",
+              "notes": "Maverick transcript 4 Apr 2026: \"big radishes growing on the south side.\" Variety unknown — kept as generic Radish. Pending James recount."
+            }
+          ]
+        },
+        {
+          "species": "Pumpkin",
+          "strata": "low",
+          "count": 1,
+          "notes": "Maverick transcript 4 Apr 2026: \"pumpkin stretching across the trench onto the walking path, south side.\" Self-seeded. Pending James recount.",
+          "first_planted": "2026-04-04",
+          "asset_name": "4 APR 2026 - Pumpkin - P2R5.22-29",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-04-03",
+              "name": "Inventory P2R5.22-29 — Pumpkin",
+              "notes": "Maverick transcript 4 Apr 2026: \"pumpkin stretching across the trench onto the walking path, south side.\" Self-seeded. Pending James recount."
+            }
+          ]
+        }
+      ],
       "green_manure": [
         {
           "species": "Barley",
