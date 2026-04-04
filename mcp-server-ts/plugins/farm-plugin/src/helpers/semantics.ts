@@ -420,3 +420,116 @@ export function detectLoggingGaps(
 
   return gaps;
 }
+
+// ── Growth Model — YAML-driven maturity assessment ───────────────
+
+interface ThresholdEntry { label: string; value: number; meaning?: string; }
+interface InterpretationBlock {
+  direction?: 'higher_is_better' | 'lower_is_better';
+  thresholds?: ThresholdEntry[] | Record<string, number>;
+  pioneer_exception?: boolean;
+}
+
+/**
+ * Classify a value using the YAML-declared interpretation rule.
+ * Reads direction from the interpretation block — no hardcoded assumptions.
+ */
+export function classifyByDirection(value: number | null | undefined, interpretation: InterpretationBlock): string {
+  if (value == null) return 'unknown';
+  const direction = interpretation.direction ?? 'higher_is_better';
+  const raw = interpretation.thresholds;
+  let thresholds: [string, number][];
+  if (Array.isArray(raw)) {
+    thresholds = raw.map(t => [t.label, t.value]);
+  } else if (raw && typeof raw === 'object') {
+    thresholds = Object.entries(raw);
+  } else return 'unknown';
+
+  if (direction === 'lower_is_better') {
+    const sorted = [...thresholds].sort((a, b) => a[1] - b[1]);
+    for (const [label, threshold] of sorted) { if (value <= threshold) return label; }
+    return sorted[sorted.length - 1]?.[0] ?? 'unknown';
+  } else {
+    const sorted = [...thresholds].sort((a, b) => b[1] - a[1]);
+    for (const [label, threshold] of sorted) { if (value >= threshold) return label; }
+    return sorted[sorted.length - 1]?.[0] ?? 'unknown';
+  }
+}
+
+function getInterpThreshold(interpretation: InterpretationBlock, label: string, defaultVal: number): number {
+  const raw = interpretation.thresholds;
+  if (Array.isArray(raw)) { const f = raw.find(t => t.label === label); if (f) return f.value; }
+  else if (raw && typeof raw === 'object') { const v = (raw as Record<string, number>)[label]; if (v !== undefined) return v; }
+  return defaultVal;
+}
+
+export function assessFarmMaturity(data: { active_plants: number; section_health_scores: any[] }, config: any): any {
+  const farmConfig = config.dimensions.farm;
+  const metricsConfig = farmConfig.metrics;
+  const stages = farmConfig.stages;
+  const metrics: Record<string, any> = {};
+  const triggers: any[] = [];
+
+  const active = data.active_plants ?? 0;
+  const plantInterp = metricsConfig.active_plants?.interpretation ?? {};
+  const f1 = getInterpThreshold(plantInterp, 'f1', 500);
+  const f2 = getInterpThreshold(plantInterp, 'f2', 1000);
+  const plantStatus = classifyByDirection(active, plantInterp);
+  metrics.active_plants = { value: active, status: active >= f1 ? `passed_${plantStatus}` : 'below_f1' };
+  if (active >= f2) triggers.push({ metric: 'active_plants', status: 'warning', value: active, threshold: f2, action: metricsConfig.active_plants?.scale_actions?.f2 ?? '' });
+
+  const scores = data.section_health_scores ?? [];
+  let avgSurvival: number | null = null;
+  if (scores.length) {
+    const rates = scores.map((s: any) => s.survival_rate).filter((r: any) => r != null) as number[];
+    avgSurvival = rates.length ? rates.reduce((a, b) => a + b, 0) / rates.length : null;
+  }
+  const survivalInterp = metricsConfig.survival_rate?.interpretation ?? {};
+  metrics.survival_rate = { value: avgSurvival, status: avgSurvival != null ? classifyByDirection(avgSurvival, survivalInterp) : 'unknown', pioneer_exception: survivalInterp.pioneer_exception ?? false };
+
+  let pctGood: number | null = null;
+  let strataStatus = 'unknown';
+  if (scores.length) {
+    const strataInterp = metricsConfig.strata_coverage?.interpretation ?? {};
+    const goodT = getInterpThreshold(strataInterp, 'good', 0.75);
+    const ss = scores.map((s: any) => s.strata_score ?? 0);
+    pctGood = ss.filter((s: number) => s >= goodT).length / ss.length;
+    strataStatus = classifyByDirection(pctGood, strataInterp);
+  }
+  metrics.strata_coverage = { value: pctGood, status: strataStatus };
+  return { stage: active < f1 ? stages[0].label : stages[1].label, metrics, scale_triggers: triggers };
+}
+
+export function assessSystemMaturity(data: Record<string, any>, config: any): any {
+  const sysConfig = config.dimensions.system;
+  const mc = sysConfig.metrics;
+  const metrics: Record<string, any> = {};
+  const triggers: any[] = [];
+  const best = new Set(['healthy', 'safe', 'fresh']);
+
+  for (const mn of ['total_entities', 'plant_type_drift', 'observation_backlog']) {
+    const v = data[mn]; if (v == null) { metrics[mn] = { value: null, status: 'unknown' }; continue; }
+    const interp = mc[mn]?.interpretation ?? {};
+    metrics[mn] = { value: v, status: classifyByDirection(v, interp) };
+    const raw = interp.thresholds ?? [];
+    const pairs: [string, number][] = Array.isArray(raw) ? raw.map((t: any) => [t.label, t.value]) : Object.entries(raw);
+    const dir = interp.direction ?? 'higher_is_better';
+    for (const [label, threshold] of pairs) {
+      if (best.has(label)) continue;
+      if ((dir === 'lower_is_better' && v > threshold) || (dir === 'higher_is_better' && v >= threshold))
+        triggers.push({ metric: mn, status: label, value: v, threshold, action: mc[mn]?.scale_actions?.[label] ?? '' });
+    }
+  }
+  return { stage: sysConfig.stages[3]?.label ?? 'S4: Reliable', metrics, scale_triggers: triggers };
+}
+
+export function assessTeamMaturity(data: Record<string, any>, config: any): any {
+  const tc = config.dimensions.team;
+  const mc = tc.metrics;
+  const metrics: Record<string, any> = {};
+  for (const mn of ['active_users_weekly', 'team_memory_velocity', 'kb_entry_count']) {
+    const v = data[mn]; if (v == null) { metrics[mn] = { value: null, status: 'unknown' }; continue; }
+    metrics[mn] = { value: v, status: classifyByDirection(v, mc[mn]?.interpretation ?? {}) };
+  }
+  return { stage: tc.stages[1]?.label ?? 'T2: Using', metrics, scale_triggers: [] };
+}

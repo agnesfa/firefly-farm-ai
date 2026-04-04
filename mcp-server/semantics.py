@@ -21,6 +21,7 @@ AEST = timezone(timedelta(hours=10))
 
 _SEMANTICS_CACHE: dict = {}
 _ONTOLOGY_CACHE: dict = {}
+_GROWTH_CACHE: dict = {}
 
 
 def _find_yaml(filename: str) -> str:
@@ -63,9 +64,10 @@ def load_ontology(path: Optional[str] = None) -> dict:
 
 def clear_caches():
     """Clear loaded YAML caches (for testing)."""
-    global _SEMANTICS_CACHE, _ONTOLOGY_CACHE
+    global _SEMANTICS_CACHE, _ONTOLOGY_CACHE, _GROWTH_CACHE
     _SEMANTICS_CACHE = {}
     _ONTOLOGY_CACHE = {}
+    _GROWTH_CACHE = {}
 
 
 # ── Helpers ───────────────────────────────────────────────────────
@@ -574,3 +576,213 @@ def detect_logging_gaps(
                 })
 
     return gaps
+
+
+# ── Growth Model — Farm Maturity Assessment ──────────────────────
+
+_GROWTH_CACHE: dict = {}
+
+
+def load_growth_config(path: Optional[str] = None) -> dict:
+    """Load and cache farm_growth.yaml."""
+    global _GROWTH_CACHE
+    if _GROWTH_CACHE:
+        return _GROWTH_CACHE
+    if path is None:
+        path = _find_yaml("farm_growth.yaml")
+    with open(path, "r") as f:
+        _GROWTH_CACHE = yaml.safe_load(f)
+    return _GROWTH_CACHE
+
+
+def classify_by_direction(value, interpretation: dict) -> str:
+    """Classify a value using the YAML-declared interpretation rule.
+
+    Reads interpretation.direction to determine logic:
+      - higher_is_better: value >= threshold (walk from highest to lowest)
+      - lower_is_better: value <= threshold (walk from lowest to highest)
+
+    interpretation.thresholds is a list of {label, value, meaning} dicts,
+    OR a flat dict of {label: value} for backward compatibility.
+
+    No hardcoded assumptions — direction is governed by YAML.
+    """
+    if value is None:
+        return "unknown"
+
+    direction = interpretation.get("direction", "higher_is_better")
+    raw_thresholds = interpretation.get("thresholds", [])
+
+    # Normalize thresholds: support both list-of-dicts and flat-dict formats
+    if isinstance(raw_thresholds, list):
+        thresholds = [(t["label"], t["value"]) for t in raw_thresholds]
+    elif isinstance(raw_thresholds, dict):
+        thresholds = list(raw_thresholds.items())
+    else:
+        return "unknown"
+
+    if direction == "lower_is_better":
+        # Walk ascending — first threshold value >= current value wins
+        sorted_t = sorted(thresholds, key=lambda x: x[1])
+        for label, threshold in sorted_t:
+            if value <= threshold:
+                return label
+        return sorted_t[-1][0] if sorted_t else "unknown"
+    else:
+        # higher_is_better — walk descending
+        sorted_t = sorted(thresholds, key=lambda x: x[1], reverse=True)
+        for label, threshold in sorted_t:
+            if value >= threshold:
+                return label
+        return sorted_t[-1][0] if sorted_t else "unknown"
+
+
+def _get_interp_threshold(interpretation: dict, label: str, default: float) -> float:
+    """Extract a named threshold value from an interpretation block."""
+    raw = interpretation.get("thresholds", [])
+    if isinstance(raw, list):
+        for t in raw:
+            if t.get("label") == label:
+                return t["value"]
+    elif isinstance(raw, dict):
+        return raw.get(label, default)
+    return default
+
+
+def assess_farm_maturity(data: dict, config: dict) -> dict:
+    """Assess farm biological maturity against growth milestones.
+
+    Args:
+        data: {active_plants: int, section_health_scores: [{strata_score, survival_rate}, ...]}
+        config: Loaded farm_growth.yaml
+    """
+    farm_config = config["dimensions"]["farm"]
+    metrics_config = farm_config["metrics"]
+    stages = farm_config["stages"]
+    metrics = {}
+    triggers = []
+
+    # Active plants
+    active = data.get("active_plants", 0)
+    plant_interp = metrics_config["active_plants"].get("interpretation", {})
+    plant_status_raw = classify_by_direction(active, plant_interp)
+    # Annotate with "passed_" prefix if above f1 threshold
+    f1_threshold = _get_interp_threshold(plant_interp, "f1", 500)
+    metrics["active_plants"] = {
+        "value": active,
+        "status": f"passed_{plant_status_raw}" if active >= f1_threshold else "below_f1",
+    }
+
+    f2_threshold = _get_interp_threshold(plant_interp, "f2", 1000)
+    if active >= f2_threshold:
+        triggers.append({"metric": "active_plants", "status": "warning", "value": active,
+                         "threshold": f2_threshold,
+                         "action": metrics_config["active_plants"].get("scale_actions", {}).get("f2", "")})
+
+    # Survival rate — average across all sections
+    scores = data.get("section_health_scores", [])
+    if scores:
+        survival_rates = [s.get("survival_rate") for s in scores if s.get("survival_rate") is not None]
+        avg_survival = sum(survival_rates) / len(survival_rates) if survival_rates else None
+    else:
+        avg_survival = None
+
+    survival_interp = metrics_config["survival_rate"].get("interpretation", {})
+    survival_status = classify_by_direction(avg_survival, survival_interp) if avg_survival is not None else "unknown"
+    metrics["survival_rate"] = {
+        "value": avg_survival,
+        "status": survival_status,
+        "pioneer_exception": survival_interp.get("pioneer_exception", False),
+    }
+
+    # Strata coverage — % of sections with good coverage
+    if scores:
+        strata_scores = [s.get("strata_score", 0) for s in scores]
+        strata_interp = metrics_config["strata_coverage"].get("interpretation", {})
+        good_threshold = _get_interp_threshold(strata_interp, "good", 0.75)
+        pct_good = sum(1 for s in strata_scores if s >= good_threshold) / len(strata_scores)
+        strata_status = classify_by_direction(pct_good, strata_interp)
+    else:
+        pct_good = None
+        strata_status = "unknown"
+    metrics["strata_coverage"] = {"value": pct_good, "status": strata_status}
+
+    # Determine current stage
+    if active < f1_threshold:
+        stage = stages[0]["label"]
+    else:
+        stage = stages[1]["label"]  # F2: Surviving (current target)
+
+    return {"stage": stage, "metrics": metrics, "scale_triggers": triggers}
+
+
+def assess_system_maturity(data: dict, config: dict) -> dict:
+    """Assess technical system maturity.
+
+    Args:
+        data: {total_entities, plant_type_drift, observation_backlog, ...}
+        config: Loaded farm_growth.yaml
+    """
+    sys_config = config["dimensions"]["system"]
+    metrics_config = sys_config["metrics"]
+    metrics = {}
+    triggers = []
+
+    for metric_name in ["total_entities", "plant_type_drift", "observation_backlog"]:
+        value = data.get(metric_name)
+        if value is None:
+            metrics[metric_name] = {"value": None, "status": "unknown"}
+            continue
+
+        interp = metrics_config.get(metric_name, {}).get("interpretation", {})
+        status = classify_by_direction(value, interp)
+        metrics[metric_name] = {"value": value, "status": status}
+
+        # Check for scale triggers — any metric beyond the best threshold
+        raw_thresholds = interp.get("thresholds", [])
+        if isinstance(raw_thresholds, list):
+            threshold_pairs = [(t["label"], t["value"]) for t in raw_thresholds]
+        elif isinstance(raw_thresholds, dict):
+            threshold_pairs = list(raw_thresholds.items())
+        else:
+            threshold_pairs = []
+
+        best_labels = {"healthy", "safe", "fresh"}  # don't trigger on "all good"
+        direction = interp.get("direction", "higher_is_better")
+        for label, threshold in threshold_pairs:
+            if label in best_labels:
+                continue
+            if direction == "lower_is_better" and value > threshold:
+                action = metrics_config.get(metric_name, {}).get("scale_actions", {}).get(label, "")
+                triggers.append({"metric": metric_name, "status": label, "value": value,
+                                 "threshold": threshold, "action": action})
+            elif direction == "higher_is_better" and value >= threshold:
+                action = metrics_config.get(metric_name, {}).get("scale_actions", {}).get(label, "")
+                triggers.append({"metric": metric_name, "status": label, "value": value,
+                                 "threshold": threshold, "action": action})
+
+    return {"stage": sys_config["stages"][3]["label"], "metrics": metrics, "scale_triggers": triggers}
+
+
+def assess_team_maturity(data: dict, config: dict) -> dict:
+    """Assess team operational maturity.
+
+    Args:
+        data: {active_users_weekly, team_memory_velocity, kb_entry_count, ...}
+        config: Loaded farm_growth.yaml
+    """
+    team_config = config["dimensions"]["team"]
+    metrics_config = team_config["metrics"]
+    metrics = {}
+
+    for metric_name in ["active_users_weekly", "team_memory_velocity", "kb_entry_count"]:
+        value = data.get(metric_name)
+        if value is None:
+            metrics[metric_name] = {"value": None, "status": "unknown"}
+            continue
+
+        interp = metrics_config.get(metric_name, {}).get("interpretation", {})
+        status = classify_by_direction(value, interp)
+        metrics[metric_name] = {"value": value, "status": status}
+
+    return {"stage": team_config["stages"][1]["label"], "metrics": metrics, "scale_triggers": []}

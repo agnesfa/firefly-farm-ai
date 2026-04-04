@@ -216,6 +216,7 @@ class TestPagination:
     @responses.activate
     def test_fetch_plants_contains_url_construction(self, env_vars):
         client = _connect(env_vars)
+        # Page 1: empty
         responses.add(
             responses.GET,
             f"{BASE_URL}/api/asset/plant",
@@ -229,6 +230,163 @@ class TestPagination:
         assert "filter%5Bname%5D%5Boperator%5D=CONTAINS" in request_url
         assert "P2R3.15-21" in request_url
         assert "filter%5Bstatus%5D=active" in request_url
+
+    @responses.activate
+    def test_fetch_plants_contains_uses_offset_pagination(self, env_vars):
+        """fetchPlantsContains must use offset pagination, not links.next.
+
+        Simulates 3 pages of results where links.next disappears after page 1
+        (the exact bug that caused data loss with 250+ items).
+        All 3 pages should still be fetched via offset stepping.
+        """
+        client = _connect(env_vars)
+
+        # Page 1 (offset=0): 2 items, links.next present
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={
+                "data": [
+                    {"id": "uuid-1", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Pigeon Pea - P2R3.15-21"}},
+                    {"id": "uuid-2", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Comfrey - P2R3.15-21"}},
+                ],
+                "links": {"next": {"href": f"{BASE_URL}/api/asset/plant?page[offset]=50"}},
+            },
+        )
+        # Page 2 (offset=50): 1 item, NO links.next (the bug trigger)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={
+                "data": [
+                    {"id": "uuid-3", "type": "asset--plant",
+                     "attributes": {"name": "25 APR 2025 - Sweet Potato - P2R3.15-21"}},
+                ],
+                "links": {},  # links.next GONE — old code would stop here
+            },
+        )
+        # Page 3 (offset=100): empty — signals true end of data
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={"data": [], "links": {}},
+        )
+
+        result = client._fetch_plants_contains("P2R3.15-21")
+
+        assert len(result) == 3
+        ids = {r["id"] for r in result}
+        assert ids == {"uuid-1", "uuid-2", "uuid-3"}
+
+    @responses.activate
+    def test_fetch_plants_contains_stable_sort(self, env_vars):
+        """fetchPlantsContains must include &sort=name for stable ordering."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={"data": [], "links": {}},
+        )
+
+        client._fetch_plants_contains("P2R3")
+
+        request_url = responses.calls[-1].request.url
+        assert "sort=name" in request_url
+
+    @responses.activate
+    def test_fetch_logs_contains_uses_offset_pagination(self, env_vars):
+        """fetchLogsContains must use offset pagination with quantity merging."""
+        client = _connect(env_vars)
+
+        # Page 1 (offset=0): 1 log with quantity
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/log/observation",
+            json={
+                "data": [
+                    {"id": "log-1", "type": "log--observation",
+                     "attributes": {"name": "Obs P2R3 - Pigeon Pea", "timestamp": "2026-03-01"},
+                     "relationships": {"quantity": {"data": [{"id": "qty-1", "type": "quantity--standard"}]}}},
+                ],
+                "included": [
+                    {"id": "qty-1", "type": "quantity--standard",
+                     "attributes": {"value": {"decimal": "5"}, "measure": "count"}},
+                ],
+                "links": {},  # No links.next
+            },
+        )
+        # Page 2 (offset=50): 1 more log
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/log/observation",
+            json={
+                "data": [
+                    {"id": "log-2", "type": "log--observation",
+                     "attributes": {"name": "Obs P2R3 - Comfrey", "timestamp": "2026-03-02"},
+                     "relationships": {"quantity": {"data": [{"id": "qty-2", "type": "quantity--standard"}]}}},
+                ],
+                "included": [
+                    {"id": "qty-2", "type": "quantity--standard",
+                     "attributes": {"value": {"decimal": "3"}, "measure": "count"}},
+                ],
+                "links": {},
+            },
+        )
+        # Page 3: empty
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/log/observation",
+            json={"data": [], "links": {}},
+        )
+
+        result = client._fetch_logs_contains("observation", "P2R3")
+
+        assert len(result) == 2
+        # Verify quantity merging happened
+        assert result[0].get("_quantities") is not None
+        assert result[1].get("_quantities") is not None
+
+    @responses.activate
+    def test_fetch_logs_contains_stable_sort(self, env_vars):
+        """fetchLogsContains must include &sort=-timestamp,name for stable ordering."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/log/observation",
+            json={"data": [], "links": {}},
+        )
+
+        client._fetch_logs_contains("observation", "P2R3")
+
+        request_url = responses.calls[-1].request.url
+        assert "sort=-timestamp%2Cname" in request_url or "sort=-timestamp,name" in request_url
+
+    @responses.activate
+    def test_fetch_contains_maxpages_safety(self, env_vars):
+        """Offset pagination must stop at max_pages to prevent infinite loops."""
+        client = _connect(env_vars)
+
+        # Return 1 item on every page (simulating an infinite result set)
+        for i in range(25):
+            responses.add(
+                responses.GET,
+                f"{BASE_URL}/api/asset/plant",
+                json={
+                    "data": [{"id": f"uuid-{i}", "type": "asset--plant",
+                              "attributes": {"name": f"Plant {i}"}}],
+                    "links": {},
+                },
+            )
+
+        result = client._fetch_plants_contains("P2R3", max_pages=5)
+
+        # Should stop after 5 pages despite more data being available
+        assert len(result) <= 5 * 50  # max_pages * page_limit
+        # Should have made exactly 5 GET calls (+ 1 token call)
+        get_calls = [c for c in responses.calls if "asset/plant" in c.request.url]
+        assert len(get_calls) == 5
 
     @responses.activate
     def test_exact_species_match_avoids_partial_strawberry_bug(self, env_vars):

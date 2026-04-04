@@ -442,60 +442,41 @@ class FarmOSClient:
 
     # ── Query helpers for tools ─────────────────────────────────
 
-    def _fetch_plants_contains(self, name_contains: str, status: str = "active") -> list:
+    def _fetch_plants_contains(self, name_contains: str, status: str = "active",
+                               max_pages: int = 20) -> list:
         """Fetch plant assets using farmOS CONTAINS filter on name.
 
-        Like _fetch_logs_contains, this pushes filtering to the server side,
-        avoiding the need to fetch all 400+ plants and filter in Python.
+        Uses offset-based pagination (not links.next) to avoid the farmOS
+        JSON:API bug where links.next disappears after ~250 results.
         """
         if not self._connected:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
 
         encoded = urllib.parse.quote(name_contains)
-        path = (f"/api/asset/plant"
-                f"?filter[name][operator]=CONTAINS"
-                f"&filter[name][value]={encoded}"
-                f"&filter[status]={status}"
-                f"&page[limit]=50")
+        base_path = (f"/api/asset/plant"
+                     f"?filter[name][operator]=CONTAINS"
+                     f"&filter[name][value]={encoded}"
+                     f"&filter[status]={status}"
+                     f"&sort=name"
+                     f"&page[limit]=50")
 
         seen = {}  # UUID → item dict, deduplicates across pages
-        url = f"{self.hostname}{path}"
+        offset = 0
 
-        while url:
-            resp = self.session.get(url, timeout=30)
-            if resp.status_code in (401, 403):
-                # Token expired — refresh and retry once
-                try:
-                    self._connected = False
-                    self.connect()
-                except Exception as e:
-                    raise ConnectionError(
-                        f"farmOS authentication expired (HTTP {resp.status_code}) "
-                        f"and reconnect failed: {e}"
-                    )
-                resp = self.session.get(url, timeout=30)
-                if resp.status_code in (401, 403):
-                    self._connected = False
-                    raise ConnectionError(
-                        f"farmOS authentication failed after token refresh "
-                        f"(HTTP {resp.status_code})."
-                    )
+        for _ in range(max_pages):
+            url = f"{self.hostname}{base_path}&page[offset]={offset}"
+            resp = self._retry_on_auth_error("GET", url, timeout=30)
             if resp.status_code != 200:
                 raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
             data = resp.json()
-            for item in data.get("data", []):
+            items = data.get("data", [])
+            if not items:
+                break
+            for item in items:
                 item_id = item.get("id", "")
                 if item_id:
                     seen[item_id] = item
-            next_link = data.get("links", {}).get("next", {})
-            if isinstance(next_link, dict):
-                url = next_link.get("href", "")
-            elif isinstance(next_link, str):
-                url = next_link
-            else:
-                url = ""
-            if not url:
-                break
+            offset += 50
 
         return list(seen.values())
 
@@ -647,52 +628,39 @@ class FarmOSClient:
         return items
 
     def _fetch_logs_contains(self, log_type: str, name_contains: str,
-                              include_quantity: bool = True) -> list:
+                              include_quantity: bool = True,
+                              max_pages: int = 20) -> list:
         """Fetch logs using farmOS CONTAINS filter on name.
 
-        This is far more reliable than fetch_all_paginated + Python filter,
-        because farmOS pagination caps at ~250 entries (5 pages of 50).
-        The CONTAINS filter pushes the search to the server side.
+        Uses offset-based pagination (not links.next) to avoid the farmOS
+        JSON:API bug where links.next disappears after ~250 results.
         """
         if not self._connected:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
 
         encoded = urllib.parse.quote(name_contains)
-        path = (f"/api/log/{log_type}"
-                f"?filter[name][operator]=CONTAINS"
-                f"&filter[name][value]={encoded}"
-                f"&page[limit]=50"
-                f"&sort=-timestamp")
+        base_path = (f"/api/log/{log_type}"
+                     f"?filter[name][operator]=CONTAINS"
+                     f"&filter[name][value]={encoded}"
+                     f"&page[limit]=50"
+                     f"&sort=-timestamp,name")
         if include_quantity:
-            path += "&include=quantity"
+            base_path += "&include=quantity"
 
         seen = {}  # UUID → item dict, deduplicates across pages
-        url = f"{self.hostname}{path}"
+        offset = 0
 
-        while url:
-            resp = self.session.get(url, timeout=30)
-            if resp.status_code in (401, 403):
-                # Token expired — refresh and retry once
-                try:
-                    self._connected = False
-                    self.connect()
-                except Exception as e:
-                    raise ConnectionError(
-                        f"farmOS authentication expired (HTTP {resp.status_code}) "
-                        f"and reconnect failed: {e}"
-                    )
-                resp = self.session.get(url, timeout=30)
-                if resp.status_code in (401, 403):
-                    self._connected = False
-                    raise ConnectionError(
-                        f"farmOS authentication failed after token refresh "
-                        f"(HTTP {resp.status_code})."
-                    )
+        for _ in range(max_pages):
+            url = f"{self.hostname}{base_path}&page[offset]={offset}"
+            resp = self._retry_on_auth_error("GET", url, timeout=30)
             if resp.status_code != 200:
                 raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
 
             data = resp.json()
             page_items = data.get("data", [])
+
+            if not page_items:
+                break
 
             # Merge included quantity data into log objects
             if include_quantity:
@@ -703,16 +671,7 @@ class FarmOSClient:
                 if item_id:
                     seen[item_id] = item
 
-            next_link = data.get("links", {}).get("next", {})
-            if isinstance(next_link, dict):
-                url = next_link.get("href", "")
-            elif isinstance(next_link, str):
-                url = next_link
-            else:
-                url = ""
-
-            if not url:
-                break
+            offset += 50
 
         return list(seen.values())
 

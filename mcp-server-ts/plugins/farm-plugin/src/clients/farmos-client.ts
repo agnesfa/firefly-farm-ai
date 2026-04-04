@@ -396,15 +396,16 @@ export class FarmOSClient {
 
   // ── Query helpers for tools ─────────────────────────────────
 
-  private async fetchPlantsContains(nameContains: string, status = 'active'): Promise<any[]> {
+  private async fetchPlantsContains(nameContains: string, status = 'active', maxPages = 20): Promise<any[]> {
     await this.ensureConnected();
     const encoded = encodeURIComponent(nameContains);
-    const basePath = `/api/asset/plant?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&page[limit]=50`;
+    const basePath = `/api/asset/plant?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&sort=name&page[limit]=50`;
 
     const seen = new Map<string, any>();
-    let url: string | null = `${this.baseUrl}${basePath}`;
+    let offset = 0;
 
-    while (url) {
+    for (let page = 0; page < maxPages; page++) {
+      const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
       const resp = await fetch(url, { headers: this.headers });
       if (resp.status === 401 || resp.status === 403) {
         this.connected = false;
@@ -413,11 +414,13 @@ export class FarmOSClient {
       if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
 
       const data: any = await resp.json();
-      for (const item of (data.data ?? [])) {
+      const items = data.data ?? [];
+      if (items.length === 0) break;
+
+      for (const item of items) {
         if (item.id) seen.set(item.id, item);
       }
-
-      url = this.getNextLink(data);
+      offset += 50;
     }
 
     return Array.from(seen.values());
@@ -514,16 +517,18 @@ export class FarmOSClient {
     logType: string,
     nameContains: string,
     includeQuantity = true,
+    maxPages = 20,
   ): Promise<any[]> {
     await this.ensureConnected();
     const encoded = encodeURIComponent(nameContains);
-    let basePath = `/api/log/${logType}?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&page[limit]=50&sort=-timestamp`;
+    let basePath = `/api/log/${logType}?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&page[limit]=50&sort=-timestamp,name`;
     if (includeQuantity) basePath += '&include=quantity';
 
     const seen = new Map<string, any>();
-    let url: string | null = `${this.baseUrl}${basePath}`;
+    let offset = 0;
 
-    while (url) {
+    for (let page = 0; page < maxPages; page++) {
+      const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
       const resp = await fetch(url, { headers: this.headers });
       if (resp.status === 401 || resp.status === 403) {
         this.connected = false;
@@ -533,6 +538,7 @@ export class FarmOSClient {
 
       const data: any = await resp.json();
       const pageItems = data.data ?? [];
+      if (pageItems.length === 0) break;
 
       if (includeQuantity) {
         FarmOSClient.mergeIncludedQuantities(data, pageItems);
@@ -541,8 +547,7 @@ export class FarmOSClient {
       for (const item of pageItems) {
         if (item.id) seen.set(item.id, item);
       }
-
-      url = this.getNextLink(data);
+      offset += 50;
     }
 
     return Array.from(seen.values());

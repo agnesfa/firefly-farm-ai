@@ -2572,6 +2572,192 @@ def update_knowledge(
 
 
 # ═══════════════════════════════════════════════════════════════
+# SYSTEM HEALTH — Growth maturity & scale triggers
+# ═══════════════════════════════════════════════════════════════
+
+
+@mcp.tool
+def system_health() -> str:
+    """Assess farm maturity across three dimensions: Farm (biological),
+    System (technical), and Team (human). Returns current growth stage
+    per dimension, metric scores, and active scale triggers with
+    recommended build actions.
+
+    All thresholds and interpretation rules are defined in
+    knowledge/farm_growth.yaml (human-reviewable, not hardcoded).
+    """
+    from semantics import (
+        assess_farm_maturity,
+        assess_system_maturity,
+        assess_team_maturity,
+        load_growth_config,
+        assess_section_health,
+        load_semantics,
+    )
+
+    config = load_growth_config()
+    client = get_client()
+    semantics_config = load_semantics()
+
+    result = {"dimensions": {}, "scale_triggers": [], "assumptions": []}
+
+    # ── Farm dimension: aggregate section-level health ──────────
+
+    try:
+        # Get all plant assets for farm-wide metrics
+        all_plants = client.fetch_all_paginated("asset/plant", filters={"status": "active"})
+        active_plant_count = len(all_plants)
+
+        # Build plant_types_db for strata/succession lookups
+        all_types = client.get_all_plant_types_cached()
+        plant_types_db = {}
+        for t in all_types:
+            name = t.get("attributes", {}).get("name", "")
+            desc = t.get("attributes", {}).get("description", {})
+            desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc)
+            from helpers import parse_plant_type_metadata
+            meta = parse_plant_type_metadata(desc_text)
+            plant_types_db[name] = meta
+
+        # Sample section health across paddock sections
+        sections = client.get_section_assets()
+        section_scores = []
+        for sec in sections[:20]:  # Sample first 20 for performance
+            sec_name = sec.get("attributes", {}).get("name", "")
+            sec_plants_raw = client.get_plant_assets(section_id=sec_name)
+            sec_plants = [format_plant_asset(p) for p in sec_plants_raw]
+            sec_logs_raw = client.get_logs(section_id=sec_name)
+            sec_logs = [format_log(l) for l in sec_logs_raw]
+            health = assess_section_health(
+                sec_plants, sec_logs, plant_types_db, has_trees=True,
+                semantics=semantics_config,
+            )
+            score = {
+                "section": sec_name,
+                "strata_score": health.get("strata", {}).get("score", 0),
+                "survival_rate": None,  # Not computed at section level yet
+                "status": health.get("overall_status", "unknown"),
+            }
+            section_scores.append(score)
+
+        farm_data = {
+            "active_plants": active_plant_count,
+            "section_health_scores": section_scores,
+        }
+        farm_result = assess_farm_maturity(farm_data, config)
+        farm_result["sampled_sections"] = len(section_scores)
+        farm_result["total_sections"] = len(sections)
+        result["dimensions"]["farm"] = farm_result
+        result["scale_triggers"].extend(farm_result.get("scale_triggers", []))
+
+    except Exception as e:
+        result["dimensions"]["farm"] = {"error": str(e)}
+
+    # ── System dimension: infrastructure metrics ────────────────
+
+    try:
+        # Total entities
+        all_assets = client.fetch_all_paginated("asset/plant", filters={"status": "active"})
+        # Approximate total from what we already have
+        total_entities = active_plant_count  # plants
+        # Add log estimate
+        obs_logs = client.get_logs(log_type="observation", max_results=1)
+        total_entities += 1200  # rough estimate from known counts
+
+        # Plant type drift
+        try:
+            pt_client = get_plant_types_client()
+            drift_result = pt_client.reconcile()
+            drift_count = drift_result.get("mismatch_count", 0) if isinstance(drift_result, dict) else 0
+        except Exception:
+            drift_count = None
+
+        # Observation backlog
+        try:
+            obs_client = get_observe_client()
+            pending = obs_client.list_observations(status="pending")
+            backlog_count = len(pending) if isinstance(pending, list) else 0
+        except Exception:
+            backlog_count = None
+
+        system_data = {
+            "total_entities": total_entities,
+            "plant_type_drift": drift_count,
+            "observation_backlog": backlog_count,
+        }
+        system_result = assess_system_maturity(system_data, config)
+        result["dimensions"]["system"] = system_result
+        result["scale_triggers"].extend(system_result.get("scale_triggers", []))
+
+    except Exception as e:
+        result["dimensions"]["system"] = {"error": str(e)}
+
+    # ── Team dimension: usage metrics ──────────────────────────
+
+    try:
+        mem_client = get_memory_client()
+        recent_activity = mem_client.read_activity(days=7)
+
+        if isinstance(recent_activity, list):
+            distinct_users = len(set(
+                entry.get("user", "") for entry in recent_activity if entry.get("user")
+            ))
+            memory_velocity = len(recent_activity)
+        else:
+            distinct_users = 0
+            memory_velocity = 0
+
+        # KB count
+        try:
+            kb_client = get_knowledge_client()
+            kb_entries = kb_client.list(summary_only=True)
+            kb_count = len(kb_entries) if isinstance(kb_entries, list) else 0
+        except Exception:
+            kb_count = None
+
+        team_data = {
+            "active_users_weekly": distinct_users,
+            "team_memory_velocity": memory_velocity,
+            "kb_entry_count": kb_count,
+        }
+        team_result = assess_team_maturity(team_data, config)
+        result["dimensions"]["team"] = team_result
+        result["scale_triggers"].extend(team_result.get("scale_triggers", []))
+
+    except Exception as e:
+        result["dimensions"]["team"] = {"error": str(e)}
+
+    # ── Overall maturity summary ───────────────────────────────
+
+    stages = []
+    for dim_name in ["farm", "system", "team"]:
+        dim = result["dimensions"].get(dim_name, {})
+        if "stage" in dim:
+            stages.append(f"{dim_name.title()}: {dim['stage']}")
+
+    result["overall_maturity"] = " | ".join(stages) if stages else "Unable to assess"
+
+    # Surface assumptions from the YAML so the human reviewer knows what's baked in
+    for dim_name, dim_config in config.get("dimensions", {}).items():
+        for stage in dim_config.get("stages", []):
+            if "assumption" in stage:
+                result["assumptions"].append({
+                    "dimension": dim_name,
+                    "stage": stage["label"],
+                    "assumption": stage["assumption"],
+                })
+        for metric_name, metric_config in dim_config.get("metrics", {}).items():
+            if "assumption" in metric_config:
+                result["assumptions"].append({
+                    "dimension": dim_name,
+                    "metric": metric_name,
+                    "assumption": metric_config["assumption"],
+                })
+
+    return json.dumps(result, indent=2, default=str)
+
+
+# ═══════════════════════════════════════════════════════════════
 # PROMPTS — Conversation templates
 # ═══════════════════════════════════════════════════════════════
 

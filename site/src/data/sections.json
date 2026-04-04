@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-03-20T19:53:42.678704+10:00",
+  "generated_at": "2026-03-30T10:24:51.420050+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -3939,7 +3939,7 @@
       "length": "10m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-18",
+      "inventory_date": "2026-03-23",
       "plants": [
         {
           "species": "Forest Red Gum",
@@ -4086,7 +4086,7 @@
         {
           "species": "Tagasaste - Tree Lucerne",
           "strata": "emergent",
-          "count": 6,
+          "count": 5,
           "notes": "3 planted Nov 2025",
           "first_planted": "2025-11-17",
           "asset_name": "25 APR 2025 - Tagasaste - Tree Lucerne - P2R3.40-50",
@@ -4108,6 +4108,12 @@
               "date": "2026-03-18",
               "name": "Observation P2R3.40-50 — Tagasaste - Tree Lucerne — 2026-03-19",
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 5 added today on that section\nCount: 1 → 6"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-23",
+              "name": "Observation P2R3.40-50 — Tagasaste - Tree Lucerne — 2026-03-24",
+              "notes": "Inventory update: Corrected to 5 — James confirmed count on 24 Mar. Previous conflicting QR submissions (showing 5 and 7) both rejected as errors."
             }
           ]
         },
@@ -4128,13 +4134,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Pigeon Pea",
+              "name": "Inventory P2R3.40-50 — Pigeon Pea",
               "notes": ""
             },
             {
@@ -4252,13 +4258,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Tea Tree Oil (Melaleuca) (Alternifolia)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "name": "Inventory P2R3.40-50 — Tea Tree Oil (Melaleuca) (Alternifolia)",
               "notes": ""
             },
             {
@@ -4410,13 +4416,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Lemon",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Lemon",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Lemon",
+              "name": "Inventory P2R3.40-50 — Lemon",
               "notes": ""
             },
             {
@@ -4444,13 +4450,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Acerola",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Acerola",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Acerola",
+              "name": "Inventory P2R3.40-50 — Acerola",
               "notes": ""
             },
             {
@@ -4648,13 +4654,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Comfrey",
+              "name": "Inventory P2R3.40-50 — Comfrey",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Comfrey",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Comfrey",
               "notes": ""
             },
             {
@@ -4688,13 +4694,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Turmeric",
+              "name": "Inventory P2R3.40-50 — Turmeric",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Turmeric",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Turmeric",
               "notes": ""
             },
             {
@@ -4768,13 +4774,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.40-50 — Garlic",
+              "name": "Inventory P2R3.40-50 — Garlic",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.40-50 — Garlic",
+              "name": "Inventory Oct 2025 P2R3.40-50 — Garlic",
               "notes": ""
             }
           ]
@@ -4853,7 +4859,7 @@
       "length": "12m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-18",
+      "inventory_date": "2026-03-21",
       "plants": [
         {
           "species": "Forest Red Gum",
@@ -4908,6 +4914,12 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.50-62 — Ice Cream Bean",
               "notes": "All dead"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Inventory P2R3.50-62 — Ice Cream Bean",
+              "notes": ""
             }
           ]
         },
@@ -4928,13 +4940,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Malabar Chestnut",
+              "name": "Inventory P2R3.50-62 — Malabar Chestnut",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Malabar Chestnut",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Malabar Chestnut",
               "notes": ""
             },
             {
@@ -4968,13 +4980,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Macadamia",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Macadamia",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Macadamia",
+              "name": "Inventory P2R3.50-62 — Macadamia",
               "notes": ""
             },
             {
@@ -5036,13 +5048,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Pigeon Pea",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Pigeon Pea",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Pigeon Pea",
+              "name": "Inventory P2R3.50-62 — Pigeon Pea",
               "notes": ""
             },
             {
@@ -5160,13 +5172,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "name": "Inventory P2R3.50-62 — Tea Tree Oil (Melaleuca) (Alternifolia)",
               "notes": ""
             },
             {
@@ -5222,13 +5234,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Zucchini (Blackjack)",
+              "name": "Inventory P2R3.50-62 — Zucchini (Blackjack)",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Zucchini (Blackjack)",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Zucchini (Blackjack)",
               "notes": ""
             },
             {
@@ -5256,13 +5268,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Peach",
+              "name": "Inventory P2R3.50-62 — Peach",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Peach",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Peach",
               "notes": ""
             },
             {
@@ -5290,13 +5302,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Apricot",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Apricot",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Apricot",
+              "name": "Inventory P2R3.50-62 — Apricot",
               "notes": ""
             },
             {
@@ -5420,13 +5432,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Curry Leaf",
+              "name": "Inventory P2R3.50-62 — Curry Leaf",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Curry Leaf",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Curry Leaf",
               "notes": ""
             },
             {
@@ -5488,13 +5500,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Galangal",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Galangal",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Galangal",
+              "name": "Inventory P2R3.50-62 — Galangal",
               "notes": ""
             },
             {
@@ -5604,6 +5616,18 @@
               "date": "2026-03-09",
               "name": "Observation P2R3.50-62 — Turmeric",
               "notes": "Dead"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Observation P2R3.50-62 — Turmeric — 2026-03-22",
+              "notes": "Inventory update: Corrected from 3 to 1 — submission error, James confirmed 1x Turmeric transplanted into P2R3.50-62 on 21 Mar."
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Inventory P2R3.50-62 — Turmeric",
+              "notes": ""
             }
           ]
         },
@@ -5624,13 +5648,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Tansy",
+              "name": "Inventory P2R3.50-62 — Tansy",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Tansy",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Tansy",
               "notes": ""
             },
             {
@@ -5670,13 +5694,13 @@
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory Oct 2025 P2R3.50-62 — Garlic",
+              "name": "Inventory P2R3.50-62 — Garlic",
               "notes": ""
             },
             {
               "type": "observation",
               "date": "2025-11-16",
-              "name": "Inventory P2R3.50-62 — Garlic",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Garlic",
               "notes": ""
             }
           ]
@@ -5706,6 +5730,108 @@
               "date": "2026-03-18",
               "name": "Inventory P2R3.50-62 — Tagasaste - Tree Lucerne",
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: new_plant\nPlant notes: added today from FFC nursery\nCount: 0 → 1\nNew plant added via field observation"
+            }
+          ]
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 0,
+          "notes": "Reporter: James\nSubmitted: 2026-03-22T07:33:00\nMode: new_plant\nPlant notes: Transplanted into the dry exposed sections\nCount: 0 → 4\nNew plant added via field observation",
+          "first_planted": "2026-03-22",
+          "asset_name": "22 MAR 2026 - Lavender - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Inventory P2R3.50-62 — Lavender",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Ice Cream Bean",
+          "strata": "high",
+          "count": 0,
+          "notes": "Reporter: James\nSubmitted: 2026-03-22T07:33:00\nMode: new_plant\nPlant notes: Planted between pigeon peas\nCount: 0 → 2\nNew plant added via field observation",
+          "first_planted": "2025-11-17",
+          "asset_name": "22 MAR 2026 - Ice Cream Bean - P2R3.50-62",
+          "logs": [
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Ice Cream Bean",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Ice Cream Bean",
+              "notes": ""
+            },
+            {
+              "type": "transplanting",
+              "date": "2025-11-17",
+              "name": "Renovation P2R3.50-62 — Ice Cream Bean",
+              "notes": "ADD MORE"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Ice Cream Bean",
+              "notes": "All dead"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Inventory P2R3.50-62 — Ice Cream Bean",
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "species": "Turmeric",
+          "strata": "low",
+          "count": 1,
+          "notes": "Reporter: James\nSubmitted: 2026-03-22T07:33:00\nMode: new_plant\nPlant notes: Planted next to the tea trees\nCount: 0 → 3\nNew plant added via field observation",
+          "first_planted": "2025-04-24",
+          "asset_name": "22 MAR 2026 - Turmeric - P2R3.50-62",
+          "logs": [
+            {
+              "type": "transplanting",
+              "date": "2025-04-24",
+              "name": "Planted P2R3.50-62 — Turmeric",
+              "notes": "?"
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory Oct 2025 P2R3.50-62 — Turmeric",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2025-11-16",
+              "name": "Inventory P2R3.50-62 — Turmeric",
+              "notes": ""
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-09",
+              "name": "Observation P2R3.50-62 — Turmeric",
+              "notes": "Dead"
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Observation P2R3.50-62 — Turmeric — 2026-03-22",
+              "notes": "Inventory update: Corrected from 3 to 1 — submission error, James confirmed 1x Turmeric transplanted into P2R3.50-62 on 21 Mar."
+            },
+            {
+              "type": "observation",
+              "date": "2026-03-21",
+              "name": "Inventory P2R3.50-62 — Turmeric",
+              "notes": ""
             }
           ]
         }

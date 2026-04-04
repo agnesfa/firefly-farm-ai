@@ -167,18 +167,79 @@ describe('FarmOSClient', () => {
       const client = FarmOSClient.getInstance(config);
       await client.connect();
 
-      // Server CONTAINS filter returns both Strawberry and Guava (Strawberry) for section
+      // Page 1: Server CONTAINS returns both Strawberry and Guava (Strawberry)
       fetchSpy.mockResolvedValueOnce(mockResponse({
         data: [
           { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Strawberry - P2R3.15-21', status: 'active' } },
           { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Guava (Strawberry) - P2R3.15-21', status: 'active' } },
         ],
       }));
+      // Page 2: empty (offset pagination terminator)
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.getPlantAssets('P2R3.15-21', 'Strawberry');
       expect(result).toHaveLength(1);
       expect(result[0].attributes.name).toContain('- Strawberry -');
       expect(result[0].attributes.name).not.toContain('Guava');
+    });
+
+    it('fetchPlantsContains uses offset pagination, not links.next', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      // Page 1 (offset=0): 2 items, links.next present
+      fetchSpy.mockResolvedValueOnce(mockResponse({
+        data: [
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant A' } },
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant B' } },
+        ],
+        links: { next: { href: 'https://test.farmos.net/api/asset/plant?page[offset]=50' } },
+      }));
+      // Page 2 (offset=50): 1 item, NO links.next (the bug trigger)
+      fetchSpy.mockResolvedValueOnce(mockResponse({
+        data: [
+          { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant C' } },
+        ],
+        links: {},
+      }));
+      // Page 3 (offset=100): empty — true end
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+
+      const result = await client.getPlantAssets('P2R3');
+      expect(result).toHaveLength(3);
+    });
+
+    it('fetchPlantsContains includes stable sort=name', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      await client.getPlantAssets('P2R3');
+
+      const callUrl = fetchSpy.mock.calls[1][0] as string;
+      expect(callUrl).toContain('sort=name');
+    });
+
+    it('fetchPlantsContains respects maxPages safety cap', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      // Return 1 item per page indefinitely
+      for (let i = 0; i < 25; i++) {
+        fetchSpy.mockResolvedValueOnce(mockResponse({
+          data: [{ id: makeUuid(), type: 'asset--plant', attributes: { name: `Plant ${i}` } }],
+        }));
+      }
+
+      // Access the private method with a max_pages limit
+      const result = await (client as any).fetchPlantsContains('P2R3', 'active', 5);
+      // Should stop at 5 pages
+      const plantCalls = fetchSpy.mock.calls.filter((c: any[]) =>
+        (c[0] as string).includes('asset/plant'));
+      expect(plantCalls.length).toBe(5);
     });
 
     it('exact match handles species with dashes (Basil - Sweet)', async () => {
@@ -192,6 +253,8 @@ describe('FarmOSClient', () => {
           { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21', status: 'active' } },
         ],
       }));
+      // Page 2: empty (offset pagination terminator)
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.getPlantAssets('P2R3.15-21', 'Basil - Sweet');
       expect(result).toHaveLength(1);

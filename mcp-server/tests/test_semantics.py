@@ -23,6 +23,11 @@ from semantics import (
     detect_knowledge_gaps,
     detect_decision_gaps,
     detect_logging_gaps,
+    assess_farm_maturity,
+    assess_system_maturity,
+    assess_team_maturity,
+    classify_by_direction,
+    load_growth_config,
     clear_caches,
     load_semantics,
     _classify,
@@ -506,6 +511,311 @@ class TestLoggingGaps:
 
         gaps = detect_logging_gaps(sessions, logs)
         assert len(gaps) == 2
+
+
+# ── Growth Model — Farm Maturity ──────────────────────────────────
+
+
+# Test config mirrors farm_growth.yaml structure with explicit interpretation rules.
+# The code reads direction from here — no hardcoded assumptions.
+GROWTH_CONFIG = {
+    "dimensions": {
+        "farm": {
+            "stages": [
+                {"name": "planted", "label": "F1: Planted"},
+                {"name": "surviving", "label": "F2: Surviving"},
+                {"name": "succeeding", "label": "F3: Succeeding"},
+            ],
+            "metrics": {
+                "active_plants": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "f3", "value": 2000},
+                            {"label": "f2", "value": 1000},
+                            {"label": "f1", "value": 500},
+                            {"label": "starting", "value": 0},
+                        ],
+                    },
+                    "scale_actions": {"f2": "Optimize query_sections"},
+                },
+                "survival_rate": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "healthy", "value": 0.70},
+                            {"label": "concerning", "value": 0.50},
+                            {"label": "at_risk", "value": 0.30},
+                        ],
+                        "pioneer_exception": True,
+                    },
+                },
+                "strata_coverage": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "good", "value": 0.75},
+                            {"label": "fair", "value": 0.50},
+                            {"label": "poor", "value": 0.25},
+                        ],
+                    },
+                },
+            },
+        },
+        "system": {
+            "stages": [
+                {"name": "instrumented", "label": "S1: Instrumented"},
+                {"name": "observable", "label": "S2: Observable"},
+                {"name": "intelligent", "label": "S3: Intelligent"},
+                {"name": "reliable", "label": "S4: Reliable"},
+            ],
+            "metrics": {
+                "total_entities": {
+                    "interpretation": {
+                        "direction": "lower_is_better",
+                        "thresholds": [
+                            {"label": "safe", "value": 1500},
+                            {"label": "warning", "value": 3000},
+                            {"label": "critical", "value": 5000},
+                        ],
+                    },
+                    "scale_actions": {"warning": "Add farmOS Views"},
+                },
+                "plant_type_drift": {
+                    "interpretation": {
+                        "direction": "lower_is_better",
+                        "thresholds": [
+                            {"label": "healthy", "value": 0},
+                            {"label": "drifting", "value": 5},
+                            {"label": "broken", "value": 20},
+                        ],
+                    },
+                    "scale_actions": {"drifting": "Sync corrections"},
+                },
+                "observation_backlog": {
+                    "interpretation": {
+                        "direction": "lower_is_better",
+                        "thresholds": [
+                            {"label": "healthy", "value": 5},
+                            {"label": "backlog", "value": 15},
+                            {"label": "blocked", "value": 50},
+                        ],
+                    },
+                },
+            },
+        },
+        "team": {
+            "stages": [
+                {"name": "equipped", "label": "T1: Equipped"},
+                {"name": "using", "label": "T2: Using"},
+                {"name": "knowledge_capturing", "label": "T4: Knowledge-capturing"},
+            ],
+            "metrics": {
+                "active_users_weekly": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "healthy", "value": 3},
+                            {"label": "low", "value": 1},
+                            {"label": "dormant", "value": 0},
+                        ],
+                    },
+                },
+                "team_memory_velocity": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "active", "value": 5},
+                            {"label": "slow", "value": 2},
+                            {"label": "dormant", "value": 0},
+                        ],
+                    },
+                },
+                "kb_entry_count": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "t4", "value": 20},
+                            {"label": "growing", "value": 10},
+                            {"label": "minimal", "value": 3},
+                        ],
+                    },
+                },
+            },
+        },
+    },
+}
+
+
+class TestClassifyByDirection:
+    """Tests that classify_by_direction reads direction from YAML, not hardcoded."""
+
+    def test_higher_is_better(self):
+        interp = {
+            "direction": "higher_is_better",
+            "thresholds": [
+                {"label": "good", "value": 0.75},
+                {"label": "fair", "value": 0.50},
+                {"label": "poor", "value": 0.25},
+            ],
+        }
+        assert classify_by_direction(0.80, interp) == "good"
+        assert classify_by_direction(0.60, interp) == "fair"
+        assert classify_by_direction(0.10, interp) == "poor"
+
+    def test_lower_is_better(self):
+        interp = {
+            "direction": "lower_is_better",
+            "thresholds": [
+                {"label": "healthy", "value": 5},
+                {"label": "backlog", "value": 15},
+                {"label": "blocked", "value": 50},
+            ],
+        }
+        assert classify_by_direction(2, interp) == "healthy"
+        assert classify_by_direction(10, interp) == "backlog"
+        assert classify_by_direction(60, interp) == "blocked"
+
+    def test_none_returns_unknown(self):
+        interp = {"direction": "higher_is_better", "thresholds": [{"label": "good", "value": 0.5}]}
+        assert classify_by_direction(None, interp) == "unknown"
+
+    def test_flat_dict_backward_compat(self):
+        """Supports flat dict thresholds for backward compatibility."""
+        interp = {
+            "direction": "higher_is_better",
+            "thresholds": {"good": 0.75, "fair": 0.50, "poor": 0.25},
+        }
+        assert classify_by_direction(0.80, interp) == "good"
+        assert classify_by_direction(0.60, interp) == "fair"
+
+
+class TestFarmMaturity:
+
+    def test_above_f1_threshold(self):
+        """644 active plants > 500 → F1 passed, metric healthy."""
+        data = {
+            "active_plants": 644,
+            "section_health_scores": [
+                {"strata_score": 0.75, "survival_rate": 0.65},
+                {"strata_score": 0.50, "survival_rate": 0.70},
+                {"strata_score": 1.0, "survival_rate": 0.80},
+            ],
+        }
+        result = assess_farm_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "F2: Surviving"  # past F1, working on F2
+        assert result["metrics"]["active_plants"]["value"] == 644
+        assert result["metrics"]["active_plants"]["status"] == "passed_f1"
+
+    def test_low_survival_triggers_concern(self):
+        """Farm-wide survival avg 0.55 (0.50 + 0.60 / 2) → concerning (>= 0.50)."""
+        data = {
+            "active_plants": 644,
+            "section_health_scores": [
+                {"strata_score": 0.75, "survival_rate": 0.50},
+                {"strata_score": 0.50, "survival_rate": 0.60},
+            ],
+        }
+        result = assess_farm_maturity(data, GROWTH_CONFIG)
+        assert result["metrics"]["survival_rate"]["status"] == "concerning"
+
+    def test_good_strata_coverage(self):
+        """All sections >0.75 strata → good."""
+        data = {
+            "active_plants": 644,
+            "section_health_scores": [
+                {"strata_score": 0.80, "survival_rate": 0.75},
+                {"strata_score": 1.0, "survival_rate": 0.70},
+            ],
+        }
+        result = assess_farm_maturity(data, GROWTH_CONFIG)
+        assert result["metrics"]["strata_coverage"]["status"] == "good"
+
+    def test_empty_sections_still_works(self):
+        """No section data → F1 check only, no crash."""
+        data = {"active_plants": 100, "section_health_scores": []}
+        result = assess_farm_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "F1: Planted"  # not yet past F1
+        assert result["metrics"]["survival_rate"]["value"] is None
+
+
+class TestSystemMaturity:
+
+    def test_healthy_system(self):
+        """Low entity count + no drift + low backlog → safe/healthy."""
+        data = {
+            "total_entities": 1200,  # below safe threshold (1500)
+            "plant_type_drift": 0,
+            "observation_backlog": 2,
+        }
+        result = assess_system_maturity(data, GROWTH_CONFIG)
+        assert result["metrics"]["total_entities"]["status"] == "safe"
+        assert result["metrics"]["plant_type_drift"]["status"] == "healthy"
+        assert result["metrics"]["observation_backlog"]["status"] == "healthy"
+
+    def test_drift_warning(self):
+        """53 plant type mismatches → broken."""
+        data = {
+            "total_entities": 1800,
+            "plant_type_drift": 53,
+            "observation_backlog": 0,
+        }
+        result = assess_system_maturity(data, GROWTH_CONFIG)
+        assert result["metrics"]["plant_type_drift"]["status"] == "broken"
+
+    def test_scale_triggers_populated(self):
+        """Metrics above warning thresholds generate scale_triggers."""
+        data = {
+            "total_entities": 3500,  # above warning (3000)
+            "plant_type_drift": 10,  # above drifting (5)
+            "observation_backlog": 0,
+        }
+        result = assess_system_maturity(data, GROWTH_CONFIG)
+        triggers = result.get("scale_triggers", [])
+        assert len(triggers) >= 2
+        trigger_metrics = [t["metric"] for t in triggers]
+        assert "total_entities" in trigger_metrics
+        assert "plant_type_drift" in trigger_metrics
+
+
+class TestTeamMaturity:
+
+    def test_active_team(self):
+        """3 users, 6 memory entries, 15 KB entries → T2: Using."""
+        data = {
+            "active_users_weekly": 3,
+            "team_memory_velocity": 6,
+            "kb_entry_count": 15,
+        }
+        result = assess_team_maturity(data, GROWTH_CONFIG)
+        assert result["metrics"]["active_users_weekly"]["status"] == "healthy"
+        assert result["metrics"]["team_memory_velocity"]["status"] == "active"
+        assert result["metrics"]["kb_entry_count"]["status"] == "growing"
+
+    def test_dormant_team(self):
+        """0 users, 0 memory → dormant."""
+        data = {
+            "active_users_weekly": 0,
+            "team_memory_velocity": 0,
+            "kb_entry_count": 2,
+        }
+        result = assess_team_maturity(data, GROWTH_CONFIG)
+        assert result["metrics"]["active_users_weekly"]["status"] == "dormant"
+        assert result["metrics"]["team_memory_velocity"]["status"] == "dormant"
+        assert result["metrics"]["kb_entry_count"]["status"] == "minimal"
+
+
+class TestLoadGrowthConfig:
+
+    def test_loads_yaml(self):
+        """farm_growth.yaml loads and has expected structure."""
+        config = load_growth_config()
+        assert "dimensions" in config
+        assert "farm" in config["dimensions"]
+        assert "system" in config["dimensions"]
+        assert "team" in config["dimensions"]
+        assert "stages" in config["dimensions"]["farm"]
+        assert "metrics" in config["dimensions"]["farm"]
 
     def test_found_by_name_match(self):
         """Change without ID but matching log name → no gap."""

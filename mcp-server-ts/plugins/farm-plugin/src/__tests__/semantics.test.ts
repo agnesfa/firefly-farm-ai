@@ -14,6 +14,10 @@ import {
   detectKnowledgeGaps,
   detectDecisionGaps,
   detectLoggingGaps,
+  classifyByDirection,
+  assessFarmMaturity,
+  assessSystemMaturity,
+  assessTeamMaturity,
 } from '../helpers/semantics.js';
 
 const PLANT_TYPES_DB: Record<string, any> = {
@@ -207,5 +211,135 @@ describe('detectLoggingGaps', () => {
   it('skips plain text farmos_changes', () => {
     const sessions = [{ summary_id: '91', user: 'James', timestamp: '2026-03-25T00:00:00Z', farmos_changes: 'Updated some plants' }];
     expect(detectLoggingGaps(sessions, [])).toHaveLength(0);
+  });
+});
+
+// ── Growth Model tests ───────────────────────────────────────
+
+const GROWTH_CONFIG = {
+  dimensions: {
+    farm: {
+      stages: [
+        { name: 'planted', label: 'F1: Planted' },
+        { name: 'surviving', label: 'F2: Surviving' },
+      ],
+      metrics: {
+        active_plants: {
+          interpretation: {
+            direction: 'higher_is_better',
+            thresholds: [
+              { label: 'f2', value: 1000 }, { label: 'f1', value: 500 }, { label: 'starting', value: 0 },
+            ],
+          },
+          scale_actions: { f2: 'Optimize query_sections' },
+        },
+        survival_rate: {
+          interpretation: {
+            direction: 'higher_is_better',
+            thresholds: [
+              { label: 'healthy', value: 0.70 }, { label: 'concerning', value: 0.50 }, { label: 'at_risk', value: 0.30 },
+            ],
+            pioneer_exception: true,
+          },
+        },
+        strata_coverage: {
+          interpretation: {
+            direction: 'higher_is_better',
+            thresholds: [
+              { label: 'good', value: 0.75 }, { label: 'fair', value: 0.50 }, { label: 'poor', value: 0.25 },
+            ],
+          },
+        },
+      },
+    },
+    system: {
+      stages: [{ name: 'i', label: 'S1' }, { name: 'o', label: 'S2' }, { name: 'i2', label: 'S3' }, { name: 'r', label: 'S4: Reliable' }],
+      metrics: {
+        total_entities: {
+          interpretation: { direction: 'lower_is_better', thresholds: [{ label: 'safe', value: 1500 }, { label: 'warning', value: 3000 }] },
+          scale_actions: { warning: 'Add Views' },
+        },
+        plant_type_drift: {
+          interpretation: { direction: 'lower_is_better', thresholds: [{ label: 'healthy', value: 0 }, { label: 'drifting', value: 5 }, { label: 'broken', value: 20 }] },
+          scale_actions: { drifting: 'Sync' },
+        },
+        observation_backlog: {
+          interpretation: { direction: 'lower_is_better', thresholds: [{ label: 'healthy', value: 5 }, { label: 'backlog', value: 15 }] },
+        },
+      },
+    },
+    team: {
+      stages: [{ name: 'e', label: 'T1' }, { name: 'u', label: 'T2: Using' }],
+      metrics: {
+        active_users_weekly: {
+          interpretation: { direction: 'higher_is_better', thresholds: [{ label: 'healthy', value: 3 }, { label: 'low', value: 1 }, { label: 'dormant', value: 0 }] },
+        },
+        team_memory_velocity: {
+          interpretation: { direction: 'higher_is_better', thresholds: [{ label: 'active', value: 5 }, { label: 'slow', value: 2 }, { label: 'dormant', value: 0 }] },
+        },
+        kb_entry_count: {
+          interpretation: { direction: 'higher_is_better', thresholds: [{ label: 't4', value: 20 }, { label: 'growing', value: 10 }, { label: 'minimal', value: 3 }] },
+        },
+      },
+    },
+  },
+};
+
+describe('classifyByDirection', () => {
+  it('higher_is_better classifies correctly', () => {
+    const interp = { direction: 'higher_is_better' as const, thresholds: [{ label: 'good', value: 0.75 }, { label: 'fair', value: 0.50 }, { label: 'poor', value: 0.25 }] };
+    expect(classifyByDirection(0.80, interp)).toBe('good');
+    expect(classifyByDirection(0.60, interp)).toBe('fair');
+    expect(classifyByDirection(0.10, interp)).toBe('poor');
+  });
+
+  it('lower_is_better classifies correctly', () => {
+    const interp = { direction: 'lower_is_better' as const, thresholds: [{ label: 'healthy', value: 5 }, { label: 'backlog', value: 15 }, { label: 'blocked', value: 50 }] };
+    expect(classifyByDirection(2, interp)).toBe('healthy');
+    expect(classifyByDirection(10, interp)).toBe('backlog');
+    expect(classifyByDirection(60, interp)).toBe('blocked');
+  });
+
+  it('null returns unknown', () => {
+    expect(classifyByDirection(null, { direction: 'higher_is_better', thresholds: [{ label: 'good', value: 0.5 }] })).toBe('unknown');
+  });
+});
+
+describe('assessFarmMaturity', () => {
+  it('644 plants > 500 → passed F1', () => {
+    const result = assessFarmMaturity({ active_plants: 644, section_health_scores: [{ strata_score: 0.75, survival_rate: 0.65 }] }, GROWTH_CONFIG);
+    expect(result.stage).toBe('F2: Surviving');
+    expect(result.metrics.active_plants.status).toBe('passed_f1');
+  });
+
+  it('survival rate surfaced with pioneer_exception', () => {
+    const result = assessFarmMaturity({ active_plants: 644, section_health_scores: [{ strata_score: 0.75, survival_rate: 0.55 }] }, GROWTH_CONFIG);
+    expect(result.metrics.survival_rate.status).toBe('concerning');
+    expect(result.metrics.survival_rate.pioneer_exception).toBe(true);
+  });
+});
+
+describe('assessSystemMaturity', () => {
+  it('drift beyond threshold triggers scale action', () => {
+    // 10 drift: > drifting(5), <= broken(20) → classified as "broken"
+    const result = assessSystemMaturity({ total_entities: 1200, plant_type_drift: 10, observation_backlog: 0 }, GROWTH_CONFIG);
+    expect(result.metrics.plant_type_drift.status).toBe('broken');
+    const triggers = result.scale_triggers.filter((t: any) => t.metric === 'plant_type_drift');
+    expect(triggers.length).toBeGreaterThan(0);
+  });
+});
+
+describe('assessTeamMaturity', () => {
+  it('active team classified correctly', () => {
+    const result = assessTeamMaturity({ active_users_weekly: 3, team_memory_velocity: 6, kb_entry_count: 15 }, GROWTH_CONFIG);
+    expect(result.metrics.active_users_weekly.status).toBe('healthy');
+    expect(result.metrics.team_memory_velocity.status).toBe('active');
+    expect(result.metrics.kb_entry_count.status).toBe('growing');
+  });
+
+  it('dormant team classified correctly', () => {
+    const result = assessTeamMaturity({ active_users_weekly: 0, team_memory_velocity: 0, kb_entry_count: 2 }, GROWTH_CONFIG);
+    expect(result.metrics.active_users_weekly.status).toBe('dormant');
+    expect(result.metrics.kb_entry_count.status).toBe('minimal');
   });
 });

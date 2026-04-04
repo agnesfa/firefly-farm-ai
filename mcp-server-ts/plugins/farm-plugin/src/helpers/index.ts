@@ -10,6 +10,7 @@ export {
   assessStrataCoverage, assessActivityRecency, assessSuccessionBalance,
   assessSectionHealth, findTransplantReady,
   detectKnowledgeGaps, detectDecisionGaps, detectLoggingGaps,
+  classifyByDirection, assessFarmMaturity, assessSystemMaturity, assessTeamMaturity,
 } from './semantics.js';
 
 /** Hardcoded UUID for the "plant" unit in farmOS. */
