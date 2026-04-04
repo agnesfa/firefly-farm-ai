@@ -1,0 +1,238 @@
+# Firefly Corner Farm — Semantic Layer (Layer 3)
+#
+# Canonical definitions of farm metrics and business rules.
+# This is WHAT THINGS MEAN — governed, reviewable, versioned.
+#
+# The code in mcp-server/semantics.py reads this file and computes metrics.
+# When field reality contradicts a definition, update THIS file —
+# the code automatically uses the new values.
+#
+# Human-reviewable: Agnes and Claire should be able to read every
+# definition and confirm "yes, that's what we mean by X."
+#
+# Last updated: 2026-04-04
+# Maintainer: Agnes (semantic changes require review + rationale in git commit)
+
+---
+
+# ═══════════════════════════════════════════════════════
+# SECTION HEALTH METRICS
+# ═══════════════════════════════════════════════════════
+
+section_health:
+
+  strata_coverage:
+    definition: >
+      Fraction of expected strata layers with at least 1 living plant.
+      Measures whether the syntropic design intent (multi-layer canopy)
+      is being achieved.
+    calculation: "count(distinct strata where plant_count > 0) / expected_strata"
+    expected_strata:
+      tree_section: 4     # emergent, high, medium, low
+      open_section: 2     # medium, low
+    thresholds:
+      good: 0.75          # 3/4 strata (tree) or 2/2 (open)
+      fair: 0.50          # 2/4 strata (tree) or 1/2 (open)
+      poor: 0.25          # missing most layers
+    notes: >
+      Young sections (< 6 months) may legitimately have low coverage.
+      Consider section age when interpreting.
+
+  survival_rate:
+    definition: >
+      Living plants as a fraction of total ever planted in a section.
+      Indicates whether the section is establishing successfully.
+    calculation: "current_inventory / total_ever_planted"
+    thresholds:
+      healthy: 0.70
+      concerning: 0.50
+      at_risk: 0.30
+    caveats:
+      - name: pioneer_exception
+        description: >
+          Pioneer species (pigeon pea, wattles, tagasaste) ARE EXPECTED
+          to die. Low pioneer survival is design intent, not failure.
+          A section with 30% pioneer survival but thriving secondary
+          species is HEALTHY.
+        applies_to: "Species where succession_stage = pioneer"
+
+  activity_recency:
+    definition: >
+      Days since the last observation or activity log for a section.
+      Indicates whether the section is being actively managed.
+    calculation: "today - max(log.timestamp for logs in section)"
+    thresholds:
+      active: 14            # days — section recently visited
+      needs_attention: 30   # days — getting stale
+      neglected: 60         # days — has been forgotten
+    notes: >
+      Dormant sections (e.g., winter fallow) may legitimately have
+      long gaps. Consider season when interpreting.
+
+  succession_balance:
+    definition: >
+      Ratio of pioneer:secondary:climax species in a section.
+      Indicates whether the syntropic succession is progressing
+      as designed — pioneers giving way to secondary and climax.
+    calculation: "count by succession_stage / total plants"
+    interpretation_by_age:
+      young:        # < 1 year
+        description: "Should be pioneer-heavy"
+        expected_pioneer: "> 50%"
+      maturing:     # 1-3 years
+        description: "Transitioning — pioneers declining, secondary rising"
+        expected_pioneer: "30-50%"
+        expected_secondary: "30-50%"
+      established:  # 3+ years
+        description: "Climax becoming dominant"
+        expected_climax: "> 30%"
+    notes: >
+      Section age is calculated from first_planted date.
+      Pioneer die-off is a SUCCESS signal, not a failure.
+
+# ═══════════════════════════════════════════════════════
+# PLANT-LEVEL METRICS
+# ═══════════════════════════════════════════════════════
+
+plant_metrics:
+
+  transplant_readiness:
+    definition: >
+      Whether a nursery plant has grown long enough to survive
+      transplanting to the field.
+    calculation: "(today - planted_date) >= species.transplant_days"
+    source_field: "transplant_days from plant_types.csv / farmOS taxonomy"
+    notes: >
+      transplant_days varies by species (e.g., 60 for tomato, 180 for macadamia).
+      Missing transplant_days = cannot assess readiness (flag as LOW confidence).
+
+  species_distribution:
+    definition: >
+      Count of distinct sections where a species has at least 1 living plant.
+      Indicates concentration risk and diversification.
+    calculation: "count(distinct sections where species.count > 0)"
+    notes: >
+      High distribution = resilient. Low distribution = single point of failure.
+
+# ═══════════════════════════════════════════════════════
+# KNOWLEDGE METRICS
+# ═══════════════════════════════════════════════════════
+
+knowledge_metrics:
+
+  kb_coverage:
+    definition: >
+      Whether Knowledge Base entries exist for species present in the field
+      and for each active farm domain topic.
+    gaps:
+      species_gap: "Species with plants in field but no KB entry"
+      topic_gap: "Active farm domain (from topics vocabulary) with no KB entries"
+    assessment: "count(covered) / count(total)"
+
+  workflow_reproducibility:
+    definition: >
+      Whether SOPs or tutorials exist for common field tasks, enabling
+      a new WWOOFer to perform the task without oral instruction.
+    core_workflows:
+      - watering
+      - pruning
+      - transplanting
+      - harvesting
+      - composting
+      - seed_saving
+      - mulching
+    assessment: "Per workflow: does a KB entry with category=sop|tutorial exist?"
+
+# ═══════════════════════════════════════════════════════
+# DECISION PIPELINE METRICS (Layer 4 Integration)
+# ═══════════════════════════════════════════════════════
+
+decision_pipeline:
+
+  task_completion_rate:
+    definition: >
+      Fraction of created tasks that have been completed within a period.
+      Indicates whether the plan→execute pipeline is functioning.
+    calculation: "count(done tasks) / count(all tasks) per period"
+    thresholds:
+      healthy: 0.80
+      concerning: 0.60
+      stalled: 0.40
+
+  observation_to_action_ratio:
+    definition: >
+      Fraction of observations that led to a follow-up task or knowledge entry.
+      High = responsive system. Low = observations filed but not acted on.
+    calculation: "count(observations with subsequent task/KB) / count(observations)"
+    notes: >
+      Not every observation needs a follow-up action. Pure inventory counts
+      are expected to have no action. Condition reports SHOULD have follow-up.
+
+  decision_trace_completeness:
+    definition: >
+      Fraction of tasks that have rationale recorded — not just "what"
+      but "why" and "because of what observation."
+    calculation: "count(tasks with rationale) / count(tasks)"
+    notes: >
+      This is the metric that detects whether the Context Graph (Layer 4)
+      is actually being populated. If completeness is low, institutional
+      memory is not accumulating.
+
+# ═══════════════════════════════════════════════════════
+# INTERACTION INTELLIGENCE (Learning Layer)
+# ═══════════════════════════════════════════════════════
+
+interaction_metrics:
+
+  correction_rate:
+    definition: >
+      How often a human corrects the AI's interpretation in a session.
+      High rate = semantic layer gap (definitions unclear or wrong).
+    signal: "Human says 'no', 'that's not right', 'actually...'"
+
+  question_recurrence:
+    definition: >
+      Same question asked across multiple sessions.
+      High recurrence = answer not persisted or not satisfying.
+    signal: "Same entity + similar phrasing across sessions"
+
+  proactive_value:
+    definition: >
+      Whether proactively surfaced information led to action.
+      Measures whether push intelligence (alerts, suggestions)
+      is useful or noise.
+    signal: "farm_context gap detection → task created"
+
+# ═══════════════════════════════════════════════════════
+# FEEDBACK LOOPS
+# ═══════════════════════════════════════════════════════
+
+feedback_loops:
+
+  - signal: "Survival rate consistently violates threshold for pioneer species"
+    action: "Review ontology: is strata/succession classification correct for this climate?"
+    feeds_back_to: farm_ontology.yaml
+
+  - signal: "Transplant readiness predictions fail (transplanted too early/late)"
+    action: "Review semantic definition: is transplant_days accurate for subtropical conditions?"
+    feeds_back_to: farm_semantics.yaml (plant_metrics.transplant_readiness)
+
+  - signal: "Tasks go unactioned despite observations"
+    action: "Review decision pipeline: is the task workflow working? Are the right people seeing tasks?"
+    feeds_back_to: farm_semantics.yaml (decision_pipeline)
+
+  - signal: "Different Claude sessions give different health assessments"
+    action: "Review semantic definitions: are thresholds clear? Are there ambiguous edge cases?"
+    feeds_back_to: farm_semantics.yaml (section_health)
+
+  - signal: "Knowledge gaps persist despite team effort"
+    action: "Review ontology: is the topic vocabulary complete? Are new farm domains emerging?"
+    feeds_back_to: farm_ontology.yaml (topics vocabulary)
+
+  - signal: "High correction rate in human-AI interactions"
+    action: "Specific definition is wrong or unclear. Find which metric was corrected and update."
+    feeds_back_to: farm_semantics.yaml (the specific metric)
+
+  - signal: "Same question recurs across sessions"
+    action: "Answer needs to be persisted (KB entry) or definition needs to be canonical (semantic layer)"
+    feeds_back_to: "Knowledge Base or farm_semantics.yaml"

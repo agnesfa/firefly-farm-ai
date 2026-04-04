@@ -1,0 +1,405 @@
+# Firefly Corner Farm — Ontology (Layer 1)
+#
+# This is the farm's schema of reality. It defines WHAT EXISTS —
+# entity types, relationships, and constraints — but contains NO DATA.
+#
+# Human-reviewable: Claire or a future farm manager should be able to
+# read this and confirm "yes, this is how our farm works."
+#
+# Portable: not tied to farmOS. If the platform changes, this travels.
+#
+# Evolutionary: grows via the evolution protocol (see Section 8 of the
+# design document). New concepts get assessed, formalized, and validated.
+#
+# Last updated: 2026-04-04
+# Maintainer: Agnes (ontology changes require review + rationale in git commit)
+
+---
+
+# ═══════════════════════════════════════════════════════
+# ENTITY TYPES
+# ═══════════════════════════════════════════════════════
+
+entity_types:
+
+  # ── Living things ────────────────────────────────────
+
+  Species:
+    description: >
+      A type of plant with syntropic agriculture metadata.
+      The canonical reference for all species identification across systems.
+    canonical_source: farmOS taxonomy_term/plant_type
+    enrichment_source: knowledge/plant_types.csv
+    id_field: farmos_name
+    id_examples:
+      - "Pigeon Pea"
+      - "Tomato (Marmande)"
+      - "Basil - Sweet (Classic)"
+    attributes:
+      - farmos_name       # canonical name (primary key)
+      - botanical_name    # scientific name
+      - strata            # emergent | high | medium | low
+      - succession_stage  # pioneer | secondary | climax
+      - plant_functions   # [nitrogen_fixer, edible_fruit, ...]
+      - crop_family       # botanical family
+      - lifespan_years    # how long it lives
+      - lifecycle_years   # production cycle
+      - maturity_days     # days to maturity
+      - transplant_days   # days from seed/cutting to field-ready
+      - source            # default supplier
+    notes: >
+      Enriched by plant_types.csv until Phase 4 farm_syntropic Drupal module
+      adds strata/succession/functions as native farmOS fields.
+
+  Plant:
+    description: >
+      A specific planting instance — a species planted in a section on a date.
+      The fundamental unit of the farm's living inventory.
+    canonical_source: farmOS asset/plant
+    id_field: name
+    id_format: "{date_label} - {farmos_name} - {section_id}"
+    id_examples:
+      - "25 APR 2025 - Pigeon Pea - P2R2.0-3"
+      - "20 MAR 2025 - Comfrey - P2R1.3-9"
+    attributes:
+      - name              # canonical asset name
+      - status            # active | archived
+      - inventory_count   # current living count (computed from observation logs)
+      - planted_date      # from earliest transplanting log
+    lifecycle:
+      - created           # asset created (seeding or direct planting)
+      - active            # growing in location
+      - archived          # dead, removed, or no longer tracked
+
+  Seed:
+    description: >
+      Seed inventory for a species. Follows the farmOS Seed→Plant lifecycle:
+      Seed asset → Seeding Log → Plant asset.
+    canonical_source: farmOS asset/seed (to be created — 263 records in CSV)
+    current_source: knowledge/seed_bank.csv
+    id_format: "{Species} Seeds"
+    attributes:
+      - species           # link to Species
+      - quantity_grams    # exact weight
+      - stock_level       # 0 | 0.5 | 1 (indicative)
+      - supplier          # link to Supplier
+      - batch_date        # when counted/received
+
+  # ── Locations ────────────────────────────────────────
+
+  Section:
+    description: >
+      A physical portion of a row with a QR code pole. The primary
+      unit of field management — inventories, observations, and tasks
+      are scoped to sections.
+    canonical_source: farmOS asset/land
+    id_field: section_id
+    id_format: "P{paddock}R{row}.{start}-{end}"
+    id_examples:
+      - "P2R3.15-21"
+      - "NURS.SH1-2"
+      - "COMP.BAY1"
+    attributes:
+      - section_id        # canonical identifier
+      - has_trees         # boolean — determines expected strata count
+      - length_metres     # physical length
+      - first_planted     # earliest planting date
+    subtypes:
+      paddock_section:
+        id_pattern: "P{n}R{n}.{n}-{n}"
+        description: Field section in a cultivated row
+      nursery_zone:
+        id_pattern: "NURS.{zone}"
+        description: Nursery shelf, ground area, or storage
+      compost_bay:
+        id_pattern: "COMP.{bay}"
+        description: Compost production bay
+
+  Row:
+    description: A cultivated row containing multiple sections.
+    canonical_source: farmOS asset/land
+    id_field: row prefix
+    id_examples: ["P2R3", "P1R1"]
+
+  Paddock:
+    description: A cultivated area containing rows.
+    canonical_source: farmOS asset/land
+    id_examples: ["P1", "P2"]
+
+  # ── Infrastructure ───────────────────────────────────
+
+  WaterAsset:
+    description: Dams, trenches, keyline water infrastructure.
+    canonical_source: farmOS asset/water
+    count: 11
+
+  Structure:
+    description: Buildings and built facilities.
+    canonical_source: farmOS asset/structure
+    examples: ["Plant Nursery", "WWOOFer Camp", "Amenities"]
+    count: 17+
+
+  Equipment:
+    description: Tools, machinery, implements.
+    canonical_source: farmOS asset/equipment
+    count: 3
+
+  CompostBay:
+    description: Active compost production bays.
+    canonical_source: farmOS asset/compost
+    count: 5
+
+  Material:
+    description: Mulch, soil amendments, supplies.
+    canonical_source: farmOS asset/material
+
+  # ── People ───────────────────────────────────────────
+
+  Actor:
+    description: >
+      A person who observes, decides, or acts on the farm.
+      First-class entity because WHO did something matters
+      for decision traceability and institutional memory.
+    canonical_source: implicit (to be formalized)
+    id_field: name
+    attributes:
+      - name
+      - role              # manager | farmhand | visitor
+      - active_period     # when they were on the farm (important for WWOOFers)
+    roles:
+      manager:
+        description: Full farmOS + Claude access. Agnes, Claire, James.
+        access: [farmOS, Claude, GitHub]
+      farmhand:
+        description: Task execution, observation logging. WWOOFers, helpers.
+        access: [QR pages, simplified Claude chat]
+      visitor:
+        description: Public content only. Landcare, Hipcamp, tours.
+        access: [QR landing pages]
+    known_actors:
+      - {name: Agnes, role: manager, note: "CTO, architect, system builder"}
+      - {name: Claire, role: manager, note: "Agronomist, departed March 2026. Decision rationale partially lost."}
+      - {name: James, role: manager, note: "Infrastructure, marketing, daily operations"}
+      - {name: Olivier, role: manager, note: "Compost, cooking, knowledge capture"}
+
+  # ── Events & Actions ─────────────────────────────────
+
+  Task:
+    description: >
+      A planned action in the decision pipeline.
+      Tracks the DECIDE → PLAN → ASSIGN → EXECUTE lifecycle.
+    canonical_source: farmOS log/activity (status=pending)
+    lifecycle:
+      - pending           # planned, waiting for assignment
+      - in_progress       # actor has picked it up (implicit)
+      - done              # completed (via complete_task tool)
+    attributes:
+      - name              # task description
+      - section_id        # where
+      - rationale         # WHY this task was created (the critical missing piece)
+      - created_by        # Actor or Session that initiated
+      - completed_by      # Actor who finished it
+      - outcome           # what happened (linked to observation)
+
+  Observation:
+    description: >
+      A field report about the state of entities.
+      The OBSERVE step in the decision lifecycle.
+    canonical_source: farmOS log/observation + QR observation sheet
+    attributes:
+      - section_id        # where
+      - plant_name        # what (optional — can be section-level)
+      - count             # inventory count
+      - condition         # free-text condition notes
+      - reported_by       # Actor
+      - timestamp
+      - media             # photos (stored in Google Drive)
+
+  Harvest:
+    description: A recorded harvest event.
+    canonical_source: Harvest Sheet (Apps Script)
+    attributes:
+      - species           # what was harvested
+      - weight_kg         # how much
+      - section_id        # where (or whole paddock)
+      - recorded_by       # Actor
+      - timestamp
+
+  # ── Knowledge & Memory ───────────────────────────────
+
+  KnowledgeEntry:
+    description: >
+      Codified learning — tutorials, SOPs, references, source materials.
+      The LEARN step in the decision lifecycle.
+    canonical_source: Knowledge Base (Apps Script / Google Sheet)
+    id_field: entry_id (UUID)
+    attributes:
+      - title
+      - category          # tutorial | sop | guide | reference | recipe | observation | source-material
+      - topics            # multi-value: nursery, compost, irrigation, syntropic, seeds, harvest, paddock, equipment, cooking, infrastructure, camp
+      - tags              # free-form keywords
+      - content           # full text
+      - related_plants    # [farmos_name, ...] — join to Species
+      - related_sections  # [section_id, ...] — join to Section
+      - media_links       # Drive URLs
+      - author            # Actor
+
+  Session:
+    description: >
+      A decision trace — what was discussed, decided, and changed
+      in a human-AI collaboration session.
+    canonical_source: Team Memory (Apps Script / Google Sheet)
+    id_field: summary_id
+    attributes:
+      - actor             # who
+      - topics            # what domains
+      - decisions         # key decisions made
+      - farmos_changes    # what changed in farmOS
+      - questions         # open questions
+      - summary           # free-text
+      - timestamp
+
+  Supplier:
+    description: Seed and plant source providers.
+    canonical_source: knowledge/seed_bank.csv (supplier column)
+    count: 18
+    examples: ["EDEN Seeds", "Daleys Fruit Nursery", "Greenpatch Organic Seeds", "FFC"]
+
+# ═══════════════════════════════════════════════════════
+# RELATIONSHIPS
+# ═══════════════════════════════════════════════════════
+
+relationships:
+
+  # Living things
+  GROWS_IN:       {from: Plant, to: Section, via: "farmOS location log"}
+  IS_SPECIES:     {from: Plant, to: Species, via: "farmOS plant_type reference"}
+  SEED_OF:        {from: Seed, to: Species, via: "farmOS plant_type reference"}
+  FROM_SUPPLIER:  {from: Seed, to: Supplier, via: "seed_bank.csv supplier column"}
+
+  # Species metadata
+  HAS_STRATA:     {from: Species, to: "{emergent, high, medium, low}", via: "plant_type description"}
+  HAS_SUCCESSION: {from: Species, to: "{pioneer, secondary, climax}", via: "plant_type description"}
+  HAS_FUNCTIONS:  {from: Species, to: "[function tags]", via: "plant_type description"}
+
+  # Location hierarchy
+  BELONGS_TO:     {from: Section, to: Row, via: "farmOS land asset hierarchy"}
+  ROW_IN:         {from: Row, to: Paddock, via: "farmOS land asset hierarchy"}
+
+  # Actions & decisions
+  TARGETS:        {from: Task, to: "Section | Plant | Species", via: "log name + notes"}
+  CREATED_BY:     {from: Task, to: "Actor | Session", via: "log owner + session ref"}
+  COMPLETED_BY:   {from: Task, to: Actor, via: "complete_task attribution"}
+  REFERENCES:     {from: Observation, to: "Plant | Section", via: "farmOS log asset/location ref"}
+  REPORTED_BY:    {from: Observation, to: Actor, via: "observer name"}
+  HARVESTED_BY:   {from: Harvest, to: Actor, via: "recorder name"}
+  HARVESTED_FROM: {from: Harvest, to: Section, via: "location field"}
+  HARVEST_OF:     {from: Harvest, to: Species, via: "species field"}
+
+  # Knowledge
+  COVERS_SPECIES: {from: KnowledgeEntry, to: "[Species]", via: "related_plants field"}
+  COVERS_SECTION: {from: KnowledgeEntry, to: "[Section]", via: "related_sections field"}
+  COVERS_DOMAIN:  {from: KnowledgeEntry, to: "[Topic]", via: "topics field"}
+  AUTHORED_BY:    {from: KnowledgeEntry, to: Actor, via: "author field"}
+
+  # Sessions
+  SESSION_BY:     {from: Session, to: Actor, via: "user field"}
+  SESSION_CHANGED:{from: Session, to: "[farmOS entities]", via: "farmos_changes field"}
+
+# ═══════════════════════════════════════════════════════
+# CONSTRAINTS
+# ═══════════════════════════════════════════════════════
+
+constraints:
+
+  # Syntropic agriculture rules
+  - rule: "Tree sections SHOULD have all 4 strata (emergent, high, medium, low)"
+    type: recommendation
+    applies_to: Section (has_trees=true)
+
+  - rule: "Open sections SHOULD have at least 2 strata (medium, low)"
+    type: recommendation
+    applies_to: Section (has_trees=false)
+
+  - rule: "Pioneer species ARE EXPECTED to die — low survival is design intent"
+    type: information
+    applies_to: Species (succession_stage=pioneer)
+    note: "Do not flag low pioneer survival as a problem"
+
+  - rule: "Every active section SHOULD have an observation within 30 days"
+    type: recommendation
+    applies_to: Section (status=active)
+
+  # Naming conventions
+  - rule: "Plant name = {date_label} - {farmos_name} - {section_id}"
+    type: mandatory
+    applies_to: Plant
+
+  - rule: "Section ID = P{n}R{n}.{start}-{end} | NURS.{zone} | COMP.{bay}"
+    type: mandatory
+    applies_to: Section
+
+  - rule: "Species canonical name = farmos_name from plant_type taxonomy"
+    type: mandatory
+    applies_to: Species
+
+  # Lifecycle rules
+  - rule: "Seed → Seeding Log → Plant (nursery) → Transplanting Log → Plant (field)"
+    type: mandatory
+    applies_to: [Seed, Plant]
+
+  - rule: "Task transitions: pending → in_progress → done (with rationale at each step)"
+    type: recommendation
+    applies_to: Task
+
+  - rule: "Every Plant MUST reference a Species"
+    type: mandatory
+    applies_to: Plant
+
+  - rule: "Every Section MUST belong to a Row"
+    type: mandatory
+    applies_to: Section
+
+# ═══════════════════════════════════════════════════════
+# JOIN KEYS (Cross-Store Entity Resolution)
+# ═══════════════════════════════════════════════════════
+
+join_keys:
+
+  farmos_name:
+    connects: [Plant, Species, KnowledgeEntry, Seed, Harvest]
+    description: "The canonical species identifier across all systems"
+    examples: ["Pigeon Pea", "Tomato (Marmande)"]
+
+  section_id:
+    connects: [Section, Plant, Observation, Task, KnowledgeEntry, Harvest]
+    description: "Physical location identifier"
+    examples: ["P2R3.15-21", "NURS.SH1-2"]
+
+  topic:
+    connects: [KnowledgeEntry, Section (via TOPIC_FARMOS_MAP)]
+    description: "Farm domain that maps to farmOS section prefixes"
+    mapping:
+      nursery:       {section_prefix: "NURS."}
+      compost:       {section_prefix: "COMP."}
+      paddock:       {section_prefix: "P"}
+      seeds:         {section_prefix: "NURS.FR"}
+      camp:          {section_prefix: null, structure_name: "WWOOFer Camp"}
+
+  actor_name:
+    connects: [Session, Observation, Task, Harvest]
+    description: "Person who acted"
+
+# ═══════════════════════════════════════════════════════
+# EVOLUTION PROTOCOL
+# ═══════════════════════════════════════════════════════
+#
+# When encountering a new concept:
+#
+# 1. CLASSIFY: existing entity instance? → entity resolution
+# 2. ASSESS: lifecycle? 2+ relationships? decision-relevant attributes?
+#    YES to any → candidate for new entity type
+#    NO to all → attribute of existing entity
+# 3. FORMALIZE: add here with source, relationships, constraints
+# 4. PROPAGATE: check farm_semantics.yaml and farm_context tool
+# 5. VALIDATE: human review → git commit with rationale

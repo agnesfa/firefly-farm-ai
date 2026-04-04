@@ -40,6 +40,9 @@ import { listKnowledgeTool } from './list-knowledge.js';
 import { addKnowledgeTool } from './add-knowledge.js';
 import { updateKnowledgeTool } from './update-knowledge.js';
 
+// INTELLIGENCE LAYER (1)
+import { farmContextTool } from './farm-context.js';
+
 // OTHER (2)
 import { getFarmOverviewTool } from './get-farm-overview.js';
 import { regeneratePagesTool } from './regenerate-pages.js';
@@ -79,6 +82,8 @@ export const farmTools = [
   listKnowledgeTool,
   addKnowledgeTool,
   updateKnowledgeTool,
+  // Intelligence layer (1)
+  farmContextTool,
   // Other (2)
   getFarmOverviewTool,
   regeneratePagesTool,
@@ -92,4 +97,5 @@ export { listObservationsTool, updateObservationStatusTool, importObservationsTo
 export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool, acknowledgeMemoryTool };
 export { addPlantTypeTool, updatePlantTypeTool, reconcilePlantTypesTool };
 export { searchKnowledgeTool, listKnowledgeTool, addKnowledgeTool, updateKnowledgeTool };
+export { farmContextTool };
 export { getFarmOverviewTool, regeneratePagesTool };

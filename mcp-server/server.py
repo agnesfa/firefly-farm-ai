@@ -1449,6 +1449,323 @@ def _run_script(script_name: str, args: list = None) -> dict:
         return {"returncode": -1, "stdout": "", "stderr": str(e)}
 
 
+# ── Farm Context (Intelligence Layer) ──────────────────────────────
+
+
+@mcp.tool
+def farm_context(
+    subject: Optional[str] = None,
+    section: Optional[str] = None,
+    topic: Optional[str] = None,
+) -> str:
+    """Cross-reference farmOS, Knowledge Base, and plant types in one call.
+
+    Returns interpreted farm intelligence with all five layers:
+    ontology (what exists), facts (what's true), interpretation (what it means),
+    context (what we did about it), and gaps (what's missing).
+
+    Provide exactly ONE of:
+    - subject: Species name (e.g., "Pigeon Pea") — distribution + KB + metadata
+    - section: Section ID (e.g., "P2R3.15-21") — health assessment + pending tasks
+    - topic: Farm domain (e.g., "nursery") — domain overview + transplant readiness
+    """
+    from semantics import (
+        assess_section_health,
+        find_transplant_ready,
+        detect_knowledge_gaps,
+        detect_decision_gaps,
+        detect_logging_gaps,
+        load_semantics,
+    )
+    from helpers import TOPIC_FARMOS_MAP
+
+    if not any([subject, section, topic]):
+        return json.dumps({"error": "Provide one of: subject, section, or topic"})
+
+    client = get_client()
+    kb_client = get_knowledge_client()
+    semantics = load_semantics()
+    result = {}
+
+    # ── Section mode ──────────────────────────────────────────
+    if section:
+        result["query"] = {"type": "section", "id": section}
+
+        # Determine section type and constraints
+        is_nursery = section.startswith("NURS.")
+        has_trees = not is_nursery  # nursery zones don't have tree expectations
+        entity_type = "nursery_zone" if is_nursery else "paddock_section"
+
+        result["ontology"] = {
+            "entity_type": entity_type,
+            "constraints": [
+                "expects 4 strata layers (emergent, high, medium, low)" if has_trees else "nursery zone — no strata expectation",
+            ],
+        }
+
+        # Layer 2: Facts
+        plants_raw = client.get_plant_assets(section_id=section)
+        plants = [format_plant_asset(p) for p in plants_raw]
+
+        logs_raw = client.get_logs(section_id=section)
+        logs = [format_log(l) for l in logs_raw]
+
+        # Build plant_types_db from cached taxonomy
+        all_types = client.get_all_plant_types_cached()
+        plant_types_db = {}
+        for pt in all_types:
+            fmt = format_plant_type(pt)
+            plant_types_db[fmt["name"]] = fmt
+
+        # KB entries
+        kb_entries = []
+        if kb_client:
+            try:
+                kb_result = kb_client.search(section)
+                kb_entries = kb_result if isinstance(kb_result, list) else kb_result.get("results", [])
+            except Exception:
+                pass
+
+        result["facts"] = {
+            "total_plants": len(plants),
+            "total_species": len(set(p.get("species", "") for p in plants)),
+            "plants": [{"species": p.get("species", ""), "count": p.get("inventory_count"), "status": p.get("status")} for p in plants],
+            "recent_logs": len(logs),
+            "kb_entries": [{"title": e.get("title", ""), "category": e.get("category", "")} for e in kb_entries[:5]],
+        }
+
+        # Layer 3: Interpretation
+        plant_data = [{"species": p.get("species", ""), "count": p.get("inventory_count") or 0, "strata": p.get("strata", "")} for p in plants]
+        log_data = [{"timestamp": l.get("timestamp", "")} for l in logs]
+
+        health = assess_section_health(plant_data, log_data, plant_types_db, has_trees, semantics)
+        result["interpretation"] = health
+
+        # Layer 4: Context
+        pending = [l for l in logs if l.get("status") == "pending"]
+        recent_obs = [l for l in logs if l.get("type") == "observation"][:5]
+
+        # Cross-reference team memory against farmOS logs
+        logging_gaps = []
+        try:
+            memory_client = get_memory_client()
+        except (ValueError, Exception):
+            memory_client = None
+        if memory_client and memory_client.is_connected:
+            try:
+                memory_result = memory_client.search_memory(section, days=30)
+                sessions = memory_result.get("results", []) if isinstance(memory_result, dict) else []
+                if sessions:
+                    logging_gaps = detect_logging_gaps(sessions, logs, section_filter=section)
+            except Exception:
+                pass
+
+        result["context"] = {
+            "pending_tasks": [{"name": t.get("name", ""), "timestamp": t.get("timestamp", "")} for t in pending],
+            "recent_observations": [{"name": o.get("name", ""), "timestamp": o.get("timestamp", ""), "notes": o.get("notes", "")} for o in recent_obs],
+            "logging_gaps": [
+                {"user": g["user"], "session": g["session_id"],
+                 "claimed": g["claimed_change"]["details"],
+                 "evidence": g["evidence"]}
+                for g in logging_gaps
+            ],
+        }
+
+        # Gaps
+        species_in_section = [p.get("species", "") for p in plants if p.get("species")]
+        kb_gaps = detect_knowledge_gaps(species_in_section, kb_entries)
+        decision_gaps = detect_decision_gaps(pending, recent_obs)
+
+        gaps = []
+        if kb_gaps.get("uncovered_species"):
+            gaps.append(f"No KB entries for species: {', '.join(kb_gaps['uncovered_species'][:5])}")
+        gaps.extend(decision_gaps)
+        if health.get("activity_recency", {}).get("status") == "neglected":
+            gaps.append("Section has not been visited in over 60 days")
+        if health.get("strata_coverage", {}).get("status") == "poor":
+            gaps.append("Poor strata coverage — missing most canopy layers")
+        for g in logging_gaps:
+            gaps.append(f"INTEGRITY: {g['user']} claimed '{g['claimed_change']['details']}' (session {g['session_id']}) but no matching farmOS log found")
+
+        result["gaps"] = gaps
+
+        # Data integrity gate — if logging gaps exist, flag for human confirmation
+        if logging_gaps:
+            result["data_integrity"] = {
+                "requires_confirmation": True,
+                "reason": "Team memory records changes that are not reflected in farmOS. "
+                          "The facts shown above may be INCOMPLETE. "
+                          "Confirm with the human what actually happened before acting on this data.",
+                "discrepancies": [
+                    {
+                        "who": g["user"],
+                        "session": g["session_id"],
+                        "claimed": g["claimed_change"]["details"],
+                        "type": g["claimed_change"].get("type", "unknown"),
+                    }
+                    for g in logging_gaps
+                ],
+            }
+        else:
+            result["data_integrity"] = {"requires_confirmation": False}
+
+    # ── Subject (species) mode ────────────────────────────────
+    elif subject:
+        result["query"] = {"type": "species", "name": subject}
+
+        # Layer 1: Ontology
+        result["ontology"] = {
+            "entity_type": "Species",
+            "canonical_source": "farmOS taxonomy_term/plant_type",
+        }
+
+        # Layer 2: Facts — all plants of this species
+        plants_raw = client.get_plant_assets(species=subject)
+        plants = [format_plant_asset(p) for p in plants_raw]
+
+        # Species metadata
+        all_types = client.get_all_plant_types_cached()
+        species_meta = None
+        for pt in all_types:
+            fmt = format_plant_type(pt)
+            if fmt["name"].lower() == subject.lower():
+                species_meta = fmt
+                break
+
+        # KB entries
+        kb_entries = []
+        if kb_client:
+            try:
+                kb_result = kb_client.search(subject)
+                kb_entries = kb_result if isinstance(kb_result, list) else kb_result.get("results", [])
+            except Exception:
+                pass
+
+        # Group plants by section
+        sections = {}
+        for p in plants:
+            sec = p.get("section", "unknown")
+            if sec not in sections:
+                sections[sec] = {"count": 0, "plants": []}
+            count = p.get("inventory_count") or 0
+            sections[sec]["count"] += count
+            sections[sec]["plants"].append(p.get("name", ""))
+
+        result["facts"] = {
+            "total_plants": len(plants),
+            "total_count": sum(s["count"] for s in sections.values()),
+            "sections": {k: v["count"] for k, v in sections.items()},
+            "distribution": len(sections),
+            "species_metadata": species_meta,
+            "kb_entries": [{"title": e.get("title", ""), "category": e.get("category", "")} for e in kb_entries[:5]],
+        }
+
+        # Layer 3: Interpretation
+        result["interpretation"] = {
+            "strata": species_meta.get("strata", "unknown") if species_meta else "unknown",
+            "succession": species_meta.get("succession_stage", "unknown") if species_meta else "unknown",
+            "functions": species_meta.get("plant_functions", "") if species_meta else "",
+            "distribution_sections": len(sections),
+        }
+
+        # Layer 4: Context
+        result["context"] = {
+            "kb_coverage": len(kb_entries) > 0,
+        }
+
+        # Gaps
+        gaps = []
+        if not kb_entries:
+            gaps.append(f"No Knowledge Base entries for {subject}")
+        if not species_meta:
+            gaps.append(f"{subject} not found in plant type taxonomy")
+        result["gaps"] = gaps
+
+    # ── Topic (domain) mode ───────────────────────────────────
+    elif topic:
+        topic_lower = topic.lower()
+        result["query"] = {"type": "topic", "name": topic_lower}
+
+        topic_config = TOPIC_FARMOS_MAP.get(topic_lower, {})
+        prefix = topic_config.get("section_prefix")
+
+        result["ontology"] = {
+            "entity_type": "farm_domain",
+            "topic": topic_lower,
+            "section_prefix": prefix,
+        }
+
+        # Layer 2: Facts
+        plants = []
+        sections_data = {}
+        if prefix:
+            # Get inventory for all sections with this prefix
+            section_assets = client.get_plant_assets(section_id=prefix)
+            plants = [format_plant_asset(p) for p in section_assets]
+
+            for p in plants:
+                sec = p.get("section", "unknown")
+                if sec not in sections_data:
+                    sections_data[sec] = {"count": 0, "species": set()}
+                count = p.get("inventory_count") or 0
+                sections_data[sec]["count"] += count
+                sections_data[sec]["species"].add(p.get("species", ""))
+
+        # KB entries for this topic
+        kb_entries = []
+        if kb_client:
+            try:
+                kb_result = kb_client.search(topic_lower)
+                kb_entries = kb_result if isinstance(kb_result, list) else kb_result.get("results", [])
+            except Exception:
+                pass
+
+        result["facts"] = {
+            "total_plants": len(plants),
+            "total_sections": len(sections_data),
+            "sections_summary": {k: v["count"] for k, v in sections_data.items()},
+            "total_species": len(set(p.get("species", "") for p in plants)),
+            "kb_entries": [{"title": e.get("title", ""), "category": e.get("category", "")} for e in kb_entries[:10]],
+        }
+
+        # Layer 3: Interpretation — transplant readiness for nursery
+        if topic_lower == "nursery":
+            all_types = client.get_all_plant_types_cached()
+            plant_types_db = {}
+            for pt in all_types:
+                fmt = format_plant_type(pt)
+                plant_types_db[fmt["name"]] = fmt
+
+            nursery_plants = [
+                {"species": p.get("species", ""), "planted_date": p.get("planted_date", ""),
+                 "name": p.get("name", ""), "count": p.get("inventory_count") or 0,
+                 "section": p.get("section", "")}
+                for p in plants
+            ]
+            ready = find_transplant_ready(nursery_plants, plant_types_db, semantics)
+            result["interpretation"] = {
+                "transplant_ready": [{"species": r["species"], "section": r["section"],
+                                      "count": r["count"], "days_overdue": r["days_overdue"]} for r in ready[:10]],
+                "total_transplant_ready": len(ready),
+            }
+        else:
+            result["interpretation"] = {}
+
+        # Layer 4: Context — pending tasks
+        result["context"] = {"kb_entry_count": len(kb_entries)}
+
+        # Gaps
+        gaps = []
+        if not kb_entries:
+            gaps.append(f"No Knowledge Base entries for topic '{topic_lower}'")
+        result["gaps"] = gaps
+
+    return json.dumps(result, indent=2, default=str)
+
+
+# ── Site Management ────────────────────────────────────────────────
+
+
 @mcp.tool
 def regenerate_pages(push_to_github: bool = True) -> str:
     """Regenerate QR landing pages from live farmOS data and optionally push to GitHub Pages.

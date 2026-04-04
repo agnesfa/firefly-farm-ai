@@ -424,3 +424,20 @@ def parse_plant_type_metadata(description_text: str) -> dict:
             metadata["source"] = clean.split(":", 1)[1].strip()
 
     return metadata
+
+
+# ── Topic-to-farmOS mapping ───────────────────────────────────────
+
+TOPIC_FARMOS_MAP = {
+    "nursery":        {"section_prefix": "NURS.", "asset_types": ["plant", "structure"]},
+    "compost":        {"section_prefix": "COMP.", "asset_types": ["compost"]},
+    "paddock":        {"section_prefix": "P",     "asset_types": ["plant", "land"]},
+    "seeds":          {"section_prefix": "NURS.FR", "asset_types": ["seed"]},
+    "irrigation":     {"section_prefix": None,    "asset_types": ["water", "equipment"]},
+    "equipment":      {"section_prefix": None,    "asset_types": ["equipment"]},
+    "infrastructure": {"section_prefix": None,    "asset_types": ["water", "land"]},
+    "camp":           {"section_prefix": None,    "asset_types": ["structure"]},
+    "harvest":        {"section_prefix": None,    "asset_types": ["plant"]},
+    "cooking":        {"section_prefix": None,    "asset_types": []},
+    "syntropic":      {"section_prefix": "P",     "asset_types": ["plant", "land"]},
+}

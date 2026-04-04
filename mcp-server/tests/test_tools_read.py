@@ -189,3 +189,270 @@ def test_get_all_plant_types_uses_cache(monkeypatch, mock_farmos_client):
     server.get_all_plant_types()
 
     mock_farmos_client.get_all_plant_types_cached.assert_called_once()
+
+
+# ── farm_context ─────────────────────────────────────────────────
+
+
+def _build_plant_type_with_metadata(name, strata="low", succession="secondary"):
+    """Build a plant type with syntropic metadata in the description."""
+    desc = f"A plant.\n\n---\n**Syntropic Agriculture Data:**\n**Strata:** {strata.title()}\n**Succession Stage:** {succession.title()}"
+    return make_plant_type(name=name, description=desc)
+
+
+def _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, logs, plant_types, kb_entries=None, memory_sessions=None):
+    """Common setup for farm_context tests."""
+    from unittest.mock import MagicMock
+
+    mock_farmos_client.get_plant_assets.return_value = plants
+    mock_farmos_client.get_logs.return_value = logs
+    mock_farmos_client.get_all_plant_types_cached.return_value = plant_types
+    monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+    # Mock knowledge client
+    mock_kb = MagicMock()
+    if kb_entries is not None:
+        mock_kb.search.return_value = kb_entries
+    else:
+        mock_kb.search.return_value = []
+    monkeypatch.setattr(server, "get_knowledge_client", lambda: mock_kb)
+
+    # Mock memory client
+    mock_mem = MagicMock()
+    mock_mem.is_connected = True
+    mock_mem.search_memory.return_value = {"results": memory_sessions or [], "count": len(memory_sessions or [])}
+    monkeypatch.setattr(server, "get_memory_client", lambda: mock_mem)
+
+    # Clear semantics cache so it loads fresh YAML
+    from semantics import clear_caches
+    clear_caches()
+
+
+class TestFarmContextSection:
+    """Tests for farm_context(section=...) mode."""
+
+    def test_section_returns_all_five_layers(self, monkeypatch, mock_farmos_client):
+        """farm_context section mode returns ontology, facts, interpretation, context, gaps."""
+        plants = [
+            make_plant_asset(name="25 APR 2025 - Ice Cream Bean - P2R3.15-21", inventory_count=4),
+            make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21", inventory_count=2),
+            make_plant_asset(name="25 APR 2025 - Comfrey - P2R3.15-21", inventory_count=3),
+            make_plant_asset(name="25 APR 2025 - Tomato (Marmande) - P2R3.15-21", inventory_count=5),
+        ]
+        logs = [
+            make_log(name="Observation P2R3.15-21", log_type="observation",
+                     timestamp=str(int((datetime.now(tz=AEST) - timedelta(days=5)).timestamp()))),
+        ]
+        plant_types = [
+            _build_plant_type_with_metadata("Ice Cream Bean", "emergent", "pioneer"),
+            _build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer"),
+            _build_plant_type_with_metadata("Comfrey", "low", "secondary"),
+            _build_plant_type_with_metadata("Tomato (Marmande)", "medium", "pioneer"),
+        ]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, logs, plant_types)
+
+        result = json.loads(server.farm_context(section="P2R3.15-21"))
+
+        # All five layers present
+        assert "ontology" in result
+        assert "facts" in result
+        assert "interpretation" in result
+        assert "context" in result
+        assert "gaps" in result
+
+        # Query metadata
+        assert result["query"]["type"] == "section"
+        assert result["query"]["id"] == "P2R3.15-21"
+
+        # Ontology
+        assert result["ontology"]["entity_type"] == "paddock_section"
+
+        # Facts
+        assert result["facts"]["total_plants"] == 4
+        assert result["facts"]["total_species"] == 4
+
+        # Interpretation — strata coverage should be good (4/4 strata)
+        strata = result["interpretation"]["strata_coverage"]
+        assert strata["score"] == 1.0
+        assert strata["status"] == "good"
+
+        # Activity recency — 5 days ago, should be active
+        recency = result["interpretation"]["activity_recency"]
+        assert recency["status"] == "active"
+
+    def test_section_detects_poor_strata(self, monkeypatch, mock_farmos_client):
+        """Section with only 1 stratum → poor strata coverage."""
+        plants = [
+            make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21", inventory_count=4),
+        ]
+        plant_types = [_build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer")]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types)
+
+        result = json.loads(server.farm_context(section="P2R3.15-21"))
+
+        assert result["interpretation"]["strata_coverage"]["status"] == "poor"
+        assert any("strata coverage" in g.lower() for g in result["gaps"])
+
+    def test_section_detects_neglected(self, monkeypatch, mock_farmos_client):
+        """Section with no logs → neglected."""
+        plants = [make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21", inventory_count=2)]
+        plant_types = [_build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer")]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types)
+
+        result = json.loads(server.farm_context(section="P2R3.15-21"))
+
+        assert result["interpretation"]["activity_recency"]["status"] == "neglected"
+        assert any("visited" in g.lower() for g in result["gaps"])
+
+    def test_section_nursery_zone(self, monkeypatch, mock_farmos_client):
+        """Nursery zone → entity_type is nursery_zone, no strata expectation."""
+        plants = [make_plant_asset(name="01 MAR 2026 - Comfrey - NURS.SH1-2", inventory_count=5)]
+        plant_types = [_build_plant_type_with_metadata("Comfrey", "low", "secondary")]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types)
+
+        result = json.loads(server.farm_context(section="NURS.SH1-2"))
+
+        assert result["ontology"]["entity_type"] == "nursery_zone"
+
+
+class TestFarmContextSubject:
+    """Tests for farm_context(subject=...) mode."""
+
+    def test_subject_returns_distribution(self, monkeypatch, mock_farmos_client):
+        """Species query returns plants grouped by section."""
+        plants = [
+            make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R2.0-3", inventory_count=4),
+            make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21", inventory_count=2),
+        ]
+        plant_types = [_build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer")]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types)
+
+        result = json.loads(server.farm_context(subject="Pigeon Pea"))
+
+        assert result["query"]["type"] == "species"
+        assert result["facts"]["total_plants"] == 2
+        assert result["facts"]["distribution"] == 2
+        assert result["interpretation"]["strata"] == "High"
+        assert result["interpretation"]["succession"] == "Pioneer"
+
+    def test_subject_detects_kb_gap(self, monkeypatch, mock_farmos_client):
+        """Species with no KB entries → gap detected."""
+        plants = [make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R2.0-3", inventory_count=4)]
+        plant_types = [_build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer")]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types, kb_entries=[])
+
+        result = json.loads(server.farm_context(subject="Pigeon Pea"))
+
+        assert any("No Knowledge Base" in g for g in result["gaps"])
+
+    def test_subject_unknown_species(self, monkeypatch, mock_farmos_client):
+        """Unknown species → gap about missing taxonomy."""
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, [], [], [])
+
+        result = json.loads(server.farm_context(subject="Unicorn Tree"))
+
+        assert any("not found" in g for g in result["gaps"])
+
+
+class TestFarmContextTopic:
+    """Tests for farm_context(topic=...) mode."""
+
+    def test_topic_nursery(self, monkeypatch, mock_farmos_client):
+        """Nursery topic returns sections and transplant readiness."""
+        plants = [
+            make_plant_asset(name="01 JAN 2026 - Comfrey - NURS.SH1-2", inventory_count=3),
+        ]
+        plant_types = [_build_plant_type_with_metadata("Comfrey", "low", "secondary")]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types)
+
+        result = json.loads(server.farm_context(topic="nursery"))
+
+        assert result["query"]["type"] == "topic"
+        assert result["query"]["name"] == "nursery"
+        assert result["ontology"]["section_prefix"] == "NURS."
+
+    def test_topic_no_kb_entries(self, monkeypatch, mock_farmos_client):
+        """Topic with no KB entries → gap detected."""
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, [], [], [], kb_entries=[])
+
+        result = json.loads(server.farm_context(topic="compost"))
+
+        assert any("No Knowledge Base" in g for g in result["gaps"])
+
+
+class TestFarmContextLoggingGaps:
+    """Tests for farm_context team memory cross-reference."""
+
+    def test_detects_missing_farmos_log(self, monkeypatch, mock_farmos_client):
+        """Session claims plant created but no farmOS log exists → integrity gap."""
+        plants = [make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R4.6-14", inventory_count=14)]
+        plant_types = [_build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer")]
+
+        # James's session claims lavender was planted but no log in farmOS
+        memory_sessions = [{
+            "summary_id": "89",
+            "user": "James",
+            "timestamp": "2026-03-25T23:04:00Z",
+            "farmos_changes": '[{"type":"create_plant","species":"Lavender","section":"P2R4.6-14","count":5,"details":"Lavender x5 — P2R4.6-14"}]',
+        }]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, [], plant_types,
+                                  memory_sessions=memory_sessions)
+
+        result = json.loads(server.farm_context(section="P2R4.6-14"))
+
+        # Should have a logging gap
+        assert len(result["context"]["logging_gaps"]) >= 1
+        assert any("James" in g["user"] for g in result["context"]["logging_gaps"])
+        assert any("INTEGRITY" in g for g in result["gaps"])
+
+        # Data integrity gate should require confirmation
+        assert result["data_integrity"]["requires_confirmation"] is True
+        assert len(result["data_integrity"]["discrepancies"]) >= 1
+        assert "Lavender" in result["data_integrity"]["discrepancies"][0]["claimed"]
+
+    def test_no_gap_when_log_exists(self, monkeypatch, mock_farmos_client):
+        """Session claims activity and farmOS log matches → no integrity gap."""
+        plants = [make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.50-62", inventory_count=8)]
+        logs = [make_log(name="Seeding — P2R3.50-62", log_type="activity",
+                         log_uuid="0ee1ea15-a7e7-482c-8872-6745588a75be")]
+        plant_types = [_build_plant_type_with_metadata("Pigeon Pea", "high", "pioneer")]
+
+        memory_sessions = [{
+            "summary_id": "82",
+            "user": "James",
+            "timestamp": "2026-03-21T07:08:00Z",
+            "farmos_changes": '[{"type":"activity","id":"0ee1ea15","details":"Seeding — P2R3.50-62"}]',
+        }]
+
+        _setup_farm_context_mocks(monkeypatch, mock_farmos_client, plants, logs, plant_types,
+                                  memory_sessions=memory_sessions)
+
+        result = json.loads(server.farm_context(section="P2R3.50-62"))
+
+        assert len(result["context"]["logging_gaps"]) == 0
+        assert not any("INTEGRITY" in g for g in result["gaps"])
+
+        # Data integrity gate should NOT require confirmation
+        assert result["data_integrity"]["requires_confirmation"] is False
+
+
+class TestFarmContextValidation:
+    """Tests for farm_context input validation."""
+
+    def test_no_params_returns_error(self):
+        """Calling with no params → error."""
+        result = json.loads(server.farm_context())
+        assert "error" in result
+
+
+# Need datetime imports for timestamps in tests
+from datetime import datetime, timedelta, timezone
+AEST = timezone(timedelta(hours=10))
