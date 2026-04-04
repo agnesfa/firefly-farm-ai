@@ -464,6 +464,34 @@ def query_logs(
     }, indent=2)
 
 
+def _format_seed_asset(seed: dict) -> dict:
+    """Format a farmOS seed asset into a standard inventory dict."""
+    attrs = seed.get("attributes", {})
+    name = attrs.get("name", "")
+    # Extract species from seed name: "{Species} Seeds" or "{Species} Seeds — {Source}"
+    species_name = name.replace(" Seeds", "").split(" — ")[0].strip()
+    # Get inventory from computed attribute
+    inv = attrs.get("inventory", [])
+    count = None
+    if inv:
+        for q in inv:
+            val = q.get("value")
+            if val is not None:
+                try:
+                    count = float(val)
+                except (ValueError, TypeError):
+                    pass
+    return {
+        "name": name,
+        "species": species_name,
+        "section": "Seed Bank",
+        "inventory_count": count,
+        "status": attrs.get("status", "active"),
+        "asset_type": "seed",
+        "notes": (attrs.get("notes", {}) or {}).get("value", ""),
+    }
+
+
 @mcp.tool
 def get_inventory(section_id: Optional[str] = None, species: Optional[str] = None, section_prefix: Optional[str] = None) -> str:
     """Get current inventory (plant counts) for a section or specific species.
@@ -503,11 +531,14 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
         if not sections_list:
             return json.dumps({"error": f"No sections found matching prefix '{section_prefix}'"})
 
-        # Fetch plants for each section and aggregate
+        # Fetch plants AND seeds for each section and aggregate
         all_formatted = []
         for sec_id in sorted(sections_list):
             plants = client.get_plant_assets(section_id=sec_id, species=species)
             all_formatted.extend([format_plant_asset(p) for p in plants])
+            # Also fetch seed assets (different API: asset/seed)
+            seeds = client.get_seed_assets(section_id=sec_id, species=species)
+            all_formatted.extend([_format_seed_asset(s) for s in seeds])
 
         formatted = all_formatted
         query_info = {"section_prefix": section_prefix}
@@ -517,6 +548,9 @@ def get_inventory(section_id: Optional[str] = None, species: Optional[str] = Non
         # --- original single-section / species mode ---
         plants = client.get_plant_assets(section_id=section_id, species=species)
         formatted = [format_plant_asset(p) for p in plants]
+        # Also fetch seed assets
+        seeds = client.get_seed_assets(section_id=section_id, species=species)
+        formatted.extend([_format_seed_asset(s) for s in seeds])
         query_info = {"section_id": section_id, "species": species}
 
     # Build inventory summary with actual counts

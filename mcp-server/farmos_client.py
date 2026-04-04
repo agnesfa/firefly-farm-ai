@@ -512,6 +512,52 @@ class FarmOSClient:
             "asset/plant", filters={"status": status}
         )
 
+    def get_seed_assets(self, section_id: Optional[str] = None,
+                        species: Optional[str] = None,
+                        status: str = "active") -> list:
+        """Get seed assets with optional section/species filtering.
+
+        Seed assets use asset/seed (not asset/plant). They follow naming
+        convention: "{Species} Seeds" or "{Species} Seeds — {Source}".
+        """
+        if species:
+            return self._fetch_seeds_contains(species, status)
+        if section_id:
+            return self._fetch_seeds_contains(section_id, status)
+        return self.fetch_all_paginated("asset/seed", filters={"status": status})
+
+    def _fetch_seeds_contains(self, name_contains: str, status: str = "active",
+                              max_pages: int = 20) -> list:
+        """Fetch seed assets using CONTAINS filter with offset pagination."""
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+
+        encoded = urllib.parse.quote(name_contains)
+        base_path = (f"/api/asset/seed"
+                     f"?filter[name][operator]=CONTAINS"
+                     f"&filter[name][value]={encoded}"
+                     f"&filter[status]={status}"
+                     f"&sort=name"
+                     f"&page[limit]=50")
+
+        seen = {}
+        offset = 0
+        for _ in range(max_pages):
+            url = f"{self.hostname}{base_path}&page[offset]={offset}"
+            resp = self._retry_on_auth_error("GET", url, timeout=30)
+            if resp.status_code != 200:
+                raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
+            data = resp.json()
+            items = data.get("data", [])
+            if not items:
+                break
+            for item in items:
+                item_id = item.get("id", "")
+                if item_id:
+                    seen[item_id] = item
+            offset += 50
+        return list(seen.values())
+
     def get_section_assets(self, row_filter: Optional[str] = None) -> list:
         """Get land assets (paddock sections) with optional row filter."""
         all_sections = self.fetch_all_paginated("asset/land")
