@@ -208,6 +208,19 @@ class TestActivityRecency:
         result = assess_activity_recency(logs, SEMANTICS, now=now)
         assert result["status"] == "active"
 
+    def test_naive_formatted_timestamp(self):
+        """Handles format_timestamp output: '2026-04-01 18:39' (no timezone).
+
+        This was the farm_context bug — format_log returns timestamps without
+        timezone info, causing 'offset-naive vs offset-aware' when subtracted
+        from timezone-aware now.
+        """
+        now = datetime(2026, 4, 4, 10, 0, tzinfo=AEST)
+        logs = [{"timestamp": "2026-04-01 18:39"}]
+        result = assess_activity_recency(logs, SEMANTICS, now=now)
+        assert result["days_since_last"] == 2  # April 1 → April 4 ≈ 2-3 days
+        assert result["status"] == "active"
+
 
 # ── Succession Balance ────────────────────────────────────────────
 

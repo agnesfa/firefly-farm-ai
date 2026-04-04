@@ -426,6 +426,32 @@ export class FarmOSClient {
     return Array.from(seen.values());
   }
 
+  async getSeedAssets(sectionId?: string, species?: string, status = 'active'): Promise<any[]> {
+    if (species) return this.fetchSeedsContains(species, status);
+    if (sectionId) return this.fetchSeedsContains(sectionId, status);
+    return this.fetchAllPaginated('asset/seed', { status });
+  }
+
+  private async fetchSeedsContains(nameContains: string, status = 'active', maxPages = 20): Promise<any[]> {
+    await this.ensureConnected();
+    const encoded = encodeURIComponent(nameContains);
+    const basePath = `/api/asset/seed?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&sort=name&page[limit]=50`;
+    const seen = new Map<string, any>();
+    let offset = 0;
+    for (let page = 0; page < maxPages; page++) {
+      const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
+      const resp = await fetch(url, { headers: this.headers });
+      if (resp.status === 401 || resp.status === 403) { this.connected = false; throw new Error(`farmOS auth expired (${resp.status})`); }
+      if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
+      const data: any = await resp.json();
+      const items = data.data ?? [];
+      if (items.length === 0) break;
+      for (const item of items) { if (item.id) seen.set(item.id, item); }
+      offset += 50;
+    }
+    return Array.from(seen.values());
+  }
+
   async getPlantAssets(sectionId?: string, species?: string, status = 'active'): Promise<any[]> {
     if (species && sectionId) {
       const plants = await this.fetchPlantsContains(sectionId, status);

@@ -198,13 +198,18 @@ def assess_activity_recency(
     latest = None
     for log in logs:
         ts = log.get("timestamp", "")
-        if not ts:
+        if not ts or ts == "unknown":
             continue
         try:
             if isinstance(ts, (int, float)) or (isinstance(ts, str) and ts.isdigit()):
                 dt = datetime.fromtimestamp(int(ts), tz=AEST)
             else:
-                dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                # Handle ISO strings with or without timezone
+                cleaned = ts.replace("Z", "+00:00")
+                dt = datetime.fromisoformat(cleaned)
+            # Ensure timezone-aware immediately after parsing
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=AEST)
             if latest is None or dt > latest:
                 latest = dt
         except (ValueError, OSError):
@@ -213,9 +218,7 @@ def assess_activity_recency(
     if latest is None:
         return {"days_since_last": 9999, "last_log_date": None, "status": "neglected"}
 
-    # Ensure both are timezone-aware for subtraction
-    if latest.tzinfo is None:
-        latest = latest.replace(tzinfo=AEST)
+    # Ensure now is also timezone-aware
     if now.tzinfo is None:
         now = now.replace(tzinfo=AEST)
 

@@ -44,6 +44,9 @@ import { updateKnowledgeTool } from './update-knowledge.js';
 import { farmContextTool } from './farm-context.js';
 import { systemHealthTool } from './system-health.js';
 
+// SEED BANK (1)
+import { getSeedTransactionsTool } from './get-seed-transactions.js';
+
 // OTHER (2)
 import { getFarmOverviewTool } from './get-farm-overview.js';
 import { regeneratePagesTool } from './regenerate-pages.js';
@@ -86,6 +89,8 @@ export const farmTools = [
   // Intelligence layer (2)
   farmContextTool,
   systemHealthTool,
+  // Seed bank (1)
+  getSeedTransactionsTool,
   // Other (2)
   getFarmOverviewTool,
   regeneratePagesTool,
@@ -100,4 +105,5 @@ export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool, ac
 export { addPlantTypeTool, updatePlantTypeTool, reconcilePlantTypesTool };
 export { searchKnowledgeTool, listKnowledgeTool, addKnowledgeTool, updateKnowledgeTool };
 export { farmContextTool, systemHealthTool };
+export { getSeedTransactionsTool };
 export { getFarmOverviewTool, regeneratePagesTool };
