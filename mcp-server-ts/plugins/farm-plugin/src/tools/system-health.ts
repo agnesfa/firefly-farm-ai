@@ -50,13 +50,16 @@ export const systemHealthTool: Tool = {
       for (const sec of sections.slice(0, 20)) {
         const secName = sec.attributes?.name ?? '';
         const secPlantsRaw = await client.getPlantAssets(secName);
-        const secPlants = secPlantsRaw.map(formatPlantAsset);
+        const secPlants = secPlantsRaw.map(formatPlantAsset).map((p: any) => ({
+          species: p.species ?? '',
+          count: p.inventory_count ?? 0,
+        }));
         const secLogsRaw = await client.getLogs(undefined, secName);
-        const secLogs = secLogsRaw.map(formatLog);
+        const secLogs = secLogsRaw.map(formatLog) as any[];
         const health = assessSectionHealth(secPlants, secLogs, plantTypesDb, true);
         sectionScores.push({
           section: secName,
-          strata_score: health.strata?.score ?? 0,
+          strata_score: health.strata_coverage?.score ?? 0,
           survival_rate: null,
           status: health.overall_status ?? 'unknown',
         });
@@ -76,16 +79,20 @@ export const systemHealthTool: Tool = {
       const totalEntities = (result.dimensions.farm?.metrics?.active_plants?.value ?? 0) + 1200;
       let driftCount: number | null = null;
       try {
-        const ptClient = getPlantTypesClient(extra);
-        const drift = await ptClient.reconcile();
-        driftCount = drift?.mismatch_count ?? 0;
+        const ptClient = getPlantTypesClient();
+        if (ptClient) {
+          const drift = await ptClient.getReconcileData();
+          driftCount = drift?.mismatch_count ?? 0;
+        }
       } catch { /* */ }
 
       let backlogCount: number | null = null;
       try {
-        const obsClient = getObserveClient(extra);
-        const pending = await obsClient.listObservations('pending');
-        backlogCount = Array.isArray(pending) ? pending.length : 0;
+        const obsClient = getObserveClient();
+        if (obsClient) {
+          const pending = await obsClient.listObservations({ status: 'pending' });
+          backlogCount = Array.isArray(pending) ? pending.length : 0;
+        }
       } catch { /* */ }
 
       const systemResult = assessSystemMaturity({ total_entities: totalEntities, plant_type_drift: driftCount, observation_backlog: backlogCount }, config);
@@ -97,16 +104,19 @@ export const systemHealthTool: Tool = {
 
     // ── Team dimension ──────────────────────────────────
     try {
-      const memClient = getMemoryClient(extra);
+      const memClient = getMemoryClient();
+      if (!memClient) throw new Error('Memory client not configured');
       const recent = await memClient.readActivity(7);
       const distinctUsers = new Set((Array.isArray(recent) ? recent : []).map((e: any) => e.user).filter(Boolean)).size;
       const velocity = Array.isArray(recent) ? recent.length : 0;
 
       let kbCount: number | null = null;
       try {
-        const kbClient = getKnowledgeClient(extra);
-        const entries = await kbClient.list(undefined, undefined, true);
-        kbCount = Array.isArray(entries) ? entries.length : 0;
+        const kbClient = getKnowledgeClient();
+        if (kbClient) {
+          const entries = await kbClient.listEntries();
+          kbCount = Array.isArray(entries) ? entries.length : 0;
+        }
       } catch { /* */ }
 
       const teamResult = assessTeamMaturity({ active_users_weekly: distinctUsers, team_memory_velocity: velocity, kb_entry_count: kbCount }, config);

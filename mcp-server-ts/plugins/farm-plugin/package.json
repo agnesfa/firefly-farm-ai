@@ -16,7 +16,8 @@
   "dependencies": {
     "@fireflyagents/mcp-server-plugin-sdk": "file:../../packed-deps/fireflyagents-mcp-server-plugin-sdk-1.0.0-beta.0.tgz",
     "@fireflyagents/mcp-server-types": "file:../../packed-deps/fireflyagents-mcp-server-types-1.0.0-beta.0.tgz",
-    "@fireflyagents/mcp-shared-utils": "file:../../packed-deps/fireflyagents-mcp-shared-utils-1.0.0-beta.0.tgz"
+    "@fireflyagents/mcp-shared-utils": "file:../../packed-deps/fireflyagents-mcp-shared-utils-1.0.0-beta.0.tgz",
+    "yaml": "^2.7.0"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
