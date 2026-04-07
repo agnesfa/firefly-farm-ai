@@ -11,6 +11,8 @@ import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
 const logger = baseLogger.child({ context: 'farm-plugin:farmos-client' });
 
 const PLANT_UNIT_UUID = '2371b79e-a87b-4152-b6e4-ea6a9ed37fd0';
+const GRAMS_UNIT_UUID = 'e7bad672-9c33-4138-9fc3-1b0548a33aca';
+const NURS_FRDG_UUID = '429fcdd3-8be6-436a-b439-49186f56b3c7';
 
 interface FarmOSConfig {
   farmUrl: string;
@@ -391,6 +393,82 @@ export class FarmOSClient {
 
     const payload = { data: { type: 'asset--plant', ...data } };
     const result = await this._post('/api/asset/plant', payload);
+    return result.data?.id ?? null;
+  }
+
+  // ── Seed asset creation ──────────────────────────────────────
+
+  async seedAssetExists(name: string): Promise<string | null> {
+    const assets = await this.fetchByName('asset/seed', name);
+    return assets.length > 0 ? assets[0].id : null;
+  }
+
+  async createSeedAsset(name: string, plantTypeUuid: string, notes = ''): Promise<string | null> {
+    const data: any = {
+      attributes: { name, status: 'active' },
+      relationships: {
+        plant_type: { data: [{ type: 'taxonomy_term--plant_type', id: plantTypeUuid }] },
+      },
+    };
+    if (notes) data.attributes.notes = { value: notes, format: 'default' };
+
+    const payload = { data: { type: 'asset--seed', ...data } };
+    const result = await this._post('/api/asset/seed', payload);
+    return result.data?.id ?? null;
+  }
+
+  async createSeedQuantity(
+    seedId: string,
+    value: number,
+    unitType: 'grams' | 'stock_level' = 'grams',
+    adjustment: 'reset' | 'increment' | 'decrement' = 'reset',
+  ): Promise<string | null> {
+    const isGrams = unitType === 'grams';
+    const payload = {
+      data: {
+        type: 'quantity--standard',
+        attributes: {
+          value: { decimal: String(value) },
+          measure: isGrams ? 'weight' : 'rating',
+          label: isGrams ? 'grams' : 'stock_level',
+          inventory_adjustment: adjustment,
+        },
+        relationships: {
+          units: { data: { type: 'taxonomy_term--unit', id: GRAMS_UNIT_UUID } },
+          inventory_asset: { data: { type: 'asset--seed', id: seedId } },
+        },
+      },
+    };
+    const result = await this._post('/api/quantity/standard', payload);
+    return result.data?.id ?? null;
+  }
+
+  async createSeedObservationLog(
+    seedId: string,
+    quantityId: string | null,
+    timestamp: number,
+    name: string,
+    notes = '',
+    isMovement = true,
+  ): Promise<string | null> {
+    const logData: any = {
+      attributes: {
+        name,
+        timestamp: String(timestamp),
+        status: 'done',
+        is_movement: isMovement,
+      },
+      relationships: {
+        asset: { data: [{ type: 'asset--seed', id: seedId }] },
+        location: { data: [{ type: 'asset--structure', id: NURS_FRDG_UUID }] },
+      },
+    };
+    if (notes) logData.attributes.notes = { value: notes, format: 'default' };
+    if (quantityId) {
+      logData.relationships.quantity = { data: [{ type: 'quantity--standard', id: quantityId }] };
+    }
+    const payload = { data: { type: 'log--observation', ...logData } };
+    const result = await this._post('/api/log/observation', payload);
     return result.data?.id ?? null;
   }
 

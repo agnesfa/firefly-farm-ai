@@ -1,4 +1,4 @@
-// Barrel export — all 32 farm tools
+// Barrel export — all 34 farm tools
 import { helloTool } from './hello.js';
 
 // READ TOOLS (7)
@@ -44,8 +44,10 @@ import { updateKnowledgeTool } from './update-knowledge.js';
 import { farmContextTool } from './farm-context.js';
 import { systemHealthTool } from './system-health.js';
 
-// SEED BANK (1)
+// SEED BANK (3)
 import { getSeedTransactionsTool } from './get-seed-transactions.js';
+import { createSeedTool } from './create-seed.js';
+import { syncSeedTransactionsTool } from './sync-seed-transactions.js';
 
 // OTHER (2)
 import { getFarmOverviewTool } from './get-farm-overview.js';
@@ -89,8 +91,10 @@ export const farmTools = [
   // Intelligence layer (2)
   farmContextTool,
   systemHealthTool,
-  // Seed bank (1)
+  // Seed bank (3)
   getSeedTransactionsTool,
+  createSeedTool,
+  syncSeedTransactionsTool,
   // Other (2)
   getFarmOverviewTool,
   regeneratePagesTool,
@@ -105,5 +109,5 @@ export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool, ac
 export { addPlantTypeTool, updatePlantTypeTool, reconcilePlantTypesTool };
 export { searchKnowledgeTool, listKnowledgeTool, addKnowledgeTool, updateKnowledgeTool };
 export { farmContextTool, systemHealthTool };
-export { getSeedTransactionsTool };
+export { getSeedTransactionsTool, createSeedTool, syncSeedTransactionsTool };
 export { getFarmOverviewTool, regeneratePagesTool };

@@ -661,6 +661,110 @@ def get_seed_transactions(
 
 
 @mcp.tool
+def create_seed(
+    species: str,
+    quantity_grams: Optional[float] = None,
+    stock_level: Optional[str] = None,
+    source: Optional[str] = None,
+    source_type: str = "commercial",
+    notes: str = "",
+    date: Optional[str] = None,
+) -> str:
+    """Create or restock a seed asset in the seed bank.
+
+    Creates a farmOS seed asset, sets initial inventory, and records location
+    in NURS.FRDG (seed bank fridge). If the seed asset already exists, adds
+    stock via an inventory increment log.
+
+    Three acquisition pathways:
+    - commercial: purchased from a nursery or supplier
+    - harvest: saved from farm harvest
+    - exchange: received from another farm (non-commercial)
+
+    Args:
+        species: Plant species farmos_name (must match plant_type taxonomy).
+        quantity_grams: Initial weight in grams (for bulk seeds).
+        stock_level: For sachet seeds: "full", "half", or "empty".
+        source: Where seeds came from (e.g., "Down Under Ag", "Farm harvest P2R3").
+        source_type: One of "commercial", "harvest", "exchange". Default "commercial".
+        notes: Free text (composition, invoice refs, harvest context).
+        date: Acquisition date in ISO format. Defaults to today.
+
+    Returns:
+        Created/restocked seed asset details.
+    """
+    from farmos_client import GRAMS_UNIT_UUID, STOCK_LEVEL_UNIT_UUID
+
+    NURS_FRDG_UUID = "429fcdd3-8be6-436a-b439-49186f56b3c7"
+
+    if not quantity_grams and not stock_level:
+        return json.dumps({"error": "Provide either quantity_grams or stock_level."})
+
+    client = get_client()
+
+    # Validate species exists
+    pt_results = client.fetch_by_name("taxonomy_term/plant_type", species)
+    if not pt_results:
+        return json.dumps({"error": f"Plant type '{species}' not found in farmOS taxonomy."})
+    pt_uuid = pt_results[0]["id"]
+
+    seed_name = f"{species} Seeds"
+    date_str = date or datetime.now().strftime("%Y-%m-%d")
+    dt = datetime.strptime(date_str, "%Y-%m-%d")
+    timestamp = int(dt.timestamp())
+
+    # Build notes with source metadata
+    note_parts = []
+    if source:
+        note_parts.append(f"Source: {source} ({source_type})")
+    if notes:
+        note_parts.append(notes)
+    full_notes = ". ".join(note_parts)
+
+    # Check if seed asset already exists
+    existing = client.fetch_by_name("asset/seed", seed_name)
+    if existing:
+        seed_id = existing[0]["id"]
+        status = "restocked"
+    else:
+        seed_id = client.create_seed_asset(seed_name, pt_uuid, full_notes)
+        if not seed_id:
+            return json.dumps({"error": "Failed to create seed asset in farmOS."})
+        status = "created"
+
+    # Create inventory quantity
+    qty_id = None
+    if quantity_grams:
+        adjustment = "increment" if existing else "reset"
+        qty_id = client.create_seed_quantity(seed_id, quantity_grams, "grams", adjustment)
+    elif stock_level:
+        level_map = {"full": 1, "half": 0.5, "empty": 0}
+        value = level_map.get(stock_level.lower(), 1)
+        qty_id = client.create_seed_quantity(seed_id, value, "stock_level", "reset")
+
+    # Create observation log (movement to NURS.FRDG)
+    qty_label = f"{quantity_grams}g" if quantity_grams else (stock_level or "")
+    log_name = f"Seedbank {'restock' if existing else 'addition'} — {seed_name}"
+    if qty_label:
+        log_name += f" — {qty_label}"
+    log_id = client.create_seed_observation_log(seed_id, qty_id, timestamp, log_name, full_notes)
+
+    result = {
+        "status": status,
+        "seed": {"id": seed_id, "name": seed_name, "species": species},
+        "inventory": (
+            {"quantity_grams": quantity_grams, "adjustment": "increment" if existing else "reset"}
+            if quantity_grams
+            else {"stock_level": stock_level}
+        ),
+        "source": source,
+        "source_type": source_type,
+        "observation_log": {"id": log_id, "name": log_name},
+    }
+    return json.dumps(result, indent=2)
+
+
+@mcp.tool
 def sync_seed_transactions(days: int = 7, dry_run: bool = False) -> str:
     """Sync seed bank transactions from Google Sheet to farmOS seed assets.
 

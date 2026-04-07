@@ -405,6 +405,34 @@ class FarmOSClient:
         result = self._post("/api/quantity/standard", payload)
         return result.get("data", {}).get("id")
 
+    def create_seed_asset(self, name: str, plant_type_uuid: str,
+                          notes: str = "") -> Optional[str]:
+        """Create a seed asset in farmOS.
+
+        Args:
+            name: Seed asset name (e.g., "Pigeon Pea Seeds")
+            plant_type_uuid: UUID of the plant_type taxonomy term
+            notes: Optional notes text
+
+        Returns:
+            UUID of the created seed asset, or None on failure.
+        """
+        data = {
+            "attributes": {"name": name, "status": "active"},
+            "relationships": {
+                "plant_type": {
+                    "data": [{"type": "taxonomy_term--plant_type",
+                              "id": plant_type_uuid}]
+                },
+            },
+        }
+        if notes:
+            data["attributes"]["notes"] = {"value": notes, "format": "default"}
+
+        payload = {"data": {"type": "asset--seed", **data}}
+        result = self._post("/api/asset/seed", payload)
+        return result.get("data", {}).get("id")
+
     def create_seed_observation_log(self, seed_id: str, quantity_id: str,
                                      timestamp: int, name: str,
                                      notes: str = "") -> Optional[str]:

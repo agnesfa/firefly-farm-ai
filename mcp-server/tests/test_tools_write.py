@@ -1,6 +1,6 @@
 """
 Tests for the MCP server write tools: create_observation, create_activity,
-create_plant, and update_inventory.
+create_plant, create_seed, and update_inventory.
 
 Each test monkeypatches server.get_client() to return a mock FarmOSClient,
 verifying the tools produce correct JSON output and handle error/idempotency
@@ -430,3 +430,157 @@ class TestArchivePlant:
         mock_farmos_client.create_activity_log.assert_called_once()
         call_kwargs = mock_farmos_client.create_activity_log.call_args
         assert call_kwargs.kwargs.get("notes") or call_kwargs[1].get("notes") == "Died from frost damage"
+
+
+# ── create_seed ──────────────────────────────────────────────
+
+
+class TestCreateSeed:
+    def test_create_seed_happy_path(self, mock_farmos_client, monkeypatch):
+        """Successful seed creation returns seed asset details."""
+        import server
+
+        pt_uuid = make_uuid()
+        seed_id = make_uuid()
+        qty_id = make_uuid()
+        log_id = make_uuid()
+
+        mock_farmos_client.fetch_by_name.side_effect = [
+            [{"id": pt_uuid}],  # plant type lookup
+            [],                  # seed asset existence check (not found)
+        ]
+        mock_farmos_client.create_seed_asset.return_value = seed_id
+        mock_farmos_client.create_seed_quantity.return_value = qty_id
+        mock_farmos_client.create_seed_observation_log.return_value = log_id
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_seed(
+            species="Pigeon Pea",
+            quantity_grams=500,
+            source="Greenpatch",
+            source_type="commercial",
+            notes="Organic certified",
+            date="2026-03-13",
+        ))
+
+        assert result["status"] == "created"
+        assert result["seed"]["id"] == seed_id
+        assert result["seed"]["name"] == "Pigeon Pea Seeds"
+        assert result["inventory"]["quantity_grams"] == 500
+        assert result["inventory"]["adjustment"] == "reset"
+        assert result["source_type"] == "commercial"
+
+        mock_farmos_client.create_seed_asset.assert_called_once()
+        mock_farmos_client.create_seed_quantity.assert_called_once_with(
+            seed_id, 500, "grams", "reset"
+        )
+
+    def test_create_seed_restock_existing(self, mock_farmos_client, monkeypatch):
+        """Restocking existing seed uses increment adjustment."""
+        import server
+
+        existing_id = make_uuid()
+        qty_id = make_uuid()
+        log_id = make_uuid()
+
+        mock_farmos_client.fetch_by_name.side_effect = [
+            [{"id": make_uuid()}],            # plant type found
+            [{"id": existing_id}],             # seed asset exists
+        ]
+        mock_farmos_client.create_seed_quantity.return_value = qty_id
+        mock_farmos_client.create_seed_observation_log.return_value = log_id
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_seed(
+            species="Pigeon Pea",
+            quantity_grams=200,
+            source="Farm harvest P2R3",
+            source_type="harvest",
+        ))
+
+        assert result["status"] == "restocked"
+        assert result["seed"]["id"] == existing_id
+        assert result["inventory"]["adjustment"] == "increment"
+        assert result["source_type"] == "harvest"
+        mock_farmos_client.create_seed_asset.assert_not_called()
+
+    def test_create_seed_stock_level(self, mock_farmos_client, monkeypatch):
+        """Sachet seeds use stock_level quantity type."""
+        import server
+
+        seed_id = make_uuid()
+        mock_farmos_client.fetch_by_name.side_effect = [
+            [{"id": make_uuid()}],  # plant type
+            [],                      # no existing seed
+        ]
+        mock_farmos_client.create_seed_asset.return_value = seed_id
+        mock_farmos_client.create_seed_quantity.return_value = make_uuid()
+        mock_farmos_client.create_seed_observation_log.return_value = make_uuid()
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_seed(
+            species="Tomato (Marmande)",
+            stock_level="full",
+            source="EDEN Seeds",
+        ))
+
+        assert result["status"] == "created"
+        assert result["inventory"]["stock_level"] == "full"
+        mock_farmos_client.create_seed_quantity.assert_called_once_with(
+            seed_id, 1, "stock_level", "reset"
+        )
+
+    def test_create_seed_type_not_found(self, mock_farmos_client, monkeypatch):
+        """Returns error when plant type doesn't exist."""
+        import server
+
+        mock_farmos_client.fetch_by_name.return_value = []
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_seed(
+            species="Nonexistent",
+            quantity_grams=100,
+        ))
+
+        assert "error" in result
+        assert "not found" in result["error"]
+        mock_farmos_client.create_seed_asset.assert_not_called()
+
+    def test_create_seed_no_quantity(self, mock_farmos_client, monkeypatch):
+        """Returns error when neither quantity_grams nor stock_level provided."""
+        import server
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_seed(species="Pigeon Pea"))
+
+        assert "error" in result
+        assert "quantity_grams" in result["error"]
+
+    def test_create_seed_exchange_source(self, mock_farmos_client, monkeypatch):
+        """Exchange source type is correctly passed through."""
+        import server
+
+        mock_farmos_client.fetch_by_name.side_effect = [
+            [{"id": make_uuid()}],  # plant type
+            [],                      # no existing seed
+        ]
+        mock_farmos_client.create_seed_asset.return_value = make_uuid()
+        mock_farmos_client.create_seed_quantity.return_value = make_uuid()
+        mock_farmos_client.create_seed_observation_log.return_value = make_uuid()
+
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        result = json.loads(server.create_seed(
+            species="Comfrey",
+            quantity_grams=50,
+            source="Minimba Farm",
+            source_type="exchange",
+        ))
+
+        assert result["source_type"] == "exchange"
+        assert result["source"] == "Minimba Farm"

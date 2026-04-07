@@ -596,6 +596,32 @@ class TestEntityCreation:
         ]
 
     @responses.activate
+    def test_create_seed_asset(self, env_vars):
+        client = _connect(env_vars)
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/asset/seed",
+            json={"data": {"id": "new-seed-id", "type": "asset--seed"}},
+            status=201,
+        )
+
+        result = client.create_seed_asset(
+            name="Pigeon Pea Seeds",
+            plant_type_uuid="pt-uuid-123",
+            notes="Source: Greenpatch (commercial)",
+        )
+
+        assert result == "new-seed-id"
+
+        import json
+        body = json.loads(responses.calls[-1].request.body)
+        data = body["data"]
+        assert data["type"] == "asset--seed"
+        assert data["attributes"]["name"] == "Pigeon Pea Seeds"
+        assert "Greenpatch" in data["attributes"]["notes"]["value"]
+        assert data["relationships"]["plant_type"]["data"][0]["id"] == "pt-uuid-123"
+
+    @responses.activate
     def test_create_plant_type(self, env_vars):
         client = _connect(env_vars)
         responses.add(
