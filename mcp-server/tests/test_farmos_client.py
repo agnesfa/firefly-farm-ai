@@ -138,6 +138,38 @@ class TestErrorHandling:
         with pytest.raises(HTTPError):
             client._post("/api/asset/plant", {"data": {}})
 
+    @responses.activate
+    def test_post_401_retries_and_succeeds(self, env_vars):
+        client = _connect(env_vars)
+        # First POST returns 401
+        responses.add(responses.POST, f"{BASE_URL}/api/log/observation", status=401)
+        # Reconnect token request succeeds
+        _add_token_mock()
+        # Retry POST succeeds
+        responses.add(
+            responses.POST, f"{BASE_URL}/api/log/observation",
+            json={"data": {"id": "new-log-id", "type": "log--observation"}},
+            status=201,
+        )
+
+        result = client._post("/api/log/observation", {"data": {"type": "log--observation"}})
+        assert result["data"]["id"] == "new-log-id"
+        assert client._connected is True
+
+    @responses.activate
+    def test_post_401_retries_then_fails(self, env_vars):
+        client = _connect(env_vars)
+        # First POST returns 401
+        responses.add(responses.POST, f"{BASE_URL}/api/log/observation", status=401)
+        # Reconnect succeeds
+        _add_token_mock()
+        # Retry also returns 401
+        responses.add(responses.POST, f"{BASE_URL}/api/log/observation", status=401)
+
+        with pytest.raises(ConnectionError, match="authentication failed after token refresh"):
+            client._post("/api/log/observation", {"data": {}})
+        assert client._connected is False
+
 
 # ── Pagination tests ─────────────────────────────────────────
 

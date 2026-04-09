@@ -31,6 +31,16 @@ export class FarmOSClient {
   private readonly PLANT_TYPE_CACHE_TTL = 300; // 5 minutes
   private connected = false;
 
+  // ── Connection stats for observability ─────────────────────
+  private stats = {
+    connectCount: 0,
+    retryCount: 0,
+    retrySuccessCount: 0,
+    retryFailCount: 0,
+    lastConnectAt: null as string | null,
+    lastRetryAt: null as string | null,
+  };
+
   // Singleton per farmUrl
   private static instances = new Map<string, FarmOSClient>();
 
@@ -70,14 +80,21 @@ export class FarmOSClient {
     });
 
     if (!resp.ok) {
+      logger.error('farmOS connect failed', { status: resp.status, url: this.baseUrl });
       throw new Error(`farmOS OAuth2 authentication failed: HTTP ${resp.status}`);
     }
 
     const data: any = await resp.json();
     this.token = data.access_token;
     this.connected = true;
-    logger.info('Connected to farmOS', { url: this.baseUrl });
+    this.stats.connectCount++;
+    this.stats.lastConnectAt = new Date().toISOString();
+    logger.info('Connected to farmOS', { url: this.baseUrl, connectCount: this.stats.connectCount });
     return true;
+  }
+
+  getStats() {
+    return { ...this.stats };
   }
 
   private get headers(): Record<string, string> {
@@ -90,47 +107,58 @@ export class FarmOSClient {
 
   // ── Low-level HTTP ──────────────────────────────────────────
 
-  private async ensureConnected(): Promise<void> {
+  async ensureConnected(): Promise<void> {
     if (!this.connected) {
       await this.connect();
     }
   }
 
-  private async _get(path: string): Promise<any> {
+  /**
+   * Unified fetch wrapper: retry once on 401/403 with a fresh token.
+   * All HTTP methods route through here for consistent auth handling.
+   */
+  private async _fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
     await this.ensureConnected();
-    const url = `${this.baseUrl}${path}`;
-    const resp = await fetch(url, { headers: this.headers });
+    const mergedInit = { ...init, headers: { ...this.headers, ...init?.headers } };
+    const resp = await fetch(url, mergedInit);
+
     if (resp.status === 401 || resp.status === 403) {
       this.connected = false;
-      // Try reconnect once
+      this.stats.retryCount++;
+      this.stats.lastRetryAt = new Date().toISOString();
+      const shortUrl = url.replace(this.baseUrl, '');
+      logger.warn('Auth expired, reconnecting', { url: shortUrl, status: resp.status });
+
       await this.connect();
-      const retry = await fetch(url, { headers: this.headers });
-      if (!retry.ok) throw new Error(`farmOS API error: HTTP ${retry.status} for ${path}`);
-      return retry.json();
+      const retry = await fetch(url, { ...init, headers: { ...this.headers, ...init?.headers } });
+
+      if (retry.status === 401 || retry.status === 403) {
+        this.stats.retryFailCount++;
+        logger.error('Auth retry failed', { url: shortUrl, status: retry.status });
+        throw new Error(`farmOS authentication failed after retry (HTTP ${retry.status})`);
+      }
+
+      this.stats.retrySuccessCount++;
+      logger.info('Auth retry succeeded', { url: shortUrl });
+      return retry;
     }
+
+    return resp;
+  }
+
+  private async _get(path: string): Promise<any> {
+    const url = `${this.baseUrl}${path}`;
+    const resp = await this._fetchWithRetry(url);
     if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status} for ${path}`);
     return resp.json();
   }
 
   private async _post(path: string, payload: any): Promise<any> {
-    await this.ensureConnected();
     const url = `${this.baseUrl}${path}`;
-    const resp = await fetch(url, {
+    const resp = await this._fetchWithRetry(url, {
       method: 'POST',
-      headers: this.headers,
       body: JSON.stringify(payload),
     });
-    if (resp.status === 401 || resp.status === 403) {
-      this.connected = false;
-      await this.connect();
-      const retry = await fetch(url, {
-        method: 'POST',
-        headers: this.headers,
-        body: JSON.stringify(payload),
-      });
-      if (!retry.ok) throw new Error(`farmOS POST error: HTTP ${retry.status}`);
-      return retry.json();
-    }
     if (!resp.ok) {
       const text = await resp.text();
       throw new Error(`farmOS POST error: HTTP ${resp.status} - ${text}`);
@@ -139,24 +167,11 @@ export class FarmOSClient {
   }
 
   private async _patch(path: string, payload: any): Promise<any> {
-    await this.ensureConnected();
     const url = `${this.baseUrl}${path}`;
-    const resp = await fetch(url, {
+    const resp = await this._fetchWithRetry(url, {
       method: 'PATCH',
-      headers: this.headers,
       body: JSON.stringify(payload),
     });
-    if (resp.status === 401 || resp.status === 403) {
-      this.connected = false;
-      await this.connect();
-      const retry = await fetch(url, {
-        method: 'PATCH',
-        headers: this.headers,
-        body: JSON.stringify(payload),
-      });
-      if (!retry.ok) throw new Error(`farmOS PATCH error: HTTP ${retry.status}`);
-      return retry.json();
-    }
     if (!resp.ok) {
       const text = await resp.text();
       throw new Error(`farmOS PATCH error: HTTP ${resp.status} - ${text}`);
@@ -179,7 +194,6 @@ export class FarmOSClient {
     sort?: string,
     limit = 50,
   ): Promise<any[]> {
-    await this.ensureConnected();
     const seen = new Map<string, any>();
     const effectiveSort = sort ?? 'name';
 
@@ -194,11 +208,7 @@ export class FarmOSClient {
     let offset = 0;
     while (true) {
       const url = `${this.baseUrl}/api/${apiPath}?${params}&page[offset]=${offset}`;
-      const resp = await fetch(url, { headers: this.headers });
-      if (resp.status === 401 || resp.status === 403) {
-        this.connected = false;
-        throw new Error(`farmOS authentication expired (HTTP ${resp.status})`);
-      }
+      const resp = await this._fetchWithRetry(url);
       if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status} fetching ${apiPath}`);
 
       const data: any = await resp.json();
@@ -475,7 +485,6 @@ export class FarmOSClient {
   // ── Query helpers for tools ─────────────────────────────────
 
   private async fetchPlantsContains(nameContains: string, status = 'active', maxPages = 20): Promise<any[]> {
-    await this.ensureConnected();
     const encoded = encodeURIComponent(nameContains);
     const basePath = `/api/asset/plant?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&sort=name&page[limit]=50`;
 
@@ -484,11 +493,7 @@ export class FarmOSClient {
 
     for (let page = 0; page < maxPages; page++) {
       const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
-      const resp = await fetch(url, { headers: this.headers });
-      if (resp.status === 401 || resp.status === 403) {
-        this.connected = false;
-        throw new Error(`farmOS authentication expired (HTTP ${resp.status})`);
-      }
+      const resp = await this._fetchWithRetry(url);
       if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
 
       const data: any = await resp.json();
@@ -511,15 +516,13 @@ export class FarmOSClient {
   }
 
   private async fetchSeedsContains(nameContains: string, status = 'active', maxPages = 20): Promise<any[]> {
-    await this.ensureConnected();
     const encoded = encodeURIComponent(nameContains);
     const basePath = `/api/asset/seed?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&sort=name&page[limit]=50`;
     const seen = new Map<string, any>();
     let offset = 0;
     for (let page = 0; page < maxPages; page++) {
       const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
-      const resp = await fetch(url, { headers: this.headers });
-      if (resp.status === 401 || resp.status === 403) { this.connected = false; throw new Error(`farmOS auth expired (${resp.status})`); }
+      const resp = await this._fetchWithRetry(url);
       if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
       const data: any = await resp.json();
       const items = data.data ?? [];
@@ -623,7 +626,6 @@ export class FarmOSClient {
     includeQuantity = true,
     maxPages = 20,
   ): Promise<any[]> {
-    await this.ensureConnected();
     const encoded = encodeURIComponent(nameContains);
     let basePath = `/api/log/${logType}?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&page[limit]=50&sort=-timestamp,name`;
     if (includeQuantity) basePath += '&include=quantity';
@@ -633,11 +635,7 @@ export class FarmOSClient {
 
     for (let page = 0; page < maxPages; page++) {
       const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
-      const resp = await fetch(url, { headers: this.headers });
-      if (resp.status === 401 || resp.status === 403) {
-        this.connected = false;
-        throw new Error(`farmOS authentication expired (HTTP ${resp.status})`);
-      }
+      const resp = await this._fetchWithRetry(url);
       if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
 
       const data: any = await resp.json();
@@ -814,21 +812,15 @@ export class FarmOSClient {
     binaryData: ArrayBuffer,
     mimeType = 'image/jpeg',
   ): Promise<string | null> {
-    await this.ensureConnected();
     const url = `${this.baseUrl}/api/${entityType}/${entityId}/${fieldName}`;
-    const resp = await fetch(url, {
+    const resp = await this._fetchWithRetry(url, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${this.token}`,
         'Content-Type': 'application/octet-stream',
         'Content-Disposition': `file; filename="${filename}"`,
       },
       body: binaryData,
     });
-    if (resp.status === 401 || resp.status === 403) {
-      this.connected = false;
-      throw new Error(`farmOS authentication expired (HTTP ${resp.status})`);
-    }
     if (!resp.ok) throw new Error(`farmOS file upload error: HTTP ${resp.status}`);
     const result: any = await resp.json();
     return result.data?.id ?? null;

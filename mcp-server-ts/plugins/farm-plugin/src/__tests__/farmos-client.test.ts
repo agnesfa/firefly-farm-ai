@@ -101,6 +101,91 @@ describe('FarmOSClient', () => {
         client.createPlantType('Bad Type', 'desc'),
       ).rejects.toThrow('422');
     });
+
+    it('reconnects on 401 in fetchAllPaginated', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      const uuid1 = makeUuid();
+      // First paginated fetch returns 401
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+      // Reconnect
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
+      // Retry succeeds with data
+      fetchSpy.mockResolvedValueOnce(mockResponse({
+        data: [{ id: uuid1, attributes: { name: 'A' } }],
+      }));
+      // Second page empty
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+
+      const result = await client.fetchAllPaginated('asset/plant');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe(uuid1);
+    });
+
+    it('reconnects on 401 in paginated plant query', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      // getPlantAssets with species calls fetchPlantsContains
+      // First page returns 401
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+      // Reconnect
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
+      // Retry succeeds
+      fetchSpy.mockResolvedValueOnce(mockResponse({
+        data: [{ id: makeUuid(), attributes: { name: '09 APR 2026 - Test Plant - P2R3.0-5' } }],
+      }));
+      // Empty page
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+
+      const result = await client.getPlantAssets(undefined, 'Test Plant');
+      expect(result).toHaveLength(1);
+    });
+
+    it('tracks connection stats', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      let stats = client.getStats();
+      expect(stats.connectCount).toBe(1);
+      expect(stats.retryCount).toBe(0);
+      expect(stats.lastConnectAt).toBeTruthy();
+
+      // Trigger a retry via 401 on GET
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      await client.fetchByName('asset/plant', 'Test');
+
+      stats = client.getStats();
+      expect(stats.connectCount).toBe(2); // initial + reconnect
+      expect(stats.retryCount).toBe(1);
+      expect(stats.retrySuccessCount).toBe(1);
+      expect(stats.retryFailCount).toBe(0);
+      expect(stats.lastRetryAt).toBeTruthy();
+    });
+
+    it('throws after retry also fails with 401', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
+      const client = FarmOSClient.getInstance(config);
+      await client.connect();
+
+      // GET 401, reconnect, retry also 401
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+
+      await expect(client.fetchByName('asset/plant', 'Test')).rejects.toThrow(
+        'authentication failed after retry',
+      );
+
+      const stats = client.getStats();
+      expect(stats.retryFailCount).toBe(1);
+    });
   });
 
   // ── Pagination ────────────────────────────────────────────

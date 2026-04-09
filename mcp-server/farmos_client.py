@@ -144,8 +144,10 @@ class FarmOSClient:
 
     def _post(self, path: str, payload: dict) -> dict:
         """POST request to farmOS API. Returns parsed JSON."""
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
         url = f"{self.hostname}{path}"
-        resp = self.session.post(url, json=payload, timeout=30)
+        resp = self._retry_on_auth_error("POST", url, json=payload, timeout=30)
         resp.raise_for_status()
         return resp.json()
 
