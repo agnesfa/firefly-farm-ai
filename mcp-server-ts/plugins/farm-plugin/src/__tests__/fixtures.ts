@@ -139,6 +139,7 @@ export function makeObservation(opts: {
   plantNotes?: string;
   condition?: string;
   timestamp?: string;
+  mediaFiles?: string;
 } = {}) {
   return {
     species: opts.species ?? '',
@@ -153,6 +154,7 @@ export function makeObservation(opts: {
     plant_notes: opts.plantNotes ?? '',
     condition: opts.condition ?? '',
     timestamp: opts.timestamp ?? '2026-03-09T03:15:00.000Z',
+    media_files: opts.mediaFiles ?? '',
   };
 }
 

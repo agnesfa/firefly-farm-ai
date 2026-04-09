@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient, getObserveClient } from '../clients/index.js';
-import { parseDate, formatPlantAsset, buildAssetName } from '../helpers/index.js';
+import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto } from '../helpers/index.js';
 
 function buildImportNotes(obs: any, extra = ''): string {
   const parts: string[] = [];
@@ -49,6 +49,26 @@ export const importObservationsTool: Tool = {
     const actions: any[] = [];
     const errors: string[] = [];
 
+    // Photo pipeline — fetch all media files for this submission once.
+    // Photos attach at the submission level (one set per QR form
+    // submission), not per species row, so we fetch once and distribute.
+    // Failures here must never block the observation import.
+    let submissionMedia: any[] = [];
+    const anyMediaListed = observations.some(
+      (obs: any) => typeof obs.media_files === 'string' && obs.media_files.trim().length > 0,
+    );
+    if (!params.dry_run && anyMediaListed) {
+      try {
+        const mediaResp: any = await obsClient.getMedia(params.submission_id);
+        if (mediaResp && mediaResp.success) {
+          submissionMedia = mediaResp.files ?? [];
+        }
+      } catch {
+        submissionMedia = [];
+      }
+    }
+    const speciesPhotoUpdates = new Set<string>();
+
     for (const obs of observations) {
       const species = (obs.species ?? '').trim();
       const newCount = obs.new_count;
@@ -67,6 +87,10 @@ export const importObservationsTool: Tool = {
               const ts = parseDate(obsDate || undefined);
               const logId = await client.createActivityLog(sectionUuid, ts, `Observation — ${obsSection}`, buildImportNotes(obs));
               action.result = 'created'; action.log_id = logId;
+              if (submissionMedia.length > 0 && logId) {
+                const photos = await uploadMediaToLog(client as any, 'activity', logId, submissionMedia);
+                if (photos.length > 0) action.photos_uploaded = photos.length;
+              }
             } else { action.result = 'error'; errors.push(`Section ${obsSection} not found`); }
           } catch (e: any) { action.result = 'error'; errors.push(`Activity for ${obsSection}: ${e.message}`); }
         } else { action.result = 'dry_run'; }
@@ -91,9 +115,20 @@ export const importObservationsTool: Tool = {
             if (existing) { action.result = 'skipped'; action.plant_name = assetName; actions.push(action); continue; }
             const plantId = await client.createPlantAsset(assetName, ptUuid, buildImportNotes(obs, 'New plant added via field observation'));
             if (plantId) {
-              await client.createQuantity(plantId, count, 'reset');
-              await client.createObservationLog(plantId, secUuid, null, parseDate(dateStr), `Inventory ${obsSection} — ${species}`, '');
+              const qtyId = await client.createQuantity(plantId, count, 'reset');
+              const inventoryLogId = await client.createObservationLog(plantId, secUuid, qtyId, parseDate(dateStr), `Inventory ${obsSection} — ${species}`, '');
               action.result = 'created'; action.plant_name = assetName;
+              if (submissionMedia.length > 0 && inventoryLogId) {
+                const photos = await uploadMediaToLog(client as any, 'observation', inventoryLogId, submissionMedia);
+                if (photos.length > 0) action.photos_uploaded = photos.length;
+              }
+              if (submissionMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
+                const refId = await updateSpeciesReferencePhoto(client as any, species, submissionMedia);
+                if (refId) {
+                  action.species_reference_photo = true;
+                  speciesPhotoUpdates.add(species);
+                }
+              }
             }
           } catch (e: any) { action.result = 'error'; errors.push(`Create ${species} in ${obsSection}: ${e.message}`); }
         } else { action.result = 'dry_run'; }
@@ -126,15 +161,38 @@ export const importObservationsTool: Tool = {
                   const existing = await client.logExists(logName, 'observation');
                   if (existing) { action.result = 'skipped'; } else {
                     const qtyId = await client.createQuantity(plant.id, countVal, 'reset');
-                    await client.createObservationLog(plant.id, secUuid, qtyId, ts, logName, combinedNotes);
+                    const obsLogId = await client.createObservationLog(plant.id, secUuid, qtyId, ts, logName, combinedNotes);
                     action.result = 'created';
+                    if (obsLogId) action.log_id = obsLogId;
+                    if (submissionMedia.length > 0 && obsLogId) {
+                      const photos = await uploadMediaToLog(client as any, 'observation', obsLogId, submissionMedia);
+                      if (photos.length > 0) action.photos_uploaded = photos.length;
+                    }
+                    if (submissionMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
+                      const refId = await updateSpeciesReferencePhoto(client as any, species, submissionMedia);
+                      if (refId) {
+                        action.species_reference_photo = true;
+                        speciesPhotoUpdates.add(species);
+                      }
+                    }
                   }
                 }
               } else {
                 const secUuid = await client.getSectionUuid(obsSection);
                 if (secUuid) {
-                  await client.createActivityLog(secUuid, parseDate(obsDate || undefined), `Observation — ${obsSection}`, combinedNotes);
+                  const activityLogId = await client.createActivityLog(secUuid, parseDate(obsDate || undefined), `Observation — ${obsSection}`, combinedNotes);
                   action.result = 'created'; action.type = 'activity';
+                  if (submissionMedia.length > 0 && activityLogId) {
+                    const photos = await uploadMediaToLog(client as any, 'activity', activityLogId, submissionMedia);
+                    if (photos.length > 0) action.photos_uploaded = photos.length;
+                  }
+                  if (submissionMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
+                    const refId = await updateSpeciesReferencePhoto(client as any, species, submissionMedia);
+                    if (refId) {
+                      action.species_reference_photo = true;
+                      speciesPhotoUpdates.add(species);
+                    }
+                  }
                 }
               }
             } catch (e: any) { action.result = 'error'; errors.push(`Observation for ${species} in ${obsSection}: ${e.message}`); }
@@ -159,6 +217,9 @@ export const importObservationsTool: Tool = {
       } catch (e: any) { errors.push(`Failed to update Sheet status: ${e.message}`); sheetStatus = 'partial'; }
     }
 
+    const totalPhotos = actions.reduce((sum, a) => sum + (a.photos_uploaded ?? 0), 0);
+    const speciesRefCount = actions.filter((a) => a.species_reference_photo).length;
+
     return {
       content: [{ type: 'text' as const, text: JSON.stringify({
         submission_id: params.submission_id, section_id: sectionId,
@@ -168,6 +229,9 @@ export const importObservationsTool: Tool = {
         pages_regenerated: !params.dry_run && actions.length > 0
           ? 'Pages need regeneration. Run regenerate_pages tool on Agnes\'s machine.'
           : null,
+        photos_uploaded: totalPhotos,
+        species_reference_photos_updated: speciesRefCount,
+        submission_media_fetched: params.dry_run ? 0 : submissionMedia.length,
       }, null, 2) }],
     };
   },

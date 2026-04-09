@@ -38,4 +38,22 @@ export class ObservationClient extends AppsScriptClient {
   async getMedia(submissionId: string): Promise<any> {
     return this.get({ action: 'get_media', submission_id: submissionId });
   }
+
+  /**
+   * Backfill helper — list Drive observation folders that have photos.
+   * See Observations.gs handleListMediaFolders.
+   */
+  async listMediaFolders(date?: string): Promise<any> {
+    const q: Record<string, string> = { action: 'list_media_folders' };
+    if (date) q.date = date;
+    return this.get(q);
+  }
+
+  /**
+   * Backfill helper — fetch media files for a specific (date, section)
+   * Drive folder directly, bypassing the Sheet submission lookup.
+   */
+  async getMediaByPath(date: string, section: string): Promise<any> {
+    return this.get({ action: 'get_media_by_path', date, section });
+  }
 }

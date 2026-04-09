@@ -5,6 +5,8 @@ export { formatPlantAsset, formatLog, formatPlantType, formatSectionFromAssets, 
 export { buildPlantTypeDescription, parsePlantTypeMetadata } from './plant-type-metadata.js';
 export type { PlantTypeFields, PlantTypeMetadata } from './plant-type-metadata.js';
 export { extractMemorySummaries, countKbEntries } from './apps-script-unwrap.js';
+export { decodeMediaFile, uploadMediaToLog, updateSpeciesReferencePhoto } from './photo-pipeline.js';
+export type { DecodedMedia, PhotoUploadClient } from './photo-pipeline.js';
 
 export {
   SECTION_HEALTH, TOPIC_FARMOS_MAP,
