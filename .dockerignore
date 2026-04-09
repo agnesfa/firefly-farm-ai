@@ -1,0 +1,61 @@
+# .dockerignore for Railway build context = repo root.
+# Everything Docker doesn't need at build or runtime gets excluded here so we
+# don't ship 100MB+ of unrelated files to the daemon on every build.
+
+# ── VCS + editor ──
+.git
+.gitignore
+.gitattributes
+.github
+.vscode
+.idea
+.DS_Store
+
+# ── Python (mcp-server/, scripts/, tests) ──
+# The Node image doesn't need any of this.
+mcp-server/
+scripts/
+tests/
+**/venv/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# ── Node build artifacts ──
+# We COPY packed-deps/ explicitly; never ship node_modules or local dist/.
+**/node_modules/
+mcp-server-ts/apps/*/dist/
+mcp-server-ts/plugins/*/dist/
+
+# ── Generated site ──
+# Large (~149 HTML pages) and not needed by the MCP server.
+site/
+
+# ── Documentation / design docs ──
+# None of this is read at runtime.
+docs/
+claude-docs/
+CLAUDE.md
+**/CLAUDE.md
+**/README.md
+*.md
+
+# ── Worktrees + local Claude state ──
+.claude/
+
+# ── Secrets (belt and braces — these should never be committed, but make
+#    sure they never enter the build context either) ──
+.env
+.env.*
+**/.env
+**/.env.*
+secrets/
+**/secrets/
+
+# ── Knowledge base files NOT needed by the TS server ──
+# Only farm_growth.yaml is loaded by system_health at runtime. Everything
+# else in knowledge/ is Python-pipeline input — keep the image small by
+# whitelisting just the one file we need.
+knowledge/*
+!knowledge/farm_growth.yaml

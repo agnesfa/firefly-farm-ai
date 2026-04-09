@@ -7,12 +7,16 @@ import { fileURLToPath } from 'url';
 import { parse as parseYaml } from 'yaml';
 
 function loadGrowthConfig(): any {
-  // Try multiple paths to find farm_growth.yaml
-  // In Docker with npm workspace: CWD = /app/apps/farm-server/, __dirname = /app/plugins/farm-plugin/dist/tools/
+  // knowledge/farm_growth.yaml lives at the REPO ROOT — one level above
+  // mcp-server-ts/. The Dockerfile (build context = repo root) copies it
+  // into /app/knowledge/ for the production image. Locally it stays at
+  // the repo root and is found via __dirname walks.
   const candidates = [
-    resolve(process.cwd(), 'knowledge', 'farm_growth.yaml'),                                                        // CWD = /app/
-    resolve(process.cwd(), '..', '..', 'knowledge', 'farm_growth.yaml'),                                             // CWD = /app/apps/farm-server/
-    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),        // __dirname relative (4 levels up to /app/)
+    resolve(process.cwd(), 'knowledge', 'farm_growth.yaml'),                                                              // Docker: CWD = /app/
+    resolve(process.cwd(), '..', '..', 'knowledge', 'farm_growth.yaml'),                                                  // Docker: CWD = /app/apps/farm-server/
+    resolve(process.cwd(), '..', 'knowledge', 'farm_growth.yaml'),                                                        // Local dev: CWD = mcp-server-ts/
+    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),              // Docker: __dirname 4-up → /app/
+    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),         // Local dev: __dirname 5-up → repo root
   ];
   for (const p of candidates) {
     try { return parseYaml(readFileSync(p, 'utf-8')); } catch { /* try next */ }

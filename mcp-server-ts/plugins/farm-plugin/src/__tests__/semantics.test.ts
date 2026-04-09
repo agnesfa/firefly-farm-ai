@@ -409,31 +409,4 @@ describe('farm_growth.yaml hygiene', () => {
 
     expect(violations, `farm_growth.yaml assumption text must not embed point-in-time counts (they leak into system_health output and go stale). Describe the metric's meaning instead. Violations:\n  - ${violations.join('\n  - ')}`).toEqual([]);
   });
-
-  it('mcp-server-ts/knowledge/farm_growth.yaml must match the canonical copy at repo root', () => {
-    // The Dockerfile (mcp-server-ts/Dockerfile:53) copies `knowledge/` from the
-    // mcp-server-ts build context into the production image, so there is a
-    // second on-disk copy of farm_growth.yaml that Railway ships to users.
-    // If these two files ever drift, Railway serves stale assumption text
-    // while local Python tests (and human readers) see the fresh one.
-    // Fail loudly at build time rather than discover it in a Railway log.
-    const here = dirname(fileURLToPath(import.meta.url));
-    const candidatesForRoot = [
-      resolve(here, '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),          // repo root from src/__tests__
-      resolve(here, '..', '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),
-    ];
-    const candidatesForTs = [
-      resolve(here, '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),                // mcp-server-ts/knowledge
-    ];
-    const rootPath = candidatesForRoot.find(existsSync);
-    const tsPath = candidatesForTs.find(existsSync);
-    if (!rootPath || !tsPath) {
-      // In rare layouts (e.g. the test suite is exercised from a tarball that
-      // doesn't carry the repo-root copy), skip rather than fail.
-      return;
-    }
-    const rootContent = readFileSync(rootPath, 'utf-8');
-    const tsContent = readFileSync(tsPath, 'utf-8');
-    expect(tsContent, `mcp-server-ts/knowledge/farm_growth.yaml has drifted from knowledge/farm_growth.yaml. The Dockerfile ships the mcp-server-ts copy to Railway, so edits to the canonical file at the repo root must be mirrored (or the Dockerfile changed to COPY from ../knowledge/). Run:\n    cp knowledge/farm_growth.yaml mcp-server-ts/knowledge/farm_growth.yaml`).toEqual(rootContent);
-  });
 });

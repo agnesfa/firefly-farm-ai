@@ -1,5 +1,8 @@
 [build]
-dockerfilePath = "Dockerfile"
+# Path is relative to the repo root because Railway's Root Directory is set
+# to "/" so the Dockerfile can COPY from both mcp-server-ts/ AND knowledge/
+# (canonical) in a single build context. See mcp-server-ts/Dockerfile header.
+dockerfilePath = "mcp-server-ts/Dockerfile"
 
 [deploy]
 healthcheckPath = "/health/simple"
