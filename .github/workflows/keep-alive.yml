@@ -1,0 +1,34 @@
+name: Keep Railway MCP server warm
+
+# Pings the MCP server /health endpoint on a schedule so Railway
+# doesn't cycle the container. The server's internal keep-alive only
+# runs when the container is already alive — it can't prevent a cold
+# start after Railway cycles it. This external ping keeps it warm for
+# the whole team (Agnes, Claire, James, Olivier).
+#
+# GitHub Actions cron can be delayed under load (sometimes 10+ min).
+# That's acceptable for warm-up — a cold start here and there is fine,
+# the goal is to avoid the container going cold for hours.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Every 5 minutes (GH Actions minimum)
+  workflow_dispatch:        # Manual trigger for testing
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping /health
+        run: |
+          set -e
+          URL="https://firefly-farm-ai-production.up.railway.app/health"
+          CODE=$(curl -sS -o /tmp/health.json -w "%{http_code}" -m 15 "$URL")
+          echo "HTTP $CODE"
+          cat /tmp/health.json || true
+          echo
+          if [ "$CODE" != "200" ]; then
+            echo "::warning::Health check returned $CODE"
+            exit 1
+          fi

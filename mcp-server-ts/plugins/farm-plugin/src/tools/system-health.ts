@@ -33,12 +33,18 @@ export const systemHealthTool: Tool = {
     const client = getFarmOSClient(extra);
     const result: any = { dimensions: {}, scale_triggers: [], assumptions: [] };
 
-    // ── Farm dimension ──────────────────────────────────
-    try {
-      const allPlants = await client.fetchAllPaginated('asset/plant', { status: 'active' });
+    // Farm, System, and Team dimensions are independent — run in parallel.
+    // Within Farm, the 20 section assessments are also independent and run in parallel.
+    // This turns ~40 sequential farmOS roundtrips into a couple of parallel waves.
+
+    const farmDimension = async () => {
+      const [allPlants, allTypes, sections] = await Promise.all([
+        client.fetchAllPaginated('asset/plant', { status: 'active' }),
+        client.getAllPlantTypesCached(),
+        client.getSectionAssets(),
+      ]);
       const activePlantCount = allPlants.length;
 
-      const allTypes = await client.getAllPlantTypesCached();
       const plantTypesDb: Record<string, any> = {};
       for (const t of allTypes) {
         const name = t.attributes?.name ?? '';
@@ -47,85 +53,103 @@ export const systemHealthTool: Tool = {
         plantTypesDb[name] = parsePlantTypeMetadata(descText);
       }
 
-      const sections = await client.getSectionAssets();
-      const sectionScores: any[] = [];
-      for (const sec of sections.slice(0, 20)) {
-        const secName = sec.attributes?.name ?? '';
-        const secPlantsRaw = await client.getPlantAssets(secName);
-        const secPlants = secPlantsRaw.map(formatPlantAsset).map((p: any) => ({
-          species: p.species ?? '',
-          count: p.inventory_count ?? 0,
-        }));
-        const secLogsRaw = await client.getLogs(undefined, secName);
-        const secLogs = secLogsRaw.map(formatLog) as any[];
-        const health = assessSectionHealth(secPlants, secLogs, plantTypesDb, true);
-        sectionScores.push({
-          section: secName,
-          strata_score: health.strata_coverage?.score ?? 0,
-          survival_rate: null,
-          status: health.overall_status ?? 'unknown',
-        });
-      }
+      const sampledSections = sections.slice(0, 20);
+      const sectionScores = await Promise.all(
+        sampledSections.map(async (sec) => {
+          const secName = sec.attributes?.name ?? '';
+          const [secPlantsRaw, secLogsRaw] = await Promise.all([
+            client.getPlantAssets(secName),
+            client.getLogs(undefined, secName),
+          ]);
+          const secPlants = secPlantsRaw.map(formatPlantAsset).map((p: any) => ({
+            species: p.species ?? '',
+            count: p.inventory_count ?? 0,
+          }));
+          const secLogs = secLogsRaw.map(formatLog) as any[];
+          const health = assessSectionHealth(secPlants, secLogs, plantTypesDb, true);
+          return {
+            section: secName,
+            strata_score: health.strata_coverage?.score ?? 0,
+            survival_rate: null,
+            status: health.overall_status ?? 'unknown',
+          };
+        })
+      );
 
       const farmResult = assessFarmMaturity({ active_plants: activePlantCount, section_health_scores: sectionScores }, config);
       farmResult.sampled_sections = sectionScores.length;
       farmResult.total_sections = sections.length;
-      result.dimensions.farm = farmResult;
-      result.scale_triggers.push(...(farmResult.scale_triggers ?? []));
-    } catch (e: any) {
-      result.dimensions.farm = { error: e.message };
-    }
+      return farmResult;
+    };
 
-    // ── System dimension ────────────────────────────────
-    try {
-      const totalEntities = (result.dimensions.farm?.metrics?.active_plants?.value ?? 0) + 1200;
-      let driftCount: number | null = null;
-      try {
-        const ptClient = getPlantTypesClient();
-        if (ptClient) {
-          const drift = await ptClient.getReconcileData();
-          driftCount = drift?.mismatch_count ?? 0;
-        }
-      } catch { /* */ }
+    const systemDimension = async (activePlantCount: number) => {
+      const totalEntities = activePlantCount + 1200;
+      const [driftCount, backlogCount] = await Promise.all([
+        (async () => {
+          try {
+            const ptClient = getPlantTypesClient();
+            if (!ptClient) return null;
+            const drift = await ptClient.getReconcileData();
+            return drift?.mismatch_count ?? 0;
+          } catch { return null; }
+        })(),
+        (async () => {
+          try {
+            const obsClient = getObserveClient();
+            if (!obsClient) return null;
+            const pending = await obsClient.listObservations({ status: 'pending' });
+            return Array.isArray(pending) ? pending.length : 0;
+          } catch { return null; }
+        })(),
+      ]);
+      return assessSystemMaturity({ total_entities: totalEntities, plant_type_drift: driftCount, observation_backlog: backlogCount }, config);
+    };
 
-      let backlogCount: number | null = null;
-      try {
-        const obsClient = getObserveClient();
-        if (obsClient) {
-          const pending = await obsClient.listObservations({ status: 'pending' });
-          backlogCount = Array.isArray(pending) ? pending.length : 0;
-        }
-      } catch { /* */ }
-
-      const systemResult = assessSystemMaturity({ total_entities: totalEntities, plant_type_drift: driftCount, observation_backlog: backlogCount }, config);
-      result.dimensions.system = systemResult;
-      result.scale_triggers.push(...(systemResult.scale_triggers ?? []));
-    } catch (e: any) {
-      result.dimensions.system = { error: e.message };
-    }
-
-    // ── Team dimension ──────────────────────────────────
-    try {
+    const teamDimension = async () => {
       const memClient = getMemoryClient();
       if (!memClient) throw new Error('Memory client not configured');
-      const recent = await memClient.readActivity(7);
+      const [recent, kbCount] = await Promise.all([
+        memClient.readActivity(7),
+        (async () => {
+          try {
+            const kbClient = getKnowledgeClient();
+            if (!kbClient) return null;
+            const entries = await kbClient.listEntries();
+            return Array.isArray(entries) ? entries.length : 0;
+          } catch { return null; }
+        })(),
+      ]);
       const distinctUsers = new Set((Array.isArray(recent) ? recent : []).map((e: any) => e.user).filter(Boolean)).size;
       const velocity = Array.isArray(recent) ? recent.length : 0;
+      return assessTeamMaturity({ active_users_weekly: distinctUsers, team_memory_velocity: velocity, kb_entry_count: kbCount }, config);
+    };
 
-      let kbCount: number | null = null;
-      try {
-        const kbClient = getKnowledgeClient();
-        if (kbClient) {
-          const entries = await kbClient.listEntries();
-          kbCount = Array.isArray(entries) ? entries.length : 0;
-        }
-      } catch { /* */ }
+    // Run Farm first (System depends on its activePlantCount), then System + Team in parallel.
+    // Farm itself parallelizes its 20 section fetches internally.
+    const [farmSettled] = await Promise.allSettled([farmDimension()]);
+    if (farmSettled.status === 'fulfilled') {
+      result.dimensions.farm = farmSettled.value;
+      result.scale_triggers.push(...(farmSettled.value.scale_triggers ?? []));
+    } else {
+      result.dimensions.farm = { error: farmSettled.reason?.message ?? String(farmSettled.reason) };
+    }
 
-      const teamResult = assessTeamMaturity({ active_users_weekly: distinctUsers, team_memory_velocity: velocity, kb_entry_count: kbCount }, config);
-      result.dimensions.team = teamResult;
-      result.scale_triggers.push(...(teamResult.scale_triggers ?? []));
-    } catch (e: any) {
-      result.dimensions.team = { error: e.message };
+    const activePlantCount = result.dimensions.farm?.metrics?.active_plants?.value ?? 0;
+    const [systemSettled, teamSettled] = await Promise.allSettled([
+      systemDimension(activePlantCount),
+      teamDimension(),
+    ]);
+    if (systemSettled.status === 'fulfilled') {
+      result.dimensions.system = systemSettled.value;
+      result.scale_triggers.push(...(systemSettled.value.scale_triggers ?? []));
+    } else {
+      result.dimensions.system = { error: systemSettled.reason?.message ?? String(systemSettled.reason) };
+    }
+    if (teamSettled.status === 'fulfilled') {
+      result.dimensions.team = teamSettled.value;
+      result.scale_triggers.push(...(teamSettled.value.scale_triggers ?? []));
+    } else {
+      result.dimensions.team = { error: teamSettled.reason?.message ?? String(teamSettled.reason) };
     }
 
     // ── Summary ─────────────────────────────────────────

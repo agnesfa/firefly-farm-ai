@@ -2958,6 +2958,8 @@ def system_health() -> str:
         assess_section_health,
         load_semantics,
     )
+    from concurrent.futures import ThreadPoolExecutor
+    from helpers import parse_plant_type_metadata
 
     config = load_growth_config()
     client = get_client()
@@ -2965,44 +2967,52 @@ def system_health() -> str:
 
     result = {"dimensions": {}, "scale_triggers": [], "assumptions": []}
 
-    # ── Farm dimension: aggregate section-level health ──────────
+    # Farm/System/Team dimensions are independent — run in parallel via threads.
+    # Within Farm, the 20 section assessments also run in parallel.
+    # The farmOS client is sync/blocking HTTP, so ThreadPoolExecutor unblocks
+    # the I/O wait. Turns ~40 sequential roundtrips into a couple of parallel waves.
 
-    try:
-        # Get all plant assets for farm-wide metrics
-        all_plants = client.fetch_all_paginated("asset/plant", filters={"status": "active"})
+    def _assess_one_section(sec, plant_types_db):
+        sec_name = sec.get("attributes", {}).get("name", "")
+        with ThreadPoolExecutor(max_workers=2) as inner:
+            plants_fut = inner.submit(client.get_plant_assets, section_id=sec_name)
+            logs_fut = inner.submit(client.get_logs, section_id=sec_name)
+            sec_plants_raw = plants_fut.result()
+            sec_logs_raw = logs_fut.result()
+        sec_plants = [format_plant_asset(p) for p in sec_plants_raw]
+        sec_logs = [format_log(l) for l in sec_logs_raw]
+        health = assess_section_health(
+            sec_plants, sec_logs, plant_types_db, has_trees=True,
+            semantics=semantics_config,
+        )
+        return {
+            "section": sec_name,
+            "strata_score": health.get("strata", {}).get("score", 0),
+            "survival_rate": None,
+            "status": health.get("overall_status", "unknown"),
+        }
+
+    def _farm_dimension():
+        with ThreadPoolExecutor(max_workers=3) as ex:
+            plants_fut = ex.submit(client.fetch_all_paginated, "asset/plant", filters={"status": "active"})
+            types_fut = ex.submit(client.get_all_plant_types_cached)
+            sections_fut = ex.submit(client.get_section_assets)
+            all_plants = plants_fut.result()
+            all_types = types_fut.result()
+            sections = sections_fut.result()
+
         active_plant_count = len(all_plants)
 
-        # Build plant_types_db for strata/succession lookups
-        all_types = client.get_all_plant_types_cached()
         plant_types_db = {}
         for t in all_types:
             name = t.get("attributes", {}).get("name", "")
             desc = t.get("attributes", {}).get("description", {})
             desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc)
-            from helpers import parse_plant_type_metadata
-            meta = parse_plant_type_metadata(desc_text)
-            plant_types_db[name] = meta
+            plant_types_db[name] = parse_plant_type_metadata(desc_text)
 
-        # Sample section health across paddock sections
-        sections = client.get_section_assets()
-        section_scores = []
-        for sec in sections[:20]:  # Sample first 20 for performance
-            sec_name = sec.get("attributes", {}).get("name", "")
-            sec_plants_raw = client.get_plant_assets(section_id=sec_name)
-            sec_plants = [format_plant_asset(p) for p in sec_plants_raw]
-            sec_logs_raw = client.get_logs(section_id=sec_name)
-            sec_logs = [format_log(l) for l in sec_logs_raw]
-            health = assess_section_health(
-                sec_plants, sec_logs, plant_types_db, has_trees=True,
-                semantics=semantics_config,
-            )
-            score = {
-                "section": sec_name,
-                "strata_score": health.get("strata", {}).get("score", 0),
-                "survival_rate": None,  # Not computed at section level yet
-                "status": health.get("overall_status", "unknown"),
-            }
-            section_scores.append(score)
+        sampled = sections[:20]
+        with ThreadPoolExecutor(max_workers=10) as ex:
+            section_scores = list(ex.map(lambda s: _assess_one_section(s, plant_types_db), sampled))
 
         farm_data = {
             "active_plants": active_plant_count,
@@ -3011,56 +3021,54 @@ def system_health() -> str:
         farm_result = assess_farm_maturity(farm_data, config)
         farm_result["sampled_sections"] = len(section_scores)
         farm_result["total_sections"] = len(sections)
-        result["dimensions"]["farm"] = farm_result
-        result["scale_triggers"].extend(farm_result.get("scale_triggers", []))
+        return farm_result, active_plant_count
 
-    except Exception as e:
-        result["dimensions"]["farm"] = {"error": str(e)}
+    def _system_dimension(active_plant_count):
+        total_entities = active_plant_count + 1200  # rough estimate for logs + other assets
 
-    # ── System dimension: infrastructure metrics ────────────────
+        def _drift():
+            try:
+                pt_client = get_plant_types_client()
+                drift_result = pt_client.reconcile()
+                return drift_result.get("mismatch_count", 0) if isinstance(drift_result, dict) else 0
+            except Exception:
+                return None
 
-    try:
-        # Total entities
-        all_assets = client.fetch_all_paginated("asset/plant", filters={"status": "active"})
-        # Approximate total from what we already have
-        total_entities = active_plant_count  # plants
-        # Add log estimate
-        obs_logs = client.get_logs(log_type="observation", max_results=1)
-        total_entities += 1200  # rough estimate from known counts
+        def _backlog():
+            try:
+                obs_client = get_observe_client()
+                pending = obs_client.list_observations(status="pending")
+                return len(pending) if isinstance(pending, list) else 0
+            except Exception:
+                return None
 
-        # Plant type drift
-        try:
-            pt_client = get_plant_types_client()
-            drift_result = pt_client.reconcile()
-            drift_count = drift_result.get("mismatch_count", 0) if isinstance(drift_result, dict) else 0
-        except Exception:
-            drift_count = None
-
-        # Observation backlog
-        try:
-            obs_client = get_observe_client()
-            pending = obs_client.list_observations(status="pending")
-            backlog_count = len(pending) if isinstance(pending, list) else 0
-        except Exception:
-            backlog_count = None
+        with ThreadPoolExecutor(max_workers=2) as ex:
+            drift_count = ex.submit(_drift).result()
+            backlog_count = ex.submit(_backlog).result()
 
         system_data = {
             "total_entities": total_entities,
             "plant_type_drift": drift_count,
             "observation_backlog": backlog_count,
         }
-        system_result = assess_system_maturity(system_data, config)
-        result["dimensions"]["system"] = system_result
-        result["scale_triggers"].extend(system_result.get("scale_triggers", []))
+        return assess_system_maturity(system_data, config)
 
-    except Exception as e:
-        result["dimensions"]["system"] = {"error": str(e)}
-
-    # ── Team dimension: usage metrics ──────────────────────────
-
-    try:
+    def _team_dimension():
         mem_client = get_memory_client()
-        recent_activity = mem_client.read_activity(days=7)
+
+        def _kb():
+            try:
+                kb_client = get_knowledge_client()
+                kb_entries = kb_client.list(summary_only=True)
+                return len(kb_entries) if isinstance(kb_entries, list) else 0
+            except Exception:
+                return None
+
+        with ThreadPoolExecutor(max_workers=2) as ex:
+            activity_fut = ex.submit(mem_client.read_activity, days=7)
+            kb_fut = ex.submit(_kb)
+            recent_activity = activity_fut.result()
+            kb_count = kb_fut.result()
 
         if isinstance(recent_activity, list):
             distinct_users = len(set(
@@ -3071,25 +3079,37 @@ def system_health() -> str:
             distinct_users = 0
             memory_velocity = 0
 
-        # KB count
-        try:
-            kb_client = get_knowledge_client()
-            kb_entries = kb_client.list(summary_only=True)
-            kb_count = len(kb_entries) if isinstance(kb_entries, list) else 0
-        except Exception:
-            kb_count = None
-
         team_data = {
             "active_users_weekly": distinct_users,
             "team_memory_velocity": memory_velocity,
             "kb_entry_count": kb_count,
         }
-        team_result = assess_team_maturity(team_data, config)
-        result["dimensions"]["team"] = team_result
-        result["scale_triggers"].extend(team_result.get("scale_triggers", []))
+        return assess_team_maturity(team_data, config)
 
+    # Run Farm first (System depends on its active_plant_count), then System + Team in parallel.
+    active_plant_count = 0
+    try:
+        farm_result, active_plant_count = _farm_dimension()
+        result["dimensions"]["farm"] = farm_result
+        result["scale_triggers"].extend(farm_result.get("scale_triggers", []))
     except Exception as e:
-        result["dimensions"]["team"] = {"error": str(e)}
+        result["dimensions"]["farm"] = {"error": str(e)}
+
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        system_fut = ex.submit(_system_dimension, active_plant_count)
+        team_fut = ex.submit(_team_dimension)
+        try:
+            system_result = system_fut.result()
+            result["dimensions"]["system"] = system_result
+            result["scale_triggers"].extend(system_result.get("scale_triggers", []))
+        except Exception as e:
+            result["dimensions"]["system"] = {"error": str(e)}
+        try:
+            team_result = team_fut.result()
+            result["dimensions"]["team"] = team_result
+            result["scale_triggers"].extend(team_result.get("scale_triggers", []))
+        except Exception as e:
+            result["dimensions"]["team"] = {"error": str(e)}
 
     # ── Overall maturity summary ───────────────────────────────
 
