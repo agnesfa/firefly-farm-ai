@@ -109,6 +109,9 @@ function initObservePage() {
   // Photo capture handlers
   initPhotoCapture();
 
+  // PlantNet "What is this plant?" identification
+  initPlantNetIdentify();
+
   // Show quick mode by default
   switchMode("quick");
 }
@@ -799,4 +802,177 @@ function generateUUID() {
     var v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+// ─── PLANTNET IDENTIFICATION ─────────────────────────────────
+//
+// Lets a worker take a photo of an unknown plant, send it to the PlantNet
+// public API, and pick from the top matches to pre-fill the new-plant
+// search box. PLANTNET_API_KEY is injected at build time via
+// generate_site.py (from the PLANTNET_API_KEY env var). If the key is
+// empty the button stays hidden — no partial UX, no broken calls.
+//
+// Design: claude-docs/photo-pipeline-and-plant-id-design.md (Step 4).
+
+function initPlantNetIdentify() {
+  if (typeof PLANTNET_API_KEY === "undefined" || !PLANTNET_API_KEY) {
+    return; // No key → no button.
+  }
+  var section = document.getElementById("plantnet-section");
+  var input = document.getElementById("plantnet-photo-input");
+  if (!section || !input) return;
+
+  section.style.display = "";
+  input.addEventListener("change", function () {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    identifyPlantFromFile(file);
+    input.value = ""; // allow re-capture of the same plant
+  });
+}
+
+function identifyPlantFromFile(file) {
+  var results = document.getElementById("plantnet-results");
+  if (!results) return;
+
+  results.innerHTML =
+    '<div class="plantnet-status">Identifying plant — please wait…</div>';
+
+  // Resize to 800px (PlantNet's sweet spot) before upload — keeps the
+  // request small over the slow farm connection.
+  compressImage(file, 800, 0.8, function (dataUrl) {
+    var blob = dataUrlToBlob(dataUrl);
+    var formData = new FormData();
+    formData.append("images", blob, "observation.jpg");
+    formData.append("organs", "auto");
+
+    fetch(
+      "https://my-api.plantnet.org/v2/identify/all?api-key=" +
+        encodeURIComponent(PLANTNET_API_KEY) +
+        "&lang=en&nb-results=3",
+      { method: "POST", body: formData }
+    )
+      .then(function (response) {
+        if (!response.ok) {
+          return response.text().then(function (txt) {
+            throw new Error("PlantNet HTTP " + response.status + ": " + txt);
+          });
+        }
+        return response.json();
+      })
+      .then(renderPlantNetResults)
+      .catch(function (err) {
+        console.error("PlantNet identify failed:", err);
+        results.innerHTML =
+          '<div class="plantnet-status">Identification failed. Check connection and try again.</div>';
+      });
+  });
+}
+
+function dataUrlToBlob(dataUrl) {
+  var parts = dataUrl.split(",");
+  var mime = (parts[0].match(/:(.*?);/) || [null, "image/jpeg"])[1];
+  var binary = atob(parts[1]);
+  var len = binary.length;
+  var buf = new Uint8Array(len);
+  for (var i = 0; i < len; i++) buf[i] = binary.charCodeAt(i);
+  return new Blob([buf], { type: mime });
+}
+
+function renderPlantNetResults(payload) {
+  var results = document.getElementById("plantnet-results");
+  if (!results) return;
+
+  var candidates = (payload && payload.results) || [];
+  if (candidates.length === 0) {
+    results.innerHTML =
+      '<div class="plantnet-status">No matches. Try another angle or describe it in notes.</div>';
+    return;
+  }
+
+  var html = "";
+  for (var i = 0; i < Math.min(3, candidates.length); i++) {
+    var match = candidates[i];
+    var species = (match.species && match.species.scientificNameWithoutAuthor) || "Unknown";
+    var common =
+      (match.species && match.species.commonNames && match.species.commonNames[0]) || "";
+    var score = Math.round((match.score || 0) * 100);
+
+    var farmMatch = findFarmosNameByBotanical(species);
+    var displayName = farmMatch || common || species;
+
+    var imgUrl = "";
+    if (match.images && match.images.length > 0 && match.images[0].url) {
+      imgUrl = match.images[0].url.s || match.images[0].url.m || "";
+    }
+    var imgTag = imgUrl
+      ? '<img src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy">'
+      : "";
+
+    html +=
+      '<div class="plantnet-match" onclick="applyPlantNetMatch(this)"' +
+      ' data-farmos-name="' + escapeHtml(farmMatch || "") + '"' +
+      ' data-display="' + escapeHtml(displayName) + '"' +
+      ' data-botanical="' + escapeHtml(species) + '">' +
+      imgTag +
+      '<div class="plantnet-match-text">' +
+      '<div class="plantnet-species">' + escapeHtml(displayName) + "</div>" +
+      '<div class="plantnet-botanical">' + escapeHtml(species) + "</div>" +
+      "</div>" +
+      '<div class="plantnet-confidence">' + score + "%</div>" +
+      "</div>";
+  }
+
+  if (candidates.every(function (c) { return !findFarmosNameByBotanical((c.species || {}).scientificNameWithoutAuthor || ""); })) {
+    html +=
+      '<div class="plantnet-status">No farm match — species may need to be added to the taxonomy.</div>';
+  }
+  results.innerHTML = html;
+}
+
+function findFarmosNameByBotanical(botanical) {
+  if (!botanical || typeof PLANT_TYPES_DATA === "undefined") return "";
+  var target = botanical.trim().toLowerCase();
+  for (var i = 0; i < PLANT_TYPES_DATA.length; i++) {
+    var entry = PLANT_TYPES_DATA[i];
+    var bot = (entry.botanical || "").trim().toLowerCase();
+    if (bot && (bot === target || target.indexOf(bot) === 0 || bot.indexOf(target) === 0)) {
+      return entry.species;
+    }
+  }
+  return "";
+}
+
+function applyPlantNetMatch(el) {
+  var farmosName = el.dataset.farmosName;
+  var displayName = el.dataset.display || farmosName;
+  var searchInput = document.getElementById("plant-search");
+  if (!searchInput) return;
+
+  if (farmosName) {
+    // Known farm species — drive the existing search-and-select flow.
+    searchInput.value = farmosName;
+    if (typeof filterPlantTypes === "function") {
+      filterPlantTypes(farmosName);
+    }
+    // Auto-select if there's a unique exact match
+    var resultsDiv = document.getElementById("plant-search-results");
+    if (resultsDiv) {
+      var first = resultsDiv.querySelector(".plant-search-result");
+      if (first && first.dataset.species === farmosName) {
+        selectNewPlant(first);
+      }
+    }
+  } else {
+    // Unknown to the farm taxonomy — still seed the search so the worker
+    // can confirm it's really new and add it manually.
+    searchInput.value = displayName;
+    if (typeof filterPlantTypes === "function") {
+      filterPlantTypes(displayName);
+    }
+  }
+
+  // Tidy up the result list so the page doesn't feel cluttered.
+  var plantnetResults = document.getElementById("plantnet-results");
+  if (plantnetResults) plantnetResults.innerHTML = "";
 }

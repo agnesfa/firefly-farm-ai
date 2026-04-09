@@ -204,6 +204,7 @@ def render_plant_card(planting, plant_db):
     notes = planting.get("notes", "")
     first_planted = planting.get("first_planted", "")
     logs = planting.get("logs", [])
+    photo_url = planting.get("photo_url", "")
 
     plant = plant_db.get(species, {})
     st = STRATA_CONFIG.get(strata, STRATA_CONFIG["medium"])
@@ -255,9 +256,20 @@ def render_plant_card(planting, plant_db):
     # Log timeline (expanded view)
     timeline_html = render_log_timeline(logs)
 
+    # Species reference photo — populated by import_observations latest-wins.
+    # Lazy-loaded so collapsed cards don't fetch photos until scrolled to.
+    photo_html = ""
+    if photo_url:
+        photo_html = (
+            f'<img class="plant-photo" loading="lazy" decoding="async" '
+            f'src="{esc(photo_url)}" alt="{esc(species)} reference photo" '
+            f'onerror="this.style.display=\'none\'">'
+        )
+
     return f"""
     <div class="plant-card" style="border-left-color:{st['color']}" onclick="this.classList.toggle('expanded')">
       <div class="plant-header">
+        {photo_html}
         <div class="plant-info">
           <div class="plant-name">{esc(species)}</div>
           <div class="plant-botanical">{esc(botanical)}</div>
@@ -509,6 +521,7 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
 .plant-botanical { font-style: italic; font-size: 13px; color: #8b8b8b; margin-top: 1px; }
 .plant-count { font-weight: 700; font-size: 15px; padding: 2px 10px; border-radius: 12px; min-width: 28px; text-align: center; flex-shrink: 0; margin-left: 8px; }
+.plant-photo { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; flex-shrink: 0; margin-right: 12px; background: #f0ece4; border: 1px solid #e5e1d7; }
 .plant-notes { font-size: 12px; color: #aaa; margin-top: 4px; }
 .plant-tags-collapsed { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
 .plant-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0ec; }
@@ -680,6 +693,13 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
 
     endpoint_js = f'const OBSERVE_ENDPOINT = "{observe_endpoint}";' if observe_endpoint else 'const OBSERVE_ENDPOINT = "";'
 
+    # PlantNet API key — optional. If unset, the "What is this plant?"
+    # button is hidden at runtime. Free tier at https://my.plantnet.org/
+    # (500 requests/day, CORS-enabled so we can call it directly from the
+    # browser). The key is injected at build time as a string literal.
+    plantnet_key = os.environ.get("PLANTNET_API_KEY", "").strip()
+    plantnet_js = f'const PLANTNET_API_KEY = "{plantnet_key}";'
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -837,6 +857,13 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
       <input type="text" id="plant-search" class="obs-input" placeholder="Search plant types..." autocomplete="off">
       <div id="plant-search-results" class="plant-search-results"></div>
     </div>
+    <div class="obs-field-group" id="plantnet-section" style="display:none">
+      <label class="obs-media-btn plantnet-btn">
+        <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
+        <span>🪴 What is this plant? (camera)</span>
+      </label>
+      <div id="plantnet-results" class="plantnet-results"></div>
+    </div>
     <div id="new-plant-fields" style="display:none">
       <div class="obs-field-row">
         <div class="obs-field-group obs-field-small">
@@ -894,6 +921,7 @@ const SECTION_DATA = {{
 }};
 const PLANT_TYPES_DATA = {plant_types_json};
 {endpoint_js}
+{plantnet_js}
 </script>
 <script src="{base_url}observe.js"></script>
 </body>
@@ -982,6 +1010,16 @@ def get_observe_css():
 .add-plant-trigger:active { background: #eeeddf; border-color: #e67e22; color: #e67e22; }
 .add-plant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .add-plant-close-btn { background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; padding: 4px 8px; }
+.plantnet-btn { margin-top: 8px; background: #2d5016; color: #fff; }
+.plantnet-results { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.plantnet-match { display: flex; gap: 10px; padding: 8px 10px; background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 8px; cursor: pointer; align-items: center; }
+.plantnet-match:hover { background: #efece0; border-color: #6b9e3c; }
+.plantnet-match img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.plantnet-match-text { flex: 1; min-width: 0; }
+.plantnet-species { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.plantnet-botanical { font-size: 11px; font-style: italic; color: #6b7280; }
+.plantnet-confidence { font-size: 11px; font-weight: 700; color: #2d5016; }
+.plantnet-status { font-size: 12px; color: #6b7280; padding: 6px 10px; }
 .plant-search-results { max-height: 200px; overflow-y: auto; border: 1px solid #e5e5e0; border-radius: 8px; margin-top: 4px; display: none; }
 .plant-search-result { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f0f0ec; font-size: 13px; }
 .plant-search-result:hover { background: #f7f6f0; }

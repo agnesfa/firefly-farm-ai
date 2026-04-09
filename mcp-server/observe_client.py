@@ -136,3 +136,42 @@ class ObservationClient:
         resp = requests.get(self.endpoint, params=params, timeout=60)
         resp.raise_for_status()
         return resp.json()
+
+    def list_media_folders(self, date: Optional[str] = None) -> dict:
+        """List Drive observation folders for backfill of historical photos.
+
+        Used by scripts/backfill_photos.py to enumerate every (date, section)
+        pair that has photos on disk — so they can be matched to farmOS logs
+        even when the original Sheet rows have been deleted post-import.
+
+        Args:
+            date: Optional YYYY-MM-DD filter. None → all dates.
+
+        Returns dict with keys:
+            success (bool)
+            folders (list of {date, section, file_count, filenames})
+            count (int)
+        """
+        params = {"action": "list_media_folders"}
+        if date:
+            params["date"] = date
+        resp = requests.get(self.endpoint, params=params, timeout=60)
+        resp.raise_for_status()
+        return resp.json()
+
+    def get_media_by_path(self, date: str, section: str) -> dict:
+        """Fetch media files for a (date, section) Drive folder directly.
+
+        Bypasses the Sheet submission lookup — useful during backfill when
+        the original submission row no longer exists in the Sheet.
+
+        Args:
+            date: YYYY-MM-DD
+            section: Section ID, e.g. ``P2R3.15-21``.
+
+        Returns dict with keys: success, files.
+        """
+        params = {"action": "get_media_by_path", "date": date, "section": section}
+        resp = requests.get(self.endpoint, params=params, timeout=60)
+        resp.raise_for_status()
+        return resp.json()

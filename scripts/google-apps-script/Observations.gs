@@ -126,6 +126,16 @@ function doGet(e) {
     return handleListObservations(params);
   } else if (action === "get_media") {
     return handleGetMedia(e.parameter);
+  } else if (action === "list_media_folders") {
+    // Backfill helper: scan the Drive observation tree and return
+    // a flat list of {date, section, files: [...]} so historical photos
+    // can be matched to farmOS logs by date+section even after Sheet rows
+    // were deleted on import.
+    return handleListMediaFolders(e.parameter);
+  } else if (action === "get_media_by_path") {
+    // Backfill helper: fetch binary files for a specific (date, section)
+    // pair directly from the Drive folder — no Sheet lookup required.
+    return handleGetMediaByPath(e.parameter);
   }
 
   // Fallback: basic health
@@ -669,6 +679,123 @@ function handleGetMedia(params) {
       var blob = file.getBlob();
       results.push({
         filename: file.getName(),
+        mime_type: blob.getContentType(),
+        data_base64: Utilities.base64Encode(blob.getBytes()),
+      });
+    }
+
+    return jsonResponse({ success: true, files: results });
+  } catch (err) {
+    return jsonResponse({ success: false, error: "Drive error: " + err.message });
+  }
+}
+
+// ─── BACKFILL — LIST DRIVE MEDIA FOLDERS ─────────────────────
+
+/**
+ * List all observation media folders in Drive, grouped by date and section.
+ *
+ * Used by scripts/backfill_photos.py to match historical Drive photos to
+ * farmOS logs by (date, section) when the original Sheet rows have been
+ * deleted post-import.
+ *
+ * Query params:
+ *   ?action=list_media_folders             — all folders, all files
+ *   ?action=list_media_folders&date=2026-03-09 — limit to one date
+ *
+ * Returns:
+ *   { success: true, folders: [{date, section, file_count, filenames: [...]}] }
+ *
+ * Binary bytes are NOT included — callers fetch them per folder via
+ * get_media_by_path. This keeps the scan response small enough for
+ * Apps Script response limits.
+ */
+function handleListMediaFolders(params) {
+  try {
+    var dateFilter = params.date || null;  // optional YYYY-MM-DD filter
+    var rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+    var dateFolders = rootFolder.getFolders();
+    var results = [];
+
+    while (dateFolders.hasNext()) {
+      var dateFolder = dateFolders.next();
+      var dateName = dateFolder.getName();
+      // Only YYYY-MM-DD folders at the top level
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateName)) continue;
+      if (dateFilter && dateName !== dateFilter) continue;
+
+      var sectionFolders = dateFolder.getFolders();
+      while (sectionFolders.hasNext()) {
+        var sectionFolder = sectionFolders.next();
+        var sectionName = sectionFolder.getName();
+        var filenames = [];
+        var files = sectionFolder.getFiles();
+        while (files.hasNext()) {
+          var f = files.next();
+          var name = f.getName();
+          // Skip raw JSON payload copies — those are bookkeeping, not media.
+          if (/\.json$/i.test(name)) continue;
+          filenames.push(name);
+        }
+        if (filenames.length > 0) {
+          results.push({
+            date: dateName,
+            section: sectionName,
+            file_count: filenames.length,
+            filenames: filenames,
+          });
+        }
+      }
+    }
+
+    return jsonResponse({ success: true, folders: results, count: results.length });
+  } catch (err) {
+    return jsonResponse({ success: false, error: "Drive scan error: " + err.message });
+  }
+}
+
+/**
+ * Fetch binary files for a specific (date, section) Drive folder directly.
+ *
+ * Mirrors handleGetMedia but bypasses the Sheet lookup — callers supply
+ * the folder path explicitly. Used by the backfill script after it has
+ * picked a (date, section) pair from list_media_folders.
+ *
+ * Query params:
+ *   ?action=get_media_by_path&date=2026-03-09&section=P2R3.15-21
+ *
+ * Returns:
+ *   { success: true, files: [{filename, mime_type, data_base64}] }
+ */
+function handleGetMediaByPath(params) {
+  var date = params.date;
+  var section = params.section;
+  if (!date || !section) {
+    return jsonResponse({ success: false, error: "Missing date or section" });
+  }
+
+  try {
+    var rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+    var dateFolders = rootFolder.getFoldersByName(date);
+    if (!dateFolders.hasNext()) {
+      return jsonResponse({ success: true, files: [], message: "No folder for date: " + date });
+    }
+    var dateFolder = dateFolders.next();
+    var sectionFolders = dateFolder.getFoldersByName(section);
+    if (!sectionFolders.hasNext()) {
+      return jsonResponse({ success: true, files: [], message: "No folder for section: " + section });
+    }
+    var sectionFolder = sectionFolders.next();
+
+    var files = sectionFolder.getFiles();
+    var results = [];
+    while (files.hasNext()) {
+      var file = files.next();
+      var name = file.getName();
+      if (/\.json$/i.test(name)) continue;  // skip payload JSON copies
+      var blob = file.getBlob();
+      results.push({
+        filename: name,
         mime_type: blob.getContentType(),
         data_base64: Utilities.base64Encode(blob.getBytes()),
       });

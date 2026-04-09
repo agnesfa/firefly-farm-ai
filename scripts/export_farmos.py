@@ -352,6 +352,74 @@ class SectionsExporter:
             return plant_db[species].get("strata", "low")
         return "low"
 
+    # ── Species reference photos ───────────────────────────────
+
+    def fetch_species_photo_urls(self) -> dict:
+        """Fetch the plant_type taxonomy and build {farmos_name: photo_url}.
+
+        Plant types with no reference photo are omitted. The reference photo
+        is populated by the import_observations photo pipeline (latest-wins
+        per species). URLs returned are the raw farmOS file URIs — callers
+        that want thumbnails should add a farmOS image_style suffix or
+        download and resize at build time.
+
+        One API call fetches all plant_type terms with their image
+        relationship included; the included[] array carries the file
+        entities whose ``attributes.uri.url`` is the public path.
+        """
+        photos: dict[str, str] = {}
+        # include=image pulls the file entities into included[]. page[limit]
+        # is capped at 50 by farmOS; we paginate via links.next.
+        path = "/api/taxonomy_term/plant_type?include=image&page[limit]=50"
+        while path:
+            data = self._http_get(path)
+            if not data:
+                break
+
+            # Index included files by UUID so we can resolve the relationship.
+            files_by_id: dict[str, str] = {}
+            for inc in data.get("included", []) or []:
+                if inc.get("type") != "file--file":
+                    continue
+                uri = (inc.get("attributes") or {}).get("uri") or {}
+                url = uri.get("url") if isinstance(uri, dict) else ""
+                if not url:
+                    continue
+                # Make relative URLs absolute against the farmOS host.
+                if url.startswith("/"):
+                    url = self.hostname.rstrip("/") + url
+                files_by_id[inc.get("id", "")] = url
+
+            for term in data.get("data", []) or []:
+                attrs = term.get("attributes") or {}
+                name = attrs.get("name", "")
+                image_rel = (term.get("relationships") or {}).get("image") or {}
+                rel_data = image_rel.get("data")
+                # The image field is multi-value on taxonomy terms (data is a list)
+                if isinstance(rel_data, list) and rel_data:
+                    file_id = rel_data[-1].get("id", "")  # latest
+                elif isinstance(rel_data, dict):
+                    file_id = rel_data.get("id", "")
+                else:
+                    file_id = ""
+                if file_id and file_id in files_by_id and name:
+                    photos[name] = files_by_id[file_id]
+
+            # Follow pagination
+            next_link = (data.get("links") or {}).get("next", {})
+            if isinstance(next_link, dict):
+                full_url = next_link.get("href", "")
+            elif isinstance(next_link, str):
+                full_url = next_link
+            else:
+                full_url = ""
+            if full_url:
+                path = full_url[len(self.hostname):] if full_url.startswith(self.hostname) else full_url
+            else:
+                path = None
+
+        return photos
+
     # ── Main export logic ──────────────────────────────────────
 
     def export_sections_json(self, output_path: str, plant_db: dict):
@@ -374,6 +442,18 @@ class SectionsExporter:
         print(f"EXPORTING ENRICHED SECTIONS JSON")
         print(f"{'='*60}")
         print(f"Sections to process: {len(existing_sections)}")
+
+        # Build species → photo URL map from the plant_type taxonomy once.
+        # The import_observations photo pipeline attaches latest-wins photos
+        # to each term; we surface them on plant cards so WWOOFers have a
+        # visual reference for species identification.
+        print("Fetching species reference photos from plant_type taxonomy...")
+        try:
+            species_photos = self.fetch_species_photo_urls()
+            print(f"  → {len(species_photos)} species with reference photos")
+        except Exception as e:
+            print(f"  ! reference photo fetch failed: {e}")
+            species_photos = {}
 
         for section_id, section_meta in existing_sections.items():
             print(f"\n  {section_id}...")
@@ -462,6 +542,7 @@ class SectionsExporter:
                     "first_planted": first_planted_actual,
                     "asset_name": name,
                     "logs": plant_logs,
+                    "photo_url": species_photos.get(species, ""),
                 })
 
             total_plants += len(enriched_plants)
