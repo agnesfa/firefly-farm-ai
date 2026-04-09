@@ -5,6 +5,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { readFileSync, existsSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { parse as parseYaml } from 'yaml';
 import {
   assessStrataCoverage,
   assessActivityRecency,
@@ -341,5 +345,95 @@ describe('assessTeamMaturity', () => {
     const result = assessTeamMaturity({ active_users_weekly: 0, team_memory_velocity: 0, kb_entry_count: 2 }, GROWTH_CONFIG);
     expect(result.metrics.active_users_weekly.status).toBe('dormant');
     expect(result.metrics.kb_entry_count.status).toBe('minimal');
+  });
+});
+
+// ────────────────────────────────────────────────────────────
+// farm_growth.yaml hygiene
+// ────────────────────────────────────────────────────────────
+// system_health surfaces assumption: strings verbatim from knowledge/farm_growth.yaml.
+// If a point-in-time count leaks in ("Currently 53 ..."), it silently goes stale because
+// nothing regenerates the YAML. These tests reject that failure mode at build time.
+describe('farm_growth.yaml hygiene', () => {
+  // Mirrors the path-resolution logic in tools/system-health.ts:loadGrowthConfig.
+  const loadRealGrowthConfig = (): any => {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const candidates = [
+      resolve(here, '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),          // from src/__tests__ up to repo root
+      resolve(here, '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),
+      resolve(process.cwd(), 'knowledge', 'farm_growth.yaml'),
+      resolve(process.cwd(), '..', '..', 'knowledge', 'farm_growth.yaml'),
+    ];
+    for (const p of candidates) {
+      if (existsSync(p)) return parseYaml(readFileSync(p, 'utf-8'));
+    }
+    throw new Error(`Cannot find knowledge/farm_growth.yaml. Tried:\n  ${candidates.join('\n  ')}`);
+  };
+
+  it('loads the real farm_growth.yaml with expected structure', () => {
+    const config = loadRealGrowthConfig();
+    expect(config.dimensions).toBeDefined();
+    expect(config.dimensions.farm).toBeDefined();
+    expect(config.dimensions.system).toBeDefined();
+    expect(config.dimensions.team).toBeDefined();
+  });
+
+  it('assumption text must not embed point-in-time counts', () => {
+    // Narrow patterns: trigger on temporal framing ("Currently 53 ...") or
+    // counts paired with state verbs ("53 pending", "4 users equipped").
+    // Definitional phrasing like "counts as 1 user" should NOT trip these.
+    const stalePatterns: RegExp[] = [
+      /\bCurrently\s+\d+/i,
+      /\b\d+\s+\w+\s+(?:equipped|pending|remaining|connected|installed|synced|active)\b/i,
+      /\b\d+\s+(?:pending|remaining)\b/i,
+      /\bpending\s+sync\b/i,
+    ];
+
+    const config = loadRealGrowthConfig();
+    const violations: string[] = [];
+
+    for (const [dimName, dim] of Object.entries<any>(config.dimensions ?? {})) {
+      for (const stage of (dim.stages ?? []) as any[]) {
+        const text: string = stage.assumption ?? '';
+        if (stalePatterns.some((p) => p.test(text))) {
+          violations.push(`${dimName}.stages[${stage.label}]: ${text.trim().slice(0, 120)}`);
+        }
+      }
+      for (const [metricName, metric] of Object.entries<any>(dim.metrics ?? {})) {
+        const text: string = metric?.assumption ?? '';
+        if (stalePatterns.some((p) => p.test(text))) {
+          violations.push(`${dimName}.metrics.${metricName}: ${text.trim().slice(0, 120)}`);
+        }
+      }
+    }
+
+    expect(violations, `farm_growth.yaml assumption text must not embed point-in-time counts (they leak into system_health output and go stale). Describe the metric's meaning instead. Violations:\n  - ${violations.join('\n  - ')}`).toEqual([]);
+  });
+
+  it('mcp-server-ts/knowledge/farm_growth.yaml must match the canonical copy at repo root', () => {
+    // The Dockerfile (mcp-server-ts/Dockerfile:53) copies `knowledge/` from the
+    // mcp-server-ts build context into the production image, so there is a
+    // second on-disk copy of farm_growth.yaml that Railway ships to users.
+    // If these two files ever drift, Railway serves stale assumption text
+    // while local Python tests (and human readers) see the fresh one.
+    // Fail loudly at build time rather than discover it in a Railway log.
+    const here = dirname(fileURLToPath(import.meta.url));
+    const candidatesForRoot = [
+      resolve(here, '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),          // repo root from src/__tests__
+      resolve(here, '..', '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),
+    ];
+    const candidatesForTs = [
+      resolve(here, '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),                // mcp-server-ts/knowledge
+    ];
+    const rootPath = candidatesForRoot.find(existsSync);
+    const tsPath = candidatesForTs.find(existsSync);
+    if (!rootPath || !tsPath) {
+      // In rare layouts (e.g. the test suite is exercised from a tarball that
+      // doesn't carry the repo-root copy), skip rather than fail.
+      return;
+    }
+    const rootContent = readFileSync(rootPath, 'utf-8');
+    const tsContent = readFileSync(tsPath, 'utf-8');
+    expect(tsContent, `mcp-server-ts/knowledge/farm_growth.yaml has drifted from knowledge/farm_growth.yaml. The Dockerfile ships the mcp-server-ts copy to Railway, so edits to the canonical file at the repo root must be mirrored (or the Dockerfile changed to COPY from ../knowledge/). Run:\n    cp knowledge/farm_growth.yaml mcp-server-ts/knowledge/farm_growth.yaml`).toEqual(rootContent);
   });
 });

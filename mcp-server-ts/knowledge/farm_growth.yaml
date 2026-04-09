@@ -278,7 +278,8 @@ dimensions:
         assumption: >
           Drift can be in either direction: CSV updated but farmOS not synced,
           or farmOS edited directly without CSV update. The reconcile tool
-          compares both ways. Currently 53 source corrections pending sync.
+          compares both ways. The live count is the metric value above — do
+          not record point-in-time counts in this assumption text.
         scale_actions:
           drifting: "Sync CSV corrections to farmOS"
           broken: "Resolve before any imports"
@@ -308,7 +309,7 @@ dimensions:
         label: "T1: Equipped"
         criteria: "All managers have Claude Desktop + MCP tools"
         gate_metrics: []
-        assumption: "Assessed manually. Currently 4 users equipped."
+        assumption: "Assessed manually — no single metric captures this. User count is tracked in team memory, not here."
 
       - name: using
         label: "T2: Using"

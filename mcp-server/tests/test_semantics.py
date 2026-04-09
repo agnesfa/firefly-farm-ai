@@ -830,6 +830,47 @@ class TestLoadGrowthConfig:
         assert "stages" in config["dimensions"]["farm"]
         assert "metrics" in config["dimensions"]["farm"]
 
+    def test_assumptions_have_no_point_in_time_claims(self):
+        """Assumption text in farm_growth.yaml must not hardcode counts or dates.
+
+        system_health surfaces assumption strings verbatim to the caller, and the
+        YAML is not regenerated. Anything like "Currently 53 ..." or "4 users"
+        goes stale the moment the farm changes. Describe *meaning*, not *state* —
+        the metric.value field already carries the live number.
+        """
+        import re
+        config = load_growth_config()
+        # Patterns that indicate a point-in-time claim leaked into narrative text.
+        # Narrow rules: trigger on temporal framing ("Currently 53 ...") or
+        # counts paired with state verbs ("53 pending", "4 users equipped").
+        # Definitional phrasing like "counts as 1 user" should NOT trip these.
+        stale_patterns = [
+            re.compile(r"\bCurrently\s+\d+", re.IGNORECASE),
+            re.compile(r"\b\d+\s+\w+\s+(?:equipped|pending|remaining|connected|installed|synced|active)\b", re.IGNORECASE),
+            re.compile(r"\b\d+\s+(?:pending|remaining)\b", re.IGNORECASE),
+            re.compile(r"\bpending\s+sync\b", re.IGNORECASE),
+        ]
+        violations = []
+        for dim_name, dim in (config.get("dimensions") or {}).items():
+            for stage in dim.get("stages", []) or []:
+                text = stage.get("assumption") or ""
+                for pat in stale_patterns:
+                    if pat.search(text):
+                        violations.append(f"{dim_name}.stages[{stage.get('label')}]: {text.strip()[:120]}")
+                        break
+            for metric_name, metric in (dim.get("metrics") or {}).items():
+                text = (metric or {}).get("assumption") or ""
+                for pat in stale_patterns:
+                    if pat.search(text):
+                        violations.append(f"{dim_name}.metrics.{metric_name}: {text.strip()[:120]}")
+                        break
+        assert not violations, (
+            "farm_growth.yaml assumption text must not embed point-in-time counts "
+            "(these go stale and get surfaced verbatim by system_health). "
+            "Describe the metric's meaning instead. Violations:\n  - "
+            + "\n  - ".join(violations)
+        )
+
     def test_found_by_name_match(self):
         """Change without ID but matching log name → no gap."""
         sessions = [{
