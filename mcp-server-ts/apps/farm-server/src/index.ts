@@ -80,10 +80,10 @@ function startKeepAlive(port: number) {
 
   setInterval(async () => {
     try {
-      await fetch(url);
+      await fetch(url, { signal: AbortSignal.timeout(5_000) });
       logger.debug('Keep-alive ping sent');
     } catch {
-      // Server might be restarting — ignore
+      // Server might be restarting or slow — ignore
     }
   }, INTERVAL_MS);
 

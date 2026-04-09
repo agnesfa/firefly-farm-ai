@@ -14,6 +14,10 @@ const PLANT_UNIT_UUID = '2371b79e-a87b-4152-b6e4-ea6a9ed37fd0';
 const GRAMS_UNIT_UUID = 'e7bad672-9c33-4138-9fc3-1b0548a33aca';
 const NURS_FRDG_UUID = '429fcdd3-8be6-436a-b439-49186f56b3c7';
 
+// ── Timeout constants ──────────────────────────────────────
+const FETCH_TIMEOUT_MS = 15_000;  // 15s per individual HTTP request
+const CONNECT_TIMEOUT_MS = 10_000; // 10s for OAuth2 token fetch
+
 interface FarmOSConfig {
   farmUrl: string;
   username: string;
@@ -77,6 +81,7 @@ export class FarmOSClient {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: body.toString(),
+      signal: AbortSignal.timeout(CONNECT_TIMEOUT_MS),
     });
 
     if (!resp.ok) {
@@ -119,7 +124,11 @@ export class FarmOSClient {
    */
   private async _fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
     await this.ensureConnected();
-    const mergedInit = { ...init, headers: { ...this.headers, ...init?.headers } };
+    const mergedInit = {
+      ...init,
+      headers: { ...this.headers, ...init?.headers },
+      signal: init?.signal ?? AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    };
     const resp = await fetch(url, mergedInit);
 
     if (resp.status === 401 || resp.status === 403) {
@@ -130,7 +139,11 @@ export class FarmOSClient {
       logger.warn('Auth expired, reconnecting', { url: shortUrl, status: resp.status });
 
       await this.connect();
-      const retry = await fetch(url, { ...init, headers: { ...this.headers, ...init?.headers } });
+      const retry = await fetch(url, {
+        ...init,
+        headers: { ...this.headers, ...init?.headers },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
 
       if (retry.status === 401 || retry.status === 403) {
         this.stats.retryFailCount++;
@@ -193,6 +206,7 @@ export class FarmOSClient {
     filters?: Record<string, string>,
     sort?: string,
     limit = 50,
+    maxPages = 20,
   ): Promise<any[]> {
     const seen = new Map<string, any>();
     const effectiveSort = sort ?? 'name';
@@ -206,7 +220,7 @@ export class FarmOSClient {
     params += `&sort=${effectiveSort}`;
 
     let offset = 0;
-    while (true) {
+    for (let page = 0; page < maxPages; page++) {
       const url = `${this.baseUrl}/api/${apiPath}?${params}&page[offset]=${offset}`;
       const resp = await this._fetchWithRetry(url);
       if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status} fetching ${apiPath}`);
