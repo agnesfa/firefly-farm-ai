@@ -8,9 +8,11 @@ import { parse as parseYaml } from 'yaml';
 
 function loadGrowthConfig(): any {
   // Try multiple paths to find farm_growth.yaml
+  // In Docker with npm workspace: CWD = /app/apps/farm-server/, __dirname = /app/plugins/farm-plugin/dist/tools/
   const candidates = [
-    resolve(process.cwd(), 'knowledge', 'farm_growth.yaml'),
-    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),
+    resolve(process.cwd(), 'knowledge', 'farm_growth.yaml'),                                                        // CWD = /app/
+    resolve(process.cwd(), '..', '..', 'knowledge', 'farm_growth.yaml'),                                             // CWD = /app/apps/farm-server/
+    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', 'knowledge', 'farm_growth.yaml'),        // __dirname relative (4 levels up to /app/)
   ];
   for (const p of candidates) {
     try { return parseYaml(readFileSync(p, 'utf-8')); } catch { /* try next */ }

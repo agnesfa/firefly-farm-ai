@@ -11,34 +11,23 @@ export const getFarmOverviewTool: Tool = {
   handler: async (_params, extra) => {
     const client = getFarmOSClient(extra);
 
-    // Fetch land assets, plant count, and plant type count in parallel.
-    // Use limit=200 for land assets — there are <100 total, so one page suffices.
-    const [landAssets, plantPage, plantTypes] = await Promise.all([
-      client.fetchAllPaginated('asset/land', { status: 'active' }, 'name', 200, 1),
+    // Fetch all locations (land + structure), plant count, and plant type count in parallel.
+    // getAllLocations() handles both asset/land and asset/structure with proper pagination.
+    const [allLocations, plantPage, plantTypes] = await Promise.all([
+      client.getAllLocations(),
       client.fetchFiltered('asset/plant', { status: 'active' }, 'name', 1),
       client.getAllPlantTypesCached(),
     ]);
 
-    // Group sections by row
-    const sectionPattern = /^P\dR\d\.\d+-\d+$/;
-    const nurseryPattern = /^NURS\./;
-    const compostPattern = /^COMP\./;
+    // Group paddock sections by row
     const rows: Record<string, string[]> = {};
-    let nurseryCount = 0;
-    let compostCount = 0;
-
-    for (const s of landAssets) {
-      const name = s.attributes?.name ?? '';
-      if (sectionPattern.test(name)) {
-        const prefix = name.split('.')[0];
-        if (!rows[prefix]) rows[prefix] = [];
-        rows[prefix].push(name);
-      } else if (nurseryPattern.test(name)) {
-        nurseryCount++;
-      } else if (compostPattern.test(name)) {
-        compostCount++;
-      }
+    for (const loc of allLocations.paddock ?? []) {
+      const prefix = loc.name.split('.')[0];
+      if (!rows[prefix]) rows[prefix] = [];
+      rows[prefix].push(loc.name);
     }
+    const nurseryCount = (allLocations.nursery ?? []).length;
+    const compostCount = (allLocations.compost ?? []).length;
 
     const p1 = Object.fromEntries(Object.entries(rows).filter(([k]) => k.startsWith('P1')).map(([k, v]) => [k, v.sort()]));
     const p2 = Object.fromEntries(Object.entries(rows).filter(([k]) => k.startsWith('P2')).map(([k, v]) => [k, v.sort()]));
