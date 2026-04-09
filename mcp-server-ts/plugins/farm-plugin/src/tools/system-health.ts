@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient, getMemoryClient, getKnowledgeClient, getObserveClient, getPlantTypesClient } from '../clients/index.js';
-import { assessFarmMaturity, assessSystemMaturity, assessTeamMaturity, assessSectionHealth, formatPlantAsset, formatLog, parsePlantTypeMetadata } from '../helpers/index.js';
+import { assessFarmMaturity, assessSystemMaturity, assessTeamMaturity, assessSectionHealth, formatPlantAsset, formatLog, parsePlantTypeMetadata, extractMemorySummaries, countKbEntries } from '../helpers/index.js';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -118,13 +118,15 @@ export const systemHealthTool: Tool = {
           try {
             const kbClient = getKnowledgeClient();
             if (!kbClient) return null;
-            const entries = await kbClient.listEntries();
-            return Array.isArray(entries) ? entries.length : 0;
+            // Apps Script wraps results: {success, entries: [...], count, total}
+            return countKbEntries(await kbClient.listEntries(undefined, 200));
           } catch { return null; }
         })(),
       ]);
-      const distinctUsers = new Set((Array.isArray(recent) ? recent : []).map((e: any) => e.user).filter(Boolean)).size;
-      const velocity = Array.isArray(recent) ? recent.length : 0;
+      // Apps Script wraps results: {success, summaries: [...], count}
+      const summaries = extractMemorySummaries(recent);
+      const distinctUsers = new Set(summaries.map((e: any) => e.user).filter(Boolean)).size;
+      const velocity = summaries.length;
       return assessTeamMaturity({ active_users_weekly: distinctUsers, team_memory_velocity: velocity, kb_entry_count: kbCount }, config);
     };
 

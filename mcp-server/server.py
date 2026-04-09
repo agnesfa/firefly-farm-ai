@@ -3059,8 +3059,13 @@ def system_health() -> str:
         def _kb():
             try:
                 kb_client = get_knowledge_client()
-                kb_entries = kb_client.list(summary_only=True)
-                return len(kb_entries) if isinstance(kb_entries, list) else 0
+                # Apps Script wraps results: {success, entries: [...], count, total}
+                resp = kb_client.list_entries(limit=200)
+                if isinstance(resp, dict):
+                    return resp.get("total") or len(resp.get("entries") or [])
+                if isinstance(resp, list):
+                    return len(resp)
+                return None
             except Exception:
                 return None
 
@@ -3070,14 +3075,18 @@ def system_health() -> str:
             recent_activity = activity_fut.result()
             kb_count = kb_fut.result()
 
-        if isinstance(recent_activity, list):
-            distinct_users = len(set(
-                entry.get("user", "") for entry in recent_activity if entry.get("user")
-            ))
-            memory_velocity = len(recent_activity)
+        # Apps Script wraps results: {success, summaries: [...], count}
+        if isinstance(recent_activity, dict):
+            summaries = recent_activity.get("summaries") or []
+        elif isinstance(recent_activity, list):
+            summaries = recent_activity
         else:
-            distinct_users = 0
-            memory_velocity = 0
+            summaries = []
+
+        distinct_users = len({
+            entry.get("user", "") for entry in summaries if entry.get("user")
+        })
+        memory_velocity = len(summaries)
 
         team_data = {
             "active_users_weekly": distinct_users,

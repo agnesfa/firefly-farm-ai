@@ -4,6 +4,7 @@ export type { ParsedAssetName } from './names.js';
 export { formatPlantAsset, formatLog, formatPlantType, formatSectionFromAssets, summarizeKbEntries } from './formatters.js';
 export { buildPlantTypeDescription, parsePlantTypeMetadata } from './plant-type-metadata.js';
 export type { PlantTypeFields, PlantTypeMetadata } from './plant-type-metadata.js';
+export { extractMemorySummaries, countKbEntries } from './apps-script-unwrap.js';
 
 export {
   SECTION_HEALTH, TOPIC_FARMOS_MAP,

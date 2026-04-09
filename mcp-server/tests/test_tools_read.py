@@ -456,3 +456,109 @@ class TestFarmContextValidation:
 # Need datetime imports for timestamps in tests
 from datetime import datetime, timedelta, timezone
 AEST = timezone(timedelta(hours=10))
+
+
+class TestSystemHealthTeamDimensionUnwrap:
+    """Regression tests for the team dimension counter bug (April 9, 2026).
+
+    The Apps Script clients (MemoryClient.read_activity,
+    KnowledgeClient.list_entries) return wrapper dicts like
+    {success, summaries: [...], count} and {success, entries: [...], total}.
+    A prior implementation checked ``isinstance(x, list)`` and silently
+    short-circuited to 0, making ``system_health`` report Team stage as
+    dormant forever. These tests lock in the unwrap behaviour.
+    """
+
+    def _setup(self, monkeypatch, mock_farmos_client, *, memory_resp, kb_resp):
+        from unittest.mock import MagicMock
+
+        mock_farmos_client.get_plant_assets.return_value = []
+        mock_farmos_client.get_logs.return_value = []
+        mock_farmos_client.get_all_plant_types_cached.return_value = []
+        mock_farmos_client.get_section_assets.return_value = []
+        monkeypatch.setattr(server, "get_client", lambda: mock_farmos_client)
+
+        mock_mem = MagicMock()
+        mock_mem.is_connected = True
+        mock_mem.read_activity.return_value = memory_resp
+        monkeypatch.setattr(server, "get_memory_client", lambda: mock_mem)
+
+        mock_kb = MagicMock()
+        mock_kb.list_entries.return_value = kb_resp
+        monkeypatch.setattr(server, "get_knowledge_client", lambda: mock_kb)
+
+        # Plant types and observe clients may be called by other dimensions;
+        # keep them benign.
+        mock_pt = MagicMock()
+        mock_pt.reconcile.return_value = {"mismatch_count": 0}
+        monkeypatch.setattr(server, "get_plant_types_client", lambda: mock_pt)
+
+        mock_obs = MagicMock()
+        mock_obs.list_observations.return_value = []
+        monkeypatch.setattr(server, "get_observe_client", lambda: mock_obs)
+
+        from semantics import clear_caches
+        clear_caches()
+
+    def test_apps_script_wrapper_dicts_are_unwrapped(self, monkeypatch, mock_farmos_client):
+        """Wrapped dict responses must be counted, not treated as zero."""
+        memory_resp = {
+            "success": True,
+            "summaries": [
+                {"user": "Agnes", "summary": "..."},
+                {"user": "James", "summary": "..."},
+                {"user": "James", "summary": "..."},
+            ],
+            "count": 3,
+        }
+        kb_resp = {
+            "success": True,
+            "entries": [{"entry_id": str(i)} for i in range(18)],
+            "count": 18,
+            "total": 18,
+        }
+        self._setup(monkeypatch, mock_farmos_client, memory_resp=memory_resp, kb_resp=kb_resp)
+
+        result = json.loads(server.system_health())
+
+        team = result["dimensions"]["team"]
+        assert team["metrics"]["active_users_weekly"]["value"] == 2, (
+            "distinct_users should count unique 'user' fields from summaries list"
+        )
+        assert team["metrics"]["team_memory_velocity"]["value"] == 3, (
+            "memory_velocity should be the length of the summaries list"
+        )
+        assert team["metrics"]["kb_entry_count"]["value"] == 18, (
+            "kb_entry_count should unwrap the 'total' or 'entries' field"
+        )
+
+    def test_bare_list_responses_still_work(self, monkeypatch, mock_farmos_client):
+        """Fallback: if a client ever returns a bare list, it must still count."""
+        memory_resp = [
+            {"user": "Agnes"},
+            {"user": "James"},
+        ]
+        kb_resp = [{"entry_id": "1"}, {"entry_id": "2"}, {"entry_id": "3"}]
+        self._setup(monkeypatch, mock_farmos_client, memory_resp=memory_resp, kb_resp=kb_resp)
+
+        result = json.loads(server.system_health())
+
+        team = result["dimensions"]["team"]
+        assert team["metrics"]["active_users_weekly"]["value"] == 2
+        assert team["metrics"]["team_memory_velocity"]["value"] == 2
+        assert team["metrics"]["kb_entry_count"]["value"] == 3
+
+    def test_empty_wrappers_report_zero(self, monkeypatch, mock_farmos_client):
+        """Empty lists inside wrappers should still resolve cleanly to zero."""
+        self._setup(
+            monkeypatch,
+            mock_farmos_client,
+            memory_resp={"success": True, "summaries": [], "count": 0},
+            kb_resp={"success": True, "entries": [], "count": 0, "total": 0},
+        )
+
+        result = json.loads(server.system_health())
+        team = result["dimensions"]["team"]
+        assert team["metrics"]["active_users_weekly"]["value"] == 0
+        assert team["metrics"]["team_memory_velocity"]["value"] == 0
+        assert team["metrics"]["kb_entry_count"]["value"] == 0
