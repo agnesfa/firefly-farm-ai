@@ -49,6 +49,9 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=builder --chown=farmuser:nodejs /app/plugins/farm-plugin/dist ./plugins/farm-plugin/dist
 COPY --from=builder --chown=farmuser:nodejs /app/apps/farm-server/dist ./apps/farm-server/dist
 
+# Copy knowledge base (farm_growth.yaml needed by system_health tool)
+COPY --chown=farmuser:nodejs knowledge/ ./knowledge/
+
 # Copy entrypoint script
 COPY --chown=farmuser:nodejs docker-entrypoint.sh ./
 

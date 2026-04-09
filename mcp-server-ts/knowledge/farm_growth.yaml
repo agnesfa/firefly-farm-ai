@@ -1,0 +1,436 @@
+# Farm Growth Model — Milestones, Scale Triggers & Build Actions
+#
+# Three dimensions of growth, each with stages and measurable triggers.
+# Code in semantics.py reads this file. Claude interprets the output.
+# Agnes tunes thresholds here — no code changes needed.
+#
+# IMPORTANT: Every metric declares its interpretation_rule explicitly.
+# The code does NOT assume "higher is better" or "lower is better" —
+# it reads the rule from here. This is human-reviewable governance.
+#
+# Cross-references to ontology (farm_ontology.yaml) are marked with
+# [ontology: EntityType.attribute] so assumptions can be traced.
+#
+# Created: April 4, 2026
+# Reviewed by: (pending human review)
+#
+# ───────────────────────────────────────────────────────────────
+# INTERPRETATION RULES
+#
+# Each metric has an `interpretation` block declaring:
+#   direction: higher_is_better | lower_is_better | target_range
+#   thresholds: ordered from best to worst
+#   pioneer_exception: (boolean) — references ontology constraint
+#     "Pioneer species ARE EXPECTED to die — low survival is design intent"
+#
+# The code classifies by walking thresholds in declared order.
+# No hardcoded assumptions in Python/TypeScript.
+# ───────────────────────────────────────────────────────────────
+
+dimensions:
+
+  # ══════════════════════════════════════════════════════════
+  # Dimension 1: Farm Growth (Biological)
+  # ══════════════════════════════════════════════════════════
+  farm:
+    description: "What's growing in the ground and how well"
+
+    stages:
+      - name: planted
+        label: "F1: Planted"
+        criteria: ">500 active plant assets across >30 sections"
+        gate_metrics: [active_plants]
+        ontology_refs: ["Plant (status=active)", "Section"]
+
+      - name: surviving
+        label: "F2: Surviving"
+        criteria: "Farm-wide survival rate >0.60, >50% of tree sections have good strata coverage"
+        gate_metrics: [survival_rate, strata_coverage]
+        ontology_refs: ["Plant (lifecycle: active vs archived)", "Section (has_trees constraint)"]
+
+      - name: succeeding
+        label: "F3: Succeeding"
+        criteria: ">20% of sections show secondary species overtaking pioneers"
+        gate_metrics: [succession_balance]
+        ontology_refs: ["Species (HAS_SUCCESSION relationship)"]
+        assumption: >
+          "Overtaking" means secondary+climax count > pioneer count in a section.
+          This is a syntropic design goal, not a universal farming metric.
+
+      - name: producing
+        label: "F4: Producing"
+        criteria: "Monthly harvest logs >10, >5 distinct species harvested"
+        gate_metrics: [harvest_volume, harvest_diversity]
+        ontology_refs: ["Harvest entity", "HARVEST_OF relationship to Species"]
+
+      - name: self_sustaining
+        label: "F5: Self-sustaining"
+        criteria: ">30% farm-saved seeds in seed bank, compost self-sufficient"
+        gate_metrics: [seed_self_sufficiency]
+        ontology_refs: ["Seed entity (supplier=FFC)", "CompostBay entity"]
+        assumption: >
+          "Self-sufficient compost" is not yet measurable. Currently a manual
+          assessment by Claire/James. To be formalized when compost tracking exists.
+
+    metrics:
+
+      active_plants:
+        description: "Total active plant assets in farmOS"
+        query: "get_farm_overview → plant count"
+        ontology_ref: "Plant (status=active)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: f3, value: 2000, meaning: "Large-scale planting — needs query optimization"}
+            - {label: f2, value: 1000, meaning: "Substantial planting — pagination pressure"}
+            - {label: f1, value: 500, meaning: "Initial planting milestone reached"}
+            - {label: starting, value: 0, meaning: "Below first milestone"}
+        scale_actions:
+          f2: "Optimize query_sections for 1000+ plants (per-row CONTAINS)"
+          f3: "farmOS Views module or pre-computed section summaries"
+
+      survival_rate:
+        description: "Farm-wide average: current living plants / total ever planted"
+        query: "Aggregate section-level survival across all sections"
+        ontology_ref: "Plant (lifecycle: active count / total created count)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: healthy, value: 0.70, meaning: "Normal syntropic survival — pioneers dying by design"}
+            - {label: concerning, value: 0.50, meaning: "Higher loss than expected — investigate causes"}
+            - {label: at_risk, value: 0.30, meaning: "Severe loss — systemic issue (frost, disease, design)"}
+          pioneer_exception: true  # [ontology constraint: Pioneer species ARE EXPECTED to die]
+        assumption: >
+          Survival rate includes ALL species including pioneers. A "healthy" farm
+          may show 0.60 survival because 40% of pioneers died by design. The
+          pioneer_exception flag tells the interpreter to check succession stage
+          before alarming. A future enhancement would compute pioneer-excluded
+          survival separately.
+        actions:
+          concerning: "Review consortium design, check frost/drought correlation"
+          at_risk: "Emergency assessment — identify systemic failure cause"
+
+      strata_coverage:
+        description: "% of tree sections with good (≥0.75) strata coverage"
+        query: "Aggregate section-level strata scores for tree sections only"
+        ontology_ref: "Section (has_trees=true constraint), Species (HAS_STRATA)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: good, value: 0.75, meaning: "Most tree sections have all strata represented"}
+            - {label: fair, value: 0.50, meaning: "Half of sections need strata infill"}
+            - {label: poor, value: 0.25, meaning: "Major planting gaps across the farm"}
+        assumption: >
+          Only tree sections are assessed (open sections expected to have only
+          medium+low strata per ontology constraint). A section "has good strata
+          coverage" when its strata score ≥ 0.75 (3 of 4 strata present with
+          living plants). This threshold comes from farm_semantics.yaml
+          section_health.strata_coverage.thresholds.good.
+        actions:
+          fair: "Identify strata gaps, plan targeted infill planting"
+          poor: "Major planting round needed — prioritize emergent and low groundcover"
+
+      harvest_volume:
+        description: "Harvest logs per month"
+        query: "query_logs(log_type='harvest') filtered to last 30 days"
+        ontology_ref: "Harvest entity"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: productive, value: 30, meaning: "Regular harvesting — consider market"}
+            - {label: f4, value: 10, meaning: "Consistent harvesting milestone"}
+            - {label: starting, value: 0, meaning: "Not yet harvesting regularly"}
+        scale_actions:
+          f4: "Build harvest analytics, yield-per-species tracking"
+          productive: "Consider market/distribution infrastructure"
+
+      seed_self_sufficiency:
+        description: "% of seed bank weight that is farm-saved (FFC source)"
+        query: "seed_bank.csv → sum FFC weight / total weight"
+        ontology_ref: "Seed entity (FROM_SUPPLIER where supplier=FFC)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: strong, value: 0.50, meaning: "Majority farm-saved — high resilience"}
+            - {label: f5, value: 0.30, meaning: "Self-sufficiency milestone"}
+            - {label: dependent, value: 0.0, meaning: "Fully dependent on external seed"}
+        scale_actions:
+          f5: "Build seed saving workflow, germination rate tracking"
+
+  # ══════════════════════════════════════════════════════════
+  # Dimension 2: System Growth (Technical)
+  # ══════════════════════════════════════════════════════════
+  system:
+    description: "Digital infrastructure supporting farm operations"
+
+    stages:
+      - name: instrumented
+        label: "S1: Instrumented"
+        criteria: "farmOS has all sections + nursery + plant types"
+        gate_metrics: []
+        assumption: "Assessed manually — no single metric captures this."
+
+      - name: observable
+        label: "S2: Observable"
+        criteria: "QR pages live, observation forms working, >50 field observations"
+        gate_metrics: [observation_backlog]
+
+      - name: intelligent
+        label: "S3: Intelligent"
+        criteria: "farm_context tool deployed, semantic health assessments working"
+        gate_metrics: []
+        assumption: "Assessed by tool existence check, not a numeric metric."
+
+      - name: reliable
+        label: "S4: Reliable"
+        criteria: "Pagination safe, data integrity gate active, <5% logging gaps"
+        gate_metrics: [data_integrity, plant_type_drift]
+
+      - name: self_healing
+        label: "S5: Self-healing"
+        criteria: "Auto-detect drift, reconcile plant types, regenerate pages on change"
+        gate_metrics: [plant_type_drift, page_freshness_days]
+
+      - name: predictive
+        label: "S6: Predictive"
+        criteria: "Transplant readiness alerts, succession forecasting, anomaly detection"
+        gate_metrics: []
+        assumption: "Future — no metrics defined yet."
+
+    metrics:
+
+      total_entities:
+        description: "Total assets + logs in farmOS (pagination pressure indicator)"
+        query: "get_farm_overview → sum of all asset and log counts"
+        ontology_ref: "All entity types with canonical_source=farmOS"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: safe, value: 1500, meaning: "Well within pagination limits"}
+            - {label: warning, value: 3000, meaning: "Approaching offset pagination stress"}
+            - {label: critical, value: 5000, meaning: "Need pre-filtered views or external index"}
+        assumption: >
+          Offset-based pagination with page[limit]=50 and maxPages=20 handles
+          up to ~1000 results per CONTAINS query. At 5000+ total entities,
+          even filtered queries may hit limits. This threshold is based on
+          farmOS JSON:API behavior as of March 2026 — may change with farmOS updates.
+        scale_actions:
+          warning: "Add farmOS Views for pre-filtered queries"
+          critical: "Elasticsearch or external index"
+
+      data_integrity:
+        description: "% of team memory claimed changes that exist in farmOS"
+        query: "detect_logging_gaps across recent team memory entries"
+        ontology_ref: "Session (SESSION_CHANGED relationship)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: healthy, value: 0.95, meaning: "Nearly all claimed changes verified"}
+            - {label: concerning, value: 0.90, meaning: "Some changes lost — investigate write path"}
+            - {label: broken, value: 0.80, meaning: "Significant data loss — halt and audit"}
+        assumption: >
+          This metric depends on team members recording farmos_changes in their
+          session summaries. If they don't log changes, integrity looks "healthy"
+          by default (no claims to verify). A future enhancement would track
+          MCP tool invocations directly.
+        scale_actions:
+          concerning: "Audit all write paths, add retry logic"
+          broken: "Halt automated writes until root cause identified"
+
+      observation_backlog:
+        description: "Pending unreviewed observations in Google Sheet"
+        query: "list_observations(status='pending') → count"
+        ontology_ref: "Observation entity (from QR observation sheet)"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: healthy, value: 5, meaning: "Few pending — review pipeline flowing"}
+            - {label: backlog, value: 15, meaning: "Observations piling up — review needed"}
+            - {label: blocked, value: 50, meaning: "Pipeline broken — investigate"}
+        scale_actions:
+          backlog: "Auto-import approved observations"
+          blocked: "Review pipeline is broken — investigate"
+
+      page_freshness_days:
+        description: "Days since QR pages were last regenerated from farmOS"
+        query: "git log site/public/ → days since last regen commit"
+        ontology_ref: "Section (QR pages as read projection of farmOS state)"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: fresh, value: 7, meaning: "Pages reflect recent farmOS state"}
+            - {label: stale, value: 30, meaning: "Pages may not match current inventory"}
+            - {label: dead, value: 90, meaning: "Pages no longer reflect reality"}
+        scale_actions:
+          stale: "Wire auto-regenerate on farmOS data changes"
+          dead: "Urgent regeneration needed"
+
+      plant_type_drift:
+        description: "Mismatches between plant_types.csv and farmOS taxonomy"
+        query: "reconcile_plant_types → mismatch count"
+        ontology_ref: "Species (canonical_source vs enrichment_source)"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: healthy, value: 0, meaning: "CSV and farmOS in sync"}
+            - {label: drifting, value: 5, meaning: "Minor corrections needed"}
+            - {label: broken, value: 20, meaning: "Data integrity at risk"}
+        assumption: >
+          Drift can be in either direction: CSV updated but farmOS not synced,
+          or farmOS edited directly without CSV update. The reconcile tool
+          compares both ways. Currently 53 source corrections pending sync.
+        scale_actions:
+          drifting: "Sync CSV corrections to farmOS"
+          broken: "Resolve before any imports"
+
+      apps_script_quota:
+        description: "Peak daily Apps Script execution usage as % of limit"
+        query: "UsageTracking health endpoints → max usage across 6 backends"
+        ontology_ref: "(infrastructure — not in farm ontology)"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: safe, value: 0.50, meaning: "Well under quota"}
+            - {label: warning, value: 0.80, meaning: "Approaching limits"}
+            - {label: critical, value: 0.95, meaning: "May hit quota failures"}
+        scale_actions:
+          warning: "Monitor trend, consider batching optimizations"
+          critical: "Migrate highest-traffic backend to Firefly Agents"
+
+  # ══════════════════════════════════════════════════════════
+  # Dimension 3: Team Growth (Human)
+  # ══════════════════════════════════════════════════════════
+  team:
+    description: "How effectively the team uses the system"
+
+    stages:
+      - name: equipped
+        label: "T1: Equipped"
+        criteria: "All managers have Claude Desktop + MCP tools"
+        gate_metrics: []
+        assumption: "Assessed manually. Currently 4 users equipped."
+
+      - name: using
+        label: "T2: Using"
+        criteria: ">5 team memory entries/week, >10 observations/month"
+        gate_metrics: [team_memory_velocity, observation_volume_monthly]
+
+      - name: self_sufficient
+        label: "T3: Self-sufficient"
+        criteria: "WWOOFers can log observations without manager help"
+        gate_metrics: []
+        assumption: >
+          Currently not measurable. Requires a new WWOOFer to attempt the
+          QR observation workflow independently and succeed. Manual validation needed.
+
+      - name: knowledge_capturing
+        label: "T4: Knowledge-capturing"
+        criteria: ">20 KB entries, all core workflows documented as SOPs"
+        gate_metrics: [kb_entry_count, sop_completeness]
+        ontology_ref: "KnowledgeEntry entity"
+
+      - name: autonomous
+        label: "T5: Autonomous"
+        criteria: "New team member productive within 1 day using system alone"
+        gate_metrics: []
+        assumption: "Future aspiration. Not yet measurable."
+
+    metrics:
+
+      active_users_weekly:
+        description: "Distinct users with team memory entries in last 7 days"
+        query: "read_team_activity(days=7) → distinct users"
+        ontology_ref: "Actor entity, Session (SESSION_BY relationship)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: healthy, value: 3, meaning: "Multiple team members actively using system"}
+            - {label: low, value: 1, meaning: "Only one person — check tool friction"}
+            - {label: dormant, value: 0, meaning: "System abandoned — investigate urgently"}
+        assumption: >
+          Only counts Claude Desktop/Code users who write session summaries.
+          Does not count QR page visitors or observation submitters.
+          Agnes using Claude Code counts as 1 user.
+
+      team_memory_velocity:
+        description: "Team memory entries per week"
+        query: "read_team_activity(days=7) → count"
+        ontology_ref: "Session entity"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: active, value: 5, meaning: "Regular session documentation"}
+            - {label: slow, value: 2, meaning: "Team disengaging"}
+            - {label: dormant, value: 0, meaning: "No sessions being logged"}
+        actions:
+          slow: "Check in with team, investigate tool friction"
+          dormant: "Tool not integrated into workflow"
+
+      observation_volume_monthly:
+        description: "Field observations submitted in last 30 days"
+        query: "list_observations filtered to last 30 days → count"
+        ontology_ref: "Observation entity"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: healthy, value: 10, meaning: "Regular field observations"}
+            - {label: low, value: 3, meaning: "QR pages not being used regularly"}
+            - {label: none, value: 0, meaning: "Field observation system not in use"}
+        actions:
+          low: "Check physical QR codes, observe form UX"
+
+      kb_entry_count:
+        description: "Total Knowledge Base entries"
+        query: "list_knowledge → total count"
+        ontology_ref: "KnowledgeEntry entity"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: t4, value: 20, meaning: "Knowledge-capturing milestone"}
+            - {label: growing, value: 10, meaning: "Building up knowledge base"}
+            - {label: minimal, value: 3, meaning: "Critical knowledge gap"}
+        scale_actions:
+          minimal: "Prioritize KB content creation sessions"
+
+      sop_completeness:
+        description: "Core farm workflows with documented SOPs"
+        query: "list_knowledge(category='sop') → count"
+        ontology_ref: "KnowledgeEntry (category=sop)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: complete, value: 7, meaning: "All core workflows documented"}
+            - {label: partial, value: 4, meaning: "Most workflows covered"}
+            - {label: minimal, value: 2, meaning: "New workers can't self-serve"}
+        core_workflows:
+          - watering
+          - pruning
+          - transplanting
+          - harvesting
+          - composting
+          - seed_saving
+          - mulching
+        assumption: >
+          Core workflow list is based on Claire's operational knowledge.
+          Should be reviewed when new farm domains are added (e.g., irrigation,
+          pest management). Each workflow is considered "documented" when at least
+          one KB entry with category=sop and matching topic exists.
+        scale_actions:
+          partial: "Schedule SOP writing sessions for remaining workflows"
+          minimal: "Critical knowledge gap — new WWOOFers can't self-serve"
+
+# ══════════════════════════════════════════════════════════
+# GOVERNANCE
+# ══════════════════════════════════════════════════════════
+#
+# Changes to this file:
+#   - Threshold changes: Agnes can tune directly, commit with rationale
+#   - New metrics: Require ontology cross-reference and assumption documentation
+#   - Stage changes: Require team discussion (affects growth narrative)
+#   - Interpretation rule changes: Require test updates in test_semantics.py
+#
+# The code in semantics.py reads interpretation.direction to determine
+# classification logic. It does NOT hardcode "higher_is_better" or
+# "lower_is_better" — it reads from here.
+#
+# Review schedule: Monthly, or when a threshold produces surprising results.
