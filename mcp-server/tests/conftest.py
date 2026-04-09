@@ -174,6 +174,7 @@ def make_observation(
     plant_notes="",
     condition="alive",
     timestamp="2026-03-09T03:15:00.000Z",
+    media_files="",
 ):
     """Build a Google Sheet observation row dict (as returned by the Apps Script)."""
     return {
@@ -190,6 +191,7 @@ def make_observation(
         "plant_notes": plant_notes,
         "condition": condition,
         "timestamp": timestamp,
+        "media_files": media_files,
     }
 
 

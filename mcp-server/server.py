@@ -1466,6 +1466,101 @@ def update_observation_status(
     }, indent=2)
 
 
+def _decode_media_file(file: dict) -> Optional[tuple]:
+    """Decode a base64 media file from the Apps Script ``get_media`` response.
+
+    Returns (filename, mime_type, bytes) or ``None`` if the payload is
+    unusable. The Apps Script payload format is
+    ``{filename, mime_type, data_base64}``. A ``data:`` URL prefix is
+    tolerated — some older submissions stored the blob that way.
+    """
+    import base64 as _b64
+
+    data = file.get("data_base64") or file.get("data") or ""
+    if not data:
+        return None
+    # Strip any "data:image/jpeg;base64," prefix defensively.
+    if isinstance(data, str) and "," in data and data.lstrip().startswith("data:"):
+        data = data.split(",", 1)[1]
+    try:
+        binary = _b64.b64decode(data)
+    except Exception:
+        return None
+    filename = file.get("filename") or "photo.jpg"
+    mime_type = file.get("mime_type") or "image/jpeg"
+    return filename, mime_type, binary
+
+
+def _upload_media_to_log(client, log_type: str, log_id: str, files: list) -> list:
+    """Attach a list of decoded media files to a farmOS log.
+
+    Returns a list of farmOS file UUIDs that were successfully uploaded.
+    Failures are swallowed — photo upload must never block an observation
+    import. Errors are stashed on the returned dict if you need them, but
+    the design doc specifies import continues on photo failures.
+    """
+    uploaded = []
+    if not log_id or not files:
+        return uploaded
+    for f in files:
+        decoded = _decode_media_file(f)
+        if decoded is None:
+            continue
+        filename, mime_type, binary = decoded
+        try:
+            file_id = client.upload_file(
+                entity_type=f"log/{log_type}",
+                entity_id=log_id,
+                field_name="image",
+                filename=filename,
+                binary_data=binary,
+                mime_type=mime_type,
+            )
+            if file_id:
+                uploaded.append(file_id)
+        except Exception:
+            # Do not block import on photo failure.
+            continue
+    return uploaded
+
+
+def _update_species_reference_photo(client, species: str, files: list) -> Optional[str]:
+    """Copy the latest observation photo to the plant_type taxonomy term.
+
+    Latest-wins: every import overwrites the previous reference photo for
+    that species. Only the first file is used (typical observation has 1
+    photo; multi-photo submissions pick the first as representative).
+
+    Returns the uploaded file UUID or ``None`` if nothing happened.
+    """
+    if not species or not files:
+        return None
+    try:
+        uuid = client.get_plant_type_uuid(species)
+    except Exception:
+        return None
+    if not uuid:
+        return None
+    for f in files:
+        decoded = _decode_media_file(f)
+        if decoded is None:
+            continue
+        filename, mime_type, binary = decoded
+        try:
+            file_id = client.upload_file(
+                entity_type="taxonomy_term/plant_type",
+                entity_id=uuid,
+                field_name="image",
+                filename=filename,
+                binary_data=binary,
+                mime_type=mime_type,
+            )
+            return file_id
+        except Exception:
+            return None
+    return None
+
+
 def _build_import_notes(obs: dict, extra: str = "") -> str:
     """Build rich notes from observation data for farmOS log.
 
@@ -1535,6 +1630,22 @@ def import_observations(
     mode = observations[0].get("mode", "")
     obs_date = observations[0].get("timestamp", "")[:10]  # YYYY-MM-DD
 
+    # Photo pipeline — fetch all media files for this submission once.
+    # Photos attach at the submission level (one set of photos per QR form
+    # submission), not per species row, so we fetch once and distribute.
+    # Swallow failures: absence of photos must never block observation import.
+    submission_media = []
+    any_media_listed = any((obs.get("media_files") or "").strip() for obs in observations)
+    if not dry_run and any_media_listed:
+        try:
+            media_resp = obs_client.get_media(submission_id)
+            if media_resp.get("success"):
+                submission_media = media_resp.get("files") or []
+        except Exception:
+            submission_media = []
+
+    species_photo_updates = set()  # Track (species) we've already refreshed.
+
     actions = []
     errors = []
 
@@ -1565,6 +1676,12 @@ def import_observations(
                     ))
                     action["result"] = result_json.get("status", "unknown")
                     action["log_id"] = result_json.get("log_id")
+                    if submission_media and action.get("log_id"):
+                        photos = _upload_media_to_log(
+                            client, "activity", action["log_id"], submission_media,
+                        )
+                        if photos:
+                            action["photos_uploaded"] = len(photos)
                 except Exception as e:
                     action["result"] = "error"
                     errors.append(f"Activity for {obs_section}: {e}")
@@ -1598,6 +1715,24 @@ def import_observations(
                     ))
                     action["result"] = result_json.get("status", "unknown")
                     action["plant_name"] = result_json.get("plant", {}).get("name")
+                    # create_plant emits an "Inventory" observation log (sets
+                    # location + initial count) whose id is returned in
+                    # result_json["observation_log"]["id"]. Attach photos there
+                    # so the media is associated with the planting event.
+                    photo_log_id = (result_json.get("observation_log") or {}).get("id")
+                    if submission_media and photo_log_id:
+                        photos = _upload_media_to_log(
+                            client, "observation", photo_log_id, submission_media,
+                        )
+                        if photos:
+                            action["photos_uploaded"] = len(photos)
+                    if submission_media and species not in species_photo_updates:
+                        ref_id = _update_species_reference_photo(
+                            client, species, submission_media,
+                        )
+                        if ref_id:
+                            action["species_reference_photo"] = True
+                            species_photo_updates.add(species)
                 except Exception as e:
                     action["result"] = "error"
                     errors.append(f"Create {species} in {obs_section}: {e}")
@@ -1666,6 +1801,19 @@ def import_observations(
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["log_id"] = result_json.get("log_id")
+                        if submission_media and action.get("log_id"):
+                            photos = _upload_media_to_log(
+                                client, "observation", action["log_id"], submission_media,
+                            )
+                            if photos:
+                                action["photos_uploaded"] = len(photos)
+                        if submission_media and species not in species_photo_updates:
+                            ref_id = _update_species_reference_photo(
+                                client, species, submission_media,
+                            )
+                            if ref_id:
+                                action["species_reference_photo"] = True
+                                species_photo_updates.add(species)
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Observation for {species} in {obs_section}: {e}")
@@ -1680,6 +1828,19 @@ def import_observations(
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["type"] = "activity"
+                        if submission_media and result_json.get("log_id"):
+                            photos = _upload_media_to_log(
+                                client, "activity", result_json["log_id"], submission_media,
+                            )
+                            if photos:
+                                action["photos_uploaded"] = len(photos)
+                        if submission_media and species not in species_photo_updates:
+                            ref_id = _update_species_reference_photo(
+                                client, species, submission_media,
+                            )
+                            if ref_id:
+                                action["species_reference_photo"] = True
+                                species_photo_updates.add(species)
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Activity for {species} in {obs_section}: {e}")
@@ -1754,6 +1915,11 @@ def import_observations(
                 "with the project repo, or ask Agnes."
             )
 
+    total_photos = sum(a.get("photos_uploaded", 0) or 0 for a in actions)
+    species_reference_updates = sum(
+        1 for a in actions if a.get("species_reference_photo")
+    )
+
     return json.dumps({
         "submission_id": submission_id,
         "section_id": section_id,
@@ -1763,6 +1929,9 @@ def import_observations(
         "errors": errors if errors else None,
         "sheet_status": sheet_status,
         "pages_regenerated": regen_message,
+        "photos_uploaded": total_photos,
+        "species_reference_photos_updated": species_reference_updates,
+        "submission_media_fetched": len(submission_media) if not dry_run else 0,
     }, indent=2)
 
 

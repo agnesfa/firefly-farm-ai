@@ -421,3 +421,244 @@ class TestAutoRegen:
 
         assert result["pages_regenerated"] is not None
         assert "regenerate_pages" in result["pages_regenerated"] or "Pages need regeneration" in result["pages_regenerated"]
+
+
+# ── Photo pipeline (Step 1 + 2 from photo-pipeline-and-plant-id-design.md) ──
+
+
+import base64
+
+
+# A 1×1 transparent PNG, just enough to exercise the decode path.
+_TINY_PNG_B64 = (
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+)
+
+
+def _media_file(filename="photo.jpg", b64=None):
+    return {
+        "filename": filename,
+        "mime_type": "image/jpeg",
+        "data_base64": b64 or _TINY_PNG_B64,
+    }
+
+
+class TestPhotoPipeline:
+    """Regression tests for the photo pipeline wiring in import_observations.
+
+    See ``claude-docs/photo-pipeline-and-plant-id-design.md`` — Steps 1 + 2.
+    These tests lock in:
+      * photos are fetched once per submission
+      * decoded from base64 and uploaded to every farmOS log created
+      * the latest photo per species lands on the plant_type taxonomy term
+      * photo failures never block observation import
+      * submissions without media files never touch get_media
+    """
+
+    def _setup_media(self, monkeypatch, mock_farmos_client, mock_observe_client):
+        """Install a get_media mock and an upload_file recorder."""
+        mock_observe_client.get_media = MagicMock(return_value={
+            "success": True,
+            "files": [_media_file("first.jpg"), _media_file("second.jpg")],
+        })
+        uploaded = []
+
+        def fake_upload(entity_type, entity_id, field_name, filename, binary_data, mime_type="image/jpeg"):
+            uploaded.append({
+                "entity_type": entity_type,
+                "entity_id": entity_id,
+                "field_name": field_name,
+                "filename": filename,
+                "bytes_len": len(binary_data),
+                "mime_type": mime_type,
+            })
+            return f"file-uuid-{len(uploaded)}"
+
+        mock_farmos_client.upload_file = fake_upload
+        mock_farmos_client.get_plant_type_uuid = MagicMock(return_value="pt-uuid-pigeonpea")
+        return uploaded
+
+    def test_photos_uploaded_to_activity_log_case_a(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Case A (section comment) with media_files → upload to activity log."""
+        sub_id = "sub-photo-a"
+        obs = make_observation(
+            species="",
+            section_notes="Weeds growing near row edge",
+            submission_id=sub_id,
+            status="approved",
+            media_files="first.jpg,second.jpg",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        uploaded = self._setup_media(monkeypatch, mock_farmos_client, mock_observe_client)
+        activity_log_id = _mock_tool_success(monkeypatch, "create_activity")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        assert result["photos_uploaded"] == 2
+        assert result["submission_media_fetched"] == 2
+        assert result["species_reference_photos_updated"] == 0  # No species
+        assert result["actions"][0]["photos_uploaded"] == 2
+        # Both files landed on the activity log
+        assert [u["entity_type"] for u in uploaded] == [
+            "log/activity", "log/activity",
+        ]
+        assert all(u["entity_id"] == activity_log_id for u in uploaded)
+        assert all(u["field_name"] == "image" for u in uploaded)
+        assert [u["filename"] for u in uploaded] == ["first.jpg", "second.jpg"]
+        # Each upload decoded to >0 bytes (the tiny PNG)
+        assert all(u["bytes_len"] > 0 for u in uploaded)
+
+    def test_photos_uploaded_and_species_reference_case_c(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Case C (inventory update) attaches photos to observation log AND
+        refreshes the plant_type taxonomy reference photo."""
+        sub_id = "sub-photo-c"
+        obs = make_observation(
+            species="Pigeon Pea",
+            new_count=4,
+            previous_count=3,
+            submission_id=sub_id,
+            status="approved",
+            media_files="first.jpg,second.jpg",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        uploaded = self._setup_media(monkeypatch, mock_farmos_client, mock_observe_client)
+
+        plant = make_plant_asset(
+            name="25 APR 2025 - Pigeon Pea - P2R3.15-21",
+        )
+        mock_farmos_client.get_plant_assets.return_value = [plant]
+        obs_log_id = _mock_tool_success(monkeypatch, "create_observation")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        assert result["photos_uploaded"] == 2
+        assert result["species_reference_photos_updated"] == 1
+        # 2 photos to observation log + 1 photo to taxonomy term
+        log_uploads = [u for u in uploaded if u["entity_type"] == "log/observation"]
+        taxo_uploads = [u for u in uploaded if u["entity_type"] == "taxonomy_term/plant_type"]
+        assert len(log_uploads) == 2
+        assert all(u["entity_id"] == obs_log_id for u in log_uploads)
+        assert len(taxo_uploads) == 1
+        assert taxo_uploads[0]["entity_id"] == "pt-uuid-pigeonpea"
+
+    def test_no_media_files_skips_drive_fetch(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Observations without media_files → get_media is never called."""
+        sub_id = "sub-no-media"
+        obs = make_observation(
+            species="",
+            section_notes="No photo here",
+            submission_id=sub_id,
+            status="approved",
+            media_files="",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_observe_client.get_media = MagicMock(return_value={"success": True, "files": []})
+        _mock_tool_success(monkeypatch, "create_activity")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        mock_observe_client.get_media.assert_not_called()
+        assert result["photos_uploaded"] == 0
+        assert result["submission_media_fetched"] == 0
+
+    def test_upload_failure_does_not_block_import(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """upload_file raising must not abort the observation import."""
+        sub_id = "sub-photo-fail"
+        obs = make_observation(
+            species="",
+            section_notes="Photo upload will fail",
+            submission_id=sub_id,
+            status="approved",
+            media_files="photo.jpg",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_observe_client.get_media = MagicMock(return_value={
+            "success": True,
+            "files": [_media_file("photo.jpg")],
+        })
+        mock_farmos_client.upload_file = MagicMock(side_effect=RuntimeError("farmOS down"))
+        _mock_tool_success(monkeypatch, "create_activity")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        assert result["total_actions"] == 1
+        assert result["actions"][0]["result"] == "created"
+        assert result["photos_uploaded"] == 0  # upload failed but import succeeded
+        assert result["errors"] is None  # photo failures don't surface as errors
+
+    def test_undecodable_media_is_skipped(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Corrupt base64 payload is skipped without crashing the import."""
+        sub_id = "sub-photo-corrupt"
+        obs = make_observation(
+            species="",
+            section_notes="Corrupt photo",
+            submission_id=sub_id,
+            status="approved",
+            media_files="broken.jpg",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_observe_client.get_media = MagicMock(return_value={
+            "success": True,
+            "files": [{"filename": "broken.jpg", "mime_type": "image/jpeg", "data_base64": "@@not-base64@@"}],
+        })
+        uploaded = []
+
+        def fake_upload(*args, **kwargs):
+            uploaded.append(True)
+            return "file-uuid"
+
+        mock_farmos_client.upload_file = fake_upload
+        _mock_tool_success(monkeypatch, "create_activity")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        assert uploaded == []  # decoder skipped the corrupt file
+        assert result["total_actions"] == 1
+        assert result["actions"][0]["result"] == "created"
+
+    def test_data_url_prefix_is_stripped(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Legacy ``data:image/jpeg;base64,XXX`` payloads are decoded correctly."""
+        from server import _decode_media_file
+
+        raw = _decode_media_file({
+            "filename": "legacy.jpg",
+            "mime_type": "image/jpeg",
+            "data_base64": f"data:image/jpeg;base64,{_TINY_PNG_B64}",
+        })
+        assert raw is not None
+        filename, mime_type, binary = raw
+        assert filename == "legacy.jpg"
+        assert mime_type == "image/jpeg"
+        assert len(binary) > 0
