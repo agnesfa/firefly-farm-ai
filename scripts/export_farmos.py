@@ -359,15 +359,23 @@ class SectionsExporter:
 
         Plant types with no reference photo are omitted. The reference photo
         is populated by the import_observations photo pipeline (latest-wins
-        per species). URLs returned are the raw farmOS file URIs — callers
-        that want thumbnails should add a farmOS image_style suffix or
-        download and resize at build time.
+        per species).
+
+        Photos are downloaded to site/public/photos/ at build time so they
+        can be served as static files on GitHub Pages (farmOS file URLs
+        require authentication and cannot be hotlinked from public pages).
+
+        Returns {farmos_name: relative_path} e.g. {"Sunflower": "photos/sunflower.jpg"}.
 
         One API call fetches all plant_type terms with their image
         relationship included; the included[] array carries the file
         entities whose ``attributes.uri.url`` is the public path.
         """
-        photos: dict[str, str] = {}
+        import re
+        photos_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "site", "public", "photos")
+        os.makedirs(photos_dir, exist_ok=True)
+
+        remote_photos: dict[str, str] = {}  # {farmos_name: farmOS_url}
         # include=image pulls the file entities into included[]. page[limit]
         # is capped at 50 by farmOS; we paginate via links.next.
         path = "/api/taxonomy_term/plant_type?include=image&page[limit]=50"
@@ -403,7 +411,7 @@ class SectionsExporter:
                 else:
                     file_id = ""
                 if file_id and file_id in files_by_id and name:
-                    photos[name] = files_by_id[file_id]
+                    remote_photos[name] = files_by_id[file_id]
 
             # Follow pagination
             next_link = (data.get("links") or {}).get("next", {})
@@ -418,7 +426,38 @@ class SectionsExporter:
             else:
                 path = None
 
-        return photos
+        # Download each photo using the authenticated session, resize to
+        # 112×112 (2× for retina at 56×56 CSS), and compress as JPEG.
+        # Keeps GitHub Pages payload small (~5-15KB per thumbnail).
+        from PIL import Image
+        from io import BytesIO
+
+        THUMB_SIZE = 112  # 2× for retina display at 56px CSS
+        JPEG_QUALITY = 75
+
+        local_photos: dict[str, str] = {}
+        for name, url in remote_photos.items():
+            slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+            local_filename = f"{slug}.jpg"
+            local_path = os.path.join(photos_dir, local_filename)
+            try:
+                resp = self.session.get(url, timeout=30)
+                resp.raise_for_status()
+                img = Image.open(BytesIO(resp.content))
+                img = img.convert("RGB")
+                # Center-crop to square, then resize
+                w, h = img.size
+                side = min(w, h)
+                left = (w - side) // 2
+                top = (h - side) // 2
+                img = img.crop((left, top, left + side, top + side))
+                img = img.resize((THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)
+                img.save(local_path, "JPEG", quality=JPEG_QUALITY, optimize=True)
+                local_photos[name] = f"photos/{local_filename}"
+            except Exception as e:
+                print(f"    ! failed to download photo for {name}: {e}")
+
+        return local_photos
 
     # ── Main export logic ──────────────────────────────────────
 

@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-10T17:48:24.728869+10:00",
+  "generated_at": "2026-04-10T18:09:37.922164+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -46,7 +46,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Rosemary",
@@ -116,7 +116,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Thyme",
@@ -157,7 +157,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_1.jpg"
+          "photo_url": "photos/thyme.jpg"
         },
         {
           "species": "Mint",
@@ -198,7 +198,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001.jpg"
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Geranium",
@@ -215,7 +215,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Oregano",
@@ -232,7 +232,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_0.jpg"
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Mint (Australian)",
@@ -290,7 +290,7 @@
               "notes": "1 strawberry guava + 2 Thai white"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_7.jpg"
+          "photo_url": "photos/guava.jpg"
         },
         {
           "species": "Grape Vine",
@@ -360,7 +360,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Fig",
@@ -389,7 +389,7 @@
               "notes": "Inventory update: Registration error — figs were never planted in this section. Count corrected to 0."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001.jpg"
+          "photo_url": "photos/fig.jpg"
         },
         {
           "species": "Lemon",
@@ -442,7 +442,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
@@ -471,7 +471,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_1.jpg"
+          "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
         },
         {
           "species": "Comfrey",
@@ -500,7 +500,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Oregano",
@@ -529,7 +529,7 @@
               "notes": "The 3 oregano are now in the first 0-3m section"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_0.jpg"
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon Balm",
@@ -616,7 +616,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Tansy",
@@ -645,7 +645,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Guava (Hawaiian)",
@@ -679,7 +679,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         }
       ]
     },
@@ -726,7 +726,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Rosemary",
@@ -843,7 +843,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Oregano",
@@ -872,7 +872,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_0.jpg"
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Coriander",
@@ -907,7 +907,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -1012,7 +1012,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Guava",
@@ -1035,7 +1035,7 @@
               "notes": "2 Thai white + 1 strawberry guava"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_7.jpg"
+          "photo_url": "photos/guava.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -1076,7 +1076,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Olive",
@@ -1140,7 +1140,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001.jpg"
+          "photo_url": "photos/fig.jpg"
         },
         {
           "species": "Lavender",
@@ -1175,7 +1175,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Citrus (Yuzu)",
@@ -1269,7 +1269,7 @@
               "notes": "Condition: dead. Next Self seeded maybe ?"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Comfrey",
@@ -1310,7 +1310,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Lemon Balm",
@@ -1572,7 +1572,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: very dry, died probably\nCount: 8 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -1662,7 +1662,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_6.jpg"
+          "photo_url": "photos/guava-strawberry.jpg"
         },
         {
           "species": "Pear (Williams)",
@@ -1726,7 +1726,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: bad shape (drought and luck of canopy)\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -1895,7 +1895,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 2 sponteneous seedlings at the base of one of the 2 big Ones\n"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Jaboticaba",
@@ -1959,7 +1959,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: just 1 seen before the chop and drop\nCount: 4 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -2000,7 +2000,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 4 Jalapeño (1 big, 3 small)+ 1 Chilli \"Thai\"\nCount: 7 → 5"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -2029,7 +2029,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 1 seen before chop and drop\nCount: 2 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001.jpg"
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -2099,7 +2099,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: Lavender is very happy in that section\nCount: 6 → 8"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Comfrey",
@@ -2134,7 +2134,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: suffering of drought but still alive\nCount: 4 → 4"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -2286,7 +2286,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: spreading excessively, should be pruned correctly\nCount: 3 → "
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Pear (Williams)",
@@ -2338,7 +2338,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: new_plant\nPlant notes: developp well here\nCount: 0 → 4\nNew plant added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -2509,7 +2509,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: some died because too dry\nCount: 12 → 3"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -2591,7 +2591,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: 2 remain after summer\nCount: 4 → 2"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -2695,7 +2695,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: planted in May or Nov 2025 (?)\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Quince",
@@ -2785,7 +2785,7 @@
               "notes": "Claire field obs 18 Mar 2026: good health"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -2849,7 +2849,7 @@
               "notes": "Claire field obs 18 Mar 2026: not seen"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -3065,7 +3065,7 @@
               "notes": "Claire field obs 18 Mar 2026: 1 seen, good health"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -3094,7 +3094,7 @@
               "notes": "Claire field obs 18 Mar 2026: died because of drought. 10→4"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Ginger",
@@ -3170,7 +3170,7 @@
               "notes": "Claire field obs 18 Mar 2026: 1 added today (18 March), 1 died. Net count stays 4. Some more can be added."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -3275,7 +3275,7 @@
               "notes": "Claire field obs 18 Mar 2026: 2 big, 1 small. 6→3"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Garlic",
@@ -3463,7 +3463,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_4.jpg"
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -3515,7 +3515,7 @@
               "notes": "2025-11-12 00:00:00"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Banagrass",
@@ -3677,7 +3677,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Jaboticaba",
@@ -3815,7 +3815,7 @@
               "notes": "jalapeno ffc nursery"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -3850,7 +3850,7 @@
               "notes": "2025-11-13 00:00:00"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Tansy",
@@ -3885,7 +3885,7 @@
               "notes": "2025-11-13 00:00:00"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -4022,7 +4022,7 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.3-9_section_001.jpg"
+          "photo_url": "photos/achiote.jpg"
         }
       ],
       "green_manure": [
@@ -4128,7 +4128,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: not seen before chop and drop\nCount: 1 → 0"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Malabar Chestnut",
@@ -4169,7 +4169,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 on that section / 1 dead already registered\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_10.jpg"
+          "photo_url": "photos/malabar-chestnut.jpg"
         },
         {
           "species": "Macadamia",
@@ -4210,7 +4210,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 bush and 1 gouros\nCount: 2 → 2"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_4.jpg"
+          "photo_url": "photos/macadamia.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -4286,7 +4286,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 3 remaining\nCount: 5 → 3"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -4408,7 +4408,7 @@
               "notes": "Species correction: plant was actually Curry Leaf, not Tea Tree Oil. All tea trees are in P2R3.50-62."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_1.jpg"
+          "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
         },
         {
           "species": "Pak Choi",
@@ -4571,7 +4571,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Acerola",
@@ -4641,7 +4641,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Curry Leaf",
@@ -4682,7 +4682,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_6.jpg"
+          "photo_url": "photos/curry-leaf.jpg"
         },
         {
           "species": "Eggplant",
@@ -4781,7 +4781,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001.jpg"
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Comfrey",
@@ -4822,7 +4822,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: add more if possible\nCount: 4 → 4"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -4904,7 +4904,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: add more if possible\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Garlic",
@@ -5074,7 +5074,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Malabar Chestnut",
@@ -5115,7 +5115,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_10.jpg"
+          "photo_url": "photos/malabar-chestnut.jpg"
         },
         {
           "species": "Macadamia",
@@ -5156,7 +5156,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: 2 bush variety from Daleys Fruit nursery\nCount: 2 → 2"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_4.jpg"
+          "photo_url": "photos/macadamia.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -5226,7 +5226,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 8 → 8"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -5354,7 +5354,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: really in good health\nCount: 4 → 4"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_1.jpg"
+          "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
         },
         {
           "species": "Pak Choi",
@@ -5517,7 +5517,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Acerola",
@@ -5581,7 +5581,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Curry Leaf",
@@ -5616,7 +5616,7 @@
               "notes": "Dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_6.jpg"
+          "photo_url": "photos/curry-leaf.jpg"
         },
         {
           "species": "Eggplant",
@@ -5715,7 +5715,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001.jpg"
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Comfrey",
@@ -5756,7 +5756,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 4 → 4"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -5850,7 +5850,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: add 2 around malabar chestnut and acerola\nCount: 2 → 0"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Garlic",
@@ -5925,7 +5925,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -5966,7 +5966,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Turmeric",
@@ -6124,7 +6124,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -6164,7 +6164,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_0.jpg"
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon",
@@ -6181,7 +6181,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli",
@@ -6261,7 +6261,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -6284,7 +6284,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -6330,7 +6330,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -6353,7 +6353,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -6422,7 +6422,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -6462,7 +6462,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_0.jpg"
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon",
@@ -6479,7 +6479,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli",
@@ -6565,7 +6565,7 @@
               "notes": "Updated from 2 to 4. James transplanted 2 additional geranium from nursery on 24 Mar 2026. Originally missed from farmOS due to silent API failure detected by data integrity gate."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -6588,7 +6588,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -6639,7 +6639,7 @@
               "notes": "Transplanted by James on 24 Mar 2026 from nursery. Originally missed from farmOS due to silent API failure detected by farm_context data integrity gate."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         }
       ]
     },
@@ -6668,7 +6668,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -6691,7 +6691,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -6800,7 +6800,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -6834,7 +6834,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -6868,7 +6868,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001_0.jpg"
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon",
@@ -6885,7 +6885,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli",
@@ -6982,7 +6982,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -7005,7 +7005,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Tansy",
@@ -7028,7 +7028,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Turmeric",
@@ -7125,7 +7125,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -7210,7 +7210,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -7244,7 +7244,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Lemon",
@@ -7261,7 +7261,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Arrowroot",
@@ -7312,7 +7312,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.3-9_section_001.jpg"
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Ginger",
@@ -7380,7 +7380,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -7523,7 +7523,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -7557,7 +7557,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -7574,7 +7574,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001.jpg"
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Lemon",
@@ -7591,7 +7591,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Ginger",
@@ -7682,7 +7682,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Turmeric",
@@ -7762,7 +7762,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -7779,7 +7779,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -7813,7 +7813,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -7847,7 +7847,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Nettle",
@@ -7898,7 +7898,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -7915,7 +7915,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -7978,7 +7978,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -8012,7 +8012,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8075,7 +8075,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -8092,7 +8092,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -8126,7 +8126,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -8143,7 +8143,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8259,7 +8259,7 @@
               "notes": "5 added 20 Feb 2026"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -8300,7 +8300,7 @@
               "notes": "5 lost, replaced by Devil's Brew"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Lemon",
@@ -8341,7 +8341,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Comfrey",
@@ -8382,7 +8382,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -8440,7 +8440,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -8469,7 +8469,7 @@
               "notes": "Suffers from pest because of lack of canopy. Observed by Agnes March 18."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001.jpg"
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Calendula",
@@ -8498,7 +8498,7 @@
               "notes": "Condition: damaged. Almost all dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8562,7 +8562,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Pluot (Black Adder)",
@@ -8602,7 +8602,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_4.jpg"
+          "photo_url": "photos/chilli-devil-s-brew.jpg"
         },
         {
           "species": "Jacaranda",
@@ -8619,7 +8619,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Guava (Purple)",
@@ -8701,7 +8701,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8800,7 +8800,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Calendula",
@@ -8829,7 +8829,7 @@
               "notes": "Condition: damaged. Almost all dead"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Pak Choi",
@@ -8881,7 +8881,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.3-9_section_001.jpg"
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Pear (Nashi)",
@@ -8921,7 +8921,7 @@
               "notes": "Field observation 14 Mar by Claire. Count 1→2. Imported manually (submission d0f34b99 had blank count for Pear Nashi)."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Lemon",
@@ -8938,7 +8938,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -8955,7 +8955,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T00:42:00\nMode: new_plant\nPlant notes: one planted over 6 months ago, other less than 2 months ago\nCount: 0 → 2\nNew plant added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         }
       ],
       "green_manure": [
@@ -9148,7 +9148,7 @@
               "notes": "7 existing + 5 added 25 Feb 2026"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -9189,7 +9189,7 @@
               "notes": "1 died"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Lemon",
@@ -9230,7 +9230,7 @@
               "notes": "Consolidated: 1 cutting + 4 seedling + 2 new seedlings"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001.jpg"
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Ginger",
@@ -9312,7 +9312,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -9423,7 +9423,7 @@
               "notes": "3 planted Feb 2026"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -9458,7 +9458,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001.jpg"
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Strawberry",
@@ -9533,7 +9533,7 @@
               "notes": "Misidentified as Passionfruit by Hadrien — confirmed Achiote by Claire. Submission corrected."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.3-9_section_001.jpg"
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -9584,7 +9584,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         }
       ],
       "green_manure": [
@@ -9655,7 +9655,7 @@
               "notes": "Inventory update: Claire confirmed 3 Comfrey remain. Hadrien's inventory showed →0 which was incorrect."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -9719,7 +9719,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Pak Choi",
@@ -9847,7 +9847,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 2 → 1"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Quince",
@@ -9917,7 +9917,7 @@
               "notes": "Corrected from 4→3 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -9946,7 +9946,7 @@
               "notes": "4 disappeared"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -10010,7 +10010,7 @@
               "notes": "Corrected from 3→2 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -10103,7 +10103,7 @@
               "notes": "Inventory update: Field inventory by Hadrien, 11 Mar 2026. Was 2, now 1. Reviewed by Claire."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Achiote",
@@ -10120,7 +10120,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.3-9_section_001.jpg"
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -10188,7 +10188,7 @@
               "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Jacaranda",
@@ -10205,7 +10205,7 @@
               "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         }
       ],
       "green_manure": [
@@ -10305,7 +10305,7 @@
               "notes": "Corrected from 1→3 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_6.jpg"
+          "photo_url": "photos/guava-strawberry.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -10363,7 +10363,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nCount: 2 → 2"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Apple",
@@ -10433,7 +10433,7 @@
               "notes": "Corrected from 3→6 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -10491,7 +10491,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: bad state, drought?\nCo"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Capsicum (Red)",
@@ -10753,7 +10753,7 @@
               "notes": "Corrected from 3→4 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -10829,7 +10829,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nCount: 2 → 2"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Pak Choi",
@@ -10968,7 +10968,7 @@
               "notes": "2 different species (one is black)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_6.jpg"
+          "photo_url": "photos/guava-strawberry.jpg"
         },
         {
           "species": "Macadamia",
@@ -11003,7 +11003,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_4.jpg"
+          "photo_url": "photos/macadamia.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -11038,7 +11038,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -11073,7 +11073,7 @@
               "notes": "Corrected from 1→2 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -11149,7 +11149,7 @@
               "notes": "Corrected from 2→5 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Tansy",
@@ -11184,7 +11184,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_8.jpg"
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Blueberry",
@@ -11271,7 +11271,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.38-46_section_001_0.jpg"
+          "photo_url": "photos/davidson-plum.jpg"
         },
         {
           "species": "Banagrass",
@@ -11486,7 +11486,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -11503,7 +11503,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_4.jpg"
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -11543,7 +11543,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -11600,7 +11600,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Ginger",
@@ -11686,7 +11686,7 @@
               "notes": "Maverick field walk 5 Apr 2026: counted 2 sunflowers (farmOS had 1). +1 likely self-seeded. Pending James verification."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.0-8_section_002_0.jpg"
+          "photo_url": "photos/sunflower.jpg"
         },
         {
           "species": "Pumpkin",
@@ -11703,7 +11703,7 @@
               "notes": "Maverick transcript 4 Apr 2026. Self-seeded from compost/scattered seeds. Pending James verification."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.0-8_section_002.jpg"
+          "photo_url": "photos/pumpkin.jpg"
         },
         {
           "species": "Jacaranda",
@@ -11720,7 +11720,7 @@
               "notes": "Maverick transcript 4 Apr 2026. Tree species — not self-seeded. Possible unlogged transplant or section boundary error (Jacaranda exists in P2R5.29-38). Needs James investigation."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -11783,7 +11783,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -11817,7 +11817,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -11851,7 +11851,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -12011,7 +12011,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12028,7 +12028,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_4.jpg"
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -12045,7 +12045,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -12153,7 +12153,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Ginger",
@@ -12210,7 +12210,7 @@
               "notes": "Maverick transcript 4 Apr 2026: ~3 pumpkin plants including \"growing out into the walking path.\" Self-seeded. Pending James recount."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.0-8_section_002.jpg"
+          "photo_url": "photos/pumpkin.jpg"
         }
       ]
     },
@@ -12250,7 +12250,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12267,7 +12267,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_4.jpg"
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -12284,7 +12284,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -12301,7 +12301,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12370,7 +12370,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12393,7 +12393,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_4.jpg"
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -12439,7 +12439,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12490,7 +12490,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Dianella",
@@ -12524,7 +12524,7 @@
               "notes": "Seeded January 2026."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         }
       ]
     },
@@ -12559,7 +12559,7 @@
               "notes": "4 doing well, 2 missing — just gone. Observed by James March 18."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_2.jpg"
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12582,7 +12582,7 @@
               "notes": "previous section"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_4.jpg"
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -12628,7 +12628,7 @@
               "notes": "Can only find 2 of 6. Observed by James March 18."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_5.jpg"
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12696,7 +12696,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Geranium",
@@ -12713,7 +12713,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Coriander",
@@ -12730,7 +12730,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -12764,7 +12764,7 @@
               "notes": "Seeded/planted January-February 2026."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         }
       ]
     },
@@ -12843,7 +12843,7 @@
               "notes": "Maverick transcript 4 Apr 2026: \"5 or 10 sunflowers halfway through\" + 2 more earlier. Zero Sunflower assets in entire farmOS — systematic logging gap. Pending James recount."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.0-8_section_002_0.jpg"
+          "photo_url": "photos/sunflower.jpg"
         },
         {
           "species": "Radish",
@@ -12877,7 +12877,7 @@
               "notes": "Maverick transcript 4 Apr 2026: \"pumpkin stretching across the trench onto the walking path, south side.\" Self-seeded. Pending James recount."
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.0-8_section_002.jpg"
+          "photo_url": "photos/pumpkin.jpg"
         }
       ],
       "green_manure": [
@@ -13003,7 +13003,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -13020,7 +13020,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Coriander",
@@ -13030,7 +13030,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Coriander - P1R1.0-5",
           "logs": [],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -13067,7 +13067,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R3.40-50_section_001_3.jpg"
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -13114,7 +13114,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -13173,7 +13173,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Coriander",
@@ -13183,7 +13183,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Coriander - P1R1.5-9",
           "logs": [],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -13342,7 +13342,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -13359,7 +13359,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -13396,7 +13396,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_1.jpg"
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Lavender",
@@ -13413,7 +13413,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -13450,7 +13450,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001.jpg"
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Mung Bean",
@@ -13664,7 +13664,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (Red Persian)",
@@ -13684,7 +13684,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Coriander - P1R1.19-29",
           "logs": [],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn",
@@ -13721,7 +13721,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Millet",
@@ -13778,7 +13778,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Rosemary",
@@ -13878,7 +13878,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Corn",
@@ -13915,7 +13915,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001.jpg"
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Nasturtium",
@@ -13952,7 +13952,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_0.jpg"
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Sage",
@@ -14097,7 +14097,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -14124,7 +14124,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (White Haifa)",
@@ -14328,7 +14328,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Capsicum (Red)",
@@ -14362,7 +14362,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (Crimson)",
@@ -14519,7 +14519,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -14546,7 +14546,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (Crimson)",
@@ -14737,7 +14737,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Coriander",
@@ -14747,7 +14747,7 @@
           "first_planted": "2025-10-27",
           "asset_name": "27 OCT 2025 - Coriander - P1R3.23-33",
           "logs": [],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -14924,7 +14924,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -14951,7 +14951,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Citrus (Yuzu)",
@@ -15005,7 +15005,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -15186,7 +15186,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_7.jpg"
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -15213,7 +15213,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (White Haifa)",
@@ -15528,7 +15528,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_3.jpg"
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -15545,7 +15545,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R2.0-3_section_001_2.jpg"
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Coriander",
@@ -15555,7 +15555,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Coriander - P1ED1.0-5",
           "logs": [],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R5.55-66_section_001_0.jpg"
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -15582,7 +15582,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.3-9_section_001_4.jpg"
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -15609,7 +15609,7 @@
               "notes": ""
             }
           ],
-          "photo_url": "https://margregen.farmos.net/system/files/farm/term/2026-04/P2R1.0-3_section_001.jpg"
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Oat",
