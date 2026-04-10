@@ -78,6 +78,16 @@
 .add-plant-trigger:active { background: #eeeddf; border-color: #e67e22; color: #e67e22; }
 .add-plant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .add-plant-close-btn { background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; padding: 4px 8px; }
+.plantnet-btn { margin-top: 8px; background: #2d5016; color: #fff; }
+.plantnet-results { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.plantnet-match { display: flex; gap: 10px; padding: 8px 10px; background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 8px; cursor: pointer; align-items: center; }
+.plantnet-match:hover { background: #efece0; border-color: #6b9e3c; }
+.plantnet-match img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.plantnet-match-text { flex: 1; min-width: 0; }
+.plantnet-species { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.plantnet-botanical { font-size: 11px; font-style: italic; color: #6b7280; }
+.plantnet-confidence { font-size: 11px; font-weight: 700; color: #2d5016; }
+.plantnet-status { font-size: 12px; color: #6b7280; padding: 6px 10px; }
 .plant-search-results { max-height: 200px; overflow-y: auto; border: 1px solid #e5e5e0; border-radius: 8px; margin-top: 4px; display: none; }
 .plant-search-result { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f0f0ec; font-size: 13px; }
 .plant-search-result:hover { background: #f7f6f0; }

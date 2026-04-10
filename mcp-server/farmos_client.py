@@ -1053,4 +1053,8 @@ class FarmOSClient:
                     f"(HTTP {resp.status_code})."
                 )
         resp.raise_for_status()
-        return resp.json().get("data", {}).get("id")
+        data = resp.json().get("data", {})
+        # farmOS file uploads may return {"data": [{...}]} (list) or {"data": {...}} (dict)
+        if isinstance(data, list):
+            return data[0].get("id") if data else None
+        return data.get("id")
