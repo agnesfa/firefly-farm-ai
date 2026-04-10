@@ -57,6 +57,7 @@ from dotenv import load_dotenv  # noqa: E402
 
 from farmos_client import FarmOSClient  # noqa: E402
 from observe_client import ObservationClient  # noqa: E402
+from plantnet_verify import build_botanical_lookup, verify_species_photo, get_call_count  # noqa: E402
 
 
 # ── Matching ─────────────────────────────────────────────────
@@ -160,10 +161,14 @@ def main() -> int:
 
     attached = 0
     reference_photos = 0
+    photos_rejected = 0
     skipped_no_logs = 0
     skipped_already = 0
     skipped_ambiguous = 0
     species_refreshed: set[str] = set()
+
+    # Build botanical lookup for PlantNet verification
+    botanical_lookup = build_botanical_lookup()
 
     for folder in folders:
         date = folder["date"]
@@ -242,7 +247,11 @@ def main() -> int:
                 except Exception as e:
                     print(f"  ! upload failed for {filename} on log {log_id}: {e}")
 
-        # Species reference photo — first photo wins per species per run.
+        # Species reference photo — only set if PlantNet verifies the photo
+        # matches the species. Section-level photos rarely depict a single
+        # species close-up, so most will be rejected. That's correct: the
+        # reference library should be populated through the live observation
+        # pipeline where workers photograph individual plants.
         if not args.skip_species_reference:
             seen_species = {_log_species(lg) for lg in targets if _log_species(lg)}
             for species in seen_species:
@@ -254,27 +263,37 @@ def main() -> int:
                     uuid = None
                 if not uuid:
                     continue
-                filename, mime_type, binary = decoded[0]
-                try:
-                    farmos.upload_file(
-                        entity_type="taxonomy_term/plant_type",
-                        entity_id=uuid,
-                        field_name="image",
-                        filename=filename,
-                        binary_data=binary,
-                        mime_type=mime_type,
-                    )
-                    reference_photos += 1
-                    species_refreshed.add(species)
-                    print(f"    → refreshed reference photo for {species}")
-                except Exception as e:
-                    print(f"    ! reference photo for {species} failed: {e}")
+                # Try each photo — use the first one that PlantNet verifies
+                for filename, mime_type, binary in decoded:
+                    result = verify_species_photo(binary, species, botanical_lookup)
+                    if result["verified"]:
+                        try:
+                            farmos.upload_file(
+                                entity_type="taxonomy_term/plant_type",
+                                entity_id=uuid,
+                                field_name="image",
+                                filename=filename,
+                                binary_data=binary,
+                                mime_type=mime_type,
+                            )
+                            reference_photos += 1
+                            species_refreshed.add(species)
+                            print(f"    → verified reference photo for {species} ({result['reason']})")
+                        except Exception as e:
+                            print(f"    ! reference photo for {species} failed: {e}")
+                        break  # One verified photo per species is enough
+                    else:
+                        photos_rejected += 1
+                        if not args.dry_run:
+                            print(f"    ✗ photo rejected for {species}: {result['reason']}")
 
     print()
     print("─" * 60)
     print(f"Folders scanned:             {len(folders)}")
     print(f"Photos attached to logs:     {attached}")
-    print(f"Species reference photos:    {reference_photos}")
+    print(f"Species reference photos:    {reference_photos} (PlantNet-verified)")
+    print(f"Photos rejected by PlantNet: {photos_rejected}")
+    print(f"PlantNet API calls:          {get_call_count()}")
     print(f"Skipped (no matching logs):  {skipped_no_logs}")
     print(f"Skipped (already had image): {skipped_already}")
     if args.dry_run:
