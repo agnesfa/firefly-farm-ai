@@ -7,6 +7,8 @@ export type { PlantTypeFields, PlantTypeMetadata } from './plant-type-metadata.j
 export { extractMemorySummaries, countKbEntries } from './apps-script-unwrap.js';
 export { decodeMediaFile, uploadMediaToLog, updateSpeciesReferencePhoto } from './photo-pipeline.js';
 export type { DecodedMedia, PhotoUploadClient } from './photo-pipeline.js';
+export { buildBotanicalLookup, buildBotanicalLookupFromCsv, verifySpeciesPhoto, getPlantnetCallCount } from './plantnet-verify.js';
+export type { VerifyResult, BotanicalLookup } from './plantnet-verify.js';
 
 export {
   SECTION_HEALTH, TOPIC_FARMOS_MAP,

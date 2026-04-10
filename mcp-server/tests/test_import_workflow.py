@@ -456,7 +456,7 @@ class TestPhotoPipeline:
     """
 
     def _setup_media(self, monkeypatch, mock_farmos_client, mock_observe_client):
-        """Install a get_media mock and an upload_file recorder."""
+        """Install a get_media mock, upload_file recorder, and PlantNet bypass."""
         mock_observe_client.get_media = MagicMock(return_value={
             "success": True,
             "files": [_media_file("first.jpg"), _media_file("second.jpg")],
@@ -476,6 +476,14 @@ class TestPhotoPipeline:
 
         mock_farmos_client.upload_file = fake_upload
         mock_farmos_client.get_plant_type_uuid = MagicMock(return_value="pt-uuid-pigeonpea")
+
+        # Bypass PlantNet verification in tests — always approve photos.
+        # PlantNet verification is tested separately in test_plantnet_verify.py.
+        import plantnet_verify
+        monkeypatch.setattr(
+            plantnet_verify, "verify_species_photo",
+            lambda *args, **kwargs: {"verified": True, "plantnet_top": "", "confidence": 1.0, "reason": "test_bypass"},
+        )
         return uploaded
 
     def test_photos_uploaded_to_activity_log_case_a(

@@ -1646,6 +1646,42 @@ def import_observations(
 
     species_photo_updates = set()  # Track (species) we've already refreshed.
 
+    # PlantNet verification — build botanical lookup once per import session.
+    # Each photo is checked against PlantNet before attaching to farmOS.
+    from plantnet_verify import build_botanical_lookup, verify_species_photo, get_call_count
+    botanical_lookup = build_botanical_lookup() if submission_media else {}
+    photos_verified = 0
+    photos_rejected = 0
+
+    def _verify_media_for_species(media_files: list, species: str) -> list:
+        """Filter media files through PlantNet verification.
+
+        Returns only files where PlantNet confirms the species match (>=30%).
+        For section comments (no species), returns all files unchanged.
+        """
+        nonlocal photos_verified, photos_rejected
+        if not media_files or not botanical_lookup:
+            return media_files
+        if not species:
+            return media_files  # Section comments — no species to verify against
+
+        verified = []
+        for f in media_files:
+            decoded = _decode_media_file(f)
+            if decoded is None:
+                continue
+            _filename, _mime, binary = decoded
+            result = verify_species_photo(binary, species, botanical_lookup)
+            if result["verified"]:
+                verified.append(f)
+                photos_verified += 1
+            else:
+                print(
+                    f"  [plantnet] Photo rejected for {species}: {result['reason']}"
+                )
+                photos_rejected += 1
+        return verified
+
     actions = []
     errors = []
 
@@ -1677,6 +1713,7 @@ def import_observations(
                     action["result"] = result_json.get("status", "unknown")
                     action["log_id"] = result_json.get("log_id")
                     if submission_media and action.get("log_id"):
+                        # Case A: section comment — no species verification
                         photos = _upload_media_to_log(
                             client, "activity", action["log_id"], submission_media,
                         )
@@ -1720,15 +1757,16 @@ def import_observations(
                     # result_json["observation_log"]["id"]. Attach photos there
                     # so the media is associated with the planting event.
                     photo_log_id = (result_json.get("observation_log") or {}).get("id")
-                    if submission_media and photo_log_id:
+                    verified_media = _verify_media_for_species(submission_media, species)
+                    if verified_media and photo_log_id:
                         photos = _upload_media_to_log(
-                            client, "observation", photo_log_id, submission_media,
+                            client, "observation", photo_log_id, verified_media,
                         )
                         if photos:
                             action["photos_uploaded"] = len(photos)
-                    if submission_media and species not in species_photo_updates:
+                    if verified_media and species not in species_photo_updates:
                         ref_id = _update_species_reference_photo(
-                            client, species, submission_media,
+                            client, species, verified_media,
                         )
                         if ref_id:
                             action["species_reference_photo"] = True
@@ -1801,15 +1839,16 @@ def import_observations(
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["log_id"] = result_json.get("log_id")
-                        if submission_media and action.get("log_id"):
+                        verified_media = _verify_media_for_species(submission_media, species)
+                        if verified_media and action.get("log_id"):
                             photos = _upload_media_to_log(
-                                client, "observation", action["log_id"], submission_media,
+                                client, "observation", action["log_id"], verified_media,
                             )
                             if photos:
                                 action["photos_uploaded"] = len(photos)
-                        if submission_media and species not in species_photo_updates:
+                        if verified_media and species not in species_photo_updates:
                             ref_id = _update_species_reference_photo(
-                                client, species, submission_media,
+                                client, species, verified_media,
                             )
                             if ref_id:
                                 action["species_reference_photo"] = True
@@ -1828,15 +1867,16 @@ def import_observations(
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["type"] = "activity"
-                        if submission_media and result_json.get("log_id"):
+                        verified_media = _verify_media_for_species(submission_media, species)
+                        if verified_media and result_json.get("log_id"):
                             photos = _upload_media_to_log(
-                                client, "activity", result_json["log_id"], submission_media,
+                                client, "activity", result_json["log_id"], verified_media,
                             )
                             if photos:
                                 action["photos_uploaded"] = len(photos)
-                        if submission_media and species not in species_photo_updates:
+                        if verified_media and species not in species_photo_updates:
                             ref_id = _update_species_reference_photo(
-                                client, species, submission_media,
+                                client, species, verified_media,
                             )
                             if ref_id:
                                 action["species_reference_photo"] = True
@@ -1930,6 +1970,9 @@ def import_observations(
         "sheet_status": sheet_status,
         "pages_regenerated": regen_message,
         "photos_uploaded": total_photos,
+        "photos_verified": photos_verified,
+        "photos_rejected": photos_rejected,
+        "plantnet_api_calls": get_call_count(),
         "species_reference_photos_updated": species_reference_updates,
         "submission_media_fetched": len(submission_media) if not dry_run else 0,
     }, indent=2)
