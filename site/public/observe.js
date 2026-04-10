@@ -819,15 +819,57 @@ function initPlantNetIdentify() {
     return; // No key → no button.
   }
   var section = document.getElementById("plantnet-section");
-  var input = document.getElementById("plantnet-photo-input");
-  if (!section || !input) return;
+  var fileInput = document.getElementById("plantnet-photo-input");
+  var useAttachedBtn = document.getElementById("plantnet-use-attached");
+  var cameraLabel = document.getElementById("plantnet-camera-label");
+  if (!section || !fileInput) return;
 
   section.style.display = "";
-  input.addEventListener("change", function () {
-    var file = input.files && input.files[0];
+
+  // Show/hide "Identify attached photo" button based on whether an
+  // observation photo has been captured in the form above.
+  function updateAttachedButton() {
+    var hasPhoto = document.querySelectorAll(".obs-photo-preview").length > 0;
+    if (useAttachedBtn) {
+      useAttachedBtn.style.display = hasPhoto ? "" : "none";
+    }
+    // Adjust secondary button label based on context
+    if (cameraLabel) {
+      var span = cameraLabel.querySelector("span");
+      if (span) {
+        span.textContent = hasPhoto
+          ? "📷 Take a different photo to identify"
+          : "📷 Take / choose photo to identify";
+      }
+    }
+  }
+
+  // Watch for photo additions/removals in the observation form
+  var previewContainers = document.querySelectorAll(".obs-photo-previews");
+  previewContainers.forEach(function (container) {
+    new MutationObserver(updateAttachedButton).observe(container, {
+      childList: true,
+    });
+  });
+  updateAttachedButton();
+
+  // "Identify attached photo" — reuse the already-captured observation photo
+  if (useAttachedBtn) {
+    useAttachedBtn.addEventListener("click", function () {
+      var preview = document.querySelector(".obs-photo-preview");
+      var dataUrl = preview && preview.dataset.base64;
+      if (!dataUrl) return;
+      var blob = dataUrlToBlob(dataUrl);
+      identifyPlantFromFile(blob);
+    });
+  }
+
+  // "Take / choose photo" — opens camera or file picker
+  fileInput.addEventListener("change", function () {
+    var file = fileInput.files && fileInput.files[0];
     if (!file) return;
     identifyPlantFromFile(file);
-    input.value = ""; // allow re-capture of the same plant
+    fileInput.value = ""; // allow re-capture of the same plant
   });
 }
 

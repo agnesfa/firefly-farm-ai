@@ -341,10 +341,15 @@
       <div id="plant-search-results" class="plant-search-results"></div>
     </div>
     <div class="obs-field-group" id="plantnet-section" style="display:none">
-      <label class="obs-media-btn plantnet-btn">
-        <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
-        <span>🪴 What is this plant? (camera)</span>
-      </label>
+      <div class="plantnet-actions">
+        <button type="button" id="plantnet-use-attached" class="obs-media-btn plantnet-btn" style="display:none">
+          🪴 Identify attached photo
+        </button>
+        <label class="obs-media-btn plantnet-btn plantnet-btn-secondary" id="plantnet-camera-label">
+          <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
+          <span>📷 Take / choose photo to identify</span>
+        </label>
+      </div>
       <div id="plantnet-results" class="plantnet-results"></div>
     </div>
     <div id="new-plant-fields" style="display:none">

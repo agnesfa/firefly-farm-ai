@@ -858,10 +858,15 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
       <div id="plant-search-results" class="plant-search-results"></div>
     </div>
     <div class="obs-field-group" id="plantnet-section" style="display:none">
-      <label class="obs-media-btn plantnet-btn">
-        <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
-        <span>🪴 What is this plant? (camera)</span>
-      </label>
+      <div class="plantnet-actions">
+        <button type="button" id="plantnet-use-attached" class="obs-media-btn plantnet-btn" style="display:none">
+          🪴 Identify attached photo
+        </button>
+        <label class="obs-media-btn plantnet-btn plantnet-btn-secondary" id="plantnet-camera-label">
+          <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
+          <span>📷 Take / choose photo to identify</span>
+        </label>
+      </div>
       <div id="plantnet-results" class="plantnet-results"></div>
     </div>
     <div id="new-plant-fields" style="display:none">
@@ -1010,7 +1015,9 @@ def get_observe_css():
 .add-plant-trigger:active { background: #eeeddf; border-color: #e67e22; color: #e67e22; }
 .add-plant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .add-plant-close-btn { background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; padding: 4px 8px; }
-.plantnet-btn { margin-top: 8px; background: #2d5016; color: #fff; }
+.plantnet-actions { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.plantnet-btn { background: #2d5016; color: #fff; }
+.plantnet-btn-secondary { background: #f7f6f0; color: #2d5016; border: 1px solid #2d5016; }
 .plantnet-results { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .plantnet-match { display: flex; gap: 10px; padding: 8px 10px; background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 8px; cursor: pointer; align-items: center; }
 .plantnet-match:hover { background: #efece0; border-color: #6b9e3c; }
