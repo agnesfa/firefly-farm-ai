@@ -40,6 +40,13 @@ vi.mock('../clients/index.js', () => ({
   getKnowledgeClient: () => null,
 }));
 
+// Bypass PlantNet verification in tests — always approve photos.
+vi.mock('../helpers/plantnet-verify.js', () => ({
+  buildBotanicalLookupFromCsv: () => ({ forward: new Map(), reverse: new Map() }),
+  verifySpeciesPhoto: async () => ({ verified: true, plantnetTop: '', confidence: 1.0, reason: 'test_bypass' }),
+  getPlantnetCallCount: () => 0,
+}));
+
 import { importObservationsTool } from '../tools/import-observations.js';
 
 function parseResult(result: any): any {

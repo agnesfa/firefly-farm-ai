@@ -1,6 +1,12 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
+import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
 import { getFarmOSClient, getObserveClient } from '../clients/index.js';
-import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto } from '../helpers/index.js';
+import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto, decodeMediaFile } from '../helpers/index.js';
+import { buildBotanicalLookupFromCsv, verifySpeciesPhoto, getPlantnetCallCount, type BotanicalLookup } from '../helpers/plantnet-verify.js';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
+const logger = baseLogger.child({ context: 'import-observations' });
 
 function buildImportNotes(obs: any, extra = ''): string {
   const parts: string[] = [];
@@ -69,6 +75,42 @@ export const importObservationsTool: Tool = {
     }
     const speciesPhotoUpdates = new Set<string>();
 
+    // PlantNet verification — build botanical lookup from plant_types.csv
+    let botanicalLookup: BotanicalLookup = { forward: new Map(), reverse: new Map() };
+    let photosVerified = 0;
+    let photosRejected = 0;
+    if (submissionMedia.length > 0) {
+      try {
+        const csvPath = path.resolve(__dirname, '../../../../knowledge/plant_types.csv');
+        const csvContent = fs.readFileSync(csvPath, 'utf-8');
+        botanicalLookup = buildBotanicalLookupFromCsv(csvContent);
+      } catch {
+        // CSV not found — verification disabled, all photos pass through
+      }
+    }
+
+    async function verifyMediaForSpecies(media: any[], species: string): Promise<any[]> {
+      if (media.length === 0 || botanicalLookup.reverse.size === 0) return media;
+      if (!species) return media; // Section comments — no species to verify
+
+      const verified: any[] = [];
+      for (const f of media) {
+        const decoded = decodeMediaFile(f);
+        if (!decoded) continue;
+        const result = await verifySpeciesPhoto(
+          decoded.bytes, species, botanicalLookup,
+        );
+        if (result.verified) {
+          verified.push(f);
+          photosVerified++;
+        } else {
+          logger.info(`Photo rejected for ${species}: ${result.reason}`);
+          photosRejected++;
+        }
+      }
+      return verified;
+    }
+
     for (const obs of observations) {
       const species = (obs.species ?? '').trim();
       const newCount = obs.new_count;
@@ -118,12 +160,13 @@ export const importObservationsTool: Tool = {
               const qtyId = await client.createQuantity(plantId, count, 'reset');
               const inventoryLogId = await client.createObservationLog(plantId, secUuid, qtyId, parseDate(dateStr), `Inventory ${obsSection} — ${species}`, '');
               action.result = 'created'; action.plant_name = assetName;
-              if (submissionMedia.length > 0 && inventoryLogId) {
-                const photos = await uploadMediaToLog(client as any, 'observation', inventoryLogId, submissionMedia);
+              const verifiedMedia = await verifyMediaForSpecies(submissionMedia, species);
+              if (verifiedMedia.length > 0 && inventoryLogId) {
+                const photos = await uploadMediaToLog(client as any, 'observation', inventoryLogId, verifiedMedia);
                 if (photos.length > 0) action.photos_uploaded = photos.length;
               }
-              if (submissionMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
-                const refId = await updateSpeciesReferencePhoto(client as any, species, submissionMedia);
+              if (verifiedMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
+                const refId = await updateSpeciesReferencePhoto(client as any, species, verifiedMedia);
                 if (refId) {
                   action.species_reference_photo = true;
                   speciesPhotoUpdates.add(species);
@@ -164,12 +207,13 @@ export const importObservationsTool: Tool = {
                     const obsLogId = await client.createObservationLog(plant.id, secUuid, qtyId, ts, logName, combinedNotes);
                     action.result = 'created';
                     if (obsLogId) action.log_id = obsLogId;
-                    if (submissionMedia.length > 0 && obsLogId) {
-                      const photos = await uploadMediaToLog(client as any, 'observation', obsLogId, submissionMedia);
+                    const verifiedMedia2 = await verifyMediaForSpecies(submissionMedia, species);
+                    if (verifiedMedia2.length > 0 && obsLogId) {
+                      const photos = await uploadMediaToLog(client as any, 'observation', obsLogId, verifiedMedia2);
                       if (photos.length > 0) action.photos_uploaded = photos.length;
                     }
-                    if (submissionMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
-                      const refId = await updateSpeciesReferencePhoto(client as any, species, submissionMedia);
+                    if (verifiedMedia2.length > 0 && !speciesPhotoUpdates.has(species)) {
+                      const refId = await updateSpeciesReferencePhoto(client as any, species, verifiedMedia2);
                       if (refId) {
                         action.species_reference_photo = true;
                         speciesPhotoUpdates.add(species);
@@ -182,12 +226,13 @@ export const importObservationsTool: Tool = {
                 if (secUuid) {
                   const activityLogId = await client.createActivityLog(secUuid, parseDate(obsDate || undefined), `Observation — ${obsSection}`, combinedNotes);
                   action.result = 'created'; action.type = 'activity';
-                  if (submissionMedia.length > 0 && activityLogId) {
-                    const photos = await uploadMediaToLog(client as any, 'activity', activityLogId, submissionMedia);
+                  const verifiedMedia3 = await verifyMediaForSpecies(submissionMedia, species);
+                  if (verifiedMedia3.length > 0 && activityLogId) {
+                    const photos = await uploadMediaToLog(client as any, 'activity', activityLogId, verifiedMedia3);
                     if (photos.length > 0) action.photos_uploaded = photos.length;
                   }
-                  if (submissionMedia.length > 0 && !speciesPhotoUpdates.has(species)) {
-                    const refId = await updateSpeciesReferencePhoto(client as any, species, submissionMedia);
+                  if (verifiedMedia3.length > 0 && !speciesPhotoUpdates.has(species)) {
+                    const refId = await updateSpeciesReferencePhoto(client as any, species, verifiedMedia3);
                     if (refId) {
                       action.species_reference_photo = true;
                       speciesPhotoUpdates.add(species);
@@ -230,6 +275,9 @@ export const importObservationsTool: Tool = {
           ? 'Pages need regeneration. Run regenerate_pages tool on Agnes\'s machine.'
           : null,
         photos_uploaded: totalPhotos,
+        photos_verified: photosVerified,
+        photos_rejected: photosRejected,
+        plantnet_api_calls: getPlantnetCallCount(),
         species_reference_photos_updated: speciesRefCount,
         submission_media_fetched: params.dry_run ? 0 : submissionMedia.length,
       }, null, 2) }],
