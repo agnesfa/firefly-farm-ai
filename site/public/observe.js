@@ -580,6 +580,16 @@ function handlePhotoCapture(input) {
     previewDiv.dataset.target = input.dataset.target || "section";
     previewContainer.appendChild(previewDiv);
 
+    // Auto-identify: if PlantNet is available, run identification in
+    // the background so results are ready when the user opens "Add New Plant".
+    if (typeof PLANTNET_API_KEY !== "undefined" && PLANTNET_API_KEY) {
+      var blob = dataUrlToBlob(dataUrl);
+      identifyPlantFromFile(blob);
+      // Expand the Add New Plant panel so results are visible
+      var addPlantPanel = document.getElementById("add-plant-panel");
+      if (addPlantPanel) addPlantPanel.style.display = "";
+    }
+
     // Reset input so the same file can be re-selected
     input.value = "";
   });
