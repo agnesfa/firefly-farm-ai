@@ -38,6 +38,22 @@
 #   FAST: real-time feedback, no "submit and hope"
 #   TRUSTWORTHY: the system shows what it knows AND what it doesn't
 #
+# INTERACTION STAMP (mandatory on every entity change):
+#   WHO: the actor — a person (Agnes, James, Maverick) or a system
+#        (Claude, PlantNet API, import_observations, backfill_photos)
+#   WHEN: ISO timestamp of the interaction
+#   WHAT: which entity was changed and how (created, updated, archived, verified)
+#   HOW: the method/source (QR observation, Claude conversation, transcript,
+#        spreadsheet import, API call, manual farmOS entry)
+#
+# This stamp is non-negotiable. An entity change without a stamp is
+# untraceable and therefore untrusted. The stamp enables:
+#   - Audit trail: who changed what, when, and why
+#   - Trust ranking: human observation > AI processing > automated import
+#   - Conflict resolution: which source was newer, more trusted
+#   - Credit: recognising field workers' contributions
+#   - Debugging: tracing where bad data entered the system
+#
 # The test: can a new signal (a photo, a count, a note) flow from
 # the moment of capture all the way through to the farm intelligence
 # layer, enriching every entity it touches along the way?
@@ -193,30 +209,70 @@ entity_types:
 
   Actor:
     description: >
-      A person who observes, decides, or acts on the farm.
-      First-class entity because WHO did something matters
-      for decision traceability and institutional memory.
-    canonical_source: implicit (to be formalized)
+      Any agent — human or system — that observes, decides, or acts on
+      the farm. First-class entity because WHO did something matters for
+      decision traceability, trust ranking, and audit trails.
+      Every entity change carries an Actor stamp.
+    canonical_source: implicit (to be formalized as registry)
     id_field: name
     attributes:
       - name
-      - role              # manager | farmhand | visitor
-      - active_period     # when they were on the farm (important for WWOOFers)
+      - actor_type        # human | ai_agent | api_service | automated_pipeline
+      - role              # manager | farmhand | visitor | system
+      - active_period     # when they were on the farm (WWOOFers) or deployed (systems)
+      - trust_level       # highest | high | medium | supporting | low
+    actor_types:
+      human:
+        description: A person who physically interacts with the farm
+        trust: "Determined by role (manager=highest, farmhand=high, visitor=medium)"
+        stamp_fields: [name, role, timestamp]
+      ai_agent:
+        description: >
+          Claude (any instance) processing data, writing summaries,
+          importing observations, creating farmOS entities
+        trust: medium
+        stamp_fields: [name, session_id, tool_used, timestamp]
+      api_service:
+        description: >
+          External APIs that provide supporting evidence — PlantNet,
+          GBIF, weather services. Never authoritative, always supporting.
+        trust: supporting
+        stamp_fields: [service_name, api_call_id, confidence, timestamp]
+      automated_pipeline:
+        description: >
+          Background processes — backfill scripts, sync jobs, page
+          regeneration. Lowest trust, always requires human review gate.
+        trust: low
+        stamp_fields: [script_name, trigger, timestamp]
     roles:
       manager:
         description: Full farmOS + Claude access. Agnes, Claire, James.
         access: [farmOS, Claude, GitHub]
+        trust_level: highest
       farmhand:
         description: Task execution, observation logging. WWOOFers, helpers.
         access: [QR pages, simplified Claude chat]
+        trust_level: high
       visitor:
         description: Public content only. Landcare, Hipcamp, tours.
         access: [QR landing pages]
+        trust_level: medium
+      system:
+        description: Automated actors — Claude, PlantNet, import pipelines.
+        access: [MCP tools, APIs]
+        trust_level: varies_by_actor_type
     known_actors:
-      - {name: Agnes, role: manager, note: "CTO, architect, system builder"}
-      - {name: Claire, role: manager, note: "Agronomist, departed March 2026. Decision rationale partially lost."}
-      - {name: James, role: manager, note: "Infrastructure, marketing, daily operations"}
-      - {name: Olivier, role: manager, note: "Compost, cooking, knowledge capture"}
+      # Humans
+      - {name: Agnes, actor_type: human, role: manager, trust: highest, note: "CTO, architect, system builder"}
+      - {name: Claire, actor_type: human, role: manager, trust: highest, note: "Agronomist, departed March 2026"}
+      - {name: James, actor_type: human, role: manager, trust: highest, note: "Infrastructure, marketing, daily operations"}
+      - {name: Olivier, actor_type: human, role: manager, trust: high, note: "Compost, cooking, knowledge capture"}
+      # Systems
+      - {name: Claude, actor_type: ai_agent, role: system, trust: medium, note: "AI agent processing data, creating entities"}
+      - {name: PlantNet, actor_type: api_service, role: system, trust: supporting, note: "Plant identification API — verification only, never authoritative"}
+      - {name: import_observations, actor_type: automated_pipeline, role: system, trust: low, note: "Observation sheet → farmOS import pipeline"}
+      - {name: backfill_photos, actor_type: automated_pipeline, role: system, trust: low, note: "Historical Drive photo → farmOS attachment"}
+      - {name: sync_seed_transactions, actor_type: automated_pipeline, role: system, trust: low, note: "Seed bank sheet → farmOS sync"}
 
   # ── Events & Actions ─────────────────────────────────
 
@@ -340,6 +396,31 @@ entity_types:
       - farmos_name         # our canonical name
       - match_type          # synonym | genus | related_species | exact
       - notes               # human explanation of the mapping
+
+  InteractionStamp:
+    description: >
+      Metadata attached to every entity change in the system.
+      Not a standalone entity — it's a required pattern embedded in
+      every log, observation, asset creation, and status update.
+      Without a stamp, a change is untraceable and untrusted.
+    pattern_type: embedded_metadata  # not a standalone entity
+    required_fields:
+      - actor_name          # WHO — human name or system name
+      - actor_type          # human | ai_agent | api_service | automated_pipeline
+      - timestamp           # WHEN — ISO 8601
+      - action              # WHAT — created | updated | archived | verified | rejected
+      - method              # HOW — qr_observation | claude_conversation | transcript |
+                            #       spreadsheet_import | api_call | manual_farmos | backfill
+    optional_fields:
+      - session_id          # links to Session entity (for Claude interactions)
+      - source_submission   # links to QR submission_id
+      - confidence          # 0.0-1.0 (for AI/API actors)
+      - notes               # human-readable context
+    implementation_note: >
+      Currently stored in farmOS log notes as structured text.
+      Future: native farmOS fields or a metadata sidecar.
+      The MCP tools (create_plant, create_observation, etc.) should
+      always include stamp fields in the notes they generate.
 
   Supplier:
     description: Seed and plant source providers.
