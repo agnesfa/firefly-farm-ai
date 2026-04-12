@@ -400,16 +400,13 @@
   <img id="lightbox-img" src="" alt="Species photo">
 </div>
 <script>
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('plant-photo')) {
-    e.stopPropagation();
-    var lb = document.getElementById('photo-lightbox');
-    var img = document.getElementById('lightbox-img');
-    img.src = e.target.src;
-    img.alt = e.target.alt;
-    lb.classList.add('active');
-  }
-});
+function openLightbox(el) {
+  var lb = document.getElementById('photo-lightbox');
+  var img = document.getElementById('lightbox-img');
+  img.src = el.src.replace('.jpg', '-full.jpg');
+  img.alt = el.alt;
+  lb.classList.add('active');
+}
 </script>
 
 </body>

@@ -263,6 +263,7 @@ def render_plant_card(planting, plant_db):
         photo_html = (
             f'<img class="plant-photo" loading="lazy" decoding="async" '
             f'src="{esc(photo_url)}" alt="{esc(species)} reference photo" '
+            f'onclick="event.stopPropagation();openLightbox(this)" '
             f'onerror="this.style.display=\'none\'">'
         )
 
@@ -477,16 +478,13 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
   <img id="lightbox-img" src="" alt="Species photo">
 </div>
 <script>
-document.addEventListener('click', function(e) {{
-  if (e.target.classList.contains('plant-photo')) {{
-    e.stopPropagation();
-    var lb = document.getElementById('photo-lightbox');
-    var img = document.getElementById('lightbox-img');
-    img.src = e.target.src;
-    img.alt = e.target.alt;
-    lb.classList.add('active');
-  }}
-}});
+function openLightbox(el) {{
+  var lb = document.getElementById('photo-lightbox');
+  var img = document.getElementById('lightbox-img');
+  img.src = el.src.replace('.jpg', '-full.jpg');
+  img.alt = el.alt;
+  lb.classList.add('active');
+}}
 </script>
 
 </body>

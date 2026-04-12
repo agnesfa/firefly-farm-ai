@@ -80,7 +80,7 @@
       <div class="strata-plants">
     <div class="plant-card" style="border-left-color:#4a7c29" onclick="this.classList.toggle('expanded')">
       <div class="plant-header">
-        <img class="plant-photo" loading="lazy" decoding="async" src="photos/papaya.jpg" alt="Papaya reference photo" onerror="this.style.display='none'">
+        <img class="plant-photo" loading="lazy" decoding="async" src="photos/papaya.jpg" alt="Papaya reference photo" onclick="event.stopPropagation();openLightbox(this)" onerror="this.style.display='none'">
         <div class="plant-info">
           <div class="plant-name">Papaya</div>
           <div class="plant-botanical">Carica papaya</div>
@@ -380,16 +380,13 @@
   <img id="lightbox-img" src="" alt="Species photo">
 </div>
 <script>
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('plant-photo')) {
-    e.stopPropagation();
-    var lb = document.getElementById('photo-lightbox');
-    var img = document.getElementById('lightbox-img');
-    img.src = e.target.src;
-    img.alt = e.target.alt;
-    lb.classList.add('active');
-  }
-});
+function openLightbox(el) {
+  var lb = document.getElementById('photo-lightbox');
+  var img = document.getElementById('lightbox-img');
+  img.src = el.src.replace('.jpg', '-full.jpg');
+  img.alt = el.alt;
+  lb.classList.add('active');
+}
 </script>
 
 </body>

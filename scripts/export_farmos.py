@@ -426,34 +426,45 @@ class SectionsExporter:
             else:
                 path = None
 
-        # Download each photo using the authenticated session, resize to
-        # 112×112 (2× for retina at 56×56 CSS), and compress as JPEG.
-        # Keeps GitHub Pages payload small (~5-15KB per thumbnail).
+        # Download each photo, create two versions:
+        # 1. Thumbnail: 112×112 square crop (2× retina for 56px CSS cards) ~5KB
+        # 2. Lightbox: 800px max dimension, preserves aspect ratio ~30-80KB
         from PIL import Image
         from io import BytesIO
 
-        THUMB_SIZE = 112  # 2× for retina display at 56px CSS
-        JPEG_QUALITY = 75
+        THUMB_SIZE = 112   # 2× for retina display at 56px CSS
+        LIGHTBOX_MAX = 800  # Max dimension for lightbox view
+        THUMB_QUALITY = 75
+        LIGHTBOX_QUALITY = 80
 
         local_photos: dict[str, str] = {}
         for name, url in remote_photos.items():
             slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
-            local_filename = f"{slug}.jpg"
-            local_path = os.path.join(photos_dir, local_filename)
+            thumb_filename = f"{slug}.jpg"
+            lightbox_filename = f"{slug}-full.jpg"
+            thumb_path = os.path.join(photos_dir, thumb_filename)
+            lightbox_path = os.path.join(photos_dir, lightbox_filename)
             try:
                 resp = self.session.get(url, timeout=30)
                 resp.raise_for_status()
                 img = Image.open(BytesIO(resp.content))
                 img = img.convert("RGB")
-                # Center-crop to square, then resize
+
+                # Lightbox: resize to max 800px, preserve aspect ratio
+                lightbox_img = img.copy()
+                lightbox_img.thumbnail((LIGHTBOX_MAX, LIGHTBOX_MAX), Image.LANCZOS)
+                lightbox_img.save(lightbox_path, "JPEG", quality=LIGHTBOX_QUALITY, optimize=True)
+
+                # Thumbnail: center-crop to square, then resize to 112×112
                 w, h = img.size
                 side = min(w, h)
                 left = (w - side) // 2
                 top = (h - side) // 2
-                img = img.crop((left, top, left + side, top + side))
-                img = img.resize((THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)
-                img.save(local_path, "JPEG", quality=JPEG_QUALITY, optimize=True)
-                local_photos[name] = f"photos/{local_filename}"
+                thumb_img = img.crop((left, top, left + side, top + side))
+                thumb_img = thumb_img.resize((THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)
+                thumb_img.save(thumb_path, "JPEG", quality=THUMB_QUALITY, optimize=True)
+
+                local_photos[name] = f"photos/{thumb_filename}"
             except Exception as e:
                 print(f"    ! failed to download photo for {name}: {e}")
 
