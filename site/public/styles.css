@@ -37,7 +37,10 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 /* Plant cards */
 .plant-card { padding: 14px 16px; background: #fff; cursor: pointer; border-left: 3px solid; transition: background 0.15s; }
 .plant-header { display: flex; justify-content: space-between; align-items: flex-start; }
-.plant-photo { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; flex-shrink: 0; margin-right: 10px; background: #f5f0e8; }
+.plant-photo { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; flex-shrink: 0; margin-right: 10px; background: #f5f0e8; cursor: zoom-in; }
+.photo-lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; cursor: zoom-out; -webkit-tap-highlight-color: transparent; }
+.photo-lightbox.active { display: flex; }
+.photo-lightbox img { max-width: 92vw; max-height: 88vh; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
 .plant-info { flex: 1; min-width: 0; }
 .plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
 .plant-botanical { font-style: italic; font-size: 13px; color: #8b8b8b; margin-top: 1px; }

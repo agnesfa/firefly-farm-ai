@@ -634,5 +634,22 @@ New plant added via field observation</div>
   </a>
 
 </div>
+
+<div class="photo-lightbox" id="photo-lightbox" onclick="this.classList.remove('active')">
+  <img id="lightbox-img" src="" alt="Species photo">
+</div>
+<script>
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('plant-photo')) {
+    e.stopPropagation();
+    var lb = document.getElementById('photo-lightbox');
+    var img = document.getElementById('lightbox-img');
+    img.src = e.target.src;
+    img.alt = e.target.alt;
+    lb.classList.add('active');
+  }
+});
+</script>
+
 </body>
 </html>
