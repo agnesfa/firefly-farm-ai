@@ -10,8 +10,12 @@
 # Human-reviewable: Agnes and Claire should be able to read every
 # definition and confirm "yes, that's what we mean by X."
 #
-# Last updated: 2026-04-04
+# Last updated: 2026-04-12
 # Maintainer: Agnes (semantic changes require review + rationale in git commit)
+#
+# Governing principle: FIELD DATA IS GOLD (see farm_ontology.yaml)
+# Every metric here should answer: "Is the gold being mined, verified,
+# preserved, and connected effectively?"
 
 ---
 
@@ -204,6 +208,193 @@ interaction_metrics:
     signal: "farm_context gap detection → task created"
 
 # ═══════════════════════════════════════════════════════
+# DATA QUALITY METRICS (Field Data is Gold)
+# ═══════════════════════════════════════════════════════
+#
+# Every signal from the field is gold. These metrics measure
+# whether the system is mining, verifying, preserving, and
+# connecting that gold effectively.
+#
+# Reference: farm_ontology.yaml "GOVERNING PRINCIPLE — FIELD DATA IS GOLD"
+#
+# INTERACTION RIPPLE MAP
+# ─────────────────────
+# Every field interaction should ripple through the system,
+# touching entities and moving metrics. The test of a healthy
+# system: trace a single QR observation and count the entities
+# it enriches.
+#
+# Example: WWOOFer submits QR observation for Pigeon Pea in P2R3.15-21
+#   → Observation entity created (who, when, what, where)
+#   → Plant entity updated (inventory count changed → survival_rate moves)
+#   → Section entity touched (activity_recency resets to 0 days)
+#   → Species entity enriched (distribution map updated, reference photo if verified)
+#   → Media entity created (photo with provenance + verification status)
+#   → Actor entity updated (this WWOOFer's contribution tracked)
+#   → Row entity (section health aggregates → strata_coverage may change)
+#   → Knowledge gaps detected (does a KB entry exist for this species?)
+#   → Decision pipeline (does this observation warrant a follow-up task?)
+#   → Session memory (team activity velocity metric ticks)
+#   → Growth model (data quality metrics move: pipeline_age, import_rate)
+#
+# If any of those entities is NOT touched, there is a gap in the system.
+# The metrics below measure whether the gold is flowing through.
+
+data_quality:
+
+  species_photo_coverage:
+    definition: >
+      Fraction of active species in the field that have a verified
+      reference photo (either from farm observation or PlantNet stock).
+      Directly impacts WWOOFer species identification ability.
+    calculation: "count(species with verified reference photo) / count(distinct active species)"
+    interpretation:
+      direction: higher_is_better
+      thresholds:
+        equipped: 0.50     # half of species visually identifiable
+        growing: 0.25
+        minimal: 0.10
+        dormant: 0.0
+    photo_tier_breakdown:
+      tier_1: "Farm observation photos (verified via PlantNet)"
+      tier_2: "PlantNet stock reference photos (fallback)"
+    notes: >
+      Tier 1 always preferred over Tier 2. A species with only Tier 2
+      still counts as covered but should be flagged for upgrade.
+
+  observation_pipeline_age:
+    definition: >
+      Maximum age in days of observations sitting in pending status.
+      Measures whether field data is flowing through to farmOS promptly.
+      Gold left unmined loses context.
+    calculation: "max(today - observation.timestamp) for status=pending"
+    interpretation:
+      direction: lower_is_better
+      thresholds:
+        healthy: 3        # imported within 3 days
+        fair: 7           # within a week
+        concerning: 14    # two weeks is too long
+        stale: 30         # context is degrading
+    notes: >
+      An observation older than 14 days may have counts that no longer
+      reflect field reality. Flag for review before importing.
+
+  observation_import_rate:
+    definition: >
+      Fraction of submitted observations that import cleanly into farmOS
+      without manual intervention, duplicate detection, or rejection.
+    calculation: "count(imported) / count(submitted) per period"
+    interpretation:
+      direction: higher_is_better
+      thresholds:
+        clean: 0.85
+        fair: 0.70
+        noisy: 0.50
+    breakdowns:
+      duplicates_caught: "Observations that matched existing farmOS assets"
+      species_unmapped: "Species name submitted didn't match taxonomy"
+      rejected: "Rejected with reason (unknown species, empty data)"
+    notes: >
+      Low import rate signals either poor QR page UX (species picker
+      confusing) or taxonomy gaps (species not in system).
+
+  provenance_coverage:
+    definition: >
+      Fraction of farmOS entities (plants, observations, photos) that
+      carry traceable source attribution — who, when, how, from what input.
+    calculation: "count(entities with source_type + captured_by + timestamp) / count(all entities)"
+    interpretation:
+      direction: higher_is_better
+      thresholds:
+        governed: 0.90
+        structured: 0.70
+        partial: 0.50
+    notes: >
+      Data without provenance is untrusted. Legacy data from before
+      provenance tracking may have gaps — these should be flagged
+      and backfilled where possible, not silently accepted.
+
+  source_conflict_rate:
+    definition: >
+      Count of unresolved conflicts where two data sources disagree
+      about the same entity (e.g., transcript says Okra=11, QR says 6).
+      Conflicts MUST be surfaced, never silently resolved.
+    calculation: "count(entities with conflicting source values)"
+    interpretation:
+      direction: lower_is_better
+      thresholds:
+        clean: 0
+        acceptable: 3
+        concerning: 10
+    notes: >
+      Each conflict should be tracked as a pending review task with
+      both values and the trust ranking of each source.
+
+  entity_touch_rate:
+    definition: >
+      Average number of entities enriched per field interaction.
+      A healthy system turns one observation into 5-10 entity updates.
+      A leaky system creates the observation log and stops there.
+    calculation: >
+      For each import_observations call: count distinct entities
+      touched (plant updated, section activity reset, species photo
+      refreshed, actor attributed, KB gap flagged, task created).
+      Average over the last 30 days.
+    interpretation:
+      direction: higher_is_better
+      thresholds:
+        rich: 5.0         # each observation enriches 5+ entities
+        adequate: 3.0     # basic entity chain working
+        shallow: 1.5      # only creating the log, not rippling
+    notes: >
+      This is the master metric for the Field Data is Gold principle.
+      If entity_touch_rate is low, gold is being captured but not
+      connected to the intelligence layer.
+
+  lifecycle_completeness:
+    definition: >
+      Fraction of entity lifecycles that have reached their expected
+      state transitions. Measures whether data flows through the
+      full pipeline, not just the first step.
+    lifecycle_chains:
+      observation: "captured → reviewed → approved → imported → farmOS log + entity updates → pages regenerated"
+      plant: "observed → created → located → inventoried → photo attached → visible on QR page"
+      seed: "acquired → seed bank → sown → germinated → transplanted → field plant"
+      knowledge: "learned → captured → categorised → cross-referenced → searchable"
+      task: "identified → created → assigned → in_progress → completed → outcome recorded"
+    calculation: >
+      For each lifecycle chain: count entities that completed all
+      steps / count entities that entered the chain.
+    interpretation:
+      direction: higher_is_better
+      thresholds:
+        complete: 0.80     # most entities reach full lifecycle
+        partial: 0.50      # entities stalling mid-pipeline
+        broken: 0.30       # systemic pipeline gaps
+    notes: >
+      Partial lifecycles indicate pipeline gaps. A plant that was
+      created but never got a location log is a broken lifecycle.
+      An observation that was imported but never triggered entity
+      updates is a shallow import.
+
+  external_reference_coverage:
+    definition: >
+      Fraction of species with botanical names that have validated
+      PlantNet bridge mappings in plantnet_bridge.csv.
+      Measures ability to verify photos against external AI.
+    calculation: "count(species in bridge) / count(species with botanical_name)"
+    interpretation:
+      direction: higher_is_better
+      thresholds:
+        complete: 0.95    # nearly all species bridged
+        usable: 0.80
+        gaps: 0.50
+    notes: >
+      Unmapped species will fail PlantNet verification even when the
+      photo is correct. Priority: map species that have plants in
+      the field first, then nursery, then seed bank.
+
+# ═══════════════════════════════════════════════════════
 # FEEDBACK LOOPS
 # ═══════════════════════════════════════════════════════
 
@@ -236,3 +427,24 @@ feedback_loops:
   - signal: "Same question recurs across sessions"
     action: "Answer needs to be persisted (KB entry) or definition needs to be canonical (semantic layer)"
     feeds_back_to: "Knowledge Base or farm_semantics.yaml"
+
+  # Data quality feedback loops (Field Data is Gold)
+  - signal: "Species reference photos fail PlantNet verification at high rate"
+    action: "Review photo capture UX — are workers taking section-level shots instead of close-ups? Add guidance."
+    feeds_back_to: "QR observe page UX + Knowledge Base (photo tutorial)"
+
+  - signal: "Observations sit pending for >7 days"
+    action: "Review pipeline — is the review/approve/import workflow blocked? Who is responsible?"
+    feeds_back_to: "farm_semantics.yaml (observation_pipeline_age) + Team workflow"
+
+  - signal: "Species names submitted via QR don't match taxonomy"
+    action: "Review species picker UX — is search working? Are common names missing from taxonomy?"
+    feeds_back_to: "plant_types.csv + QR page species search"
+
+  - signal: "Data sources conflict (transcript vs QR vs farmOS)"
+    action: "Surface both values with trust ranking. Create pending review task. Never silently pick one."
+    feeds_back_to: "farm_context data integrity gate"
+
+  - signal: "New data captured but not connected to semantic context"
+    action: "Trace the data flow — where did it stop? Is there a missing join key, unmapped entity, or broken pipeline step?"
+    feeds_back_to: "farm_ontology.yaml (join_keys) + MCP tool implementation"

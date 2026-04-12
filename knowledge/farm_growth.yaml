@@ -1,6 +1,6 @@
 # Farm Growth Model — Milestones, Scale Triggers & Build Actions
 #
-# Three dimensions of growth, each with stages and measurable triggers.
+# Four dimensions of growth, each with stages and measurable triggers.
 # Code in semantics.py reads this file. Claude interprets the output.
 # Agnes tunes thresholds here — no code changes needed.
 #
@@ -419,6 +419,111 @@ dimensions:
         scale_actions:
           partial: "Schedule SOP writing sessions for remaining workflows"
           minimal: "Critical knowledge gap — new WWOOFers can't self-serve"
+
+  # ══════════════════════════════════════════════════════════
+  # Dimension 4: Data Quality (Field Data is Gold)
+  # ══════════════════════════════════════════════════════════
+  data:
+    description: "Quality, completeness, and trustworthiness of farm data"
+
+    stages:
+      - name: raw
+        label: "D1: Raw"
+        criteria: "Data exists in farmOS but unverified, no provenance tracking"
+
+      - name: structured
+        label: "D2: Structured"
+        criteria: >
+          All field data flows into farmOS within 7 days, species names
+          resolve against taxonomy, section IDs valid, observation pipeline
+          functional.
+
+      - name: verified
+        label: "D3: Verified"
+        criteria: >
+          >50% of species have verified reference photos, external reference
+          bridge covers >80% of botanical names, source conflicts surfaced
+          and tracked, all entities carry provenance.
+
+      - name: governed
+        label: "D4: Governed"
+        criteria: >
+          Data quality metrics in system_health, feedback loops trigger
+          corrective actions automatically, every new signal from the
+          field flows through to the intelligence layer with full
+          semantic linkage.
+
+    metrics:
+
+      species_photo_coverage:
+        description: "Fraction of active field species with verified reference photos"
+        query: "count(species with photo) / count(distinct species with active plants)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: equipped, value: 0.50, meaning: "Half of species visually identifiable"}
+            - {label: growing, value: 0.25, meaning: "Growing photo library"}
+            - {label: minimal, value: 0.10, meaning: "Most species have no visual reference"}
+            - {label: dormant, value: 0.0, meaning: "No species photos at all"}
+          assumption: >
+            [ontology: Media.verification_status] Only photos that passed
+            PlantNet verification (≥30% confidence + botanical match) count.
+            PlantNet stock reference photos count as Tier 2 coverage.
+          actions:
+            dormant: "Run PlantNet stock photo batch to populate Tier 2 for all species"
+            minimal: "Prioritise photo capture for most common field species"
+            growing: "Continue — each observation adds photos through the pipeline"
+            equipped: "Maintain — latest-wins ensures photos stay current"
+
+      observation_pipeline_age:
+        description: "Maximum days any observation has been pending"
+        query: "max(today - timestamp) for pending observations"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: healthy, value: 3, meaning: "Data flows promptly"}
+            - {label: fair, value: 7, meaning: "Within a week"}
+            - {label: concerning, value: 14, meaning: "Context degrading"}
+            - {label: stale, value: 30, meaning: "Gold unmined — urgent review needed"}
+          assumption: >
+            [ontology: Observation] Pending observations from the QR
+            observation sheet, measured from submission timestamp to today.
+          actions:
+            stale: "Emergency: review and import all pending observations immediately"
+            concerning: "Schedule observation review session this week"
+            fair: "Normal cadence — review within standard weekly cycle"
+
+      provenance_coverage:
+        description: "Fraction of entities with traceable source attribution"
+        query: "count(entities with source_type + captured_by) / count(all recent entities)"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: governed, value: 0.90, meaning: "Nearly all data is traceable"}
+            - {label: structured, value: 0.70, meaning: "Most data has provenance"}
+            - {label: partial, value: 0.50, meaning: "Significant gaps in attribution"}
+          assumption: >
+            [ontology: Media, Observation, Plant] Entities created via MCP
+            tools automatically carry provenance. Legacy entities from
+            before the provenance system may lack attribution.
+          actions:
+            partial: "Audit recent imports for missing attribution, fix MCP tool gaps"
+
+      source_conflict_count:
+        description: "Unresolved data conflicts between sources"
+        query: "count(pending review tasks flagged as source conflict)"
+        interpretation:
+          direction: lower_is_better
+          thresholds:
+            - {label: clean, value: 0, meaning: "No unresolved conflicts"}
+            - {label: acceptable, value: 3, meaning: "Small backlog"}
+            - {label: concerning, value: 10, meaning: "Conflicts accumulating — trust eroding"}
+          assumption: >
+            [ontology: Observation, Session] Conflicts between QR observations,
+            transcripts, and existing farmOS data. Each conflict tracked as
+            a pending activity log with both values noted.
+          actions:
+            concerning: "Schedule conflict resolution session with James/Claire in the field"
 
 # ══════════════════════════════════════════════════════════
 # GOVERNANCE
