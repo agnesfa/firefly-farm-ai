@@ -1,0 +1,7 @@
+plantnet_botanical,farmos_botanical,farmos_name,match_type,notes
+Bergera koenigii,Murraya koenigii,Curry Leaf,synonym,"Current accepted name vs older widely-used name. Same species."
+Typha latifolia,Typha spp.,Cattail,genus,"PlantNet returns species-level; our taxonomy uses genus-level spp."
+Typha domingensis,Typha spp.,Cattail,genus,"Another Typha species that should match Cattail."
+Davidsonia pruriens,Davidsonia jerseyana,Davidson Plum,related_species,"Both are Davidson Plums. D. pruriens (smooth) vs D. jerseyana (NSW). Same genus, different species, same common name."
+Crotalaria juncea,Crotalaria juncea,Sunn Hemp,exact,"Indian-hemp / Sunn Hemp — PlantNet common name differs but botanical matches."
+Catharanthus roseus,,Madagascar Periwinkle,not_in_taxonomy,"Hadrien found in P2R5.66-77. Not a farm species — weed or volunteer."

@@ -64,6 +64,43 @@ def build_botanical_lookup(csv_path: str = None) -> dict[str, str]:
     return forward
 
 
+def _load_synonym_bridge(csv_path: str = None) -> dict[str, str]:
+    """Load PlantNet→farmOS botanical name bridge from plantnet_bridge.csv.
+
+    Returns {plantnet_botanical_lower: farmos_botanical_lower} for synonym
+    and genus-level mappings. Exact matches and not_in_taxonomy rows are skipped.
+    """
+    if csv_path is None:
+        csv_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "knowledge", "plantnet_bridge.csv",
+        )
+    bridge: dict[str, str] = {}
+    if not os.path.exists(csv_path):
+        return bridge
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            pn = (row.get("plantnet_botanical") or "").strip().lower()
+            fb = (row.get("farmos_botanical") or "").strip().lower()
+            match_type = (row.get("match_type") or "").strip()
+            if pn and fb and match_type in ("synonym", "genus", "related_species"):
+                bridge[pn] = fb
+    return bridge
+
+
+# Module-level cache — loaded once on first use.
+_synonym_bridge: Optional[dict[str, str]] = None
+
+
+def _get_synonym_bridge() -> dict[str, str]:
+    """Get the cached synonym bridge, loading from CSV on first call."""
+    global _synonym_bridge
+    if _synonym_bridge is None:
+        _synonym_bridge = _load_synonym_bridge()
+    return _synonym_bridge
+
+
 def _get_expected_botanical(claimed_species: str, lookup: dict) -> Optional[str]:
     """Get the expected botanical name for a farmos_name."""
     reverse = lookup.get("__reverse__", {})
@@ -71,16 +108,39 @@ def _get_expected_botanical(claimed_species: str, lookup: dict) -> Optional[str]
 
 
 def _botanical_match(plantnet_name: str, expected: str) -> bool:
-    """Bidirectional prefix match (same as observe.js findFarmosNameByBotanical).
+    """Match PlantNet botanical name against expected farmOS botanical name.
+
+    Checks in order:
+    1. Direct match (exact or prefix, bidirectional)
+    2. Synonym bridge (PlantNet uses different accepted name)
+    3. Genus-level match (PlantNet returns species, we have genus "spp.")
 
     Examples:
         "Cajanus cajan" matches "Cajanus cajan" (exact)
-        "Cajanus cajan" matches "Cajanus" (prefix)
-        "Cajanus" matches "Cajanus cajan" (prefix)
+        "Bergera koenigii" matches "Murraya koenigii" (synonym bridge)
+        "Typha latifolia" matches "Typha spp." (genus match)
     """
     a = plantnet_name.lower().strip()
     b = expected.lower().strip()
-    return a == b or a.startswith(b) or b.startswith(a)
+
+    # Direct match (exact or prefix)
+    if a == b or a.startswith(b) or b.startswith(a):
+        return True
+
+    # Synonym bridge — translate PlantNet name to farmOS equivalent
+    bridge = _get_synonym_bridge()
+    resolved = bridge.get(a)
+    if resolved:
+        if resolved == b or resolved.startswith(b) or b.startswith(resolved):
+            return True
+
+    # Genus-level: if expected ends with "spp." match on genus prefix
+    if b.endswith("spp."):
+        genus = b.replace("spp.", "").strip()
+        if a.startswith(genus):
+            return True
+
+    return False
 
 
 def _resize_for_plantnet(image_bytes: bytes) -> bytes:

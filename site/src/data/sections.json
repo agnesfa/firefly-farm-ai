@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-12T16:16:08.513403+10:00",
+  "generated_at": "2026-04-12T17:00:23.711102+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -2029,7 +2029,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 1 seen before chop and drop\nCount: 2 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -4682,7 +4682,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/curry-leaf.jpg"
         },
         {
           "species": "Eggplant",
@@ -4781,7 +4781,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Comfrey",
@@ -5616,7 +5616,7 @@
               "notes": "Dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/curry-leaf.jpg"
         },
         {
           "species": "Eggplant",
@@ -5715,7 +5715,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Comfrey",
@@ -6330,7 +6330,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -6668,7 +6668,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -7574,7 +7574,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Lemon",
@@ -7762,7 +7762,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -8075,7 +8075,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -8469,7 +8469,7 @@
               "notes": "Suffers from pest because of lack of canopy. Observed by Agnes March 18."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Calendula",
@@ -9458,7 +9458,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cape-gooseberry.jpg"
         },
         {
           "species": "Strawberry",
@@ -11486,7 +11486,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -11789,7 +11789,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -12017,7 +12017,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12343,7 +12343,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12463,7 +12463,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12652,7 +12652,7 @@
               "notes": "4 doing well, 2 missing — just gone. Observed by James March 18."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Tallowood (Gum)",
@@ -12937,7 +12937,7 @@
               "notes": "Maverick QR observation 3 Apr 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Jacaranda",
@@ -13406,7 +13406,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Sunn Hemp - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         },
         {
           "species": "Zucchini (Lebanese)",
@@ -13525,7 +13525,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Sunn Hemp - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         }
       ]
     },
@@ -13779,7 +13779,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Sunn Hemp - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -14087,7 +14087,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Sunn Hemp - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         },
         {
           "species": "Tomato",
@@ -14261,7 +14261,7 @@
           "first_planted": "2025-10-04",
           "asset_name": "4 OCT 2025 - Sunn Hemp - P1R1.29-39",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         },
         {
           "species": "Tomato",
@@ -14929,7 +14929,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Sunn Hemp - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         },
         {
           "species": "Tomato",
@@ -15113,7 +15113,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Sunn Hemp - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/sunn-hemp.jpg"
         },
         {
           "species": "Tomato",

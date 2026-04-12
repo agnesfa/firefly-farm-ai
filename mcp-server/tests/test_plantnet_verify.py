@@ -49,6 +49,22 @@ class TestBotanicalMatch:
     def test_case_insensitive(self):
         assert _botanical_match("CAJANUS CAJAN", "cajanus cajan")
 
+    def test_synonym_bridge_curry_leaf(self):
+        """Bergera koenigii (PlantNet) should match Murraya koenigii (our CSV)."""
+        assert _botanical_match("Bergera koenigii", "murraya koenigii")
+
+    def test_synonym_bridge_cattail_genus(self):
+        """Typha latifolia (PlantNet) should match Typha spp. (genus-level)."""
+        assert _botanical_match("Typha latifolia", "typha spp.")
+
+    def test_synonym_bridge_davidson_plum(self):
+        """Davidsonia pruriens (PlantNet) should match Davidsonia jerseyana."""
+        assert _botanical_match("Davidsonia pruriens", "davidsonia jerseyana")
+
+    def test_genus_spp_match(self):
+        """Any Typha species should match Typha spp."""
+        assert _botanical_match("Typha domingensis", "typha spp.")
+
 
 # ── Verify species photo ─────────────────────────────────────
 

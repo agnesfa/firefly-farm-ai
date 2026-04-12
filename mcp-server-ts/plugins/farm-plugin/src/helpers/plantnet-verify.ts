@@ -9,6 +9,8 @@
  */
 
 import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 const logger = baseLogger.child({ context: 'plantnet-verify' });
 
@@ -84,10 +86,59 @@ export function buildBotanicalLookupFromCsv(csvContent: string): BotanicalLookup
   return { forward, reverse };
 }
 
+/**
+ * Synonym bridge: PlantNet botanical name → farmOS botanical name.
+ * Loaded from knowledge/plantnet_bridge.csv on first use.
+ */
+let _synonymBridge: Map<string, string> | null = null;
+
+function getSynonymBridge(): Map<string, string> {
+  if (_synonymBridge) return _synonymBridge;
+  _synonymBridge = new Map();
+  try {
+    const csvPath = path.resolve(__dirname, '../../../../knowledge/plantnet_bridge.csv');
+    const content = fs.readFileSync(csvPath, 'utf-8');
+    const lines = content.split('\n');
+    if (lines.length < 2) return _synonymBridge;
+    const header = lines[0].split(',');
+    const pnIdx = header.indexOf('plantnet_botanical');
+    const fbIdx = header.indexOf('farmos_botanical');
+    const typeIdx = header.indexOf('match_type');
+    if (pnIdx < 0 || fbIdx < 0) return _synonymBridge;
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      const pn = cols[pnIdx]?.trim().toLowerCase();
+      const fb = cols[fbIdx]?.trim().toLowerCase();
+      const matchType = cols[typeIdx]?.trim();
+      if (pn && fb && ['synonym', 'genus', 'related_species'].includes(matchType)) {
+        _synonymBridge.set(pn, fb);
+      }
+    }
+  } catch {
+    // Bridge CSV not found — no synonyms available
+  }
+  return _synonymBridge;
+}
+
 function botanicalMatch(plantnetName: string, expected: string): boolean {
   const a = plantnetName.toLowerCase().trim();
   const b = expected.toLowerCase().trim();
-  return a === b || a.startsWith(b) || b.startsWith(a);
+
+  // Direct match (exact or prefix)
+  if (a === b || a.startsWith(b) || b.startsWith(a)) return true;
+
+  // Synonym bridge
+  const bridge = getSynonymBridge();
+  const resolved = bridge.get(a);
+  if (resolved && (resolved === b || resolved.startsWith(b) || b.startsWith(resolved))) return true;
+
+  // Genus-level: if expected ends with "spp." match on genus prefix
+  if (b.endsWith('spp.')) {
+    const genus = b.replace('spp.', '').trim();
+    if (a.startsWith(genus)) return true;
+  }
+
+  return false;
 }
 
 /**
