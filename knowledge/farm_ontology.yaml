@@ -17,6 +17,42 @@
 ---
 
 # ═══════════════════════════════════════════════════════
+# GOVERNING PRINCIPLE — FIELD DATA IS GOLD
+# ═══════════════════════════════════════════════════════
+#
+# Every signal from the field — QR observations, audio transcripts,
+# Claude conversations, spreadsheets, photos, handwritten notes,
+# casual remarks during a walk — is treated as gold.
+#
+# Gold must be:
+#   MINED: carefully extracted from whatever form it arrives in
+#   CONTEXTUALISED: mapped to the semantic layer (species, section,
+#     strata, succession, task, actor, date)
+#   VERIFIED: cross-referenced against existing data, conflicts surfaced
+#   PRESERVED: stored in farmOS or Knowledge Base with full metadata
+#   CONNECTED: linked to the ontology so it enriches the farm intelligence
+#
+# Every touchpoint with people working on or visiting the farm must be:
+#   EASY: minimal friction, mobile-first, works on slow connectivity
+#   ACCURATE: species names resolve, counts reconcile, locations match
+#   FAST: real-time feedback, no "submit and hope"
+#   TRUSTWORTHY: the system shows what it knows AND what it doesn't
+#
+# The test: can a new signal (a photo, a count, a note) flow from
+# the moment of capture all the way through to the farm intelligence
+# layer, enriching every entity it touches along the way?
+# If not, there is a gap to close.
+#
+# Trust hierarchy (when sources conflict):
+#   1. farmOS direct entry (Claire/Agnes)     — highest
+#   2. QR observation (reviewed by human)     — high
+#   3. Audio transcript (processed by Claude) — medium
+#   4. PlantNet / external AI                 — supporting evidence only
+#   5. Automated backfill / batch import      — lowest, requires review gate
+#
+# ═══════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════
 # ENTITY TYPES
 # ═══════════════════════════════════════════════════════
 
@@ -259,6 +295,52 @@ entity_types:
       - summary           # free-text
       - timestamp
 
+  Media:
+    description: >
+      A photo or document with traceable provenance. Every media item
+      carries its origin, verification status, and relationship chain
+      back to the farm entities it documents. Photos are the primary
+      media type today; the model extends to video, audio, documents.
+    canonical_source: farmOS file + site/public/photos/
+    attributes:
+      - source_type         # observation | plantnet_stock | manual_upload
+      - photo_level         # species_closeup | section_landscape
+      - species_claim       # farmos_name (what submitter says it shows)
+      - verification_status # unverified | verified | rejected
+      - verification_method # plantnet | human_review | none
+      - verification_confidence  # 0.0-1.0
+      - captured_by         # Actor
+      - captured_at         # timestamp
+      - section_id          # where the photo was taken
+    display_tiers:
+      tier_1:
+        name: "Farm observation photo"
+        source: "Verified field observation"
+        badge: none
+        priority: preferred
+      tier_2:
+        name: "PlantNet stock reference"
+        source: "PlantNet API reference image"
+        badge: "📚 Reference"
+        priority: fallback_when_no_tier_1
+    notes: >
+      Section-level landscape photos are NOT suitable as species references.
+      Only species-level close-ups that pass PlantNet verification (≥30%
+      confidence + botanical match) may become reference photos.
+
+  ExternalReference:
+    description: >
+      A mapping between an external system's identifier and the farm's
+      canonical identifier. Bridges nomenclature differences so external
+      AI (PlantNet, GBIF, iNaturalist) can be cross-referenced reliably.
+    canonical_source: knowledge/plantnet_bridge.csv
+    attributes:
+      - external_system     # plantnet | gbif | inaturalist
+      - external_name       # what the external system calls it
+      - farmos_name         # our canonical name
+      - match_type          # synonym | genus | related_species | exact
+      - notes               # human explanation of the mapping
+
   Supplier:
     description: Seed and plant source providers.
     canonical_source: knowledge/seed_bank.csv (supplier column)
@@ -305,6 +387,16 @@ relationships:
   # Sessions
   SESSION_BY:     {from: Session, to: Actor, via: "user field"}
   SESSION_CHANGED:{from: Session, to: "[farmOS entities]", via: "farmos_changes field"}
+
+  # Media & provenance
+  DOCUMENTS:      {from: Media, to: "Plant | Section", via: "farmOS log image field"}
+  DEPICTS:        {from: Media, to: Species, via: "plant_type taxonomy image field"}
+  VERIFIED_BY:    {from: Media, to: ExternalReference, via: "PlantNet verification result"}
+  CAPTURED_IN:    {from: Media, to: Section, via: "observation section_id"}
+  CAPTURED_BY:    {from: Media, to: Actor, via: "observer name"}
+
+  # External references
+  BRIDGES:        {from: ExternalReference, to: Species, via: "plantnet_bridge.csv farmos_name"}
 
 # ═══════════════════════════════════════════════════════
 # CONSTRAINTS
@@ -360,6 +452,27 @@ constraints:
     type: mandatory
     applies_to: Section
 
+  # Data quality rules (Field Data is Gold principle)
+  - rule: "Every observation SHOULD be imported within 7 days of capture"
+    type: recommendation
+    applies_to: Observation
+    note: "Stale observations lose context. Pipeline health metric tracks this."
+
+  - rule: "Species reference photos MUST pass PlantNet verification (≥30% confidence)"
+    type: mandatory
+    applies_to: Media (photo_level=species_closeup)
+    note: "Section landscape photos are NOT species references."
+
+  - rule: "When data sources conflict, surface both values with trust ranking"
+    type: mandatory
+    applies_to: "[Observation, Session]"
+    note: "Never silently pick one source over another."
+
+  - rule: "Every imported entity MUST carry source attribution (who, when, how)"
+    type: mandatory
+    applies_to: "[Plant, Observation, Media]"
+    note: "Provenance is non-negotiable. Data without origin is untrusted."
+
 # ═══════════════════════════════════════════════════════
 # JOIN KEYS (Cross-Store Entity Resolution)
 # ═══════════════════════════════════════════════════════
@@ -367,12 +480,12 @@ constraints:
 join_keys:
 
   farmos_name:
-    connects: [Plant, Species, KnowledgeEntry, Seed, Harvest]
+    connects: [Plant, Species, KnowledgeEntry, Seed, Harvest, Media, ExternalReference]
     description: "The canonical species identifier across all systems"
     examples: ["Pigeon Pea", "Tomato (Marmande)"]
 
   section_id:
-    connects: [Section, Plant, Observation, Task, KnowledgeEntry, Harvest]
+    connects: [Section, Plant, Observation, Task, KnowledgeEntry, Harvest, Media]
     description: "Physical location identifier"
     examples: ["P2R3.15-21", "NURS.SH1-2"]
 
