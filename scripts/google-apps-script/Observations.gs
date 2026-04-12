@@ -792,7 +792,8 @@ function handleGetMediaByPath(params) {
     while (files.hasNext()) {
       var file = files.next();
       var name = file.getName();
-      if (/\.json$/i.test(name)) continue;  // skip payload JSON copies
+      // .json observation payloads included — they carry species/notes
+      // context needed for photo-to-species matching during backfill.
       var blob = file.getBlob();
       results.push({
         filename: name,
