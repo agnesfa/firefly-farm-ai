@@ -392,9 +392,21 @@
 function openLightbox(el) {
   var lb = document.getElementById('photo-lightbox');
   var img = document.getElementById('lightbox-img');
-  img.src = el.src.replace('.jpg', '-full.jpg');
-  img.alt = el.alt;
-  lb.classList.add('active');
+  var fullSrc = el.src.replace('.jpg', '-full.jpg');
+  // Preload the full image, fall back to thumbnail if missing
+  var preload = new Image();
+  preload.onload = function() {
+    img.src = fullSrc;
+    img.alt = el.alt;
+    lb.classList.add('active');
+  };
+  preload.onerror = function() {
+    // -full.jpg not available, show thumbnail
+    img.src = el.src;
+    img.alt = el.alt;
+    lb.classList.add('active');
+  };
+  preload.src = fullSrc;
 }
 </script>
 
