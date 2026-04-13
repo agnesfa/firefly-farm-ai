@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient, getPlantTypesClient } from '../clients/index.js';
-import { buildPlantTypeDescription } from '../helpers/index.js';
+import { buildPlantTypeDescription, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const addPlantTypeTool: Tool = {
   namespace: 'fc',
@@ -30,12 +30,15 @@ export const addPlantTypeTool: Tool = {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ error: `Plant type '${params.farmos_name}' already exists.`, existing_id: existing[0].id }) }] };
     }
 
-    const fullDescription = buildPlantTypeDescription({
+    const stamp = buildMcpStamp('created', 'plant_type', { relatedEntities: [params.farmos_name] });
+
+    const rawDescription = buildPlantTypeDescription({
       description: params.description ?? '', botanical_name: params.botanical_name,
       lifecycle_years: params.lifecycle_years, strata: params.strata,
       succession_stage: params.succession_stage, plant_functions: params.plant_functions,
       crop_family: params.crop_family, lifespan_years: params.lifespan_years, source: params.source,
     });
+    const fullDescription = appendStamp(rawDescription, stamp);
 
     try {
       const uuid = await client.createPlantType(params.farmos_name, fullDescription, params.maturity_days, params.transplant_days);

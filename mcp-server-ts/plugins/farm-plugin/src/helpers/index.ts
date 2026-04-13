@@ -10,12 +10,15 @@ export type { DecodedMedia, PhotoUploadClient } from './photo-pipeline.js';
 export { buildBotanicalLookup, buildBotanicalLookupFromCsv, verifySpeciesPhoto, getPlantnetCallCount } from './plantnet-verify.js';
 export type { VerifyResult, BotanicalLookup } from './plantnet-verify.js';
 
+export { buildStamp, appendStamp, hasStamp, parseStamp, countStampsInLogs, buildMcpStamp } from './interaction-stamp.js';
+export type { StampFields, Channel, Executor, StampAction, TargetEntity, Outcome, InitiatorRole } from './interaction-stamp.js';
+
 export {
   SECTION_HEALTH, TOPIC_FARMOS_MAP,
   assessStrataCoverage, assessActivityRecency, assessSuccessionBalance,
   assessSectionHealth, findTransplantReady,
   detectKnowledgeGaps, detectDecisionGaps, detectLoggingGaps,
-  classifyByDirection, assessFarmMaturity, assessSystemMaturity, assessTeamMaturity,
+  classifyByDirection, assessFarmMaturity, assessSystemMaturity, assessTeamMaturity, assessDataMaturity,
 } from './semantics.js';
 
 /** Hardcoded UUID for the "plant" unit in farmOS. */

@@ -730,6 +730,18 @@ export class FarmOSClient {
     return !!resp?.data?.id;
   }
 
+  async updateLogNotes(logId: string, logType: string, notes: string): Promise<boolean> {
+    const payload = {
+      data: {
+        type: `log--${logType}`,
+        id: logId,
+        attributes: { notes: { value: notes, format: 'default' } },
+      },
+    };
+    const resp = await this._patch(`/api/log/${logType}/${logId}`, payload);
+    return !!resp?.data?.id;
+  }
+
   async getPlantTypeDetails(name?: string): Promise<any[]> {
     if (name) return this.fetchByName('taxonomy_term/plant_type', name);
     return this.getAllPlantTypesCached();

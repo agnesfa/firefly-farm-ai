@@ -39,20 +39,33 @@
 #   TRUSTWORTHY: the system shows what it knows AND what it doesn't
 #
 # INTERACTION STAMP (mandatory on every entity change):
-#   WHO: the actor — a person (Agnes, James, Maverick) or a system
-#        (Claude, PlantNet API, import_observations, backfill_photos)
-#   WHEN: ISO timestamp of the interaction
-#   WHAT: which entity was changed and how (created, updated, archived, verified)
-#   HOW: the method/source (QR observation, Claude conversation, transcript,
-#        spreadsheet import, API call, manual farmOS entry)
+#
+#   Most farm interactions have TWO actors — the human initiator and
+#   the system executor. Claire asks Claude to create an observation;
+#   Maverick submits a QR form that observe.js sends to Observations.gs.
+#   Both sides matter: the human carries intent and trust, the system
+#   carries the channel chain and outcome.
+#
+#   WHO initiated: the person (Agnes, Claire, James, Maverick)
+#   THROUGH what: the channel (claude_code, claude_desktop, qr_page,
+#        farmos_ui, automated) and executor (farmos_api, apps_script,
+#        mcp_tool, plantnet_api, wikimedia_api)
+#   WHAT happened: which entity was changed and how (created, updated,
+#        archived, verified, rejected, attempted)
+#   WHEN: ISO timestamp
+#   OUTCOME: success | failed | partial | timeout
+#        Failed/timeout interactions are ALSO stamped — the system must
+#        see when people struggle to interact with it.
 #
 # This stamp is non-negotiable. An entity change without a stamp is
 # untraceable and therefore untrusted. The stamp enables:
-#   - Audit trail: who changed what, when, and why
+#   - Audit trail: who changed what, when, through which channel
 #   - Trust ranking: human observation > AI processing > automated import
 #   - Conflict resolution: which source was newer, more trusted
 #   - Credit: recognising field workers' contributions
 #   - Debugging: tracing where bad data entered the system
+#   - Reliability: surfacing when MCP timeouts or silent failures hide
+#     real work (Claire's lost observations, James's phantom KB writes)
 #
 # The test: can a new signal (a photo, a count, a note) flow from
 # the moment of capture all the way through to the farm intelligence
@@ -403,24 +416,67 @@ entity_types:
       Not a standalone entity — it's a required pattern embedded in
       every log, observation, asset creation, and status update.
       Without a stamp, a change is untraceable and untrusted.
+
+      Dual-actor design: most interactions have a human initiator
+      (who has intent and trust) and a system executor (which has a
+      channel chain and an outcome). Both are captured.
+
+      Failed interactions are ALSO stamped (action=attempted,
+      outcome=timeout|failed). The system must see when people
+      struggle to interact with it — Claire's MCP timeouts and
+      James's silent KB write failures were invisible until this.
     pattern_type: embedded_metadata  # not a standalone entity
+    format: >
+      [ontology:InteractionStamp] initiator=X | role=X | channel=X |
+      executor=X | action=X | target=X | outcome=X | ts=ISO8601 |
+      related=entity1,entity2
     required_fields:
-      - actor_name          # WHO — human name or system name
-      - actor_type          # human | ai_agent | api_service | automated_pipeline
-      - timestamp           # WHEN — ISO 8601
-      - action              # WHAT — created | updated | archived | verified | rejected
-      - method              # HOW — qr_observation | claude_conversation | transcript |
-                            #       spreadsheet_import | api_call | manual_farmos | backfill
+      # WHO initiated
+      - initiator           # human actor name (Agnes, Claire, James, Maverick)
+                            # or system name for automated pipelines
+      - role                # manager | farmhand | visitor | system
+      # THROUGH what channel
+      - channel             # claude_code | claude_desktop | qr_page |
+                            # farmos_ui | automated
+      - executor            # farmos_api | apps_script | mcp_tool |
+                            # plantnet_api | wikimedia_api
+      # WHAT happened
+      - action              # created | updated | archived | verified |
+                            # rejected | attempted
+      - target              # plant | observation | activity | knowledge |
+                            # seed | plant_type | session_summary
+      # WHEN
+      - timestamp           # ISO 8601
     optional_fields:
+      - outcome             # success | failed | partial | timeout
+                            # default: success. MUST be set for failed interactions.
+      - error_detail        # when outcome != success — what went wrong
+      - related_entities    # [farmos_name, section_id, ...] — what this touches
+                            # enables entity_touch_rate metric
       - session_id          # links to Session entity (for Claude interactions)
       - source_submission   # links to QR submission_id
       - confidence          # 0.0-1.0 (for AI/API actors)
-      - notes               # human-readable context
     implementation_note: >
-      Currently stored in farmOS log notes as structured text.
+      Stored in farmOS log notes as structured text with the prefix
+      [ontology:InteractionStamp]. This prefix makes stamps machine-
+      parseable (regex match) and links them to this ontology definition.
+      The provenance_coverage metric in system_health counts logs with
+      this prefix to measure data traceability.
+
+      MCP tools auto-generate stamps on every write. The initiator
+      defaults to "Claude_user" when the human identity is unknown
+      (tools that accept user/author params use those instead).
+
       Future: native farmOS fields or a metadata sidecar.
-      The MCP tools (create_plant, create_observation, etc.) should
-      always include stamp fields in the notes they generate.
+    semantic_linkage: >
+      Every stamp feeds the Data dimension of system_health:
+        - provenance_coverage: count(logs with stamp) / count(all recent logs)
+        - source_conflict_count: count(stamps with outcome=conflict)
+        - entity_touch_rate: avg(related_entities.length) per stamp
+      Every stamp feeds the Team dimension:
+        - active_users_weekly: distinct(initiator where role != system)
+      Failed stamps (outcome=timeout|failed) feed:
+        - mcp_reliability: success_count / total_attempts
 
   Supplier:
     description: Seed and plant source providers.

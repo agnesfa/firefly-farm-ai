@@ -298,6 +298,28 @@ dimensions:
           warning: "Monitor trend, consider batching optimizations"
           critical: "Migrate highest-traffic backend to Firefly Agents"
 
+      mcp_reliability:
+        status: planned  # not yet computed — connection stats exist but not wired
+        description: "Fraction of MCP tool calls that succeed on first attempt"
+        query: "success_count / total_attempts per 7 days (from server connection stats)"
+        ontology_ref: "[ontology: InteractionStamp] stamps with outcome field"
+        interpretation:
+          direction: higher_is_better
+          thresholds:
+            - {label: reliable, value: 0.95, meaning: "Rare failures — team trusts the system"}
+            - {label: concerning, value: 0.80, meaning: "Frequent retries — team frustration building"}
+            - {label: broken, value: 0.60, meaning: "System unreliable — team stops trying"}
+        assumption: >
+          [ontology: InteractionStamp.outcome] Measures first-attempt success
+          rate across all MCP tool calls. The TS server already tracks
+          connectCount, retryCount, retrySuccessCount via getStats(). Wiring
+          these into the health check is the implementation step. Real-world
+          impact: Claire's MCP timeouts and James's silent write failures
+          erode team trust even when the system eventually succeeds on retry.
+        scale_actions:
+          concerning: "Investigate timeout patterns — auth, network, Apps Script?"
+          broken: "Emergency: system is unusable. Fix before any other work."
+
   # ══════════════════════════════════════════════════════════
   # Dimension 3: Team Growth (Human)
   # ══════════════════════════════════════════════════════════

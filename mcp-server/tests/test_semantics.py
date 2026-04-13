@@ -26,6 +26,7 @@ from semantics import (
     assess_farm_maturity,
     assess_system_maturity,
     assess_team_maturity,
+    assess_data_maturity,
     classify_by_direction,
     load_growth_config,
     clear_caches,
@@ -656,6 +657,59 @@ GROWTH_CONFIG = {
                 },
             },
         },
+        "data": {
+            "stages": [
+                {"name": "raw", "label": "D1: Raw"},
+                {"name": "structured", "label": "D2: Structured"},
+                {"name": "verified", "label": "D3: Verified"},
+                {"name": "governed", "label": "D4: Governed"},
+            ],
+            "metrics": {
+                "species_photo_coverage": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "equipped", "value": 0.50},
+                            {"label": "growing", "value": 0.25},
+                            {"label": "minimal", "value": 0.10},
+                            {"label": "dormant", "value": 0.0},
+                        ],
+                    },
+                },
+                "observation_pipeline_age": {
+                    "interpretation": {
+                        "direction": "lower_is_better",
+                        "thresholds": [
+                            {"label": "healthy", "value": 3},
+                            {"label": "fair", "value": 7},
+                            {"label": "concerning", "value": 14},
+                            {"label": "stale", "value": 30},
+                        ],
+                    },
+                },
+                "provenance_coverage": {
+                    "interpretation": {
+                        "direction": "higher_is_better",
+                        "thresholds": [
+                            {"label": "governed", "value": 0.90},
+                            {"label": "structured", "value": 0.70},
+                            {"label": "partial", "value": 0.50},
+                        ],
+                    },
+                },
+                "source_conflict_count": {
+                    "interpretation": {
+                        "direction": "lower_is_better",
+                        "thresholds": [
+                            {"label": "clean", "value": 0},
+                            {"label": "acceptable", "value": 3},
+                            {"label": "concerning", "value": 10},
+                        ],
+                    },
+                    "scale_actions": {"concerning": "Schedule conflict resolution session"},
+                },
+            },
+        },
     },
 }
 
@@ -818,6 +872,85 @@ class TestTeamMaturity:
         assert result["metrics"]["kb_entry_count"]["status"] == "minimal"
 
 
+class TestDataMaturity:
+
+    def test_good_coverage_healthy_pipeline(self):
+        """Good photo coverage + fresh pipeline + high provenance → D3: Verified."""
+        data = {
+            "species_photo_coverage": 0.35,
+            "observation_pipeline_age": 2,
+            "provenance_coverage": 0.75,
+            "source_conflict_count": 1,
+        }
+        result = assess_data_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "D3: Verified"
+        assert result["metrics"]["species_photo_coverage"]["status"] == "growing"
+        assert result["metrics"]["observation_pipeline_age"]["status"] == "healthy"
+        assert result["metrics"]["provenance_coverage"]["status"] == "structured"
+        assert result["metrics"]["source_conflict_count"]["status"] == "acceptable"
+
+    def test_no_provenance_stale_pipeline(self):
+        """No provenance + stale pipeline + no photos → D1: Raw."""
+        data = {
+            "species_photo_coverage": 0.0,
+            "observation_pipeline_age": 45,
+            "provenance_coverage": 0.0,
+            "source_conflict_count": 5,
+        }
+        result = assess_data_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "D1: Raw"
+        assert result["metrics"]["species_photo_coverage"]["status"] == "dormant"
+        assert result["metrics"]["observation_pipeline_age"]["status"] == "stale"
+
+    def test_d2_structured_stage(self):
+        """Pipeline <= 7 days AND photo > 0.10 → D2: Structured."""
+        data = {
+            "species_photo_coverage": 0.15,
+            "observation_pipeline_age": 5,
+            "provenance_coverage": 0.20,
+            "source_conflict_count": 2,
+        }
+        result = assess_data_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "D2: Structured"
+
+    def test_d4_governed_stage(self):
+        """High photo + high provenance + low conflicts → D4: Governed."""
+        data = {
+            "species_photo_coverage": 0.55,
+            "observation_pipeline_age": 1,
+            "provenance_coverage": 0.95,
+            "source_conflict_count": 0,
+        }
+        result = assess_data_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "D4: Governed"
+
+    def test_scale_trigger_on_high_conflicts(self):
+        """source_conflict_count > concerning threshold → scale trigger."""
+        data = {
+            "species_photo_coverage": 0.20,
+            "observation_pipeline_age": 5,
+            "provenance_coverage": 0.60,
+            "source_conflict_count": 15,
+        }
+        result = assess_data_maturity(data, GROWTH_CONFIG)
+        triggers = result.get("scale_triggers", [])
+        trigger_metrics = [t["metric"] for t in triggers]
+        assert "source_conflict_count" in trigger_metrics
+
+    def test_none_values_handled(self):
+        """None metric values → status unknown, no crash."""
+        data = {
+            "species_photo_coverage": None,
+            "observation_pipeline_age": None,
+            "provenance_coverage": None,
+            "source_conflict_count": None,
+        }
+        result = assess_data_maturity(data, GROWTH_CONFIG)
+        assert result["stage"] == "D1: Raw"
+        for metric in result["metrics"].values():
+            assert metric["status"] == "unknown"
+
+
 class TestLoadGrowthConfig:
 
     def test_loads_yaml(self):
@@ -827,8 +960,11 @@ class TestLoadGrowthConfig:
         assert "farm" in config["dimensions"]
         assert "system" in config["dimensions"]
         assert "team" in config["dimensions"]
+        assert "data" in config["dimensions"]
         assert "stages" in config["dimensions"]["farm"]
         assert "metrics" in config["dimensions"]["farm"]
+        assert "stages" in config["dimensions"]["data"]
+        assert "metrics" in config["dimensions"]["data"]
 
     def test_assumptions_have_no_point_in_time_claims(self):
         """Assumption text in farm_growth.yaml must not hardcode counts or dates.

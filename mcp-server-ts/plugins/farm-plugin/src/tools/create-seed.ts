@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
-import { parseDate } from '../helpers/index.js';
+import { parseDate, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const createSeedTool: Tool = {
   namespace: 'fc',
@@ -59,7 +59,8 @@ Args:
     const noteParts: string[] = [];
     if (params.source) noteParts.push(`Source: ${params.source} (${sourceType})`);
     if (params.notes) noteParts.push(params.notes);
-    const fullNotes = noteParts.join('. ');
+    const stamp = buildMcpStamp('created', 'seed', { relatedEntities: [params.species] });
+    const fullNotes = appendStamp(noteParts.join('. '), stamp);
 
     // Check if seed asset already exists
     const existingId = await client.seedAssetExists(seedName);

@@ -1,5 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getKnowledgeClient } from '../clients/index.js';
+import { buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const addKnowledgeTool: Tool = {
   namespace: 'fc',
@@ -23,7 +24,9 @@ export const addKnowledgeTool: Tool = {
     const kbClient = getKnowledgeClient();
     if (!kbClient) return { content: [{ type: 'text' as const, text: JSON.stringify({ error: 'Knowledge base not available', hint: 'KNOWLEDGE_ENDPOINT not configured' }) }] };
     try {
-      const result = await kbClient.add(params);
+      const stamp = buildMcpStamp('created', 'knowledge', { initiator: params.author || undefined, executor: 'apps_script', relatedEntities: params.title ? [params.title] : undefined });
+      const stampedContent = appendStamp(params.content, stamp);
+      const result = await kbClient.add({ ...params, content: stampedContent });
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     } catch (e: any) {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ error: `Failed to add knowledge entry: ${e.message}` }) }] };

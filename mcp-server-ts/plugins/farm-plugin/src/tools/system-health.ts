@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient, getMemoryClient, getKnowledgeClient, getObserveClient, getPlantTypesClient } from '../clients/index.js';
-import { assessFarmMaturity, assessSystemMaturity, assessTeamMaturity, assessSectionHealth, formatPlantAsset, formatLog, parsePlantTypeMetadata, extractMemorySummaries, countKbEntries } from '../helpers/index.js';
+import { assessFarmMaturity, assessSystemMaturity, assessTeamMaturity, assessDataMaturity, assessSectionHealth, formatPlantAsset, formatLog, parsePlantTypeMetadata, extractMemorySummaries, countKbEntries, countStampsInLogs } from '../helpers/index.js';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -28,7 +28,7 @@ export const systemHealthTool: Tool = {
   namespace: 'fc',
   name: 'system_health',
   title: 'System Health',
-  description: `Assess farm maturity across three dimensions: Farm (biological), System (technical), and Team (human). Returns current growth stage per dimension, metric scores, and active scale triggers with recommended build actions.\n\nAll thresholds and interpretation rules are defined in knowledge/farm_growth.yaml (human-reviewable, not hardcoded).`,
+  description: `Assess farm maturity across four dimensions: Farm (biological), System (technical), Team (human), and Data (quality). Returns current growth stage per dimension, metric scores, and active scale triggers with recommended build actions.\n\nAll thresholds and interpretation rules are defined in knowledge/farm_growth.yaml (human-reviewable, not hardcoded).`,
   paramsSchema: z.object({}).shape,
   options: { readOnlyHint: true },
 
@@ -130,7 +130,68 @@ export const systemHealthTool: Tool = {
       return assessTeamMaturity({ active_users_weekly: distinctUsers, team_memory_velocity: velocity, kb_entry_count: kbCount }, config);
     };
 
-    // Run Farm first (System depends on its activePlantCount), then System + Team in parallel.
+    const dataDimension = async (allPlants: any[], allTypes: any[]) => {
+      // species_photo_coverage: species with photo / distinct active species
+      const distinctSpecies = new Set(allPlants.map((p: any) => {
+        const name = p.attributes?.name ?? '';
+        const match = name.match(/^\d{1,2}\s+\w{3}\s+\d{4}\s*-\s*(.+?)\s*-\s*/);
+        return match ? match[1].trim() : name;
+      }).filter(Boolean));
+      const speciesWithPhoto = allTypes.filter((t: any) => t.relationships?.image?.data != null).length;
+      const photoCoverage = distinctSpecies.size > 0 ? speciesWithPhoto / distinctSpecies.size : 0;
+
+      // observation_pipeline_age: max days any observation has been pending
+      let pipelineAge = 0;
+      try {
+        const obsClient = getObserveClient();
+        if (obsClient) {
+          const pending = await obsClient.listObservations({ status: 'pending' });
+          const submissions = Array.isArray(pending) ? pending : (pending?.submissions ?? []);
+          const now = Date.now();
+          for (const sub of submissions) {
+            const obs = sub.observations ?? [sub];
+            for (const o of (Array.isArray(obs) ? obs : [obs])) {
+              const ts = o.timestamp ?? o.date ?? sub.timestamp ?? sub.date;
+              if (!ts) continue;
+              const dt = new Date(ts);
+              if (!isNaN(dt.getTime())) {
+                const days = Math.floor((now - dt.getTime()) / (1000 * 60 * 60 * 24));
+                if (days > pipelineAge) pipelineAge = days;
+              }
+            }
+          }
+        }
+      } catch { /* observation client unavailable */ }
+
+      // provenance_coverage: fraction of recent logs with InteractionStamp
+      let provenanceCoverage = 0;
+      try {
+        const recentLogs = await client.getRecentLogs(50);
+        const { coverage } = countStampsInLogs(recentLogs);
+        provenanceCoverage = coverage;
+      } catch { /* fallback to 0 */ }
+
+      // source_conflict_count: pending activity logs with conflict/discrepancy in notes
+      let conflictCount = 0;
+      try {
+        const pendingLogs = await client.getLogs('activity', undefined, 'pending', 50);
+        for (const log of pendingLogs) {
+          const notes = typeof log.attributes?.notes === 'object'
+            ? log.attributes?.notes?.value ?? ''
+            : String(log.attributes?.notes ?? '');
+          if (/discrepancy|conflict/i.test(notes)) conflictCount++;
+        }
+      } catch { /* fallback to 0 */ }
+
+      return assessDataMaturity({
+        species_photo_coverage: photoCoverage,
+        observation_pipeline_age: pipelineAge,
+        provenance_coverage: provenanceCoverage,
+        source_conflict_count: conflictCount,
+      }, config);
+    };
+
+    // Run Farm first (System depends on its activePlantCount), then System + Team + Data in parallel.
     // Farm itself parallelizes its 20 section fetches internally.
     const [farmSettled] = await Promise.allSettled([farmDimension()]);
     if (farmSettled.status === 'fulfilled') {
@@ -141,9 +202,18 @@ export const systemHealthTool: Tool = {
     }
 
     const activePlantCount = result.dimensions.farm?.metrics?.active_plants?.value ?? 0;
-    const [systemSettled, teamSettled] = await Promise.allSettled([
+
+    // Fetch allPlants + allTypes for dataDimension (Farm already fetched them but we need the raw data)
+    // Re-fetch is cheap because getAllPlantTypesCached is cached.
+    const [allPlantsForData, allTypesForData] = await Promise.all([
+      client.fetchAllPaginated('asset/plant', { status: 'active' }),
+      client.getAllPlantTypesCached(),
+    ]);
+
+    const [systemSettled, teamSettled, dataSettled] = await Promise.allSettled([
       systemDimension(activePlantCount),
       teamDimension(),
+      dataDimension(allPlantsForData, allTypesForData),
     ]);
     if (systemSettled.status === 'fulfilled') {
       result.dimensions.system = systemSettled.value;
@@ -157,9 +227,15 @@ export const systemHealthTool: Tool = {
     } else {
       result.dimensions.team = { error: teamSettled.reason?.message ?? String(teamSettled.reason) };
     }
+    if (dataSettled.status === 'fulfilled') {
+      result.dimensions.data = dataSettled.value;
+      result.scale_triggers.push(...(dataSettled.value.scale_triggers ?? []));
+    } else {
+      result.dimensions.data = { error: dataSettled.reason?.message ?? String(dataSettled.reason) };
+    }
 
     // ── Summary ─────────────────────────────────────────
-    const stages = ['farm', 'system', 'team']
+    const stages = ['farm', 'system', 'team', 'data']
       .map(d => result.dimensions[d]?.stage ? `${d.charAt(0).toUpperCase() + d.slice(1)}: ${result.dimensions[d].stage}` : null)
       .filter(Boolean);
     result.overall_maturity = stages.join(' | ') || 'Unable to assess';

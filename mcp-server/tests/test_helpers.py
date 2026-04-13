@@ -267,10 +267,19 @@ class TestBuildImportNotes:
         assert "Condition" not in notes
 
     def test_extra_parameter_appended(self):
-        """Extra string is appended to the notes."""
+        """Extra string is appended to the notes (before stamp)."""
         obs = make_observation(observer="Claire")
         notes = _build_import_notes(obs, extra="Created new plant asset")
-        assert notes.endswith("Created new plant asset")
+        assert "Created new plant asset" in notes
+
+    def test_stamp_appended(self):
+        """Import notes include an interaction stamp."""
+        obs = make_observation(observer="Claire")
+        notes = _build_import_notes(obs)
+        assert "[ontology:InteractionStamp]" in notes
+        assert "initiator=Claire" in notes
+        assert "role=farmhand" in notes
+        assert "channel=automated" in notes
 
 
 # ── format_timestamp ──────────────────────────────────────────

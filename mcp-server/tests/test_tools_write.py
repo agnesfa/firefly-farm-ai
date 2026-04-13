@@ -332,7 +332,8 @@ class TestUpdateInventory:
             notes="snails ate two",
         ))
 
-        assert result["notes"] == "Inventory update: snails ate two"
+        assert result["notes"].startswith("Inventory update: snails ate two")
+        assert "[ontology:InteractionStamp]" in result["notes"]
 
 
 # ── archive_plant ────────────────────────────────────────────

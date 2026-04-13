@@ -1,7 +1,7 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
 import { getFarmOSClient, getObserveClient } from '../clients/index.js';
-import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto, decodeMediaFile } from '../helpers/index.js';
+import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto, decodeMediaFile, buildStamp, appendStamp } from '../helpers/index.js';
 import { buildBotanicalLookupFromCsv, verifySpeciesPhoto, getPlantnetCallCount, type BotanicalLookup } from '../helpers/plantnet-verify.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -18,7 +18,18 @@ function buildImportNotes(obs: any, extra = ''): string {
   if (obs.plant_notes) parts.push(`Plant notes: ${obs.plant_notes}`);
   if (obs.previous_count != null && obs.new_count != null) parts.push(`Count: ${obs.previous_count} → ${obs.new_count}`);
   if (extra) parts.push(extra);
-  return parts.join('\n');
+  const notes = parts.join('\n');
+  const stamp = buildStamp({
+    initiator: obs.observer ?? 'system',
+    role: obs.observer ? 'farmhand' : 'system',
+    channel: 'automated',
+    executor: 'farmos_api',
+    action: 'created',
+    target: 'observation',
+    relatedEntities: [obs.species, obs.section_id].filter(Boolean),
+    sourceSubmission: obs.submission_id,
+  });
+  return appendStamp(notes, stamp);
 }
 
 export const importObservationsTool: Tool = {

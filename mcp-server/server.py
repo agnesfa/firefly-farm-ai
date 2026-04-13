@@ -27,6 +27,7 @@ from typing import Optional
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastmcp import FastMCP
+from interaction_stamp import build_mcp_stamp, append_stamp, build_stamp
 
 from farmos_client import FarmOSClient
 from observe_client import ObservationClient
@@ -721,6 +722,13 @@ def create_seed(
         note_parts.append(notes)
     full_notes = ". ".join(note_parts)
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="seed",
+        related_entities=[species],
+    )
+    full_notes = append_stamp(full_notes, stamp)
+
     # Check if seed asset already exists
     existing = client.fetch_by_name("asset/seed", seed_name)
     if existing:
@@ -1051,6 +1059,13 @@ def create_observation(
             "existing_log_id": existing,
         })
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="observation",
+        related_entities=[species, section_id],
+    )
+    stamped_notes = append_stamp(notes, stamp)
+
     # Create quantity (inventory count)
     qty_id = client.create_quantity(plant_id, count, adjustment="reset")
 
@@ -1061,7 +1076,7 @@ def create_observation(
         quantity_id=qty_id,
         timestamp=timestamp,
         name=log_name,
-        notes=notes,
+        notes=stamped_notes,
     )
 
     return json.dumps({
@@ -1105,11 +1120,18 @@ def create_activity(
     timestamp = parse_date(date) if date else parse_date(None)
     log_name = f"{activity_type.title()} — {section_id}"
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="activity",
+        related_entities=[section_id],
+    )
+    stamped_notes = append_stamp(notes, stamp)
+
     log_id = client.create_activity_log(
         section_uuid=section_uuid,
         timestamp=timestamp,
         name=log_name,
-        notes=notes,
+        notes=stamped_notes,
         location_type=location_type,
         status=status,
     )
@@ -1149,8 +1171,27 @@ def complete_task(
     if not log_id:
         return json.dumps({"error": f"Activity log '{log_name}' not found in farmOS"})
 
-    success = client.update_log_status(log_id, "activity", "done")
-    if not success:
+    # Build interaction stamp and patch notes alongside status
+    stamp = build_mcp_stamp(action="updated", target="activity")
+    completion_text = notes or ""
+    stamped_notes = append_stamp(completion_text, stamp)
+
+    # PATCH both status and notes in one call
+    payload = {
+        "data": {
+            "type": "log--activity",
+            "id": log_id,
+            "attributes": {
+                "status": "done",
+                "notes": {"value": stamped_notes, "format": "default"},
+            },
+        }
+    }
+    resp = client.session.patch(
+        f"{client.hostname}/api/log/activity/{log_id}",
+        json=payload,
+    )
+    if resp.status_code not in (200, 201):
         return json.dumps({"error": f"Failed to update status for '{log_name}'"})
 
     result = {
@@ -1183,13 +1224,19 @@ def update_inventory(
     Returns:
         Updated inventory details.
     """
-    # Delegate to create_observation with today's date
+    # Build interaction stamp (create_observation will add its own stamp too,
+    # but this one marks the update_inventory intent)
+    stamp = build_mcp_stamp(
+        action="updated", target="observation",
+        related_entities=[plant_name],
+    )
     date_today = datetime.now(tz=AEST).strftime("%Y-%m-%d")
     update_notes = f"Inventory update: {notes}" if notes else "Inventory update"
+    stamped_notes = append_stamp(update_notes, stamp)
     return create_observation(
         plant_name=plant_name,
         count=new_count,
-        notes=update_notes,
+        notes=stamped_notes,
         date=date_today,
     )
 
@@ -1246,8 +1293,15 @@ def create_plant(
             "existing_id": existing,
         })
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="plant",
+        related_entities=[species, section_id],
+    )
+    stamped_notes = append_stamp(notes, stamp)
+
     # Create plant asset
-    plant_id = client.create_plant_asset(asset_name, plant_type_uuid, notes=notes)
+    plant_id = client.create_plant_asset(asset_name, plant_type_uuid, notes=stamped_notes)
     if not plant_id:
         return json.dumps({"error": "Failed to create plant asset"})
 
@@ -1263,7 +1317,7 @@ def create_plant(
         quantity_id=qty_id,
         timestamp=timestamp,
         name=log_name,
-        notes=notes,
+        notes=stamped_notes,
     )
 
     return json.dumps({
@@ -1322,6 +1376,12 @@ def archive_plant(
         },
     }
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="archived", target="plant",
+        related_entities=[plant_name],
+    )
+
     # Optionally create an activity log with the reason
     if reason:
         section_id = formatted.get("section", "")
@@ -1331,11 +1391,12 @@ def archive_plant(
             timestamp = parse_date(None)
             species = formatted.get("species", "")
             log_name = f"Archived — {species} — {section_id}"
+            stamped_reason = append_stamp(reason, stamp)
             log_id = client.create_activity_log(
                 section_uuid=section_uuid,
                 timestamp=timestamp,
                 name=log_name,
-                notes=reason,
+                notes=stamped_reason,
                 asset_ids=[updated.get("id", "")],
             )
             result["activity_log"] = {
@@ -1584,7 +1645,23 @@ def _build_import_notes(obs: dict, extra: str = "") -> str:
         parts.append(f"Count: {obs['previous_count']} → {obs['new_count']}")
     if extra:
         parts.append(extra)
-    return "\n".join(parts)
+    notes_text = "\n".join(parts)
+
+    # Build interaction stamp for imported observations
+    observer = obs.get("observer", "unknown")
+    stamp = build_stamp(
+        initiator=observer,
+        role="farmhand",
+        channel="automated",
+        executor="farmos_api",
+        action="created",
+        target="observation",
+        source_submission=obs.get("submission_id"),
+        related_entities=[
+            e for e in [obs.get("species"), obs.get("section_id")] if e
+        ] or None,
+    )
+    return append_stamp(notes_text, stamp)
 
 
 @mcp.tool
@@ -2478,6 +2555,14 @@ def write_session_summary(
     except ValueError as e:
         return json.dumps({"error": str(e), "hint": "MEMORY_ENDPOINT env var not set"})
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="session_summary",
+        initiator=user,
+        executor="apps_script",
+    )
+    stamped_summary = append_stamp(summary, stamp)
+
     try:
         result = mem_client.write_summary(
             user=user,
@@ -2485,7 +2570,7 @@ def write_session_summary(
             decisions=decisions,
             farmos_changes=farmos_changes,
             questions=questions,
-            summary=summary,
+            summary=stamped_summary,
             skip=skip,
         )
         return json.dumps(result, indent=2)
@@ -2641,6 +2726,13 @@ def add_plant_type(
     }
     full_description = build_plant_type_description(fields)
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="plant_type",
+        related_entities=[farmos_name],
+    )
+    full_description = append_stamp(full_description, stamp)
+
     try:
         uuid = client.create_plant_type(
             name=farmos_name,
@@ -2769,6 +2861,13 @@ def update_plant_type(
         "source": source or current_meta.get("source"),
     }
     new_description = build_plant_type_description(fields)
+
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="updated", target="plant_type",
+        related_entities=[farmos_name],
+    )
+    new_description = append_stamp(new_description, stamp)
 
     # Build PATCH attributes
     patch_attrs = {
@@ -3074,10 +3173,18 @@ def add_knowledge(
             "hint": "KNOWLEDGE_ENDPOINT env var not configured",
         })
 
+    # Build interaction stamp
+    stamp = build_mcp_stamp(
+        action="created", target="knowledge",
+        initiator=author or None,
+        executor="apps_script",
+    )
+    stamped_content = append_stamp(content, stamp)
+
     try:
         result = kb_client.add(fields={
             "title": title,
-            "content": content,
+            "content": stamped_content,
             "category": category,
             "author": author,
             "tags": tags,
@@ -3140,6 +3247,14 @@ def update_knowledge(
     if not fields:
         return json.dumps({"error": "No fields to update"})
 
+    # Build interaction stamp — append to content if content is being updated
+    stamp = build_mcp_stamp(
+        action="updated", target="knowledge",
+        executor="apps_script",
+    )
+    if "content" in fields:
+        fields["content"] = append_stamp(fields["content"], stamp)
+
     try:
         result = kb_client.update(entry_id=entry_id, fields=fields)
         return json.dumps(result, indent=2)
@@ -3154,10 +3269,10 @@ def update_knowledge(
 
 @mcp.tool
 def system_health() -> str:
-    """Assess farm maturity across three dimensions: Farm (biological),
-    System (technical), and Team (human). Returns current growth stage
-    per dimension, metric scores, and active scale triggers with
-    recommended build actions.
+    """Assess farm maturity across four dimensions: Farm (biological),
+    System (technical), Team (human), and Data (quality). Returns current
+    growth stage per dimension, metric scores, and active scale triggers
+    with recommended build actions.
 
     All thresholds and interpretation rules are defined in
     knowledge/farm_growth.yaml (human-reviewable, not hardcoded).
@@ -3166,6 +3281,7 @@ def system_health() -> str:
         assess_farm_maturity,
         assess_system_maturity,
         assess_team_maturity,
+        assess_data_maturity,
         load_growth_config,
         assess_section_health,
         load_semantics,
@@ -3233,7 +3349,7 @@ def system_health() -> str:
         farm_result = assess_farm_maturity(farm_data, config)
         farm_result["sampled_sections"] = len(section_scores)
         farm_result["total_sections"] = len(sections)
-        return farm_result, active_plant_count
+        return farm_result, active_plant_count, all_plants, all_types
 
     def _system_dimension(active_plant_count):
         total_entities = active_plant_count + 1200  # rough estimate for logs + other assets
@@ -3307,18 +3423,99 @@ def system_health() -> str:
         }
         return assess_team_maturity(team_data, config)
 
-    # Run Farm first (System depends on its active_plant_count), then System + Team in parallel.
+    # Run Farm first (System/Data depend on its active_plant_count/types),
+    # then System + Team + Data in parallel.
     active_plant_count = 0
+    all_plants = []
+    all_types = []
     try:
-        farm_result, active_plant_count = _farm_dimension()
+        farm_result, active_plant_count, all_plants, all_types = _farm_dimension()
         result["dimensions"]["farm"] = farm_result
         result["scale_triggers"].extend(farm_result.get("scale_triggers", []))
     except Exception as e:
         result["dimensions"]["farm"] = {"error": str(e)}
 
-    with ThreadPoolExecutor(max_workers=2) as ex:
+    def _data_dimension(all_plants, all_types):
+        from interaction_stamp import count_stamps_in_logs
+
+        # species_photo_coverage: species with photo / distinct active species
+        formatted_plants = [format_plant_asset(p) for p in all_plants]
+        distinct_species = set()
+        for p in formatted_plants:
+            sp = p.get("species", "")
+            if sp:
+                distinct_species.add(sp)
+        species_with_photo = 0
+        for t in all_types:
+            name = t.get("attributes", {}).get("name", "")
+            if name not in distinct_species:
+                continue
+            image_rel = t.get("relationships", {}).get("image", {}).get("data")
+            if image_rel:
+                species_with_photo += 1
+        photo_coverage = species_with_photo / len(distinct_species) if distinct_species else 0.0
+
+        # observation_pipeline_age: max days any observation has been pending
+        pipeline_age = 0
+        try:
+            obs_client = get_observe_client()
+            pending = obs_client.list_observations(status="pending")
+            if isinstance(pending, list) and pending:
+                from datetime import datetime as _dt, timezone as _tz
+                today = _dt.now(tz=_tz.utc)
+                max_age = 0
+                for obs in pending:
+                    ts = obs.get("timestamp") or obs.get("date") or ""
+                    if not ts:
+                        continue
+                    try:
+                        obs_dt = _dt.fromisoformat(ts.replace("Z", "+00:00"))
+                        age = (today - obs_dt).days
+                        if age > max_age:
+                            max_age = age
+                    except (ValueError, TypeError):
+                        continue
+                pipeline_age = max_age
+        except Exception:
+            pipeline_age = None
+
+        # provenance_coverage: fraction of recent logs with interaction stamps
+        prov_coverage = 0.0
+        try:
+            recent_logs = client.get_logs(max_results=50)
+            stamp_result = count_stamps_in_logs(
+                [{"notes": l.get("attributes", {}).get("notes", "")} for l in recent_logs]
+            )
+            prov_coverage = stamp_result.get("coverage", 0.0)
+        except Exception:
+            prov_coverage = None
+
+        # source_conflict_count: pending activity logs with discrepancy/conflict
+        conflict_count = 0
+        try:
+            pending_activities = client.get_logs(log_type="activity", status="pending")
+            for log in pending_activities:
+                name = log.get("attributes", {}).get("name", "") or ""
+                notes = log.get("attributes", {}).get("notes", {})
+                notes_text = notes.get("value", "") if isinstance(notes, dict) else str(notes)
+                combined = (name + " " + notes_text).lower()
+                if "discrepancy" in combined or "conflict" in combined:
+                    conflict_count += 1
+        except Exception:
+            conflict_count = None
+
+        data_data = {
+            "species_photo_coverage": round(photo_coverage, 3),
+            "observation_pipeline_age": pipeline_age,
+            "provenance_coverage": round(prov_coverage, 3) if prov_coverage is not None else None,
+            "source_conflict_count": conflict_count,
+        }
+        return assess_data_maturity(data_data, config)
+
+    with ThreadPoolExecutor(max_workers=3) as ex:
         system_fut = ex.submit(_system_dimension, active_plant_count)
         team_fut = ex.submit(_team_dimension)
+        data_fut = ex.submit(_data_dimension, all_plants, all_types)
         try:
             system_result = system_fut.result()
             result["dimensions"]["system"] = system_result
@@ -3331,11 +3528,17 @@ def system_health() -> str:
             result["scale_triggers"].extend(team_result.get("scale_triggers", []))
         except Exception as e:
             result["dimensions"]["team"] = {"error": str(e)}
+        try:
+            data_result = data_fut.result()
+            result["dimensions"]["data"] = data_result
+            result["scale_triggers"].extend(data_result.get("scale_triggers", []))
+        except Exception as e:
+            result["dimensions"]["data"] = {"error": str(e)}
 
     # ── Overall maturity summary ───────────────────────────────
 
     stages = []
-    for dim_name in ["farm", "system", "team"]:
+    for dim_name in ["farm", "system", "team", "data"]:
         dim = result["dimensions"].get(dim_name, {})
         if "stage" in dim:
             stages.append(f"{dim_name.title()}: {dim['stage']}")

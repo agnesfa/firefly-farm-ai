@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
-import { parseDate, formatTimestamp } from '../helpers/index.js';
+import { parseDate, formatTimestamp, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const createActivityTool: Tool = {
   namespace: 'fc',
@@ -25,7 +25,9 @@ export const createActivityTool: Tool = {
     const logStatus = params.status || 'done';
     const timestamp = parseDate(params.date);
     const logName = `${params.activity_type.charAt(0).toUpperCase() + params.activity_type.slice(1)} — ${params.section_id}`;
-    const logId = await client.createActivityLog(sectionUuid, timestamp, logName, params.notes, undefined, locationType, logStatus);
+    const stamp = buildMcpStamp('created', 'activity', { relatedEntities: [params.section_id] });
+    const stampedNotes = appendStamp(params.notes, stamp);
+    const logId = await client.createActivityLog(sectionUuid, timestamp, logName, stampedNotes, undefined, locationType, logStatus);
     return {
       content: [{ type: 'text' as const, text: JSON.stringify({
         status: 'created', log_id: logId, log_name: logName,

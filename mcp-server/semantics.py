@@ -789,3 +789,72 @@ def assess_team_maturity(data: dict, config: dict) -> dict:
         metrics[metric_name] = {"value": value, "status": status}
 
     return {"stage": team_config["stages"][1]["label"], "metrics": metrics, "scale_triggers": []}
+
+
+def assess_data_maturity(data: dict, config: dict) -> dict:
+    """Assess data quality maturity.
+
+    Args:
+        data: {species_photo_coverage, observation_pipeline_age, provenance_coverage, source_conflict_count}
+        config: Loaded farm_growth.yaml
+    """
+    data_config = config["dimensions"]["data"]
+    metrics_config = data_config["metrics"]
+    metrics = {}
+    triggers = []
+
+    for metric_name in ["species_photo_coverage", "observation_pipeline_age", "provenance_coverage", "source_conflict_count"]:
+        value = data.get(metric_name)
+        if value is None:
+            metrics[metric_name] = {"value": None, "status": "unknown"}
+            continue
+
+        interp = metrics_config.get(metric_name, {}).get("interpretation", {})
+        status = classify_by_direction(value, interp)
+        metrics[metric_name] = {"value": value, "status": status}
+
+        # Check for scale triggers — any metric beyond the best threshold
+        raw_thresholds = interp.get("thresholds", [])
+        if isinstance(raw_thresholds, list):
+            threshold_pairs = [(t["label"], t["value"]) for t in raw_thresholds]
+        elif isinstance(raw_thresholds, dict):
+            threshold_pairs = list(raw_thresholds.items())
+        else:
+            threshold_pairs = []
+
+        best_labels = {"clean", "healthy", "equipped", "governed"}
+        direction = interp.get("direction", "higher_is_better")
+        for label, threshold in threshold_pairs:
+            if label in best_labels:
+                continue
+            if direction == "lower_is_better" and value > threshold:
+                action = metrics_config.get(metric_name, {}).get("scale_actions", {}).get(label, "")
+                triggers.append({"metric": metric_name, "status": label, "value": value,
+                                 "threshold": threshold, "action": action})
+            elif direction == "higher_is_better" and value >= threshold:
+                action = metrics_config.get(metric_name, {}).get("scale_actions", {}).get(label, "")
+                triggers.append({"metric": metric_name, "status": label, "value": value,
+                                 "threshold": threshold, "action": action})
+
+    # Determine stage: D1→D4
+    photo_cov = data.get("species_photo_coverage", 0) or 0
+    pipeline_age = data.get("observation_pipeline_age")
+    prov_cov = data.get("provenance_coverage", 0) or 0
+    conflict_count = data.get("source_conflict_count")
+
+    stage = data_config["stages"][0]["label"]  # D1: Raw (default)
+
+    # D2: Structured — pipeline_age <= 7 AND photo_coverage > 0.10
+    if pipeline_age is not None and pipeline_age <= 7 and photo_cov > 0.10:
+        stage = data_config["stages"][1]["label"]  # D2: Structured
+
+    # D3: Verified — photo_coverage >= 0.25 AND provenance_coverage >= 0.50
+    if photo_cov >= 0.25 and prov_cov >= 0.50:
+        stage = data_config["stages"][2]["label"]  # D3: Verified
+
+    # D4: Governed — photo_coverage >= 0.50 AND provenance >= 0.90 AND conflicts <= 3
+    if (photo_cov >= 0.50 and prov_cov >= 0.90
+            and conflict_count is not None and conflict_count <= 3):
+        stage = data_config["stages"][3]["label"]  # D4: Governed
+
+    return {"stage": stage, "metrics": metrics, "scale_triggers": triggers}

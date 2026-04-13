@@ -1,5 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getKnowledgeClient } from '../clients/index.js';
+import { buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const updateKnowledgeTool: Tool = {
   namespace: 'fc',
@@ -25,6 +26,10 @@ export const updateKnowledgeTool: Tool = {
     if (Object.keys(fields).length === 0) return { content: [{ type: 'text' as const, text: JSON.stringify({ error: 'No fields to update' }) }] };
 
     try {
+      const stamp = buildMcpStamp('updated', 'knowledge', { executor: 'apps_script' });
+      if (fields.content) {
+        fields.content = appendStamp(fields.content, stamp);
+      }
       const result = await kbClient.update(params.entry_id, fields);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     } catch (e: any) {

@@ -22,6 +22,7 @@ import {
   assessFarmMaturity,
   assessSystemMaturity,
   assessTeamMaturity,
+  assessDataMaturity,
 } from '../helpers/semantics.js';
 
 const PLANT_TYPES_DB: Record<string, any> = {
@@ -286,6 +287,29 @@ const GROWTH_CONFIG = {
         },
       },
     },
+    data: {
+      stages: [
+        { name: 'raw', label: 'D1: Raw' },
+        { name: 'structured', label: 'D2: Structured' },
+        { name: 'verified', label: 'D3: Verified' },
+        { name: 'governed', label: 'D4: Governed' },
+      ],
+      metrics: {
+        species_photo_coverage: {
+          interpretation: { direction: 'higher_is_better', thresholds: [{ label: 'equipped', value: 0.50 }, { label: 'growing', value: 0.25 }, { label: 'minimal', value: 0.10 }, { label: 'dormant', value: 0.0 }] },
+        },
+        observation_pipeline_age: {
+          interpretation: { direction: 'lower_is_better', thresholds: [{ label: 'healthy', value: 3 }, { label: 'fair', value: 7 }, { label: 'concerning', value: 14 }, { label: 'stale', value: 30 }] },
+        },
+        provenance_coverage: {
+          interpretation: { direction: 'higher_is_better', thresholds: [{ label: 'governed', value: 0.90 }, { label: 'structured', value: 0.70 }, { label: 'partial', value: 0.50 }] },
+        },
+        source_conflict_count: {
+          interpretation: { direction: 'lower_is_better', thresholds: [{ label: 'clean', value: 0 }, { label: 'acceptable', value: 3 }, { label: 'concerning', value: 10 }] },
+          scale_actions: { concerning: 'Schedule conflict resolution session' },
+        },
+      },
+    },
   },
 };
 
@@ -348,6 +372,72 @@ describe('assessTeamMaturity', () => {
   });
 });
 
+describe('assessDataMaturity', () => {
+  it('good photo coverage + healthy pipeline = D3 or higher', () => {
+    const result = assessDataMaturity({
+      species_photo_coverage: 0.30,
+      observation_pipeline_age: 2,
+      provenance_coverage: 0.60,
+      source_conflict_count: 1,
+    }, GROWTH_CONFIG);
+    expect(result.metrics.species_photo_coverage.status).toBe('growing');
+    expect(result.metrics.observation_pipeline_age.status).toBe('healthy');
+    expect(['D3: Verified', 'D4: Governed']).toContain(result.stage);
+  });
+
+  it('no provenance + stale pipeline = D1', () => {
+    const result = assessDataMaturity({
+      species_photo_coverage: 0.02,
+      observation_pipeline_age: 45,
+      provenance_coverage: 0.10,
+      source_conflict_count: 8,
+    }, GROWTH_CONFIG);
+    expect(result.stage).toBe('D1: Raw');
+    expect(result.metrics.observation_pipeline_age.status).toBe('stale');
+    expect(result.metrics.provenance_coverage.status).toBe('partial');
+  });
+
+  it('scale_trigger when source_conflict_count > 3', () => {
+    const result = assessDataMaturity({
+      species_photo_coverage: 0.50,
+      observation_pipeline_age: 1,
+      provenance_coverage: 0.95,
+      source_conflict_count: 12,
+    }, GROWTH_CONFIG);
+    const triggers = result.scale_triggers.filter((t: any) => t.metric === 'source_conflict_count');
+    expect(triggers.length).toBeGreaterThan(0);
+    const statuses = triggers.map((t: any) => t.status);
+    expect(statuses).toContain('concerning');
+  });
+
+  it('D2: Structured when pipeline healthy and some photos', () => {
+    const result = assessDataMaturity({
+      species_photo_coverage: 0.15,
+      observation_pipeline_age: 5,
+      provenance_coverage: 0.20,
+      source_conflict_count: 2,
+    }, GROWTH_CONFIG);
+    expect(result.stage).toBe('D2: Structured');
+  });
+
+  it('D4: Governed when all metrics excellent', () => {
+    const result = assessDataMaturity({
+      species_photo_coverage: 0.55,
+      observation_pipeline_age: 1,
+      provenance_coverage: 0.95,
+      source_conflict_count: 0,
+    }, GROWTH_CONFIG);
+    expect(result.stage).toBe('D4: Governed');
+  });
+
+  it('null values produce unknown status', () => {
+    const result = assessDataMaturity({}, GROWTH_CONFIG);
+    expect(result.metrics.species_photo_coverage.status).toBe('unknown');
+    expect(result.metrics.observation_pipeline_age.status).toBe('unknown');
+    expect(result.stage).toBe('D1: Raw');
+  });
+});
+
 // ────────────────────────────────────────────────────────────
 // farm_growth.yaml hygiene
 // ────────────────────────────────────────────────────────────
@@ -376,6 +466,7 @@ describe('farm_growth.yaml hygiene', () => {
     expect(config.dimensions.farm).toBeDefined();
     expect(config.dimensions.system).toBeDefined();
     expect(config.dimensions.team).toBeDefined();
+    expect(config.dimensions.data).toBeDefined();
   });
 
   it('assumption text must not embed point-in-time counts', () => {

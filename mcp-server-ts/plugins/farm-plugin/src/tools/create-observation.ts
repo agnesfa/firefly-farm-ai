@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
-import { parseDate, formatTimestamp, formatPlantAsset } from '../helpers/index.js';
+import { parseDate, formatTimestamp, formatPlantAsset, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const createObservationTool: Tool = {
   namespace: 'fc',
@@ -40,8 +40,11 @@ export const createObservationTool: Tool = {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ status: 'skipped', message: `Observation log '${logName}' already exists`, existing_log_id: existing }) }] };
     }
 
+    const stamp = buildMcpStamp('created', 'observation', { relatedEntities: [formatted.species, sectionId].filter(Boolean) });
+    const stampedNotes = appendStamp(params.notes ?? '', stamp);
+
     const qtyId = await client.createQuantity(plantId, params.count, 'reset');
-    const logId = await client.createObservationLog(plantId, sectionUuid, qtyId, timestamp, logName, params.notes);
+    const logId = await client.createObservationLog(plantId, sectionUuid, qtyId, timestamp, logName, stampedNotes);
 
     return {
       content: [{ type: 'text' as const, text: JSON.stringify({

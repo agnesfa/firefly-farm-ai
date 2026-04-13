@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient, getPlantTypesClient } from '../clients/index.js';
-import { buildPlantTypeDescription, parsePlantTypeMetadata } from '../helpers/index.js';
+import { buildPlantTypeDescription, parsePlantTypeMetadata, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const updatePlantTypeTool: Tool = {
   namespace: 'fc',
@@ -45,6 +45,9 @@ export const updatePlantTypeTool: Tool = {
     const patchAttrs: any = { description: { value: newDescription, format: 'default' } };
     if (params.maturity_days != null) patchAttrs.maturity_days = params.maturity_days;
     if (params.transplant_days != null) patchAttrs.transplant_days = params.transplant_days;
+
+    const stamp = buildMcpStamp('updated', 'plant_type', { relatedEntities: [params.farmos_name] });
+    patchAttrs.description = { value: appendStamp(newDescription, stamp), format: 'default' };
 
     try {
       await client.updatePlantType(uuid, patchAttrs);

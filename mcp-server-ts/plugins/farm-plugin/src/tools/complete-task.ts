@@ -1,5 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
+import { buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const completeTaskTool: Tool = {
   namespace: 'fc',
@@ -26,6 +27,14 @@ export const completeTaskTool: Tool = {
       return {
         content: [{ type: 'text' as const, text: JSON.stringify({ error: `Failed to update status for '${params.log_name}'` }) }],
       };
+    }
+
+    const stamp = buildMcpStamp('updated', 'activity');
+    const stampedNotes = appendStamp(params.notes ?? '', stamp);
+
+    // If there are notes (including stamp), update them on the log
+    if (stampedNotes) {
+      await client.updateLogNotes(logId, 'activity', stampedNotes);
     }
 
     const result: any = {

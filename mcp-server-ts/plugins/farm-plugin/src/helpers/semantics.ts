@@ -533,3 +533,39 @@ export function assessTeamMaturity(data: Record<string, any>, config: any): any 
   }
   return { stage: tc.stages[1]?.label ?? 'T2: Using', metrics, scale_triggers: [] };
 }
+
+export function assessDataMaturity(data: Record<string, any>, config: any): any {
+  const dc = config.dimensions.data;
+  const mc = dc.metrics;
+  const metrics: Record<string, any> = {};
+  const triggers: any[] = [];
+  const best = new Set(['healthy', 'clean', 'governed', 'equipped']);
+
+  for (const mn of ['species_photo_coverage', 'observation_pipeline_age', 'provenance_coverage', 'source_conflict_count']) {
+    const v = data[mn]; if (v == null) { metrics[mn] = { value: null, status: 'unknown' }; continue; }
+    const interp = mc[mn]?.interpretation ?? {};
+    metrics[mn] = { value: v, status: classifyByDirection(v, interp) };
+    const raw = interp.thresholds ?? [];
+    const pairs: [string, number][] = Array.isArray(raw) ? raw.map((t: any) => [t.label, t.value]) : Object.entries(raw);
+    const dir = interp.direction ?? 'higher_is_better';
+    for (const [label, threshold] of pairs) {
+      if (best.has(label)) continue;
+      if ((dir === 'lower_is_better' && v > threshold) || (dir === 'higher_is_better' && v >= threshold))
+        triggers.push({ metric: mn, status: label, value: v, threshold, action: mc[mn]?.scale_actions?.[label] ?? '' });
+    }
+  }
+
+  // Stage determination: D1 Raw → D2 Structured → D3 Verified → D4 Governed
+  const photoCoverage = data.species_photo_coverage ?? 0;
+  const pipelineAge = data.observation_pipeline_age ?? 999;
+  const provenanceCoverage = data.provenance_coverage ?? 0;
+  const conflictCount = data.source_conflict_count ?? 999;
+
+  let stageIdx = 0; // D1: Raw
+  if (pipelineAge <= 7 && photoCoverage > 0.10) stageIdx = 1; // D2: Structured
+  if (photoCoverage >= 0.25 && provenanceCoverage >= 0.50) stageIdx = 2; // D3: Verified
+  if (photoCoverage >= 0.50 && provenanceCoverage >= 0.90 && conflictCount <= 3) stageIdx = 3; // D4: Governed
+
+  const stage = dc.stages[stageIdx]?.label ?? 'D1: Raw';
+  return { stage, metrics, scale_triggers: triggers };
+}

@@ -1,5 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getMemoryClient } from '../clients/index.js';
+import { buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const writeSessionSummaryTool: Tool = {
   namespace: 'fc',
@@ -20,10 +21,12 @@ export const writeSessionSummaryTool: Tool = {
     const memClient = getMemoryClient();
     if (!memClient) return { content: [{ type: 'text' as const, text: JSON.stringify({ error: 'MEMORY_ENDPOINT not configured' }) }] };
     try {
+      const stamp = buildMcpStamp('created', 'session_summary', { initiator: params.user, executor: 'apps_script' });
+      const stampedSummary = appendStamp(params.summary, stamp);
       const result = await memClient.writeSummary({
         user: params.user, topics: params.topics, decisions: params.decisions,
         farmos_changes: params.farmos_changes, questions: params.questions,
-        summary: params.summary, skip: params.skip,
+        summary: stampedSummary, skip: params.skip,
       });
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     } catch (e: any) {

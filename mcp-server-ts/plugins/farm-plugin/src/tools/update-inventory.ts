@@ -1,5 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { createObservationTool } from './create-observation.js';
+import { buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const updateInventoryTool: Tool = {
   namespace: 'fc',
@@ -14,7 +15,9 @@ export const updateInventoryTool: Tool = {
   options: { readOnlyHint: false },
   handler: async (params, extra) => {
     const today = new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString().slice(0, 10);
-    const updateNotes = params.notes ? `Inventory update: ${params.notes}` : 'Inventory update';
+    const stamp = buildMcpStamp('updated', 'observation', { relatedEntities: [params.plant_name] });
+    const rawNotes = params.notes ? `Inventory update: ${params.notes}` : 'Inventory update';
+    const updateNotes = appendStamp(rawNotes, stamp);
     return createObservationTool.handler(
       { plant_name: params.plant_name, count: params.new_count, notes: updateNotes, date: today },
       extra,

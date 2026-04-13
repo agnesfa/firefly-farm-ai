@@ -448,3 +448,24 @@ feedback_loops:
   - signal: "New data captured but not connected to semantic context"
     action: "Trace the data flow — where did it stop? Is there a missing join key, unmapped entity, or broken pipeline step?"
     feeds_back_to: "farm_ontology.yaml (join_keys) + MCP tool implementation"
+
+  # Reliability feedback loops
+  - signal: "MCP server timeout or silent write failure"
+    action: >
+      Log attempted interaction to team memory with outcome=timeout/failed.
+      Surface in system_health as mcp_reliability metric. Alert Agnes when
+      failure rate exceeds threshold. Investigate root cause: is it the
+      Railway server, farmOS auth, Apps Script, or network?
+    feeds_back_to: "system_health (System dimension: mcp_reliability metric)"
+    real_examples:
+      - "Claire's MCP calls time out on first attempt — she gives up, thinks system is broken"
+      - "James's KB writes appear to succeed but Apps Script silently drops them (3 occurrences)"
+
+  - signal: "Team member reports farm data looks wrong or untrustworthy"
+    action: >
+      Treat as highest-priority data quality signal. Investigate the specific
+      data points. Fix if wrong, explain if correct-but-surprising. Update
+      the person directly — trust is rebuilt through responsiveness.
+    feeds_back_to: "farm_context data integrity gate + direct team communication"
+    real_examples:
+      - "Claire frustrated that P2R5 plant data seems wrong — erodes trust in entire system"

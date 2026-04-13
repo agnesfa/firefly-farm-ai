@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
-import { parseDate, buildAssetName } from '../helpers/index.js';
+import { parseDate, buildAssetName, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const createPlantTool: Tool = {
   namespace: 'fc',
@@ -34,7 +34,10 @@ export const createPlantTool: Tool = {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ status: 'skipped', message: `Plant asset '${assetName}' already exists`, existing_id: existing }) }] };
     }
 
-    const plantId = await client.createPlantAsset(assetName, plantTypeUuid, params.notes);
+    const stamp = buildMcpStamp('created', 'plant', { relatedEntities: [params.species, params.section_id] });
+    const stampedNotes = appendStamp(params.notes ?? '', stamp);
+
+    const plantId = await client.createPlantAsset(assetName, plantTypeUuid, stampedNotes);
     if (!plantId) {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ error: 'Failed to create plant asset' }) }] };
     }
@@ -42,7 +45,7 @@ export const createPlantTool: Tool = {
     const qtyId = await client.createQuantity(plantId, params.count, 'reset');
     const timestamp = parseDate(dateStr);
     const logName = `Inventory ${params.section_id} — ${params.species}`;
-    const logId = await client.createObservationLog(plantId, sectionUuid, qtyId, timestamp, logName, params.notes);
+    const logId = await client.createObservationLog(plantId, sectionUuid, qtyId, timestamp, logName, stampedNotes);
 
     return {
       content: [{ type: 'text' as const, text: JSON.stringify({

@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
-import { parseDate, formatPlantAsset } from '../helpers/index.js';
+import { parseDate, formatPlantAsset, buildMcpStamp, appendStamp } from '../helpers/index.js';
 
 export const archivePlantTool: Tool = {
   namespace: 'fc',
@@ -31,9 +31,11 @@ export const archivePlantTool: Tool = {
       const sectionId = formatted.section;
       const sectionUuid = sectionId ? await client.getSectionUuid(sectionId) : null;
       if (sectionUuid) {
+        const stamp = buildMcpStamp('archived', 'plant', { relatedEntities: [params.plant_name] });
+        const stampedReason = appendStamp(params.reason, stamp);
         const timestamp = parseDate(null);
         const logName = `Archived — ${formatted.species} — ${sectionId}`;
-        const logId = await client.createActivityLog(sectionUuid, timestamp, logName, params.reason, [updated.id ?? '']);
+        const logId = await client.createActivityLog(sectionUuid, timestamp, logName, stampedReason, [updated.id ?? '']);
         result.activity_log = { id: logId, name: logName, reason: params.reason };
       }
     }
