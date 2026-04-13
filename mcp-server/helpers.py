@@ -380,6 +380,8 @@ def build_plant_type_description(fields: dict) -> str:
         metadata.append(f"**Lifespan:** {fields['lifespan_years']} years")
     if fields.get("source"):
         metadata.append(f"**Source:** {fields['source']}")
+    if fields.get("photo_source"):
+        metadata.append(f"**Photo Source:** {fields['photo_source']}")
 
     if metadata:
         parts.append("\n\n---\n**Syntropic Agriculture Data:**\n" + "\n".join(metadata))
@@ -420,6 +422,8 @@ def parse_plant_type_metadata(description_text: str) -> dict:
         elif clean.startswith("Life Cycle:"):
             val = clean.split(":", 1)[1].strip()
             metadata["lifecycle_years"] = val.replace(" years", "")
+        elif clean.startswith("Photo Source:"):
+            metadata["photo_source"] = clean.split(":", 1)[1].strip()
         elif clean.startswith("Source:"):
             metadata["source"] = clean.split(":", 1)[1].strip()
 

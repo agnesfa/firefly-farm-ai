@@ -32,7 +32,7 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / ".env")
 
 from farmos_client import FarmOSClient
-from helpers import parse_plant_type_metadata
+from helpers import parse_plant_type_metadata, build_plant_type_description
 from interaction_stamp import build_stamp
 
 # ── Wikimedia Commons API ─────────────────────────────────────
@@ -144,11 +144,19 @@ def _download_image(url: str, session: requests.Session) -> tuple[bytes, str] | 
         return None
 
 
+def _tag_photo_source(farmos, uuid, current_meta, photo_source):
+    """Update a plant_type description to include photo_source metadata."""
+    current_meta["photo_source"] = photo_source
+    new_desc = build_plant_type_description(current_meta)
+    farmos.update_plant_type(uuid, {"description": {"value": new_desc, "format": "default"}})
+
+
 def main():
     parser = argparse.ArgumentParser(description="Fetch Wikimedia stock photos for species without reference photos")
     parser.add_argument("--dry-run", action="store_true", help="Preview what would happen")
     parser.add_argument("--species", type=str, help="Process a single species by farmos_name")
     parser.add_argument("--limit", type=int, default=0, help="Max species to process (0=unlimited)")
+    parser.add_argument("--retag", action="store_true", help="Retroactively tag existing photos with photo_source")
     args = parser.parse_args()
 
     # Connect to farmOS (reads credentials from .env via connect())
@@ -176,6 +184,19 @@ def main():
         if args.species:
             if name != args.species:
                 continue
+
+        # --retag mode: tag existing photos with photo_source, don't upload new ones
+        if args.retag:
+            if has_photo and not meta.get("photo_source"):
+                needs_photo.append({
+                    "name": name,
+                    "botanical": botanical,
+                    "uuid": pt.get("id"),
+                    "meta": meta,
+                    "has_photo": True,
+                })
+            continue
+
         if has_photo:
             continue
         if not botanical:
@@ -185,10 +206,30 @@ def main():
             "name": name,
             "botanical": botanical,
             "uuid": pt.get("id"),
+            "meta": meta,
         })
 
     if args.limit > 0:
         needs_photo = needs_photo[:args.limit]
+
+    if args.retag:
+        print(f"\n{len(needs_photo)} species need photo_source tagging")
+        if not needs_photo:
+            print("All species already tagged.")
+            return
+        # Known farm-sourced species (Tier 1) — the 4 from verified observation photos
+        farm_sourced = {"Papaya", "Sunn Hemp", "Curry Leaf", "Cape Gooseberry"}
+        tagged = 0
+        for sp in needs_photo:
+            source = "farm_observation" if sp["name"] in farm_sourced else "wikimedia_stock"
+            if args.dry_run:
+                print(f"  [DRY RUN] {sp['name']} → photo_source={source}")
+            else:
+                _tag_photo_source(farmos, sp["uuid"], sp["meta"], source)
+                print(f"  {sp['name']} → photo_source={source}")
+            tagged += 1
+        print(f"\nTagged {tagged} species with photo_source")
+        return
 
     print(f"\n{len(needs_photo)} species need stock photos")
     if not needs_photo:
@@ -246,8 +287,6 @@ def main():
                 target="plant_type",
                 related_entities=[sp["name"]],
             )
-            # Note: the stamp goes into the upload but farmOS image fields
-            # don't have a notes field — the stamp is for our tracking
             farmos.upload_file(
                 entity_type="taxonomy_term/plant_type",
                 entity_id=sp["uuid"],
@@ -256,7 +295,10 @@ def main():
                 binary_data=image_bytes,
                 mime_type="image/jpeg",
             )
-            print(f"  Uploaded to farmOS")
+            # Tag description with photo_source so species_photo_coverage
+            # knows this is Tier 2 (not counted in the metric).
+            _tag_photo_source(farmos, sp["uuid"], sp["meta"], "wikimedia_stock")
+            print(f"  Uploaded to farmOS + tagged photo_source=wikimedia_stock")
             stats["uploaded"] += 1
         except Exception as e:
             print(f"  Upload error: {e}")

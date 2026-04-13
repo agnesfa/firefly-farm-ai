@@ -131,14 +131,25 @@ export const systemHealthTool: Tool = {
     };
 
     const dataDimension = async (allPlants: any[], allTypes: any[]) => {
-      // species_photo_coverage: species with photo / distinct active species
+      // species_photo_coverage: species with TIER 1 (farm-sourced) photo only.
+      // Tier 2 stock photos (wikimedia_stock) don't count — they're display aids.
+      // Photo source tracked in plant_type description metadata (photo_source field).
       const distinctSpecies = new Set(allPlants.map((p: any) => {
         const name = p.attributes?.name ?? '';
         const match = name.match(/^\d{1,2}\s+\w{3}\s+\d{4}\s*-\s*(.+?)\s*-\s*/);
         return match ? match[1].trim() : name;
       }).filter(Boolean));
-      const speciesWithPhoto = allTypes.filter((t: any) => t.relationships?.image?.data != null).length;
-      const photoCoverage = distinctSpecies.size > 0 ? speciesWithPhoto / distinctSpecies.size : 0;
+      let farmSourcedPhotos = 0;
+      for (const t of allTypes) {
+        if (t.relationships?.image?.data == null) continue;
+        const desc = t.attributes?.description;
+        const descText = typeof desc === 'object' ? desc?.value ?? '' : String(desc ?? '');
+        const meta = parsePlantTypeMetadata(descText);
+        const src = meta.photo_source ?? '';
+        // farm_observation = Tier 1. Empty = legacy (pre-batch, all were farm-sourced).
+        if (src === 'farm_observation' || src === '') farmSourcedPhotos++;
+      }
+      const photoCoverage = distinctSpecies.size > 0 ? farmSourcedPhotos / distinctSpecies.size : 0;
 
       // observation_pipeline_age: max days any observation has been pending
       let pipelineAge = 0;

@@ -15,6 +15,7 @@ export interface PlantTypeFields {
   crop_family?: string;
   lifespan_years?: string;
   source?: string;
+  photo_source?: string;  // farm_observation | wikimedia_stock | plantnet_stock
 }
 
 export interface PlantTypeMetadata {
@@ -26,6 +27,7 @@ export interface PlantTypeMetadata {
   lifespan_years?: string;
   lifecycle_years?: string;
   source?: string;
+  photo_source?: string;  // farm_observation | wikimedia_stock | plantnet_stock
 }
 
 /**
@@ -50,6 +52,7 @@ export function buildPlantTypeDescription(fields: PlantTypeFields): string {
   if (fields.crop_family) metadata.push(`**Family:** ${fields.crop_family}`);
   if (fields.lifespan_years) metadata.push(`**Lifespan:** ${fields.lifespan_years} years`);
   if (fields.source) metadata.push(`**Source:** ${fields.source}`);
+  if (fields.photo_source) metadata.push(`**Photo Source:** ${fields.photo_source}`);
 
   if (metadata.length > 0) {
     parts.push('\n\n---\n**Syntropic Agriculture Data:**\n' + metadata.join('\n'));
@@ -84,6 +87,8 @@ export function parsePlantTypeMetadata(descriptionText: string | null | undefine
       metadata.lifespan_years = clean.split(':', 2)[1].trim().replace(' years', '');
     } else if (clean.startsWith('Life Cycle:')) {
       metadata.lifecycle_years = clean.split(':', 2)[1].trim().replace(' years', '');
+    } else if (clean.startsWith('Photo Source:')) {
+      metadata.photo_source = clean.split(':', 2)[1].trim();
     } else if (clean.startsWith('Source:')) {
       metadata.source = clean.split(':', 2)[1].trim();
     }

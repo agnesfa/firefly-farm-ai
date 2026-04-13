@@ -1,7 +1,7 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
 import { getFarmOSClient, getObserveClient } from '../clients/index.js';
-import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto, decodeMediaFile, buildStamp, appendStamp } from '../helpers/index.js';
+import { parseDate, formatPlantAsset, buildAssetName, uploadMediaToLog, updateSpeciesReferencePhoto, decodeMediaFile, buildStamp, appendStamp, parsePlantTypeMetadata, buildPlantTypeDescription } from '../helpers/index.js';
 import { buildBotanicalLookupFromCsv, verifySpeciesPhoto, getPlantnetCallCount, type BotanicalLookup } from '../helpers/plantnet-verify.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -30,6 +30,23 @@ function buildImportNotes(obs: any, extra = ''): string {
     sourceSubmission: obs.submission_id,
   });
   return appendStamp(notes, stamp);
+}
+
+/** Tag a plant_type's description with photo_source after setting a reference photo. */
+async function tagPhotoSource(client: any, species: string, photoSource: string): Promise<void> {
+  try {
+    const uuid = await client.getPlantTypeUuid(species);
+    if (!uuid) return;
+    const allTypes = await client.getAllPlantTypesCached();
+    const term = allTypes.find((t: any) => t.id === uuid);
+    if (!term) return;
+    const desc = term.attributes?.description;
+    const descText = typeof desc === 'object' ? desc?.value ?? '' : String(desc ?? '');
+    const meta = parsePlantTypeMetadata(descText);
+    meta.photo_source = photoSource;
+    const newDesc = buildPlantTypeDescription(meta);
+    await client.updatePlantType(uuid, { description: { value: newDesc, format: 'default' } });
+  } catch { /* non-critical — photo uploaded, tag failed */ }
 }
 
 export const importObservationsTool: Tool = {
@@ -180,6 +197,7 @@ export const importObservationsTool: Tool = {
                 const refId = await updateSpeciesReferencePhoto(client as any, species, verifiedMedia);
                 if (refId) {
                   action.species_reference_photo = true;
+                  await tagPhotoSource(client, species, 'farm_observation');
                   speciesPhotoUpdates.add(species);
                 }
               }
@@ -227,6 +245,7 @@ export const importObservationsTool: Tool = {
                       const refId = await updateSpeciesReferencePhoto(client as any, species, verifiedMedia2);
                       if (refId) {
                         action.species_reference_photo = true;
+                  await tagPhotoSource(client, species, 'farm_observation');
                         speciesPhotoUpdates.add(species);
                       }
                     }
@@ -246,6 +265,7 @@ export const importObservationsTool: Tool = {
                     const refId = await updateSpeciesReferencePhoto(client as any, species, verifiedMedia3);
                     if (refId) {
                       action.species_reference_photo = true;
+                  await tagPhotoSource(client, species, 'farm_observation');
                       speciesPhotoUpdates.add(species);
                     }
                   }

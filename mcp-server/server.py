@@ -1616,6 +1616,19 @@ def _update_species_reference_photo(client, species: str, files: list) -> Option
                 binary_data=binary,
                 mime_type=mime_type,
             )
+            # Tag description with photo_source=farm_observation (Tier 1)
+            try:
+                all_types = client.get_all_plant_types_cached()
+                term = next((t for t in all_types if t.get("id") == uuid), None)
+                if term:
+                    desc = term.get("attributes", {}).get("description", {})
+                    desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc or "")
+                    meta = parse_plant_type_metadata(desc_text)
+                    meta["photo_source"] = "farm_observation"
+                    new_desc = build_plant_type_description(meta)
+                    client.update_plant_type(uuid, {"description": {"value": new_desc, "format": "default"}})
+            except Exception:
+                pass  # non-critical — photo uploaded, tag failed
             return file_id
         except Exception:
             return None
@@ -3438,22 +3451,31 @@ def system_health() -> str:
     def _data_dimension(all_plants, all_types):
         from interaction_stamp import count_stamps_in_logs
 
-        # species_photo_coverage: species with photo / distinct active species
+        # species_photo_coverage: species with TIER 1 (farm-sourced) photo only.
+        # Tier 2 stock photos (wikimedia_stock) don't count — they're display aids.
+        # Photo source tracked in plant_type description metadata (photo_source field).
         formatted_plants = [format_plant_asset(p) for p in all_plants]
         distinct_species = set()
         for p in formatted_plants:
             sp = p.get("species", "")
             if sp:
                 distinct_species.add(sp)
-        species_with_photo = 0
+        farm_sourced_photos = 0
         for t in all_types:
             name = t.get("attributes", {}).get("name", "")
             if name not in distinct_species:
                 continue
             image_rel = t.get("relationships", {}).get("image", {}).get("data")
-            if image_rel:
-                species_with_photo += 1
-        photo_coverage = species_with_photo / len(distinct_species) if distinct_species else 0.0
+            if not image_rel:
+                continue
+            desc = t.get("attributes", {}).get("description", {})
+            desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc or "")
+            meta = parse_plant_type_metadata(desc_text)
+            src = meta.get("photo_source", "")
+            # farm_observation = Tier 1. Empty = legacy (pre-batch, all were farm-sourced).
+            if src in ("farm_observation", ""):
+                farm_sourced_photos += 1
+        photo_coverage = farm_sourced_photos / len(distinct_species) if distinct_species else 0.0
 
         # observation_pipeline_age: max days any observation has been pending
         pipeline_age = 0
