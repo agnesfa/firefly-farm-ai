@@ -111,6 +111,32 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .observe-fab:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .observe-fab-icon { font-size: 16px; }
 
+/* Per-plant observe button */
+.plant-observe-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%; background: #fff8f0;
+  border: 1.5px solid #e67e22; text-decoration: none; font-size: 14px;
+  flex-shrink: 0; margin-left: 6px; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.plant-observe-btn:active { background: #e67e22; transform: scale(0.9); }
+
+/* Identify Plant FAB */
+.identify-fab {
+  position: fixed; bottom: 80px; right: max(24px, calc((100vw - 430px)/2 + 16px));
+  background: #2d5016; color: #fff; width: 48px; height: 48px; border-radius: 50%;
+  text-decoration: none; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex; align-items: center; justify-content: center; z-index: 99;
+  transition: transform 0.15s;
+}
+.identify-fab:active { transform: scale(0.9); }
+
+/* Care tips */
+.care-tips { margin-top: 10px; padding: 10px 12px; background: #fefce8; border: 1px solid #fef08a; border-radius: 8px; }
+.care-tips-title { font-size: 10px; font-weight: 700; color: #854d0e; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.care-tip { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #713f12; line-height: 1.4; }
+.care-icon { flex-shrink: 0; font-size: 13px; }
+
 /* Home button */
 .home-btn {
   position: absolute; top: 14px; right: 14px; z-index: 30;

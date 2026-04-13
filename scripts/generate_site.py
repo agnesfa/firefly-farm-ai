@@ -196,7 +196,47 @@ def render_log_timeline(logs: list) -> str:
     return f'<div class="log-timeline"><div class="log-timeline-title">History</div>{"".join(items)}</div>'
 
 
-def render_plant_card(planting, plant_db):
+def render_care_tips(plant):
+    """Generate practical care tips from function tags and succession stage."""
+    functions = plant.get("functions", [])
+    succession = plant.get("succession", "")
+    tips = []
+
+    fn_set = set(f.lower().replace(" ", "_") for f in functions)
+
+    if "nitrogen_fixer" in fn_set:
+        tips.append(("⚡", "Chop-and-drop: cut and leave as mulch to feed the soil"))
+    if "edible_fruit" in fn_set:
+        tips.append(("🍎", "Produces edible fruit — check for ripe fruit regularly"))
+    if "edible_nut" in fn_set:
+        tips.append(("🥜", "Produces edible nuts — harvest when mature and falling"))
+    if "edible_seed" in fn_set:
+        tips.append(("🌾", "Produces edible seeds — harvest when pods are dry and brown"))
+    if "edible_greens" in fn_set:
+        tips.append(("🥬", "Edible leaves — harvest outer leaves, leave the crown to regrow"))
+    if "edible_root" in fn_set:
+        tips.append(("🥕", "Edible root — harvest when top growth signals maturity"))
+    if "living_mulch" in fn_set:
+        tips.append(("🍃", "Living mulch — do not remove, it protects the soil"))
+    if "biomass_producer" in fn_set and "nitrogen_fixer" not in fn_set:
+        tips.append(("♻️", "Biomass producer — prune regularly and use cuttings as mulch"))
+
+    if succession == "pioneer":
+        tips.append(("🔶", "Pioneer — short-lived by design. Expected to die back as the system matures"))
+    elif succession == "climax":
+        tips.append(("🌲", "Climax species — permanent. Protect from damage and give space to grow"))
+
+    if not tips:
+        return ""
+
+    items = "".join(
+        f'<div class="care-tip"><span class="care-icon">{icon}</span><span>{esc(text)}</span></div>'
+        for icon, text in tips
+    )
+    return f'<div class="care-tips"><div class="care-tips-title">Field Guide</div>{items}</div>'
+
+
+def render_plant_card(planting, plant_db, section_id="", base_url=""):
     """Render a single plant card HTML."""
     species = planting["species"]
     strata = planting["strata"]
@@ -222,6 +262,15 @@ def render_plant_card(planting, plant_db):
         count_html = f'<span class="plant-count" style="background:{st["light"]};color:{st["color"]}">{count}</span>'
     elif count is None:
         count_html = f'<span class="plant-count" style="background:#f0ece4;color:#999">—</span>'
+
+    # Per-plant camera button (observe shortcut)
+    import urllib.parse
+    observe_url = f'{base_url}{section_id}-observe.html?plant={urllib.parse.quote(species)}&camera=1'
+    camera_btn_html = (
+        f'<a href="{observe_url}" class="plant-observe-btn" '
+        f'onclick="event.stopPropagation()" title="Record observation for {esc(species)}">'
+        f'📷</a>'
+    ) if section_id else ""
 
     notes_html = f'<div class="plant-notes">{esc(notes)}</div>' if notes else ""
 
@@ -253,11 +302,13 @@ def render_plant_card(planting, plant_db):
         }
         succession_html = f'<div class="succession-tag" style="background:{sc}18;color:{sc}"><span class="succ-dot" style="background:{sc}"></span>{succession.title()} — {succ_labels.get(succession, "")}</div>'
 
+    # Care tips (expanded view)
+    care_html = render_care_tips(plant)
+
     # Log timeline (expanded view)
     timeline_html = render_log_timeline(logs)
 
-    # Species reference photo — populated by import_observations latest-wins.
-    # Lazy-loaded so collapsed cards don't fetch photos until scrolled to.
+    # Species reference photo
     photo_html = ""
     if photo_url:
         photo_html = (
@@ -276,6 +327,7 @@ def render_plant_card(planting, plant_db):
           <div class="plant-botanical">{esc(botanical)}</div>
           {planted_html}
         </div>
+        {camera_btn_html}
         {count_html}
       </div>
       {notes_html}
@@ -284,18 +336,19 @@ def render_plant_card(planting, plant_db):
         <p class="plant-desc">{esc(desc)}</p>
         <div class="plant-meta">{esc(meta_html)}</div>
         {succession_html}
+        {care_html}
         <div class="plant-tags-expanded">{all_tags_html}</div>
         {timeline_html}
       </div>
     </div>"""
 
 
-def render_strata_group(strata_key, plants, plant_db):
+def render_strata_group(strata_key, plants, plant_db, section_id="", base_url=""):
     """Render a strata group with all its plants."""
     st = STRATA_CONFIG.get(strata_key)
     if not st:
         return ""
-    
+
     alive_count = sum(p.get("count") or 0 for p in plants)
     has_uninventoried = any(p.get("count") is None for p in plants)
     if alive_count > 0:
@@ -304,8 +357,8 @@ def render_strata_group(strata_key, plants, plant_db):
         count_badge = f'<span class="strata-count" style="background:#999">{len(plants)}</span>'
     else:
         count_badge = ""
-    
-    cards = "\n".join(render_plant_card(p, plant_db) for p in plants)
+
+    cards = "\n".join(render_plant_card(p, plant_db, section_id, base_url) for p in plants)
     
     return f"""
     <div class="strata-group">
@@ -412,7 +465,7 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     grad = "linear-gradient(145deg, #1a3a0a 0%, #2d5016 60%, #3d6a20 100%)" if has_trees else "linear-gradient(145deg, #5a8c2a 0%, #7ab33e 60%, #8bb85a 100%)"
     section_type = "🌳 Tree Section" if has_trees else "☀️ Open Cultivation"
     
-    strata_html = "\n".join(render_strata_group(sk, ps, plant_db) for sk, ps in grouped.items())
+    strata_html = "\n".join(render_strata_group(sk, ps, plant_db, section_id, base_url) for sk, ps in grouped.items())
     green_manure_html = render_green_manure_box(green_manure_plants)
     row_bar_html = render_row_bar(row_info, sections_data, section_id, base_url)
     tabs_html = render_section_tabs(row_info, sections_data, section_id, base_url)
@@ -467,6 +520,9 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     <div class="footer-sub">Firefly Corner Farm · Krambach, NSW · Syntropic Agroforestry</div>
   </div>
 
+  <a href="{base_url}{section_id}-observe.html?camera=1" class="identify-fab" title="Identify a plant">
+    <span>🔍</span>
+  </a>
   <a href="{base_url}{section_id}-observe.html" class="observe-fab">
     <span class="observe-fab-icon">📋</span>
     <span>Record Observation</span>
@@ -631,30 +687,44 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 
 
 def render_observe_page(section_id, section, row_info, plant_db, observe_endpoint="", base_url=""):
-    """Render the observation form page for a section."""
+    """Render the observation form page for a section (v2 — camera-first)."""
     has_trees = section.get("has_trees", False)
     grad = "linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)" if has_trees else "linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)"
     section_type = "🌳 Tree Section" if has_trees else "☀️ Open Cultivation"
 
     all_plants = section.get("plants", [])
-    # Include plants with counts OR not-yet-inventoried for the form
     plants_to_show = [p for p in all_plants if p.get("count") is None or (p.get("count") or 0) > 0]
-    # Fill in missing strata from plant_db
     for p in plants_to_show:
         if not p.get("strata") and p["species"] in plant_db:
             p["strata"] = plant_db[p["species"]].get("strata", "low")
     regular_plants = [p for p in plants_to_show if not is_green_manure(p["species"], plant_db)]
 
-    # Build species options for quick mode dropdown
+    # Visual plant picker cards
     species_seen = set()
-    species_options = '<option value="">— Select species —</option>'
+    picker_cards = ""
     for p in regular_plants:
-        if p["species"] not in species_seen:
-            species_seen.add(p["species"])
-            count_display = p.get("count") if p.get("count") is not None else "—"
-            species_options += f'<option value="{esc(p["species"])}">{esc(p["species"])} ({count_display})</option>'
-    # Add Unknown Plant option
-    species_options += '<option value="Unknown">❓ Unknown Plant</option>'
+        if p["species"] in species_seen:
+            continue
+        species_seen.add(p["species"])
+        species = p["species"]
+        count = p.get("count")
+        photo_url = p.get("photo_url", "")
+        st = STRATA_CONFIG.get(p.get("strata", "medium"), STRATA_CONFIG["medium"])
+        count_display = count if count is not None else "—"
+        photo_img = f'<img src="{esc(photo_url)}" alt="" onerror="this.style.display=\'none\'">' if photo_url else ""
+        picker_cards += f"""
+        <div class="plant-pick-card" data-species="{esc(species)}">
+          <div class="pick-photo">{photo_img}</div>
+          <div class="pick-name">{esc(species)}</div>
+          <div class="pick-count" style="color:{st['color']}">{count_display}</div>
+        </div>"""
+    # Unknown plant card
+    picker_cards += """
+        <div class="plant-pick-card" data-species="Unknown">
+          <div class="pick-photo"><span class="pick-unknown-icon">?</span></div>
+          <div class="pick-name">Unknown</div>
+          <div class="pick-count"></div>
+        </div>"""
 
     # Build full inventory rows grouped by strata
     inventory_html = ""
@@ -711,7 +781,6 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
         for p in regular_plants
     ])
 
-    # Build plant types data for "Add New Plant" search (all species from plant_types.csv)
     plant_types_json = json.dumps([
         {"species": name, "strata": info.get("strata", "low"), "botanical": info.get("botanical", "")}
         for name, info in sorted(plant_db.items())
@@ -720,10 +789,6 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
 
     endpoint_js = f'const OBSERVE_ENDPOINT = "{observe_endpoint}";' if observe_endpoint else 'const OBSERVE_ENDPOINT = "";'
 
-    # PlantNet API key — optional. If unset, the "What is this plant?"
-    # button is hidden at runtime. Free tier at https://my.plantnet.org/
-    # (500 requests/day, CORS-enabled so we can call it directly from the
-    # browser). The key is injected at build time as a string literal.
     plantnet_key = os.environ.get("PLANTNET_API_KEY", "").strip()
     plantnet_js = f'const PLANTNET_API_KEY = "{plantnet_key}";'
 
@@ -748,7 +813,7 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
       <h1 class="section-range">{esc(section.get('range', ''))}</h1>
       <span class="section-type-badge">{section_type}</span>
     </div>
-    <div class="obs-subtitle">Recording observation for section {esc(section_id)}</div>
+    <div class="obs-subtitle">Section {esc(section_id)}</div>
   </div>
 
   <!-- Offline queue banner -->
@@ -757,120 +822,146 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
     <button onclick="syncPendingQueue()" class="queue-sync-btn">Sync Now</button>
   </div>
 
-  <!-- Observer info -->
-  <div class="obs-form-section">
-    <div class="obs-field-group">
-      <label class="obs-label" for="observer-name">Your name</label>
-      <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James, WWOOFer name" autocomplete="name">
-    </div>
-    <div class="obs-field-group">
-      <label class="obs-label" for="obs-datetime">Date & time</label>
-      <input type="datetime-local" id="obs-datetime" class="obs-input">
+  <!-- Observer info (sticky) -->
+  <div class="obs-form-section obs-observer-bar">
+    <div class="obs-field-row">
+      <div class="obs-field-group" style="flex:2">
+        <label class="obs-label" for="observer-name">Your name</label>
+        <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James" autocomplete="name">
+      </div>
+      <div class="obs-field-group" style="flex:1">
+        <label class="obs-label" for="obs-datetime">Date</label>
+        <input type="datetime-local" id="obs-datetime" class="obs-input">
+      </div>
     </div>
   </div>
 
-  <!-- Mode toggle -->
-  <div class="mode-toggle">
-    <button class="mode-tab active" data-mode="quick">⚡ Quick Report</button>
-    <button class="mode-tab" data-mode="inventory">📋 Full Inventory</button>
-    <button class="mode-tab" data-mode="comment">💬 Section Note</button>
+  <!-- TWO-TAB MODE TOGGLE -->
+  <div class="mode-toggle-v2">
+    <button class="mode-tab active" data-mode="single">🌱 Single Plant</button>
+    <button class="mode-tab" data-mode="section">📋 Full Section</button>
   </div>
 
-  <!-- QUICK MODE -->
-  <div id="mode-quick" class="obs-mode-panel">
+  <!-- ═══ SINGLE PLANT MODE ═══ -->
+  <div id="mode-single" class="obs-mode-panel">
     <div class="obs-form-section">
-      <div class="obs-field-group">
-        <label class="obs-label" for="quick-species">Plant species</label>
-        <select id="quick-species" class="obs-select">{species_options}</select>
+
+      <!-- Camera Hero -->
+      <div class="camera-hero">
+        <input type="file" accept="image/*" capture="environment" id="camera-hero-input" hidden>
+        <button type="button" id="camera-hero-btn" class="camera-hero-btn">
+          <span class="camera-hero-icon">📷</span>
+          <span class="camera-hero-text">Snap a photo to identify</span>
+        </button>
+        <div id="camera-hero-preview" class="camera-hero-preview" style="display:none"></div>
       </div>
 
-      <div id="quick-plant-info" class="quick-plant-info"></div>
+      <!-- Multi-photo strip for PlantNet ID -->
+      <div id="id-photo-strip" class="id-photo-strip" style="display:none"></div>
+      <button type="button" id="plantnet-add-more" class="plantnet-add-more" style="display:none">
+        <input type="file" accept="image/*" capture="environment" id="plantnet-more-input" hidden>
+        📷 Add another angle
+      </button>
 
-      <div class="obs-field-row">
-        <div class="obs-field-group obs-field-small">
-          <label class="obs-label" for="quick-count">New count</label>
-          <input type="number" id="quick-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+      <!-- PlantNet results -->
+      <div id="plantnet-results" class="plantnet-results" style="display:none"></div>
+
+      <!-- Visual plant picker -->
+      <div id="plant-picker-section" class="plant-picker-section">
+        <div class="picker-label">or select a plant</div>
+        <div class="plant-picker-grid">
+          {picker_cards}
         </div>
-        <div class="obs-field-group obs-field-small">
-          <label class="obs-label" for="quick-condition">Condition</label>
-          <select id="quick-condition" class="obs-select">
-            <option value="alive">Alive ✓</option>
-            <option value="damaged">Damaged ⚠️</option>
-            <option value="dead">Dead ✝</option>
-          </select>
+      </div>
+
+      <!-- Single plant observation form (hidden until plant selected) -->
+      <div id="single-obs-form" class="single-obs-form" style="display:none">
+        <div class="selected-plant-bar">
+          <span id="selected-plant-name" class="selected-plant-name"></span>
+          <span id="selected-plant-count" class="selected-plant-count"></span>
         </div>
+
+        <div class="obs-type-group">
+          <label class="obs-type-radio">
+            <input type="radio" name="obs-type" value="observation" id="obs-type-observation" checked>
+            <span class="obs-type-label">👁 I observed</span>
+          </label>
+          <label class="obs-type-radio">
+            <input type="radio" name="obs-type" value="activity">
+            <span class="obs-type-label">🔧 I did</span>
+          </label>
+          <label class="obs-type-radio">
+            <input type="radio" name="obs-type" value="todo">
+            <span class="obs-type-label">📌 Action needed</span>
+          </label>
+        </div>
+
+        <div class="obs-field-row">
+          <div class="obs-field-group obs-field-small">
+            <label class="obs-label" for="single-count">New count</label>
+            <input type="number" id="single-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+          </div>
+          <div class="obs-field-group obs-field-small">
+            <label class="obs-label" for="single-condition">Condition</label>
+            <select id="single-condition" class="obs-select">
+              <option value="alive">Alive</option>
+              <option value="damaged">Damaged</option>
+              <option value="dead">Dead</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="obs-field-group">
+          <label class="obs-label" for="single-notes">Notes</label>
+          <textarea id="single-notes" class="obs-textarea" rows="2" placeholder="What did you see? (condition, growth, pests...)"></textarea>
+        </div>
+
+        <!-- Additional photos -->
+        <div class="obs-media-area">
+          <label class="obs-media-btn">
+            <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="plant" hidden>
+            <span>📷 Add more photos</span>
+          </label>
+          <div class="obs-photo-previews"></div>
+        </div>
+
+        <button id="single-submit" class="obs-submit-btn">Save Observation</button>
       </div>
 
-      <div class="obs-field-group">
-        <label class="obs-label" for="quick-notes">Notes</label>
-        <input type="text" id="quick-notes" class="obs-input" placeholder="What did you observe?">
-      </div>
-
-      <!-- Photo capture -->
-      <div class="obs-media-area">
-        <label class="obs-media-btn">
-          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
-          <span>📷 Add Photo</span>
-        </label>
-        <div class="obs-photo-previews"></div>
-      </div>
-
-      <div class="obs-field-group">
-        <label class="obs-label" for="section-notes-quick">Section notes (optional)</label>
-        <textarea id="section-notes-quick" class="obs-textarea" rows="2" placeholder="General observations about this section..."></textarea>
-      </div>
-
-      <button id="quick-submit" class="obs-submit-btn">Save Observation</button>
-      <button id="add-plant-btn-quick" class="add-plant-trigger" onclick="showAddPlantPanel()">➕ Add New Plant to Section</button>
+      <button class="add-plant-trigger" onclick="showAddPlantPanel()">+ Add New Plant to Section</button>
     </div>
   </div>
 
-  <!-- FULL INVENTORY MODE -->
-  <div id="mode-inventory" class="obs-mode-panel" style="display:none">
+  <!-- ═══ FULL SECTION MODE ═══ -->
+  <div id="mode-section" class="obs-mode-panel" style="display:none">
     <div class="obs-form-section">
-      <p class="obs-hint">Walk the section and update counts. Only changed plants will be recorded.</p>
 
-      {inventory_html}
-
-      <!-- Photo capture -->
-      <div class="obs-media-area">
-        <label class="obs-media-btn">
-          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
-          <span>📷 Add Section Photo</span>
-        </label>
-        <div class="obs-photo-previews"></div>
-      </div>
-
+      <!-- Section notes at TOP (standalone) -->
       <div class="obs-field-group">
-        <label class="obs-label" for="section-notes-inventory">Section notes</label>
-        <textarea id="section-notes-inventory" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions..."></textarea>
-      </div>
-
-      <button id="inventory-submit" class="obs-submit-btn">Save Full Inventory</button>
-      <button id="add-plant-btn-inv" class="add-plant-trigger" onclick="showAddPlantPanel()">➕ Add New Plant to Section</button>
-    </div>
-  </div>
-
-  <!-- SECTION COMMENT MODE -->
-  <div id="mode-comment" class="obs-mode-panel" style="display:none">
-    <div class="obs-form-section">
-      <p class="obs-hint">Leave a general note about this section — no plant selection needed.</p>
-
-      <div class="obs-field-group">
-        <label class="obs-label" for="comment-notes">Section notes</label>
-        <textarea id="comment-notes" class="obs-textarea" rows="4" placeholder="Overall section health, weed pressure, weather conditions, general observations..."></textarea>
+        <label class="obs-label" for="section-notes">Section notes</label>
+        <textarea id="section-notes" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions, general observations..."></textarea>
       </div>
 
       <!-- Photo capture -->
       <div class="obs-media-area">
         <label class="obs-media-btn">
           <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
-          <span>📷 Add Section Photo</span>
+          <span>📷 Add section photos</span>
         </label>
         <div class="obs-photo-previews"></div>
       </div>
 
-      <button id="comment-submit" class="obs-submit-btn">Save Section Note</button>
+      <!-- Collapsible plant inventory -->
+      <div id="inventory-toggle" class="inventory-toggle">
+        <span class="inv-toggle-arrow">▸</span>
+        <span>Plant inventory ({len(regular_plants)} species)</span>
+      </div>
+      <div id="inventory-panel" style="display:none">
+        {inventory_html}
+      </div>
+
+      <button id="section-submit" class="obs-submit-btn">Save Section Report</button>
+      <button class="add-plant-trigger" onclick="showAddPlantPanel()">+ Add New Plant to Section</button>
     </div>
   </div>
 
@@ -883,18 +974,6 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
     <div class="obs-field-group">
       <input type="text" id="plant-search" class="obs-input" placeholder="Search plant types..." autocomplete="off">
       <div id="plant-search-results" class="plant-search-results"></div>
-    </div>
-    <div class="obs-field-group" id="plantnet-section" style="display:none">
-      <div class="plantnet-actions">
-        <button type="button" id="plantnet-use-attached" class="obs-media-btn plantnet-btn" style="display:none">
-          🪴 Identify attached photo
-        </button>
-        <label class="obs-media-btn plantnet-btn plantnet-btn-secondary" id="plantnet-camera-label">
-          <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
-          <span>📷 Take / choose photo to identify</span>
-        </label>
-      </div>
-      <div id="plantnet-results" class="plantnet-results"></div>
     </div>
     <div id="new-plant-fields" style="display:none">
       <div class="obs-field-row">
@@ -915,8 +994,8 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
         <div class="obs-field-group obs-field-small">
           <label class="obs-label" for="new-plant-condition">Condition</label>
           <select id="new-plant-condition" class="obs-select">
-            <option value="alive">Alive ✓</option>
-            <option value="damaged">Damaged ⚠️</option>
+            <option value="alive">Alive</option>
+            <option value="damaged">Damaged</option>
           </select>
         </div>
       </div>
@@ -961,15 +1040,18 @@ const PLANT_TYPES_DATA = {plant_types_json};
 
 
 def get_observe_css():
-    """Return CSS for observation pages."""
+    """Return CSS for observation pages (v2 — camera-first)."""
     return """
-/* Observation page styles — extends base styles.css */
+/* Observation page styles v2 — camera-first, two-tab */
 
 .obs-subtitle { font-size: 13px; opacity: 0.8; margin-top: 8px; }
 
 /* Queue banner */
 .queue-banner { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #fef3c7; border-bottom: 1px solid #fcd34d; font-size: 13px; color: #92400e; }
 .queue-sync-btn { background: #f59e0b; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+/* Observer bar */
+.obs-observer-bar { background: #f7f6f0; border-bottom: 1px solid #e5e5e0; padding: 12px 16px; }
 
 /* Form sections */
 .obs-form-section { padding: 16px; }
@@ -983,23 +1065,92 @@ def get_observe_css():
 .obs-textarea { resize: vertical; min-height: 48px; }
 .obs-hint { font-size: 13px; color: #9ca3af; margin-bottom: 16px; line-height: 1.5; }
 
-/* Mode toggle */
-.mode-toggle { display: flex; border-bottom: 1px solid #e5e5e0; }
-.mode-tab { flex: 1; padding: 12px; font-size: 13px; font-weight: 600; text-align: center; background: #f7f6f0; border: none; cursor: pointer; color: #9ca3af; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
-.mode-tab.active { background: #fff; color: #e67e22; box-shadow: inset 0 -2px 0 #e67e22; }
+/* ── TWO-TAB MODE TOGGLE (v2, prominent) ── */
+.mode-toggle-v2 { display: flex; gap: 4px; padding: 8px 16px; background: #f0f0ec; }
+.mode-toggle-v2 .mode-tab {
+  flex: 1; padding: 14px 12px; font-size: 15px; font-weight: 700; text-align: center;
+  border: none; border-radius: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s; color: #6b7280; background: #fff;
+}
+.mode-toggle-v2 .mode-tab.active[data-mode="single"] { background: #c17a2f; color: #fff; }
+.mode-toggle-v2 .mode-tab.active[data-mode="section"] { background: #5a7a3a; color: #fff; }
+.mode-toggle-v2 .mode-tab:not(.active):active { background: #eeeddf; }
 
-/* Quick mode plant info */
-.quick-plant-info { padding: 10px 14px; background: #f7f6f0; border-radius: 8px; margin-bottom: 14px; }
-.quick-info-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; }
-.quick-info-label { color: #9ca3af; }
-.quick-info-value { font-weight: 600; }
+/* ── CAMERA HERO ── */
+.camera-hero { margin-bottom: 16px; }
+.camera-hero-btn {
+  width: 100%; padding: 28px 20px; background: linear-gradient(145deg, #2d5016, #4a7c29);
+  border: none; border-radius: 16px; cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; transition: transform 0.1s;
+}
+.camera-hero-btn:active { transform: scale(0.97); }
+.camera-hero-icon { font-size: 40px; }
+.camera-hero-text { color: #fff; font-size: 16px; font-weight: 600; font-family: 'DM Sans', sans-serif; }
+.camera-hero-preview { border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.hero-preview-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; }
 
-/* Full inventory rows */
+/* ── MULTI-PHOTO ID STRIP ── */
+.id-photo-strip { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch; }
+.id-photo-item { position: relative; flex-shrink: 0; width: 80px; }
+.id-photo-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e5e0; }
+.id-photo-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.organ-chips { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
+.organ-chip { padding: 1px 5px; border-radius: 6px; font-size: 9px; font-weight: 600; background: #f0f0ec; color: #6b7280; cursor: pointer; border: 1px solid transparent; }
+.organ-chip.active { background: #2d5016; color: #fff; }
+.plantnet-add-more { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #f7f6f0; border: 1px dashed #d1d5db; border-radius: 8px; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-bottom: 10px; }
+
+/* ── PLANTNET RESULTS ── */
+.plantnet-results { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
+.plantnet-match { display: flex; gap: 10px; padding: 10px 12px; background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 10px; cursor: pointer; align-items: center; }
+.plantnet-match:active { background: #efece0; border-color: #6b9e3c; }
+.plantnet-match img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.pn-no-img { width: 48px; height: 48px; border-radius: 8px; background: #e5e5e0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 20px; flex-shrink: 0; }
+.plantnet-match-text { flex: 1; min-width: 0; }
+.plantnet-species { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.plantnet-botanical { font-size: 11px; font-style: italic; color: #6b7280; }
+.plantnet-confidence { font-size: 13px; font-weight: 700; color: #2d5016; flex-shrink: 0; }
+.plantnet-status { font-size: 12px; color: #6b7280; padding: 8px 10px; background: #f7f6f0; border-radius: 8px; }
+.pn-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-top: 2px; }
+.pn-badge-section { background: #d1fae5; color: #065f46; }
+.pn-badge-farm { background: #dbeafe; color: #1e40af; }
+.pn-badge-unknown { background: #f3f4f6; color: #6b7280; }
+
+/* ── VISUAL PLANT PICKER ── */
+.plant-picker-section { margin-bottom: 16px; }
+.picker-label { font-size: 12px; color: #9ca3af; text-align: center; margin-bottom: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.plant-picker-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.plant-pick-card {
+  width: 90px; padding: 8px 4px; background: #fff; border: 2px solid #e5e5e0; border-radius: 10px;
+  cursor: pointer; text-align: center; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.plant-pick-card:active, .plant-pick-card.selected { border-color: #e67e22; background: #fff8f0; }
+.pick-photo { width: 48px; height: 48px; border-radius: 8px; overflow: hidden; background: #f5f0e8; display: flex; align-items: center; justify-content: center; }
+.pick-photo img { width: 100%; height: 100%; object-fit: cover; }
+.pick-unknown-icon { font-size: 24px; color: #999; }
+.pick-name { font-size: 11px; font-weight: 600; color: #1a1a1a; line-height: 1.2; word-break: break-word; }
+.pick-count { font-size: 10px; font-weight: 700; }
+
+/* ── SINGLE PLANT OBSERVATION FORM ── */
+.single-obs-form { border-top: 2px solid #e67e22; padding-top: 16px; margin-top: 12px; }
+.selected-plant-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #fff8f0; border-radius: 10px; margin-bottom: 14px; border: 1px solid #f5dcc0; }
+.selected-plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; font-weight: 700; color: #1a1a1a; }
+.selected-plant-count { font-size: 13px; color: #6b7280; }
+
+/* Observation type radios */
+.obs-type-group { display: flex; gap: 6px; margin-bottom: 14px; }
+.obs-type-radio { flex: 1; }
+.obs-type-radio input { display: none; }
+.obs-type-label {
+  display: block; text-align: center; padding: 10px 6px; border: 2px solid #e5e5e0; border-radius: 10px;
+  font-size: 12px; font-weight: 600; color: #6b7280; cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.obs-type-radio input:checked + .obs-type-label { border-color: #e67e22; background: #fff8f0; color: #c17a2f; }
+
+/* ── FULL INVENTORY ROWS ── */
 .inv-strata-group { margin-bottom: 2px; }
 .inv-strata-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; }
 .inv-strata-name { text-transform: uppercase; letter-spacing: 0.04em; }
 .inv-strata-count { margin-left: auto; font-size: 11px; color: #9ca3af; }
-
 .inv-plant-row { padding: 10px 14px; background: #fff; border-bottom: 1px solid #f0f0ec; }
 .inv-plant-info { margin-bottom: 6px; }
 .inv-plant-name { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 600; color: #1a1a1a; }
@@ -1016,6 +1167,10 @@ def get_observe_css():
 .inv-note-input { width: 100%; padding: 6px 10px; border: 1px solid #f0f0ec; border-radius: 6px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: #555; }
 .inv-note-input:focus { border-color: #e67e22; outline: none; }
 
+/* Inventory toggle */
+.inventory-toggle { display: flex; align-items: center; gap: 8px; padding: 12px 0; cursor: pointer; font-size: 14px; font-weight: 600; color: #4a7c29; }
+.inv-toggle-arrow { font-size: 14px; transition: transform 0.2s; }
+
 /* Media capture */
 .obs-media-area { margin-bottom: 14px; }
 .obs-media-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: #f7f6f0; border: 1px dashed #d1d5db; border-radius: 8px; font-size: 13px; font-weight: 500; color: #555; cursor: pointer; font-family: 'DM Sans', sans-serif; }
@@ -1026,7 +1181,7 @@ def get_observe_css():
 .obs-photo-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
 /* Submit button */
-.obs-submit-btn { width: 100%; padding: 14px; background: #e67e22; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.obs-submit-btn { width: 100%; padding: 14px; background: #e67e22; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; margin-top: 4px; }
 .obs-submit-btn:active { background: #d35400; }
 .obs-submit-btn:disabled { background: #d1d5db; cursor: not-allowed; }
 
@@ -1042,18 +1197,6 @@ def get_observe_css():
 .add-plant-trigger:active { background: #eeeddf; border-color: #e67e22; color: #e67e22; }
 .add-plant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .add-plant-close-btn { background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; padding: 4px 8px; }
-.plantnet-actions { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
-.plantnet-btn { background: #2d5016; color: #fff; }
-.plantnet-btn-secondary { background: #f7f6f0; color: #2d5016; border: 1px solid #2d5016; }
-.plantnet-results { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
-.plantnet-match { display: flex; gap: 10px; padding: 8px 10px; background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 8px; cursor: pointer; align-items: center; }
-.plantnet-match:hover { background: #efece0; border-color: #6b9e3c; }
-.plantnet-match img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
-.plantnet-match-text { flex: 1; min-width: 0; }
-.plantnet-species { font-size: 13px; font-weight: 600; color: #1a1a1a; }
-.plantnet-botanical { font-size: 11px; font-style: italic; color: #6b7280; }
-.plantnet-confidence { font-size: 11px; font-weight: 700; color: #2d5016; }
-.plantnet-status { font-size: 12px; color: #6b7280; padding: 6px 10px; }
 .plant-search-results { max-height: 200px; overflow-y: auto; border: 1px solid #e5e5e0; border-radius: 8px; margin-top: 4px; display: none; }
 .plant-search-result { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f0f0ec; font-size: 13px; }
 .plant-search-result:hover { background: #f7f6f0; }

@@ -19,7 +19,7 @@
       <h1 class="section-range">44–53</h1>
       <span class="section-type-badge">🌳 Tree Section</span>
     </div>
-    <div class="obs-subtitle">Recording observation for section P2R5.44-53</div>
+    <div class="obs-subtitle">Section P2R5.44-53</div>
   </div>
 
   <!-- Offline queue banner -->
@@ -28,80 +28,177 @@
     <button onclick="syncPendingQueue()" class="queue-sync-btn">Sync Now</button>
   </div>
 
-  <!-- Observer info -->
-  <div class="obs-form-section">
-    <div class="obs-field-group">
-      <label class="obs-label" for="observer-name">Your name</label>
-      <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James, WWOOFer name" autocomplete="name">
-    </div>
-    <div class="obs-field-group">
-      <label class="obs-label" for="obs-datetime">Date & time</label>
-      <input type="datetime-local" id="obs-datetime" class="obs-input">
+  <!-- Observer info (sticky) -->
+  <div class="obs-form-section obs-observer-bar">
+    <div class="obs-field-row">
+      <div class="obs-field-group" style="flex:2">
+        <label class="obs-label" for="observer-name">Your name</label>
+        <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James" autocomplete="name">
+      </div>
+      <div class="obs-field-group" style="flex:1">
+        <label class="obs-label" for="obs-datetime">Date</label>
+        <input type="datetime-local" id="obs-datetime" class="obs-input">
+      </div>
     </div>
   </div>
 
-  <!-- Mode toggle -->
-  <div class="mode-toggle">
-    <button class="mode-tab active" data-mode="quick">⚡ Quick Report</button>
-    <button class="mode-tab" data-mode="inventory">📋 Full Inventory</button>
-    <button class="mode-tab" data-mode="comment">💬 Section Note</button>
+  <!-- TWO-TAB MODE TOGGLE -->
+  <div class="mode-toggle-v2">
+    <button class="mode-tab active" data-mode="single">🌱 Single Plant</button>
+    <button class="mode-tab" data-mode="section">📋 Full Section</button>
   </div>
 
-  <!-- QUICK MODE -->
-  <div id="mode-quick" class="obs-mode-panel">
+  <!-- ═══ SINGLE PLANT MODE ═══ -->
+  <div id="mode-single" class="obs-mode-panel">
     <div class="obs-form-section">
-      <div class="obs-field-group">
-        <label class="obs-label" for="quick-species">Plant species</label>
-        <select id="quick-species" class="obs-select"><option value="">— Select species —</option><option value="Papaya">Papaya (2)</option><option value="Tallowood (Gum)">Tallowood (Gum) (1)</option><option value="Jacaranda">Jacaranda (4)</option><option value="Pigeon Pea">Pigeon Pea (1)</option><option value="Basil - Perennial (Thai)">Basil - Perennial (Thai) (5)</option><option value="Pumpkin (Generic)">Pumpkin (Generic) (1)</option><option value="Unknown">❓ Unknown Plant</option></select>
+
+      <!-- Camera Hero -->
+      <div class="camera-hero">
+        <input type="file" accept="image/*" capture="environment" id="camera-hero-input" hidden>
+        <button type="button" id="camera-hero-btn" class="camera-hero-btn">
+          <span class="camera-hero-icon">📷</span>
+          <span class="camera-hero-text">Snap a photo to identify</span>
+        </button>
+        <div id="camera-hero-preview" class="camera-hero-preview" style="display:none"></div>
       </div>
 
-      <div id="quick-plant-info" class="quick-plant-info"></div>
+      <!-- Multi-photo strip for PlantNet ID -->
+      <div id="id-photo-strip" class="id-photo-strip" style="display:none"></div>
+      <button type="button" id="plantnet-add-more" class="plantnet-add-more" style="display:none">
+        <input type="file" accept="image/*" capture="environment" id="plantnet-more-input" hidden>
+        📷 Add another angle
+      </button>
 
-      <div class="obs-field-row">
-        <div class="obs-field-group obs-field-small">
-          <label class="obs-label" for="quick-count">New count</label>
-          <input type="number" id="quick-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+      <!-- PlantNet results -->
+      <div id="plantnet-results" class="plantnet-results" style="display:none"></div>
+
+      <!-- Visual plant picker -->
+      <div id="plant-picker-section" class="plant-picker-section">
+        <div class="picker-label">or select a plant</div>
+        <div class="plant-picker-grid">
+          
+        <div class="plant-pick-card" data-species="Papaya">
+          <div class="pick-photo"><img src="photos/papaya.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Papaya</div>
+          <div class="pick-count" style="color:#4a7c29">2</div>
         </div>
-        <div class="obs-field-group obs-field-small">
-          <label class="obs-label" for="quick-condition">Condition</label>
-          <select id="quick-condition" class="obs-select">
-            <option value="alive">Alive ✓</option>
-            <option value="damaged">Damaged ⚠️</option>
-            <option value="dead">Dead ✝</option>
-          </select>
+        <div class="plant-pick-card" data-species="Tallowood (Gum)">
+          <div class="pick-photo"><img src="photos/tallowood-gum.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Tallowood (Gum)</div>
+          <div class="pick-count" style="color:#2d5016">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Jacaranda">
+          <div class="pick-photo"><img src="photos/jacaranda.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Jacaranda</div>
+          <div class="pick-count" style="color:#6b9e3c">4</div>
+        </div>
+        <div class="plant-pick-card" data-species="Pigeon Pea">
+          <div class="pick-photo"><img src="photos/pigeon-pea.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Pigeon Pea</div>
+          <div class="pick-count" style="color:#4a7c29">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Basil - Perennial (Thai)">
+          <div class="pick-photo"><img src="photos/basil-perennial-thai.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Basil - Perennial (Thai)</div>
+          <div class="pick-count" style="color:#6b9e3c">5</div>
+        </div>
+        <div class="plant-pick-card" data-species="Pumpkin (Generic)">
+          <div class="pick-photo"></div>
+          <div class="pick-name">Pumpkin (Generic)</div>
+          <div class="pick-count" style="color:#8bb85a">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Unknown">
+          <div class="pick-photo"><span class="pick-unknown-icon">?</span></div>
+          <div class="pick-name">Unknown</div>
+          <div class="pick-count"></div>
+        </div>
         </div>
       </div>
 
+      <!-- Single plant observation form (hidden until plant selected) -->
+      <div id="single-obs-form" class="single-obs-form" style="display:none">
+        <div class="selected-plant-bar">
+          <span id="selected-plant-name" class="selected-plant-name"></span>
+          <span id="selected-plant-count" class="selected-plant-count"></span>
+        </div>
+
+        <div class="obs-type-group">
+          <label class="obs-type-radio">
+            <input type="radio" name="obs-type" value="observation" id="obs-type-observation" checked>
+            <span class="obs-type-label">👁 I observed</span>
+          </label>
+          <label class="obs-type-radio">
+            <input type="radio" name="obs-type" value="activity">
+            <span class="obs-type-label">🔧 I did</span>
+          </label>
+          <label class="obs-type-radio">
+            <input type="radio" name="obs-type" value="todo">
+            <span class="obs-type-label">📌 Action needed</span>
+          </label>
+        </div>
+
+        <div class="obs-field-row">
+          <div class="obs-field-group obs-field-small">
+            <label class="obs-label" for="single-count">New count</label>
+            <input type="number" id="single-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+          </div>
+          <div class="obs-field-group obs-field-small">
+            <label class="obs-label" for="single-condition">Condition</label>
+            <select id="single-condition" class="obs-select">
+              <option value="alive">Alive</option>
+              <option value="damaged">Damaged</option>
+              <option value="dead">Dead</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="obs-field-group">
+          <label class="obs-label" for="single-notes">Notes</label>
+          <textarea id="single-notes" class="obs-textarea" rows="2" placeholder="What did you see? (condition, growth, pests...)"></textarea>
+        </div>
+
+        <!-- Additional photos -->
+        <div class="obs-media-area">
+          <label class="obs-media-btn">
+            <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="plant" hidden>
+            <span>📷 Add more photos</span>
+          </label>
+          <div class="obs-photo-previews"></div>
+        </div>
+
+        <button id="single-submit" class="obs-submit-btn">Save Observation</button>
+      </div>
+
+      <button class="add-plant-trigger" onclick="showAddPlantPanel()">+ Add New Plant to Section</button>
+    </div>
+  </div>
+
+  <!-- ═══ FULL SECTION MODE ═══ -->
+  <div id="mode-section" class="obs-mode-panel" style="display:none">
+    <div class="obs-form-section">
+
+      <!-- Section notes at TOP (standalone) -->
       <div class="obs-field-group">
-        <label class="obs-label" for="quick-notes">Notes</label>
-        <input type="text" id="quick-notes" class="obs-input" placeholder="What did you observe?">
+        <label class="obs-label" for="section-notes">Section notes</label>
+        <textarea id="section-notes" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions, general observations..."></textarea>
       </div>
 
       <!-- Photo capture -->
       <div class="obs-media-area">
         <label class="obs-media-btn">
           <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
-          <span>📷 Add Photo</span>
+          <span>📷 Add section photos</span>
         </label>
         <div class="obs-photo-previews"></div>
       </div>
 
-      <div class="obs-field-group">
-        <label class="obs-label" for="section-notes-quick">Section notes (optional)</label>
-        <textarea id="section-notes-quick" class="obs-textarea" rows="2" placeholder="General observations about this section..."></textarea>
+      <!-- Collapsible plant inventory -->
+      <div id="inventory-toggle" class="inventory-toggle">
+        <span class="inv-toggle-arrow">▸</span>
+        <span>Plant inventory (6 species)</span>
       </div>
-
-      <button id="quick-submit" class="obs-submit-btn">Save Observation</button>
-      <button id="add-plant-btn-quick" class="add-plant-trigger" onclick="showAddPlantPanel()">➕ Add New Plant to Section</button>
-    </div>
-  </div>
-
-  <!-- FULL INVENTORY MODE -->
-  <div id="mode-inventory" class="obs-mode-panel" style="display:none">
-    <div class="obs-form-section">
-      <p class="obs-hint">Walk the section and update counts. Only changed plants will be recorded.</p>
-
-      
+      <div id="inventory-panel" style="display:none">
+        
         <div class="inv-strata-group">
           <div class="inv-strata-header" style="background:#e8f0e0;border-left:3px solid #2d5016">
             <span>🌳</span>
@@ -272,46 +369,10 @@
               <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Pumpkin (Generic)">
             </div>
         </div>
-
-      <!-- Photo capture -->
-      <div class="obs-media-area">
-        <label class="obs-media-btn">
-          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
-          <span>📷 Add Section Photo</span>
-        </label>
-        <div class="obs-photo-previews"></div>
       </div>
 
-      <div class="obs-field-group">
-        <label class="obs-label" for="section-notes-inventory">Section notes</label>
-        <textarea id="section-notes-inventory" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions..."></textarea>
-      </div>
-
-      <button id="inventory-submit" class="obs-submit-btn">Save Full Inventory</button>
-      <button id="add-plant-btn-inv" class="add-plant-trigger" onclick="showAddPlantPanel()">➕ Add New Plant to Section</button>
-    </div>
-  </div>
-
-  <!-- SECTION COMMENT MODE -->
-  <div id="mode-comment" class="obs-mode-panel" style="display:none">
-    <div class="obs-form-section">
-      <p class="obs-hint">Leave a general note about this section — no plant selection needed.</p>
-
-      <div class="obs-field-group">
-        <label class="obs-label" for="comment-notes">Section notes</label>
-        <textarea id="comment-notes" class="obs-textarea" rows="4" placeholder="Overall section health, weed pressure, weather conditions, general observations..."></textarea>
-      </div>
-
-      <!-- Photo capture -->
-      <div class="obs-media-area">
-        <label class="obs-media-btn">
-          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
-          <span>📷 Add Section Photo</span>
-        </label>
-        <div class="obs-photo-previews"></div>
-      </div>
-
-      <button id="comment-submit" class="obs-submit-btn">Save Section Note</button>
+      <button id="section-submit" class="obs-submit-btn">Save Section Report</button>
+      <button class="add-plant-trigger" onclick="showAddPlantPanel()">+ Add New Plant to Section</button>
     </div>
   </div>
 
@@ -324,18 +385,6 @@
     <div class="obs-field-group">
       <input type="text" id="plant-search" class="obs-input" placeholder="Search plant types..." autocomplete="off">
       <div id="plant-search-results" class="plant-search-results"></div>
-    </div>
-    <div class="obs-field-group" id="plantnet-section" style="display:none">
-      <div class="plantnet-actions">
-        <button type="button" id="plantnet-use-attached" class="obs-media-btn plantnet-btn" style="display:none">
-          🪴 Identify attached photo
-        </button>
-        <label class="obs-media-btn plantnet-btn plantnet-btn-secondary" id="plantnet-camera-label">
-          <input type="file" accept="image/*" capture="environment" id="plantnet-photo-input" hidden>
-          <span>📷 Take / choose photo to identify</span>
-        </label>
-      </div>
-      <div id="plantnet-results" class="plantnet-results"></div>
     </div>
     <div id="new-plant-fields" style="display:none">
       <div class="obs-field-row">
@@ -356,8 +405,8 @@
         <div class="obs-field-group obs-field-small">
           <label class="obs-label" for="new-plant-condition">Condition</label>
           <select id="new-plant-condition" class="obs-select">
-            <option value="alive">Alive ✓</option>
-            <option value="damaged">Damaged ⚠️</option>
+            <option value="alive">Alive</option>
+            <option value="damaged">Damaged</option>
           </select>
         </div>
       </div>

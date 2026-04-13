@@ -1,13 +1,10 @@
 /**
- * Firefly Corner Farm — Field Observation Page Logic
+ * Firefly Corner Farm — Field Observation Page Logic (v2)
  *
- * Vanilla JS — no dependencies. Handles:
- * - Observer name persistence (localStorage)
- * - Quick observation and full inventory modes
- * - Form data collection and submission to Google Apps Script
- * - Status feedback (success/error/offline)
- * - Photo capture with client-side compression (Phase B)
- * - Offline queue with IndexedDB (Phase B)
+ * Camera-first, photo-driven observation flow.
+ * Two modes: Single Plant (photo → identify → record) and Full Section.
+ *
+ * Vanilla JS — no dependencies.
  */
 
 // ─── INITIALIZATION ──────────────────────────────────────────
@@ -20,11 +17,7 @@ function initObservePage() {
   // Restore observer name from localStorage
   var savedName = localStorage.getItem("firefly_observer_name") || "";
   var nameInput = document.getElementById("observer-name");
-  if (nameInput && savedName) {
-    nameInput.value = savedName;
-  }
-
-  // Save name on change
+  if (nameInput && savedName) nameInput.value = savedName;
   if (nameInput) {
     nameInput.addEventListener("change", function () {
       localStorage.setItem("firefly_observer_name", this.value.trim());
@@ -35,69 +28,73 @@ function initObservePage() {
   var dtInput = document.getElementById("obs-datetime");
   if (dtInput) {
     var now = new Date();
-    // Format as local datetime-local value (YYYY-MM-DDTHH:MM)
     var offset = now.getTimezoneOffset();
     var local = new Date(now.getTime() - offset * 60000);
     dtInput.value = local.toISOString().slice(0, 16);
   }
 
-  // Mode toggle
-  var modeToggle = document.querySelectorAll(".mode-tab");
-  modeToggle.forEach(function (tab) {
+  // Mode toggle (2 tabs)
+  document.querySelectorAll(".mode-tab").forEach(function (tab) {
     tab.addEventListener("click", function () {
       switchMode(this.dataset.mode);
     });
   });
 
-  // Quick mode: species selector
-  var speciesSelect = document.getElementById("quick-species");
-  if (speciesSelect) {
-    speciesSelect.addEventListener("change", function () {
-      updateQuickPlantInfo(this.value);
+  // Camera hero button
+  var cameraHero = document.getElementById("camera-hero-btn");
+  if (cameraHero) {
+    cameraHero.addEventListener("click", function () {
+      var input = document.getElementById("camera-hero-input");
+      if (input) input.click();
     });
   }
+  var cameraInput = document.getElementById("camera-hero-input");
+  if (cameraInput) {
+    cameraInput.addEventListener("change", function () {
+      handleCameraHeroCapture(this);
+    });
+  }
+
+  // Visual plant picker
+  document.querySelectorAll(".plant-pick-card").forEach(function (card) {
+    card.addEventListener("click", function () {
+      selectPlantFromPicker(this.dataset.species);
+    });
+  });
+
+  // Observation type radios
+  document.querySelectorAll('input[name="obs-type"]').forEach(function (r) {
+    r.addEventListener("change", updateObsTypeUI);
+  });
 
   // Submit buttons
-  var quickSubmit = document.getElementById("quick-submit");
-  if (quickSubmit) {
-    quickSubmit.addEventListener("click", function (e) {
+  var singleSubmit = document.getElementById("single-submit");
+  if (singleSubmit) {
+    singleSubmit.addEventListener("click", function (e) {
       e.preventDefault();
-      submitQuickObservation();
+      submitSinglePlantObservation();
     });
   }
 
-  var inventorySubmit = document.getElementById("inventory-submit");
-  if (inventorySubmit) {
-    inventorySubmit.addEventListener("click", function (e) {
+  var sectionSubmit = document.getElementById("section-submit");
+  if (sectionSubmit) {
+    sectionSubmit.addEventListener("click", function (e) {
       e.preventDefault();
-      submitInventoryObservation();
-    });
-  }
-
-  // Section comment submit
-  var commentSubmit = document.getElementById("comment-submit");
-  if (commentSubmit) {
-    commentSubmit.addEventListener("click", function (e) {
-      e.preventDefault();
-      submitSectionComment();
+      submitSectionReport();
     });
   }
 
   // Add New Plant panel
   var plantCloseBtn = document.getElementById("add-plant-close");
   if (plantCloseBtn) {
-    plantCloseBtn.addEventListener("click", function () {
-      hideAddPlantPanel();
-    });
+    plantCloseBtn.addEventListener("click", hideAddPlantPanel);
   }
-
   var plantSearch = document.getElementById("plant-search");
   if (plantSearch) {
     plantSearch.addEventListener("input", function () {
       filterPlantTypes(this.value);
     });
   }
-
   var newPlantSubmit = document.getElementById("new-plant-submit");
   if (newPlantSubmit) {
     newPlantSubmit.addEventListener("click", function (e) {
@@ -106,142 +103,511 @@ function initObservePage() {
     });
   }
 
-  // Photo capture handlers
+  // Photo capture for observation form (additional photos)
   initPhotoCapture();
 
-  // PlantNet "What is this plant?" identification
-  initPlantNetIdentify();
+  // Multi-photo PlantNet ID
+  initMultiPhotoPlantNet();
 
-  // Show quick mode by default
-  switchMode("quick");
+  // Inventory toggle
+  var invToggle = document.getElementById("inventory-toggle");
+  if (invToggle) {
+    invToggle.addEventListener("click", function () {
+      var panel = document.getElementById("inventory-panel");
+      if (panel) {
+        var open = panel.style.display !== "none";
+        panel.style.display = open ? "none" : "block";
+        this.querySelector(".inv-toggle-arrow").textContent = open ? "▸" : "▾";
+      }
+    });
+  }
+
+  // Show single plant mode by default
+  switchMode("single");
+
+  // Handle URL parameters
+  handleUrlParams();
+}
+
+// ─── URL PARAMETER HANDLING ──────────────────────────────────
+
+function handleUrlParams() {
+  var params = new URLSearchParams(window.location.search);
+  var plantParam = params.get("plant");
+  var cameraParam = params.get("camera");
+
+  if (plantParam) {
+    // Auto-select the plant from picker
+    selectPlantFromPicker(plantParam);
+  }
+
+  if (cameraParam === "1") {
+    // Auto-open camera
+    setTimeout(function () {
+      var input = document.getElementById("camera-hero-input");
+      if (input) input.click();
+    }, 300);
+  }
 }
 
 // ─── MODE SWITCHING ──────────────────────────────────────────
 
 function switchMode(mode) {
-  var quickPanel = document.getElementById("mode-quick");
-  var inventoryPanel = document.getElementById("mode-inventory");
-  var commentPanel = document.getElementById("mode-comment");
+  var singlePanel = document.getElementById("mode-single");
+  var sectionPanel = document.getElementById("mode-section");
   var tabs = document.querySelectorAll(".mode-tab");
 
   tabs.forEach(function (tab) {
     tab.classList.toggle("active", tab.dataset.mode === mode);
   });
 
-  if (quickPanel) quickPanel.style.display = mode === "quick" ? "block" : "none";
-  if (inventoryPanel) inventoryPanel.style.display = mode === "inventory" ? "block" : "none";
-  if (commentPanel) commentPanel.style.display = mode === "comment" ? "block" : "none";
-
-  // Hide add-plant panel when switching modes
-  hideAddPlantPanel();
+  if (singlePanel) singlePanel.style.display = mode === "single" ? "block" : "none";
+  if (sectionPanel) sectionPanel.style.display = mode === "section" ? "block" : "none";
 }
 
-// ─── QUICK OBSERVATION ──────────────────────────────────────
+// ─── CAMERA HERO FLOW ────────────────────────────────────────
 
-function updateQuickPlantInfo(species) {
-  var infoDiv = document.getElementById("quick-plant-info");
-  if (!infoDiv || !species) {
-    if (infoDiv) infoDiv.innerHTML = "";
-    return;
+function handleCameraHeroCapture(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+
+  // Show photo in hero area as preview
+  compressImage(file, 1200, 0.7, function (fullDataUrl) {
+    // Store full-res for observation attachment
+    var heroPreview = document.getElementById("camera-hero-preview");
+    if (heroPreview) {
+      heroPreview.innerHTML =
+        '<img src="' + fullDataUrl + '" alt="Captured photo" class="hero-preview-img">';
+      heroPreview.dataset.base64 = fullDataUrl;
+      heroPreview.style.display = "block";
+    }
+
+    // Hide camera button, show preview area
+    var heroBtn = document.getElementById("camera-hero-btn");
+    if (heroBtn) heroBtn.style.display = "none";
+
+    // Add to multi-photo strip for PlantNet
+    addPhotoToIdStrip(fullDataUrl, "auto");
+
+    // Auto-run PlantNet identification
+    if (typeof PLANTNET_API_KEY !== "undefined" && PLANTNET_API_KEY) {
+      runPlantNetIdentification();
+    } else {
+      // No PlantNet — show plant picker directly
+      showPlantPickerAfterPhoto();
+    }
+  });
+
+  input.value = "";
+}
+
+function showPlantPickerAfterPhoto() {
+  var picker = document.getElementById("plant-picker-section");
+  if (picker) picker.style.display = "block";
+}
+
+// ─── MULTI-PHOTO PLANTNET ────────────────────────────────────
+
+var plantnetPhotos = []; // [{blob, dataUrl, organ}]
+
+function initMultiPhotoPlantNet() {
+  var addMoreBtn = document.getElementById("plantnet-add-more");
+  if (addMoreBtn) {
+    addMoreBtn.addEventListener("click", function () {
+      var input = document.getElementById("plantnet-more-input");
+      if (input) input.click();
+    });
   }
 
-  // Handle Unknown Plant selection
-  if (species === "Unknown") {
-    infoDiv.innerHTML =
-      '<div class="quick-info-row">' +
-      '<span class="quick-info-label">Unknown plant</span> ' +
-      '<span class="quick-info-value">Describe in notes + add photo</span>' +
-      "</div>";
-    return;
+  var moreInput = document.getElementById("plantnet-more-input");
+  if (moreInput) {
+    moreInput.addEventListener("change", function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      compressImage(file, 1200, 0.7, function (dataUrl) {
+        addPhotoToIdStrip(dataUrl, "auto");
+        runPlantNetIdentification();
+      });
+      this.value = "";
+    });
   }
 
-  // Find plant data from embedded SECTION_DATA
-  var plant = null;
-  if (typeof SECTION_DATA !== "undefined" && SECTION_DATA.plants) {
-    for (var i = 0; i < SECTION_DATA.plants.length; i++) {
-      if (SECTION_DATA.plants[i].species === species) {
-        plant = SECTION_DATA.plants[i];
-        break;
+  // Organ chip selection
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("organ-chip")) {
+      var strip = e.target.closest(".id-photo-item");
+      if (!strip) return;
+      var idx = parseInt(strip.dataset.index, 10);
+      var organ = e.target.dataset.organ;
+      // Toggle active
+      strip.querySelectorAll(".organ-chip").forEach(function (c) {
+        c.classList.toggle("active", c.dataset.organ === organ);
+      });
+      if (plantnetPhotos[idx]) {
+        plantnetPhotos[idx].organ = organ;
+        // Re-run identification with updated organs
+        runPlantNetIdentification();
       }
     }
+  });
+}
+
+function addPhotoToIdStrip(dataUrl, organ) {
+  if (plantnetPhotos.length >= 5) return;
+
+  var blob = dataUrlToBlob(dataUrl);
+  var idx = plantnetPhotos.length;
+  plantnetPhotos.push({ blob: blob, dataUrl: dataUrl, organ: organ });
+
+  var strip = document.getElementById("id-photo-strip");
+  if (!strip) return;
+  strip.style.display = "flex";
+
+  var item = document.createElement("div");
+  item.className = "id-photo-item";
+  item.dataset.index = idx;
+  item.innerHTML =
+    '<img src="' + dataUrl + '" alt="Photo ' + (idx + 1) + '">' +
+    '<button class="id-photo-remove" onclick="removeIdPhoto(' + idx + ')">✕</button>' +
+    '<div class="organ-chips">' +
+    '<span class="organ-chip' + (organ === "auto" ? " active" : "") + '" data-organ="auto">Auto</span>' +
+    '<span class="organ-chip' + (organ === "leaf" ? " active" : "") + '" data-organ="leaf">Leaf</span>' +
+    '<span class="organ-chip' + (organ === "flower" ? " active" : "") + '" data-organ="flower">Flower</span>' +
+    '<span class="organ-chip' + (organ === "fruit" ? " active" : "") + '" data-organ="fruit">Fruit</span>' +
+    '<span class="organ-chip' + (organ === "bark" ? " active" : "") + '" data-organ="bark">Bark</span>' +
+    '</div>';
+  strip.appendChild(item);
+
+  // Show/hide "add more" button
+  var addMore = document.getElementById("plantnet-add-more");
+  if (addMore) {
+    addMore.style.display = plantnetPhotos.length < 5 ? "inline-flex" : "none";
+    addMore.textContent = "📷 Add another angle (" + plantnetPhotos.length + "/5)";
+  }
+}
+
+function removeIdPhoto(idx) {
+  plantnetPhotos.splice(idx, 1);
+  rebuildIdStrip();
+  if (plantnetPhotos.length > 0) {
+    runPlantNetIdentification();
+  } else {
+    // Reset to camera hero
+    var heroBtn = document.getElementById("camera-hero-btn");
+    var heroPreview = document.getElementById("camera-hero-preview");
+    if (heroBtn) heroBtn.style.display = "";
+    if (heroPreview) { heroPreview.style.display = "none"; heroPreview.innerHTML = ""; }
+    var results = document.getElementById("plantnet-results");
+    if (results) results.innerHTML = "";
+    var strip = document.getElementById("id-photo-strip");
+    if (strip) strip.style.display = "none";
+    var addMore = document.getElementById("plantnet-add-more");
+    if (addMore) addMore.style.display = "none";
+  }
+}
+
+function rebuildIdStrip() {
+  var strip = document.getElementById("id-photo-strip");
+  if (!strip) return;
+  strip.innerHTML = "";
+  var photos = plantnetPhotos.slice();
+  plantnetPhotos = [];
+  photos.forEach(function (p) {
+    addPhotoToIdStrip(p.dataUrl, p.organ);
+  });
+}
+
+function runPlantNetIdentification() {
+  if (plantnetPhotos.length === 0) return;
+  if (typeof PLANTNET_API_KEY === "undefined" || !PLANTNET_API_KEY) return;
+
+  var results = document.getElementById("plantnet-results");
+  if (results) {
+    results.style.display = "block";
+    results.innerHTML = '<div class="plantnet-status">Identifying plant — please wait...</div>';
   }
 
-  if (plant) {
-    infoDiv.innerHTML =
-      '<div class="quick-info-row">' +
-      '<span class="quick-info-label">Current count:</span> ' +
-      '<span class="quick-info-value">' + (plant.count || 0) + '</span>' +
+  // Build FormData with all photos
+  var formData = new FormData();
+  plantnetPhotos.forEach(function (p) {
+    // Compress to 800px for PlantNet
+    formData.append("images", p.blob, "photo.jpg");
+    formData.append("organs", p.organ);
+  });
+
+  fetch(
+    "https://my-api.plantnet.org/v2/identify/all?api-key=" +
+      encodeURIComponent(PLANTNET_API_KEY) +
+      "&lang=en&nb-results=5",
+    { method: "POST", body: formData }
+  )
+    .then(function (response) {
+      if (!response.ok) {
+        return response.text().then(function (txt) {
+          throw new Error("PlantNet HTTP " + response.status);
+        });
+      }
+      return response.json();
+    })
+    .then(renderPlantNetResults)
+    .catch(function (err) {
+      console.error("PlantNet failed:", err);
+      if (results) {
+        results.innerHTML =
+          '<div class="plantnet-status">Identification failed. Try again or select a plant manually.</div>';
+      }
+      showPlantPickerAfterPhoto();
+    });
+}
+
+// ─── PLANTNET RESULTS (SECTION-CONTEXT) ──────────────────────
+
+function renderPlantNetResults(payload) {
+  var results = document.getElementById("plantnet-results");
+  if (!results) return;
+
+  var candidates = (payload && payload.results) || [];
+  if (candidates.length === 0) {
+    results.innerHTML =
+      '<div class="plantnet-status">No matches found. Try another angle or select a plant below.</div>';
+    showPlantPickerAfterPhoto();
+    return;
+  }
+
+  var html = "";
+  var hasLowConfidence = true;
+
+  for (var i = 0; i < Math.min(5, candidates.length); i++) {
+    var match = candidates[i];
+    var botanical = (match.species && match.species.scientificNameWithoutAuthor) || "Unknown";
+    var common =
+      (match.species && match.species.commonNames && match.species.commonNames[0]) || "";
+    var score = Math.round((match.score || 0) * 100);
+
+    if (score >= 20) hasLowConfidence = false;
+
+    var farmMatch = findFarmosNameByBotanical(botanical);
+    var inSection = farmMatch ? isSpeciesInSection(farmMatch) : false;
+    var displayName = farmMatch || common || botanical;
+
+    // Context badge
+    var badge = "";
+    if (inSection) {
+      var sectionPlant = getSectionPlant(farmMatch);
+      var countText = sectionPlant ? " (" + (sectionPlant.count || 0) + " plants)" : "";
+      badge = '<span class="pn-badge pn-badge-section">In this section' + countText + '</span>';
+    } else if (farmMatch) {
+      badge = '<span class="pn-badge pn-badge-farm">In farm taxonomy</span>';
+    } else {
+      badge = '<span class="pn-badge pn-badge-unknown">New to farm</span>';
+    }
+
+    var imgUrl = "";
+    if (match.images && match.images.length > 0 && match.images[0].url) {
+      imgUrl = match.images[0].url.s || match.images[0].url.m || "";
+    }
+    var imgTag = imgUrl
+      ? '<img src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy">'
+      : '<div class="pn-no-img">?</div>';
+
+    html +=
+      '<div class="plantnet-match" onclick="applyPlantNetMatch(this)"' +
+      ' data-farmos-name="' + escapeHtml(farmMatch || "") + '"' +
+      ' data-display="' + escapeHtml(displayName) + '"' +
+      ' data-botanical="' + escapeHtml(botanical) + '"' +
+      ' data-in-section="' + (inSection ? "1" : "0") + '">' +
+      imgTag +
+      '<div class="plantnet-match-text">' +
+      '<div class="plantnet-species">' + escapeHtml(displayName) + "</div>" +
+      '<div class="plantnet-botanical">' + escapeHtml(botanical) + "</div>" +
+      badge +
       "</div>" +
-      '<div class="quick-info-row">' +
-      '<span class="quick-info-label">Strata:</span> ' +
-      '<span class="quick-info-value">' + (plant.strata || "—") + '</span>' +
+      '<div class="plantnet-confidence">' + score + "%</div>" +
       "</div>";
+  }
+
+  if (hasLowConfidence && plantnetPhotos.length < 5) {
+    html +=
+      '<div class="plantnet-status">Low confidence — add another photo from a different angle for better results.</div>';
+  }
+
+  results.innerHTML = html;
+  results.style.display = "block";
+
+  // Always show picker below results
+  showPlantPickerAfterPhoto();
+}
+
+function isSpeciesInSection(species) {
+  if (typeof SECTION_DATA === "undefined" || !SECTION_DATA.plants) return false;
+  for (var i = 0; i < SECTION_DATA.plants.length; i++) {
+    if (SECTION_DATA.plants[i].species === species) return true;
+  }
+  return false;
+}
+
+function getSectionPlant(species) {
+  if (typeof SECTION_DATA === "undefined" || !SECTION_DATA.plants) return null;
+  for (var i = 0; i < SECTION_DATA.plants.length; i++) {
+    if (SECTION_DATA.plants[i].species === species) return SECTION_DATA.plants[i];
+  }
+  return null;
+}
+
+function findFarmosNameByBotanical(botanical) {
+  if (!botanical || typeof PLANT_TYPES_DATA === "undefined") return "";
+  var target = botanical.trim().toLowerCase();
+  for (var i = 0; i < PLANT_TYPES_DATA.length; i++) {
+    var entry = PLANT_TYPES_DATA[i];
+    var bot = (entry.botanical || "").trim().toLowerCase();
+    if (bot && (bot === target || target.indexOf(bot) === 0 || bot.indexOf(target) === 0)) {
+      return entry.species;
+    }
+  }
+  return "";
+}
+
+function applyPlantNetMatch(el) {
+  var farmosName = el.dataset.farmosName;
+  var inSection = el.dataset.inSection === "1";
+
+  if (farmosName && inSection) {
+    // Existing plant in section — select it directly
+    selectPlantFromPicker(farmosName);
+  } else if (farmosName) {
+    // In taxonomy but not in section — open Add New Plant flow
+    showAddPlantPanel();
+    var searchInput = document.getElementById("plant-search");
+    if (searchInput) {
+      searchInput.value = farmosName;
+      filterPlantTypes(farmosName);
+      // Auto-select first match
+      setTimeout(function () {
+        var resultsDiv = document.getElementById("plant-search-results");
+        if (resultsDiv) {
+          var first = resultsDiv.querySelector(".plant-search-result");
+          if (first && first.dataset.species === farmosName) {
+            selectNewPlant(first);
+          }
+        }
+      }, 50);
+    }
+  } else {
+    // Unknown — open Add New Plant with display name
+    showAddPlantPanel();
+    var searchInput = document.getElementById("plant-search");
+    if (searchInput) {
+      searchInput.value = el.dataset.display || el.dataset.botanical || "";
+      filterPlantTypes(searchInput.value);
+    }
   }
 }
 
-function collectQuickData() {
-  var species = document.getElementById("quick-species");
-  var count = document.getElementById("quick-count");
-  var condition = document.getElementById("quick-condition");
-  var notes = document.getElementById("quick-notes");
-  var sectionNotes = document.getElementById("section-notes-quick");
+// ─── VISUAL PLANT PICKER ─────────────────────────────────────
 
-  if (!species || !species.value) {
-    showStatus("error", "Please select a plant species.");
-    return null;
+var selectedPlantSpecies = null;
+
+function selectPlantFromPicker(species) {
+  selectedPlantSpecies = species;
+
+  // Handle Unknown
+  if (species === "Unknown") {
+    showAddPlantPanel();
+    return;
   }
 
-  var isUnknown = species.value === "Unknown";
+  // Highlight selected card
+  document.querySelectorAll(".plant-pick-card").forEach(function (card) {
+    card.classList.toggle("selected", card.dataset.species === species);
+  });
 
-  // Find plant info from SECTION_DATA (not applicable for Unknown)
-  var plant = null;
-  if (!isUnknown && typeof SECTION_DATA !== "undefined" && SECTION_DATA.plants) {
-    for (var i = 0; i < SECTION_DATA.plants.length; i++) {
-      if (SECTION_DATA.plants[i].species === species.value) {
-        plant = SECTION_DATA.plants[i];
-        break;
-      }
-    }
+  // Find plant data
+  var plant = getSectionPlant(species);
+  if (!plant) {
+    // May be from PlantNet match — try taxonomy
+    selectedPlantSpecies = species;
   }
+
+  // Show observation form
+  var form = document.getElementById("single-obs-form");
+  if (form) {
+    form.style.display = "block";
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // Populate form header
+  var nameEl = document.getElementById("selected-plant-name");
+  var countEl = document.getElementById("selected-plant-count");
+  if (nameEl) nameEl.textContent = species;
+  if (countEl) {
+    var count = plant ? (plant.count !== null ? plant.count : "—") : "new";
+    countEl.textContent = "Current count: " + count;
+  }
+}
+
+// ─── OBSERVATION TYPE ────────────────────────────────────────
+
+function updateObsTypeUI() {
+  var selected = document.querySelector('input[name="obs-type"]:checked');
+  if (!selected) return;
+  var notesInput = document.getElementById("single-notes");
+  if (notesInput) {
+    var placeholders = {
+      observation: "What did you see? (condition, growth, pests...)",
+      activity: "What did you do? (watered, pruned, mulched...)",
+      todo: "What needs to be done? (needs staking, water, harvest...)"
+    };
+    notesInput.placeholder = placeholders[selected.value] || "";
+  }
+}
+
+// ─── SINGLE PLANT SUBMISSION ─────────────────────────────────
+
+function submitSinglePlantObservation() {
+  if (!selectedPlantSpecies) {
+    showStatus("error", "Please select a plant first.");
+    return;
+  }
+
+  var plant = getSectionPlant(selectedPlantSpecies);
+  var obsType = document.querySelector('input[name="obs-type"]:checked');
+  var count = document.getElementById("single-count");
+  var condition = document.getElementById("single-condition");
+  var notes = document.getElementById("single-notes");
 
   var obs = {
-    species: species.value,
+    species: selectedPlantSpecies,
     strata: plant ? plant.strata : "",
-    previous_count: isUnknown ? 0 : (plant ? (plant.count || 0) : 0),
+    previous_count: plant ? (plant.count || 0) : 0,
     condition: condition ? condition.value : "alive",
     notes: notes ? notes.value.trim() : "",
+    obs_type: obsType ? obsType.value : "observation",
   };
 
-  // Only include new_count if the user entered one
   if (count && count.value !== "") {
     obs.new_count = parseFloat(count.value);
   }
 
-  return {
+  submitObservation({
     observations: [obs],
-    section_notes: sectionNotes ? sectionNotes.value.trim() : "",
+    section_notes: "",
     mode: "quick",
-  };
+  });
 }
 
-function submitQuickObservation() {
-  var data = collectQuickData();
-  if (!data) return;
-  submitObservation(data);
-}
+// ─── SECTION REPORT SUBMISSION ───────────────────────────────
 
-// ─── FULL INVENTORY ──────────────────────────────────────────
-
-function collectInventoryData() {
-  var rows = document.querySelectorAll(".inv-plant-row");
+function submitSectionReport() {
+  var sectionNotes = document.getElementById("section-notes");
   var observations = [];
 
+  // Collect inventory changes
+  var rows = document.querySelectorAll(".inv-plant-row");
   rows.forEach(function (row) {
     var countInput = row.querySelector(".inv-count-input");
     var noteInput = row.querySelector(".inv-note-input");
     var conditionSelect = row.querySelector(".inv-condition");
 
-    // Only include plants where the observer entered something
     var hasCount = countInput && countInput.value !== "";
     var hasNote = noteInput && noteInput.value.trim() !== "";
     var hasCondition = conditionSelect && conditionSelect.value !== "alive";
@@ -254,51 +620,29 @@ function collectInventoryData() {
         condition: conditionSelect ? conditionSelect.value : "alive",
         notes: noteInput ? noteInput.value.trim() : "",
       };
-
-      if (hasCount) {
-        obs.new_count = parseFloat(countInput.value);
-      }
-
+      if (hasCount) obs.new_count = parseFloat(countInput.value);
       observations.push(obs);
     }
   });
 
-  if (observations.length === 0) {
-    showStatus("error", "No changes recorded. Update at least one plant count or note.");
-    return null;
-  }
+  var notesValue = sectionNotes ? sectionNotes.value.trim() : "";
 
-  var sectionNotes = document.getElementById("section-notes-inventory");
-  return {
-    observations: observations,
-    section_notes: sectionNotes ? sectionNotes.value.trim() : "",
-    mode: "inventory",
-  };
-}
-
-function submitInventoryObservation() {
-  var data = collectInventoryData();
-  if (!data) return;
-  submitObservation(data);
-}
-
-// ─── SECTION COMMENT ──────────────────────────────────────────
-
-function submitSectionComment() {
-  var commentNotes = document.getElementById("comment-notes");
-  if (!commentNotes || !commentNotes.value.trim()) {
-    showStatus("error", "Please enter a section note.");
+  if (observations.length === 0 && !notesValue) {
+    showStatus("error", "Please add section notes or update at least one plant.");
     return;
   }
 
+  // Determine mode based on content
+  var mode = observations.length > 0 ? "inventory" : "comment";
+
   submitObservation({
-    observations: [],
-    section_notes: commentNotes.value.trim(),
-    mode: "comment",
+    observations: observations,
+    section_notes: notesValue,
+    mode: mode,
   });
 }
 
-// ─── ADD NEW PLANT ──────────────────────────────────────────
+// ─── ADD NEW PLANT ───────────────────────────────────────────
 
 function showAddPlantPanel() {
   var panel = document.getElementById("add-plant-panel");
@@ -306,18 +650,9 @@ function showAddPlantPanel() {
     panel.style.display = "block";
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
     var searchInput = document.getElementById("plant-search");
-    if (searchInput) {
-      searchInput.value = "";
-      searchInput.focus();
-    }
-    // Reset fields
+    if (searchInput && !searchInput.value) searchInput.focus();
     var fieldsDiv = document.getElementById("new-plant-fields");
     if (fieldsDiv) fieldsDiv.style.display = "none";
-    var resultsDiv = document.getElementById("plant-search-results");
-    if (resultsDiv) {
-      resultsDiv.style.display = "none";
-      resultsDiv.innerHTML = "";
-    }
   }
 }
 
@@ -327,10 +662,7 @@ function hideAddPlantPanel() {
   var searchInput = document.getElementById("plant-search");
   if (searchInput) searchInput.value = "";
   var resultsDiv = document.getElementById("plant-search-results");
-  if (resultsDiv) {
-    resultsDiv.style.display = "none";
-    resultsDiv.innerHTML = "";
-  }
+  if (resultsDiv) { resultsDiv.style.display = "none"; resultsDiv.innerHTML = ""; }
   var fieldsDiv = document.getElementById("new-plant-fields");
   if (fieldsDiv) fieldsDiv.style.display = "none";
 }
@@ -346,7 +678,6 @@ function filterPlantTypes(query) {
     return;
   }
 
-  // Filter from PLANT_TYPES_DATA (embedded in page)
   var plantTypes = typeof PLANT_TYPES_DATA !== "undefined" ? PLANT_TYPES_DATA : [];
   var matches = [];
   for (var i = 0; i < plantTypes.length; i++) {
@@ -369,17 +700,14 @@ function filterPlantTypes(query) {
   var html = "";
   for (var j = 0; j < matches.length; j++) {
     var m = matches[j];
-    var escapedSpecies = escapeHtml(m.species);
-    var escapedBotanical = escapeHtml(m.botanical || "");
-    var escapedStrata = escapeHtml(m.strata || "");
     html +=
-      '<div class="plant-search-result" data-species="' + escapedSpecies +
-      '" data-strata="' + escapedStrata +
-      '" data-botanical="' + escapedBotanical +
+      '<div class="plant-search-result" data-species="' + escapeHtml(m.species) +
+      '" data-strata="' + escapeHtml(m.strata || "") +
+      '" data-botanical="' + escapeHtml(m.botanical || "") +
       '" onclick="selectNewPlant(this)">' +
-      '<div class="search-species">' + escapedSpecies + '</div>' +
-      '<div class="search-meta">' + escapedBotanical +
-      (escapedStrata ? " · " + escapedStrata : "") + '</div>' +
+      '<div class="search-species">' + escapeHtml(m.species) + '</div>' +
+      '<div class="search-meta">' + escapeHtml(m.botanical || "") +
+      (m.strata ? " · " + escapeHtml(m.strata) : "") + '</div>' +
       '</div>';
   }
 
@@ -391,13 +719,11 @@ function selectNewPlant(el) {
   var species = el.dataset.species;
   var strata = el.dataset.strata;
 
-  // Show selection in display fields
   var speciesDisplay = document.getElementById("new-plant-species");
   var strataDisplay = document.getElementById("new-plant-strata");
   if (speciesDisplay) speciesDisplay.textContent = species;
   if (strataDisplay) strataDisplay.textContent = strata || "—";
 
-  // Store selection data
   var fieldsDiv = document.getElementById("new-plant-fields");
   if (fieldsDiv) {
     fieldsDiv.style.display = "block";
@@ -405,15 +731,10 @@ function selectNewPlant(el) {
     fieldsDiv.dataset.selectedStrata = strata;
   }
 
-  // Hide search results
   var resultsDiv = document.getElementById("plant-search-results");
   if (resultsDiv) resultsDiv.style.display = "none";
-
-  // Update search input with selection
   var searchInput = document.getElementById("plant-search");
   if (searchInput) searchInput.value = species;
-
-  // Focus count input
   var countInput = document.getElementById("new-plant-count");
   if (countInput) countInput.focus();
 }
@@ -451,12 +772,6 @@ function submitNewPlantObservation() {
   });
 }
 
-function escapeHtml(text) {
-  var div = document.createElement("div");
-  div.appendChild(document.createTextNode(text));
-  return div.innerHTML;
-}
-
 // ─── SUBMISSION ──────────────────────────────────────────────
 
 function submitObservation(formData) {
@@ -465,14 +780,12 @@ function submitObservation(formData) {
 
   if (!nameInput || !nameInput.value.trim()) {
     showStatus("error", "Please enter your name.");
-    nameInput && nameInput.focus();
+    if (nameInput) nameInput.focus();
     return;
   }
 
-  // Save observer name
   localStorage.setItem("firefly_observer_name", nameInput.value.trim());
 
-  // Build full payload
   var payload = {
     version: "1",
     submission_id: generateUUID(),
@@ -485,7 +798,6 @@ function submitObservation(formData) {
     media: collectMediaData(),
   };
 
-  // Check for endpoint
   if (typeof OBSERVE_ENDPOINT === "undefined" || !OBSERVE_ENDPOINT) {
     showStatus("error", "Observation endpoint not configured. Contact Agnes.");
     return;
@@ -494,7 +806,6 @@ function submitObservation(formData) {
   showStatus("sending", "Sending observation...");
   disableSubmitButtons(true);
 
-  // POST to Google Apps Script (text/plain to avoid CORS preflight)
   fetch(OBSERVE_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
@@ -502,29 +813,20 @@ function submitObservation(formData) {
     redirect: "follow",
   })
     .then(function (response) {
-      // Google Apps Script redirects on POST; response may be opaque
       if (response.ok || response.type === "opaque" || response.redirected) {
-        return response.text().catch(function () {
-          return '{"success": true}';
-        });
+        return response.text().catch(function () { return '{"success": true}'; });
       }
       throw new Error("Server returned " + response.status);
     })
     .then(function (text) {
       var result;
-      try {
-        result = JSON.parse(text);
-      } catch (e) {
-        // Google Apps Script sometimes returns HTML on redirect
-        result = { success: true };
-      }
+      try { result = JSON.parse(text); } catch (e) { result = { success: true }; }
 
       if (result.success) {
-        showStatus(
-          "success",
-          "✓ Observation saved!" +
-            (result.duplicate ? " (already recorded)" : "") +
-            (result.message ? " " + result.message : "")
+        showStatus("success",
+          "Observation saved!" +
+          (result.duplicate ? " (already recorded)" : "") +
+          (result.message ? " " + result.message : "")
         );
         resetForm(formData.mode);
       } else {
@@ -533,15 +835,11 @@ function submitObservation(formData) {
     })
     .catch(function (err) {
       if (!navigator.onLine) {
-        // Offline — save to local queue
         saveToLocalQueue(payload);
-        showStatus(
-          "offline",
-          "📱 Saved locally — will sync when back online."
-        );
+        showStatus("offline", "Saved locally — will sync when back online.");
         resetForm(formData.mode);
       } else {
-        showStatus("error", "Failed to send: " + err.message + ". Try again.");
+        showStatus("error", "Failed to send: " + err.message);
       }
     })
     .finally(function () {
@@ -549,11 +847,10 @@ function submitObservation(formData) {
     });
 }
 
-// ─── PHOTO CAPTURE ───────────────────────────────────────────
+// ─── PHOTO CAPTURE (additional photos on form) ───────────────
 
 function initPhotoCapture() {
-  var photoInputs = document.querySelectorAll(".obs-photo-input");
-  photoInputs.forEach(function (input) {
+  document.querySelectorAll(".obs-photo-input").forEach(function (input) {
     input.addEventListener("change", function (e) {
       handlePhotoCapture(e.target);
     });
@@ -569,7 +866,6 @@ function handlePhotoCapture(input) {
     .querySelector(".obs-photo-previews");
   if (!previewContainer) return;
 
-  // Compress and show preview
   compressImage(file, 1200, 0.7, function (dataUrl) {
     var previewDiv = document.createElement("div");
     previewDiv.className = "obs-photo-preview";
@@ -579,27 +875,10 @@ function handlePhotoCapture(input) {
     previewDiv.dataset.base64 = dataUrl;
     previewDiv.dataset.target = input.dataset.target || "section";
     previewContainer.appendChild(previewDiv);
-
-    // Auto-identify: if PlantNet is available, run identification in
-    // the background so results are ready when the user opens "Add New Plant".
-    if (typeof PLANTNET_API_KEY !== "undefined" && PLANTNET_API_KEY) {
-      var blob = dataUrlToBlob(dataUrl);
-      identifyPlantFromFile(blob);
-      // Expand the Add New Plant panel so results are visible
-      var addPlantPanel = document.getElementById("add-plant-panel");
-      if (addPlantPanel) addPlantPanel.style.display = "";
-    }
-
-    // Reset input so the same file can be re-selected
     input.value = "";
   });
 }
 
-/**
- * Compress an image file using canvas.
- * maxDim: max pixels on the longest side
- * quality: JPEG quality (0-1)
- */
 function compressImage(file, maxDim, quality, callback) {
   var reader = new FileReader();
   reader.onload = function (e) {
@@ -608,22 +887,13 @@ function compressImage(file, maxDim, quality, callback) {
       var canvas = document.createElement("canvas");
       var w = img.width;
       var h = img.height;
-
       if (w > maxDim || h > maxDim) {
-        if (w > h) {
-          h = Math.round((h * maxDim) / w);
-          w = maxDim;
-        } else {
-          w = Math.round((w * maxDim) / h);
-          h = maxDim;
-        }
+        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        else { w = Math.round((w * maxDim) / h); h = maxDim; }
       }
-
       canvas.width = w;
       canvas.height = h;
-      var ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, w, h);
-
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
       callback(canvas.toDataURL("image/jpeg", quality));
     };
     img.src = e.target.result;
@@ -633,23 +903,28 @@ function compressImage(file, maxDim, quality, callback) {
 
 function collectMediaData() {
   var media = [];
-  var previews = document.querySelectorAll(".obs-photo-preview");
   var counter = 1;
+  var sectionId = typeof SECTION_DATA !== "undefined" ? SECTION_DATA.id : "unknown";
 
-  previews.forEach(function (preview) {
+  // Collect hero photo
+  var heroPreview = document.getElementById("camera-hero-preview");
+  if (heroPreview && heroPreview.dataset.base64) {
+    media.push({
+      type: "photo",
+      target: "plant",
+      filename: sectionId + "_plant_" + String(counter).padStart(3, "0") + ".jpg",
+      data: heroPreview.dataset.base64,
+    });
+    counter++;
+  }
+
+  // Collect additional photos
+  document.querySelectorAll(".obs-photo-preview").forEach(function (preview) {
     if (preview.dataset.base64) {
-      var sectionId =
-        typeof SECTION_DATA !== "undefined" ? SECTION_DATA.id : "unknown";
       media.push({
         type: "photo",
         target: preview.dataset.target || "section",
-        filename:
-          sectionId +
-          "_" +
-          (preview.dataset.target || "section") +
-          "_" +
-          String(counter).padStart(3, "0") +
-          ".jpg",
+        filename: sectionId + "_" + (preview.dataset.target || "section") + "_" + String(counter).padStart(3, "0") + ".jpg",
         data: preview.dataset.base64,
       });
       counter++;
@@ -664,7 +939,6 @@ function collectMediaData() {
 function saveToLocalQueue(payload) {
   try {
     var queue = JSON.parse(localStorage.getItem("firefly_obs_queue") || "[]");
-    // Strip media from localStorage (too large) — only save text data offline
     var lightPayload = JSON.parse(JSON.stringify(payload));
     lightPayload.media = [];
     lightPayload._offline = true;
@@ -690,51 +964,32 @@ function syncPendingQueue() {
       body: JSON.stringify(payload),
       redirect: "follow",
     })
-      .then(function (r) {
-        return r.ok || r.type === "opaque" || r.redirected;
-      })
-      .catch(function () {
-        remaining.push(payload);
-        return false;
-      });
+      .then(function (r) { return r.ok || r.type === "opaque" || r.redirected; })
+      .catch(function () { remaining.push(payload); return false; });
   });
 
   Promise.all(promises).then(function (results) {
     localStorage.setItem("firefly_obs_queue", JSON.stringify(remaining));
     updateQueueBanner();
     var synced = results.filter(Boolean).length;
-    if (synced > 0) {
-      showStatus("success", "✓ Synced " + synced + " observation(s).");
-    }
-    if (remaining.length > 0) {
-      showStatus(
-        "offline",
-        remaining.length + " observation(s) still pending."
-      );
-    }
+    if (synced > 0) showStatus("success", "Synced " + synced + " observation(s).");
+    if (remaining.length > 0) showStatus("offline", remaining.length + " still pending.");
   });
 }
 
 function updateQueueBanner() {
   var banner = document.getElementById("queue-banner");
   if (!banner) return;
-
   var queue = JSON.parse(localStorage.getItem("firefly_obs_queue") || "[]");
   if (queue.length > 0) {
     banner.style.display = "flex";
-    banner.querySelector(".queue-count").textContent =
-      queue.length + " pending observation(s)";
+    banner.querySelector(".queue-count").textContent = queue.length + " pending observation(s)";
   } else {
     banner.style.display = "none";
   }
 }
 
-// Auto-sync when coming back online
-window.addEventListener("online", function () {
-  setTimeout(syncPendingQueue, 1000);
-});
-
-// Check queue on page load
+window.addEventListener("online", function () { setTimeout(syncPendingQueue, 1000); });
 document.addEventListener("DOMContentLoaded", updateQueueBanner);
 
 // ─── UI HELPERS ──────────────────────────────────────────────
@@ -742,71 +997,74 @@ document.addEventListener("DOMContentLoaded", updateQueueBanner);
 function showStatus(type, message) {
   var statusDiv = document.getElementById("obs-status");
   if (!statusDiv) return;
-
   statusDiv.className = "obs-status obs-status-" + type;
   statusDiv.textContent = message;
   statusDiv.style.display = "block";
-
-  // Auto-hide success messages after 5 seconds
   if (type === "success") {
-    setTimeout(function () {
-      statusDiv.style.display = "none";
-    }, 5000);
+    setTimeout(function () { statusDiv.style.display = "none"; }, 5000);
   }
 }
 
 function disableSubmitButtons(disabled) {
-  var buttons = document.querySelectorAll(".obs-submit-btn");
-  buttons.forEach(function (btn) {
+  document.querySelectorAll(".obs-submit-btn").forEach(function (btn) {
     btn.disabled = disabled;
     btn.style.opacity = disabled ? "0.5" : "1";
   });
 }
 
 function resetForm(mode) {
-  if (mode === "quick") {
-    var species = document.getElementById("quick-species");
-    var count = document.getElementById("quick-count");
-    var condition = document.getElementById("quick-condition");
-    var notes = document.getElementById("quick-notes");
-    if (species) species.value = "";
+  if (mode === "quick" || mode === "new_plant") {
+    // Reset single plant form
+    selectedPlantSpecies = null;
+    var form = document.getElementById("single-obs-form");
+    if (form) form.style.display = "none";
+
+    document.querySelectorAll(".plant-pick-card").forEach(function (c) {
+      c.classList.remove("selected");
+    });
+
+    var count = document.getElementById("single-count");
+    var condition = document.getElementById("single-condition");
+    var notes = document.getElementById("single-notes");
     if (count) count.value = "";
     if (condition) condition.value = "alive";
     if (notes) notes.value = "";
-    var infoDiv = document.getElementById("quick-plant-info");
-    if (infoDiv) infoDiv.innerHTML = "";
-  } else if (mode === "inventory") {
-    // Full inventory: clear all inputs
-    var inputs = document.querySelectorAll(
-      ".inv-count-input, .inv-note-input"
-    );
-    inputs.forEach(function (input) {
-      input.value = "";
-    });
-    var conditions = document.querySelectorAll(".inv-condition");
-    conditions.forEach(function (sel) {
-      sel.value = "alive";
-    });
-  } else if (mode === "comment") {
-    var commentNotes = document.getElementById("comment-notes");
-    if (commentNotes) commentNotes.value = "";
-  } else if (mode === "new_plant") {
+
+    // Reset camera hero
+    var heroBtn = document.getElementById("camera-hero-btn");
+    var heroPreview = document.getElementById("camera-hero-preview");
+    if (heroBtn) heroBtn.style.display = "";
+    if (heroPreview) { heroPreview.style.display = "none"; heroPreview.innerHTML = ""; }
+
+    // Reset PlantNet
+    plantnetPhotos = [];
+    var strip = document.getElementById("id-photo-strip");
+    if (strip) { strip.innerHTML = ""; strip.style.display = "none"; }
+    var pnResults = document.getElementById("plantnet-results");
+    if (pnResults) { pnResults.innerHTML = ""; pnResults.style.display = "none"; }
+    var addMore = document.getElementById("plantnet-add-more");
+    if (addMore) addMore.style.display = "none";
+
+    // Reset radios
+    var obsRadio = document.getElementById("obs-type-observation");
+    if (obsRadio) obsRadio.checked = true;
+    updateObsTypeUI();
+
     hideAddPlantPanel();
+  } else if (mode === "inventory" || mode === "comment") {
+    var inputs = document.querySelectorAll(".inv-count-input, .inv-note-input");
+    inputs.forEach(function (i) { i.value = ""; });
+    var conditions = document.querySelectorAll(".inv-condition");
+    conditions.forEach(function (s) { s.value = "alive"; });
+    var sectionNotes = document.getElementById("section-notes");
+    if (sectionNotes) sectionNotes.value = "";
   }
 
-  // Clear section notes (for modes that have them)
-  var sectionNotes = document.getElementById("section-notes-" + mode);
-  if (sectionNotes) sectionNotes.value = "";
-
-  // Clear photo previews
-  var previews = document.querySelectorAll(".obs-photo-preview");
-  previews.forEach(function (p) {
-    p.remove();
-  });
+  // Clear additional photo previews
+  document.querySelectorAll(".obs-photo-preview").forEach(function (p) { p.remove(); });
 }
 
 function generateUUID() {
-  // Simple UUID v4 generator
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0;
     var v = c === "x" ? r : (r & 0x3) | 0x8;
@@ -814,111 +1072,10 @@ function generateUUID() {
   });
 }
 
-// ─── PLANTNET IDENTIFICATION ─────────────────────────────────
-//
-// Lets a worker take a photo of an unknown plant, send it to the PlantNet
-// public API, and pick from the top matches to pre-fill the new-plant
-// search box. PLANTNET_API_KEY is injected at build time via
-// generate_site.py (from the PLANTNET_API_KEY env var). If the key is
-// empty the button stays hidden — no partial UX, no broken calls.
-//
-// Design: claude-docs/photo-pipeline-and-plant-id-design.md (Step 4).
-
-function initPlantNetIdentify() {
-  if (typeof PLANTNET_API_KEY === "undefined" || !PLANTNET_API_KEY) {
-    return; // No key → no button.
-  }
-  var section = document.getElementById("plantnet-section");
-  var fileInput = document.getElementById("plantnet-photo-input");
-  var useAttachedBtn = document.getElementById("plantnet-use-attached");
-  var cameraLabel = document.getElementById("plantnet-camera-label");
-  if (!section || !fileInput) return;
-
-  section.style.display = "";
-
-  // Show/hide "Identify attached photo" button based on whether an
-  // observation photo has been captured in the form above.
-  function updateAttachedButton() {
-    var hasPhoto = document.querySelectorAll(".obs-photo-preview").length > 0;
-    if (useAttachedBtn) {
-      useAttachedBtn.style.display = hasPhoto ? "" : "none";
-    }
-    // Adjust secondary button label based on context
-    if (cameraLabel) {
-      var span = cameraLabel.querySelector("span");
-      if (span) {
-        span.textContent = hasPhoto
-          ? "📷 Take a different photo to identify"
-          : "📷 Take / choose photo to identify";
-      }
-    }
-  }
-
-  // Watch for photo additions/removals in the observation form
-  var previewContainers = document.querySelectorAll(".obs-photo-previews");
-  previewContainers.forEach(function (container) {
-    new MutationObserver(updateAttachedButton).observe(container, {
-      childList: true,
-    });
-  });
-  updateAttachedButton();
-
-  // "Identify attached photo" — reuse the already-captured observation photo
-  if (useAttachedBtn) {
-    useAttachedBtn.addEventListener("click", function () {
-      var preview = document.querySelector(".obs-photo-preview");
-      var dataUrl = preview && preview.dataset.base64;
-      if (!dataUrl) return;
-      var blob = dataUrlToBlob(dataUrl);
-      identifyPlantFromFile(blob);
-    });
-  }
-
-  // "Take / choose photo" — opens camera or file picker
-  fileInput.addEventListener("change", function () {
-    var file = fileInput.files && fileInput.files[0];
-    if (!file) return;
-    identifyPlantFromFile(file);
-    fileInput.value = ""; // allow re-capture of the same plant
-  });
-}
-
-function identifyPlantFromFile(file) {
-  var results = document.getElementById("plantnet-results");
-  if (!results) return;
-
-  results.innerHTML =
-    '<div class="plantnet-status">Identifying plant — please wait…</div>';
-
-  // Resize to 800px (PlantNet's sweet spot) before upload — keeps the
-  // request small over the slow farm connection.
-  compressImage(file, 800, 0.8, function (dataUrl) {
-    var blob = dataUrlToBlob(dataUrl);
-    var formData = new FormData();
-    formData.append("images", blob, "observation.jpg");
-    formData.append("organs", "auto");
-
-    fetch(
-      "https://my-api.plantnet.org/v2/identify/all?api-key=" +
-        encodeURIComponent(PLANTNET_API_KEY) +
-        "&lang=en&nb-results=3",
-      { method: "POST", body: formData }
-    )
-      .then(function (response) {
-        if (!response.ok) {
-          return response.text().then(function (txt) {
-            throw new Error("PlantNet HTTP " + response.status + ": " + txt);
-          });
-        }
-        return response.json();
-      })
-      .then(renderPlantNetResults)
-      .catch(function (err) {
-        console.error("PlantNet identify failed:", err);
-        results.innerHTML =
-          '<div class="plantnet-status">Identification failed. Check connection and try again.</div>';
-      });
-  });
+function escapeHtml(text) {
+  var div = document.createElement("div");
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
 }
 
 function dataUrlToBlob(dataUrl) {
@@ -929,102 +1086,4 @@ function dataUrlToBlob(dataUrl) {
   var buf = new Uint8Array(len);
   for (var i = 0; i < len; i++) buf[i] = binary.charCodeAt(i);
   return new Blob([buf], { type: mime });
-}
-
-function renderPlantNetResults(payload) {
-  var results = document.getElementById("plantnet-results");
-  if (!results) return;
-
-  var candidates = (payload && payload.results) || [];
-  if (candidates.length === 0) {
-    results.innerHTML =
-      '<div class="plantnet-status">No matches. Try another angle or describe it in notes.</div>';
-    return;
-  }
-
-  var html = "";
-  for (var i = 0; i < Math.min(3, candidates.length); i++) {
-    var match = candidates[i];
-    var species = (match.species && match.species.scientificNameWithoutAuthor) || "Unknown";
-    var common =
-      (match.species && match.species.commonNames && match.species.commonNames[0]) || "";
-    var score = Math.round((match.score || 0) * 100);
-
-    var farmMatch = findFarmosNameByBotanical(species);
-    var displayName = farmMatch || common || species;
-
-    var imgUrl = "";
-    if (match.images && match.images.length > 0 && match.images[0].url) {
-      imgUrl = match.images[0].url.s || match.images[0].url.m || "";
-    }
-    var imgTag = imgUrl
-      ? '<img src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy">'
-      : "";
-
-    html +=
-      '<div class="plantnet-match" onclick="applyPlantNetMatch(this)"' +
-      ' data-farmos-name="' + escapeHtml(farmMatch || "") + '"' +
-      ' data-display="' + escapeHtml(displayName) + '"' +
-      ' data-botanical="' + escapeHtml(species) + '">' +
-      imgTag +
-      '<div class="plantnet-match-text">' +
-      '<div class="plantnet-species">' + escapeHtml(displayName) + "</div>" +
-      '<div class="plantnet-botanical">' + escapeHtml(species) + "</div>" +
-      "</div>" +
-      '<div class="plantnet-confidence">' + score + "%</div>" +
-      "</div>";
-  }
-
-  if (candidates.every(function (c) { return !findFarmosNameByBotanical((c.species || {}).scientificNameWithoutAuthor || ""); })) {
-    html +=
-      '<div class="plantnet-status">No farm match — species may need to be added to the taxonomy.</div>';
-  }
-  results.innerHTML = html;
-}
-
-function findFarmosNameByBotanical(botanical) {
-  if (!botanical || typeof PLANT_TYPES_DATA === "undefined") return "";
-  var target = botanical.trim().toLowerCase();
-  for (var i = 0; i < PLANT_TYPES_DATA.length; i++) {
-    var entry = PLANT_TYPES_DATA[i];
-    var bot = (entry.botanical || "").trim().toLowerCase();
-    if (bot && (bot === target || target.indexOf(bot) === 0 || bot.indexOf(target) === 0)) {
-      return entry.species;
-    }
-  }
-  return "";
-}
-
-function applyPlantNetMatch(el) {
-  var farmosName = el.dataset.farmosName;
-  var displayName = el.dataset.display || farmosName;
-  var searchInput = document.getElementById("plant-search");
-  if (!searchInput) return;
-
-  if (farmosName) {
-    // Known farm species — drive the existing search-and-select flow.
-    searchInput.value = farmosName;
-    if (typeof filterPlantTypes === "function") {
-      filterPlantTypes(farmosName);
-    }
-    // Auto-select if there's a unique exact match
-    var resultsDiv = document.getElementById("plant-search-results");
-    if (resultsDiv) {
-      var first = resultsDiv.querySelector(".plant-search-result");
-      if (first && first.dataset.species === farmosName) {
-        selectNewPlant(first);
-      }
-    }
-  } else {
-    // Unknown to the farm taxonomy — still seed the search so the worker
-    // can confirm it's really new and add it manually.
-    searchInput.value = displayName;
-    if (typeof filterPlantTypes === "function") {
-      filterPlantTypes(displayName);
-    }
-  }
-
-  // Tidy up the result list so the page doesn't feel cluttered.
-  var plantnetResults = document.getElementById("plantnet-results");
-  if (plantnetResults) plantnetResults.innerHTML = "";
 }
