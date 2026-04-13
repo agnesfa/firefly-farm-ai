@@ -8,6 +8,7 @@ import { AppConfig, buildAppConfig, createServerApp } from '@fireflyagents/mcp-s
 import { env, logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
 import { createPlugin as createFarmPlugin } from '@farm/farm-plugin';
 import { appTools } from './tools/index.js';
+import { NoopPlatformAuthHandler } from './auth/noop-platform-auth-handler.js';
 
 const logger = baseLogger.child({ context: 'farm-server:main' });
 
@@ -19,10 +20,15 @@ async function main() {
     const farmPlugin = await createFarmPlugin();
 
     // Build app config
+    // NoopPlatformAuthHandler prevents a framework crash when authHandlers
+    // is empty (type-cast bug in platform-auth-service.ts). Our farmOS auth
+    // is handled inside the plugin, not through the framework's platform auth.
+    // Remove once the framework ships the fix.
     const appConfig = await buildAppConfig(env, {
       capabilities: {
         tools: appTools,
         plugins: [farmPlugin],
+        authHandlers: [new NoopPlatformAuthHandler()],
       },
     });
 
