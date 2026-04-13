@@ -151,13 +151,8 @@ def main():
     parser.add_argument("--limit", type=int, default=0, help="Max species to process (0=unlimited)")
     args = parser.parse_args()
 
-    # Connect to farmOS
-    farmos = FarmOSClient(
-        url=os.environ["FARMOS_URL"],
-        client_id=os.environ.get("FARMOS_CLIENT_ID", "farm"),
-        username=os.environ["FARMOS_USERNAME"],
-        password=os.environ["FARMOS_PASSWORD"],
-    )
+    # Connect to farmOS (reads credentials from .env via connect())
+    farmos = FarmOSClient()
     farmos.connect()
 
     # Fetch all plant types

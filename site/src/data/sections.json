@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-12T17:26:07.855534+10:00",
+  "generated_at": "2026-04-13T14:34:26.656911+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -46,7 +46,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Rosemary",
@@ -81,7 +81,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/rosemary.jpg"
         },
         {
           "species": "Comfrey",
@@ -116,7 +116,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Thyme",
@@ -157,7 +157,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/thyme.jpg"
         },
         {
           "species": "Mint",
@@ -198,7 +198,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Geranium",
@@ -215,7 +215,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Oregano",
@@ -232,7 +232,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Mint (Australian)",
@@ -290,7 +290,7 @@
               "notes": "1 strawberry guava + 2 Thai white"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava.jpg"
         },
         {
           "species": "Grape Vine",
@@ -319,7 +319,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/grape-vine.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -360,7 +360,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Fig",
@@ -389,7 +389,7 @@
               "notes": "Inventory update: Registration error — figs were never planted in this section. Count corrected to 0."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/fig.jpg"
         },
         {
           "species": "Lemon",
@@ -442,7 +442,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
@@ -471,7 +471,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
         },
         {
           "species": "Comfrey",
@@ -500,7 +500,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Oregano",
@@ -529,7 +529,7 @@
               "notes": "The 3 oregano are now in the first 0-3m section"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon Balm",
@@ -616,7 +616,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Tansy",
@@ -645,7 +645,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Guava (Hawaiian)",
@@ -662,7 +662,7 @@
               "notes": "Purchased from Daleys Fruit Nursery. Planted March 2025."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-hawaiian.jpg"
         },
         {
           "species": "Lavender",
@@ -679,7 +679,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         }
       ]
     },
@@ -726,7 +726,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Rosemary",
@@ -761,7 +761,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/rosemary.jpg"
         },
         {
           "species": "Sage",
@@ -802,7 +802,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sage.jpg"
         },
         {
           "species": "Comfrey",
@@ -843,7 +843,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Oregano",
@@ -872,7 +872,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Coriander",
@@ -907,7 +907,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -942,7 +942,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-italian.jpg"
         }
       ]
     },
@@ -1012,7 +1012,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Guava",
@@ -1035,7 +1035,7 @@
               "notes": "2 Thai white + 1 strawberry guava"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -1076,7 +1076,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Olive",
@@ -1105,7 +1105,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/olive.jpg"
         },
         {
           "species": "Fig",
@@ -1140,7 +1140,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/fig.jpg"
         },
         {
           "species": "Lavender",
@@ -1175,7 +1175,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Citrus (Yuzu)",
@@ -1204,7 +1204,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/citrus-yuzu.jpg"
         },
         {
           "species": "Lemon",
@@ -1269,7 +1269,7 @@
               "notes": "Condition: dead. Next Self seeded maybe ?"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Comfrey",
@@ -1310,7 +1310,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Lemon Balm",
@@ -1397,7 +1397,7 @@
               "notes": "Self seeded from last year"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-italian.jpg"
         }
       ]
     },
@@ -1444,7 +1444,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season en. maybe should self seed\nCount: 10 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-golden-acre.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -1508,7 +1508,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season end\nCount: 5 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/zucchini-blackjack.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -1537,7 +1537,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: died too dry\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Comfrey",
@@ -1572,7 +1572,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: very dry, died probably\nCount: 8 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -1601,7 +1601,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:42:00\nMode: inventory\nSection notes: look like a bunch of sun hemp\nPlant notes: production season end\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         }
       ],
       "green_manure": [
@@ -1662,7 +1662,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-strawberry.jpg"
         },
         {
           "species": "Pear (Williams)",
@@ -1697,7 +1697,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T08:02:00\nMode: new_plant\nPlant notes: Good state was planted in automn 2025\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pear-williams.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -1726,7 +1726,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: bad shape (drought and luck of canopy)\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -1796,7 +1796,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: just 2 seen, before chop and drop.\nCount: 4 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/quince.jpg"
         },
         {
           "species": "Apple",
@@ -1831,7 +1831,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: should be part of the high strata but both apples here are dw"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apple.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -1860,7 +1860,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -1895,7 +1895,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 2 sponteneous seedlings at the base of one of the 2 big Ones\n"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Jaboticaba",
@@ -1918,7 +1918,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: mistake, not planted in that section\nCount: 5 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jaboticaba.jpg"
         },
         {
           "species": "Lemon",
@@ -1959,7 +1959,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: just 1 seen before the chop and drop\nCount: 4 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -2000,7 +2000,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 4 Jalapeño (1 big, 3 small)+ 1 Chilli \"Thai\"\nCount: 7 → 5"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -2058,7 +2058,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: 2 seen before chop and drop\nCount: 6 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Lavender",
@@ -2099,7 +2099,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: Lavender is very happy in that section\nCount: 6 → 8"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Comfrey",
@@ -2134,7 +2134,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: suffering of drought but still alive\nCount: 4 → 4"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -2163,7 +2163,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: senescent but still with leaves to collect\nCount: 2 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Garlic",
@@ -2198,7 +2198,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: collected but new sprouts\nCount: 32 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/garlic.jpg"
         },
         {
           "species": "Strawberry",
@@ -2257,7 +2257,7 @@
               "notes": "Claire correction 17 Mar: 3 remaining, not 0. Original QR submission had 0 by mistake."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/strawberry.jpg"
         },
         {
           "species": "Geranium",
@@ -2286,7 +2286,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nSection notes: suffering of drought and end summer senescence\nPlant notes: spreading excessively, should be pruned correctly\nCount: 3 → "
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Pear (Williams)",
@@ -2321,7 +2321,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T08:02:00\nMode: new_plant\nPlant notes: Good state was planted in automn 2025\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pear-williams.jpg"
         },
         {
           "species": "Tansy",
@@ -2338,7 +2338,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: new_plant\nPlant notes: developp well here\nCount: 0 → 4\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -2422,7 +2422,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: are still here even with the drought\nCount: 50 → 8"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -2480,7 +2480,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/amaranth.jpg"
         },
         {
           "species": "Comfrey",
@@ -2509,7 +2509,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: some died because too dry\nCount: 12 → 3"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -2591,7 +2591,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: inventory\nPlant notes: 2 remain after summer\nCount: 4 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -2626,7 +2626,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: just planted 18 March 2026\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -2643,7 +2643,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: Planted nov 2025 from Beck and Dan\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -2678,7 +2678,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: just planted 18 March 2026\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -2695,7 +2695,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T02:04:00\nMode: new_plant\nPlant notes: planted in May or Nov 2025 (?)\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Quince",
@@ -2712,7 +2712,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T03:33:00\nMode: new_plant\nPlant notes: planted in Nov 2025\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/quince.jpg"
         }
       ],
       "green_manure": [
@@ -2785,7 +2785,7 @@
               "notes": "Claire field obs 18 Mar 2026: good health"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -2849,7 +2849,7 @@
               "notes": "Claire field obs 18 Mar 2026: not seen"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -2919,7 +2919,7 @@
               "notes": "Claire field obs 18 Mar 2026: just one seen"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/quince.jpg"
         },
         {
           "species": "Apple",
@@ -2960,7 +2960,7 @@
               "notes": "Claire field obs 18 Mar 2026: 4 total — 2 seedlings from FFC nursery, 1 Tropic Sweet nearly dead (not counted), 1 Dorsett Golden planted today 18 Mar from Daleys Fruit nursery. Count confirmed by Clai"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apple.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -2989,7 +2989,7 @@
               "notes": "Claire field obs 18 Mar 2026: 2 black but 0 white"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Mulberry (Beenleigh Black)",
@@ -3030,7 +3030,7 @@
               "notes": "Claire field obs 18 Mar 2026: 2 black from Daleys planted May 2025"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-beenleigh-black.jpg"
         },
         {
           "species": "Lemon",
@@ -3065,7 +3065,7 @@
               "notes": "Claire field obs 18 Mar 2026: 1 seen, good health"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -3094,7 +3094,7 @@
               "notes": "Claire field obs 18 Mar 2026: died because of drought. 10→4"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Ginger",
@@ -3129,7 +3129,7 @@
               "notes": "Claire field obs 18 Mar 2026: 1 native ginger"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Comfrey",
@@ -3170,7 +3170,7 @@
               "notes": "Claire field obs 18 Mar 2026: 1 added today (18 March), 1 died. Net count stays 4. Some more can be added."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -3275,7 +3275,7 @@
               "notes": "Claire field obs 18 Mar 2026: 2 big, 1 small. 6→3"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Garlic",
@@ -3310,7 +3310,7 @@
               "notes": "Claire field obs 18 Mar 2026: collected, self seed?"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/garlic.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -3333,7 +3333,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Strawberry",
@@ -3362,7 +3362,7 @@
               "notes": "Claire field obs 18 Mar 2026: survived drought, end of section"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/strawberry.jpg"
         },
         {
           "species": "Borage",
@@ -3391,7 +3391,7 @@
               "notes": "Claire field obs 18 Mar 2026: old borage plants gone. White Borage seeded next to apple tree (seeds from Greenpatch Organic Seeds) — seeding record to be created separately."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/borage.jpg"
         },
         {
           "species": "Passionfruit",
@@ -3408,7 +3408,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-18T03:36:00\nMode: new_plant\nPlant notes: added today from ffc nursery\nCount: 0 → 3\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/passionfruit.jpg"
         }
       ],
       "green_manure": [
@@ -3463,7 +3463,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -3515,7 +3515,7 @@
               "notes": "2025-11-12 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Banagrass",
@@ -3532,7 +3532,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Amla",
@@ -3561,7 +3561,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/amla.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -3584,7 +3584,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
         },
         {
           "species": "Apple",
@@ -3613,7 +3613,7 @@
               "notes": "2025-11-01 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apple.jpg"
         },
         {
           "species": "Longan",
@@ -3642,7 +3642,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/longan.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -3677,7 +3677,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Jaboticaba",
@@ -3706,7 +3706,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jaboticaba.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -3729,7 +3729,7 @@
               "notes": "2025-11-12 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Orange",
@@ -3746,7 +3746,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/orange.jpg"
         },
         {
           "species": "Grapefruit",
@@ -3763,7 +3763,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/grapefruit.jpg"
         },
         {
           "species": "Kumquat",
@@ -3780,7 +3780,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/kumquat.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -3815,7 +3815,7 @@
               "notes": "jalapeno ffc nursery"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -3850,7 +3850,7 @@
               "notes": "2025-11-13 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Tansy",
@@ -3885,7 +3885,7 @@
               "notes": "2025-11-13 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -3914,7 +3914,7 @@
               "notes": "2025-11-13 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Nettle",
@@ -3937,7 +3937,7 @@
               "notes": "2025-11-13 00:00:00"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/nettle.jpg"
         },
         {
           "species": "Sage (Pineapple)",
@@ -3954,7 +3954,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sage-pineapple.jpg"
         },
         {
           "species": "Passionfruit",
@@ -3971,7 +3971,7 @@
               "notes": "Reporter: James\nSubmitted: 2026-03-18T22:54:00\nMode: new_plant\nPlant notes: Plated during chop and drop 18/03/2026\nCount: 0 → 2\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/passionfruit.jpg"
         },
         {
           "species": "Ginger",
@@ -3988,7 +3988,7 @@
               "notes": "Reporter: James\nSubmitted: 2026-03-18T22:54:00\nMode: new_plant\nPlant notes: Plated during chop and drop 18/03/2026\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Coffee",
@@ -4005,7 +4005,7 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 4\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/coffee.jpg"
         },
         {
           "species": "Achiote",
@@ -4022,7 +4022,7 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-03-18T07:56:00\nMode: new_plant\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/achiote.jpg"
         }
       ],
       "green_manure": [
@@ -4128,7 +4128,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: not seen before chop and drop\nCount: 1 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Malabar Chestnut",
@@ -4169,7 +4169,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 on that section / 1 dead already registered\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/malabar-chestnut.jpg"
         },
         {
           "species": "Macadamia",
@@ -4210,7 +4210,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 bush and 1 gouros\nCount: 2 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/macadamia.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -4245,7 +4245,7 @@
               "notes": "Inventory update: Corrected to 5 — James confirmed count on 24 Mar. Previous conflicting QR submissions (showing 5 and 7) both rejected as errors."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -4286,7 +4286,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 3 remaining\nCount: 5 → 3"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -4315,7 +4315,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -4373,7 +4373,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: not seen\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/amaranth.jpg"
         },
         {
           "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
@@ -4408,7 +4408,7 @@
               "notes": "Species correction: plant was actually Curry Leaf, not Tea Tree Oil. All tea trees are in P2R3.50-62."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
         },
         {
           "species": "Pak Choi",
@@ -4466,7 +4466,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: removed or to remove\nCount: 10 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/zucchini-blackjack.jpg"
         },
         {
           "species": "Peach",
@@ -4501,7 +4501,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 2 Okinawa and 1 aztec gold from Daleys Fruit nursery\nCount: 3 → 3"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/peach.jpg"
         },
         {
           "species": "Apricot",
@@ -4536,7 +4536,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: 1 Bentley from Daleys Fruit nursery\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apricot.jpg"
         },
         {
           "species": "Lemon",
@@ -4571,7 +4571,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Acerola",
@@ -4606,7 +4606,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/acerola.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -4641,7 +4641,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Curry Leaf",
@@ -4711,7 +4711,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: senescent (cycle end)\nCount: 6 → 3"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant.jpg"
         },
         {
           "species": "Galangal",
@@ -4822,7 +4822,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: add more if possible\nCount: 4 → 4"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -4904,7 +4904,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:13:00\nMode: inventory\nPlant notes: add more if possible\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Garlic",
@@ -4933,7 +4933,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/garlic.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -5074,7 +5074,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Malabar Chestnut",
@@ -5115,7 +5115,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/malabar-chestnut.jpg"
         },
         {
           "species": "Macadamia",
@@ -5156,7 +5156,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: 2 bush variety from Daleys Fruit nursery\nCount: 2 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/macadamia.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -5185,7 +5185,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: new_plant\nPlant notes: added today from FFC nursery\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -5226,7 +5226,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 8 → 8"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -5255,7 +5255,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: maybe never planted here\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Tomato (Marmande)",
@@ -5313,7 +5313,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/amaranth.jpg"
         },
         {
           "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
@@ -5354,7 +5354,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: really in good health\nCount: 4 → 4"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
         },
         {
           "species": "Pak Choi",
@@ -5412,7 +5412,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: removed or to remove because lifecycle end\nCount: 10 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/zucchini-blackjack.jpg"
         },
         {
           "species": "Peach",
@@ -5447,7 +5447,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/peach.jpg"
         },
         {
           "species": "Apricot",
@@ -5482,7 +5482,7 @@
               "notes": "Dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apricot.jpg"
         },
         {
           "species": "Lemon",
@@ -5517,7 +5517,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Acerola",
@@ -5552,7 +5552,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: Acerola (florida sweet) from Daleys Fruit nursery\nCount: 1 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/acerola.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -5581,7 +5581,7 @@
               "notes": "All dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Curry Leaf",
@@ -5651,7 +5651,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: not seen, to remove if existing because end of lifecycle\nCount: 1 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant.jpg"
         },
         {
           "species": "Galangal",
@@ -5756,7 +5756,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nCount: 4 → 4"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -5850,7 +5850,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: inventory\nPlant notes: add 2 around malabar chestnut and acerola\nCount: 2 → 0"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Garlic",
@@ -5879,7 +5879,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/garlic.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -5908,7 +5908,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-19T05:36:00\nMode: new_plant\nPlant notes: added today from FFC nursery\nCount: 0 → 1\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Lavender",
@@ -5925,7 +5925,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -5966,7 +5966,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Turmeric",
@@ -6090,7 +6090,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Banana",
@@ -6124,7 +6124,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -6141,7 +6141,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Oregano",
@@ -6164,7 +6164,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon",
@@ -6181,7 +6181,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli",
@@ -6198,7 +6198,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Arrowroot",
@@ -6238,7 +6238,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -6261,7 +6261,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -6284,7 +6284,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -6353,7 +6353,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -6376,7 +6376,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Banana",
@@ -6422,7 +6422,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -6439,7 +6439,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Oregano",
@@ -6462,7 +6462,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon",
@@ -6479,7 +6479,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli",
@@ -6496,7 +6496,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Arrowroot",
@@ -6536,7 +6536,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -6565,7 +6565,7 @@
               "notes": "Updated from 2 to 4. James transplanted 2 additional geranium from nursery on 24 Mar 2026. Originally missed from farmOS due to silent API failure detected by data integrity gate."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -6588,7 +6588,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -6622,7 +6622,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/marigold.jpg"
         },
         {
           "species": "Lavender",
@@ -6639,7 +6639,7 @@
               "notes": "Transplanted by James on 24 Mar 2026 from nursery. Originally missed from farmOS due to silent API failure detected by farm_context data integrity gate."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         }
       ]
     },
@@ -6691,7 +6691,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -6714,7 +6714,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Banana",
@@ -6760,7 +6760,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mango.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -6783,7 +6783,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -6800,7 +6800,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -6817,7 +6817,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Jacaranda",
@@ -6834,7 +6834,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -6851,7 +6851,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
         },
         {
           "species": "Oregano",
@@ -6868,7 +6868,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/oregano.jpg"
         },
         {
           "species": "Lemon",
@@ -6885,7 +6885,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Chilli",
@@ -6902,7 +6902,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Arrowroot",
@@ -6959,7 +6959,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -6982,7 +6982,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -7005,7 +7005,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Tansy",
@@ -7028,7 +7028,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Turmeric",
@@ -7062,7 +7062,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/passionfruit.jpg"
         },
         {
           "species": "Marigold",
@@ -7079,7 +7079,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/marigold.jpg"
         },
         {
           "species": "Nasturtium",
@@ -7096,7 +7096,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/nasturtium.jpg"
         }
       ]
     },
@@ -7125,7 +7125,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -7142,7 +7142,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Banana",
@@ -7176,7 +7176,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mango.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -7193,7 +7193,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -7210,7 +7210,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -7227,7 +7227,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Jacaranda",
@@ -7244,7 +7244,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Lemon",
@@ -7261,7 +7261,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Arrowroot",
@@ -7312,7 +7312,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Ginger",
@@ -7329,7 +7329,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Nettle",
@@ -7346,7 +7346,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/nettle.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -7363,7 +7363,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Comfrey",
@@ -7380,7 +7380,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -7431,7 +7431,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/marigold.jpg"
         }
       ]
     },
@@ -7466,7 +7466,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Banana",
@@ -7500,7 +7500,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -7523,7 +7523,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -7540,7 +7540,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Jacaranda",
@@ -7557,7 +7557,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -7591,7 +7591,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Ginger",
@@ -7608,7 +7608,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Sage",
@@ -7625,7 +7625,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sage.jpg"
         },
         {
           "species": "Nettle",
@@ -7642,7 +7642,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/nettle.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -7665,7 +7665,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -7682,7 +7682,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Turmeric",
@@ -7716,7 +7716,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/marigold.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -7779,7 +7779,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Avocado",
@@ -7796,7 +7796,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -7813,7 +7813,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Banagrass",
@@ -7830,7 +7830,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Jacaranda",
@@ -7847,7 +7847,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Nettle",
@@ -7864,7 +7864,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/nettle.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -7881,7 +7881,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -7898,7 +7898,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -7915,7 +7915,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -7949,7 +7949,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         }
       ]
     },
@@ -7978,7 +7978,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -7995,7 +7995,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -8012,7 +8012,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8046,7 +8046,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         }
       ]
     },
@@ -8092,7 +8092,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -8109,7 +8109,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -8126,7 +8126,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Comfrey",
@@ -8143,7 +8143,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8177,7 +8177,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         }
       ]
     },
@@ -8259,7 +8259,7 @@
               "notes": "5 added 20 Feb 2026"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -8300,7 +8300,7 @@
               "notes": "5 lost, replaced by Devil's Brew"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Lemon",
@@ -8341,7 +8341,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Comfrey",
@@ -8382,7 +8382,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -8440,7 +8440,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -8498,7 +8498,7 @@
               "notes": "Condition: damaged. Almost all dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8562,7 +8562,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Pluot (Black Adder)",
@@ -8602,7 +8602,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-devil-s-brew.jpg"
         },
         {
           "species": "Jacaranda",
@@ -8619,7 +8619,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Guava (Purple)",
@@ -8701,7 +8701,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -8800,7 +8800,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Calendula",
@@ -8829,7 +8829,7 @@
               "notes": "Condition: damaged. Almost all dead"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Pak Choi",
@@ -8881,7 +8881,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Pear (Nashi)",
@@ -8898,7 +8898,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pear-nashi.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -8921,7 +8921,7 @@
               "notes": "Field observation 14 Mar by Claire. Count 1→2. Imported manually (submission d0f34b99 had blank count for Pear Nashi)."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Lemon",
@@ -8938,7 +8938,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -8955,7 +8955,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T00:42:00\nMode: new_plant\nPlant notes: one planted over 6 months ago, other less than 2 months ago\nCount: 0 → 2\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         }
       ],
       "green_manure": [
@@ -9043,7 +9043,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pear-williams.jpg"
         },
         {
           "species": "Quince",
@@ -9072,7 +9072,7 @@
               "notes": "Inventory update: Corrected from Hadrien's inventory (→1). Claire confirmed 3 Quince remain, 5 died."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/quince.jpg"
         },
         {
           "species": "Apple",
@@ -9107,7 +9107,7 @@
               "notes": "3 new planted 25 Feb 2026: Dorsett Golden, Tropic Sweet, Tropical Anna"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apple.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -9148,7 +9148,7 @@
               "notes": "7 existing + 5 added 25 Feb 2026"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -9189,7 +9189,7 @@
               "notes": "1 died"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Lemon",
@@ -9230,7 +9230,7 @@
               "notes": "Consolidated: 1 cutting + 4 seedling + 2 new seedlings"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon.jpg"
         },
         {
           "species": "Ginger",
@@ -9271,7 +9271,7 @@
               "notes": "Not seen any. All 3 plants lost. Observed by Agnes March 18."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Comfrey",
@@ -9312,7 +9312,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Turmeric",
@@ -9423,7 +9423,7 @@
               "notes": "3 planted Feb 2026"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Cape Gooseberry",
@@ -9487,7 +9487,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/strawberry.jpg"
         },
         {
           "species": "Yarrow (White)",
@@ -9516,7 +9516,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/yarrow-white.jpg"
         },
         {
           "species": "Achiote",
@@ -9533,7 +9533,7 @@
               "notes": "Misidentified as Passionfruit by Hadrien — confirmed Achiote by Claire. Submission corrected."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -9550,7 +9550,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -9567,7 +9567,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Geranium",
@@ -9584,7 +9584,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         }
       ],
       "green_manure": [
@@ -9655,7 +9655,7 @@
               "notes": "Inventory update: Claire confirmed 3 Comfrey remain. Hadrien's inventory showed →0 which was incorrect."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -9719,7 +9719,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Pak Choi",
@@ -9788,7 +9788,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         }
       ],
       "green_manure": [
@@ -9847,7 +9847,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 2 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Quince",
@@ -9876,7 +9876,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 2 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/quince.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -9917,7 +9917,7 @@
               "notes": "Corrected from 4→3 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -9946,7 +9946,7 @@
               "notes": "4 disappeared"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -9975,7 +9975,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 2 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Comfrey",
@@ -10010,7 +10010,7 @@
               "notes": "Corrected from 3→2 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -10103,7 +10103,7 @@
               "notes": "Inventory update: Field inventory by Hadrien, 11 Mar 2026. Was 2, now 1. Reviewed by Claire."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Achiote",
@@ -10120,7 +10120,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/achiote.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -10137,7 +10137,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-12T08:32:00\nMode: inventory\nCount: 2 → 1"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Guava (Purple)",
@@ -10188,7 +10188,7 @@
               "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Jacaranda",
@@ -10205,7 +10205,7 @@
               "notes": "Observed by Hadrien, 11 Mar 2026. Confirmed by Claire."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         }
       ],
       "green_manure": [
@@ -10305,7 +10305,7 @@
               "notes": "Corrected from 1→3 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-strawberry.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -10328,7 +10328,7 @@
               "notes": "ffc nursery"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Jacaranda",
@@ -10363,7 +10363,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nCount: 2 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Apple",
@@ -10392,7 +10392,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: part of high strata, o"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apple.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -10433,7 +10433,7 @@
               "notes": "Corrected from 3→6 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -10462,7 +10462,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: just one seen, the oth"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -10491,7 +10491,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: bad state, drought?\nCo"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Capsicum (Red)",
@@ -10520,7 +10520,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: bad state, drought?\nCo"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/capsicum-red.jpg"
         },
         {
           "species": "Eggplant",
@@ -10549,7 +10549,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: Season end, senesecent"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant.jpg"
         },
         {
           "species": "Raspberry",
@@ -10584,7 +10584,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: need canopy and more w"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/raspberry.jpg"
         },
         {
           "species": "Blackberry",
@@ -10619,7 +10619,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: To do: Transplant anot"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/blackberry.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -10642,7 +10642,7 @@
               "notes": "ffc nursery"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -10671,7 +10671,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nPlant notes: senescent\nCount: 6 → 3"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Ginger",
@@ -10706,7 +10706,7 @@
               "notes": "Corrected from 9→1 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Comfrey",
@@ -10753,7 +10753,7 @@
               "notes": "Corrected from 3→4 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -10829,7 +10829,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-14T01:32:00\nMode: inventory\nSection notes: Look like this section suffering of lack of water more than the others sections/ rows\nCount: 2 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Pak Choi",
@@ -10968,7 +10968,7 @@
               "notes": "2 different species (one is black)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-strawberry.jpg"
         },
         {
           "species": "Macadamia",
@@ -11003,7 +11003,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/macadamia.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -11038,7 +11038,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -11073,7 +11073,7 @@
               "notes": "Corrected from 1→2 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -11102,7 +11102,7 @@
               "notes": "Reporter: Olivier\nSubmitted: 2026-03-14T05:59:00\nMode: inventory\nCount: 2 → 2"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Comfrey",
@@ -11149,7 +11149,7 @@
               "notes": "Corrected from 2→5 (Claire's March 15 inventory, could not update via her Claude)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Tansy",
@@ -11184,7 +11184,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tansy.jpg"
         },
         {
           "species": "Blueberry",
@@ -11271,7 +11271,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/davidson-plum.jpg"
         },
         {
           "species": "Banagrass",
@@ -11288,7 +11288,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-16T07:31:00\nMode: new_plant\nPlant notes: 8 added from FFC nursery to provide shade to low strata (Bluerberries) and medium strata (Davidson plum, cootamundra wattle"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banagrass.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -11305,7 +11305,7 @@
               "notes": "Reporter: Claire\nSubmitted: 2026-03-16T07:31:00\nMode: new_plant\nPlant notes: 2 added from FFC nursery to compense the lost of medium strata plants\nCount: 0 → 2\nNew plant added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
         }
       ],
       "green_manure": [
@@ -11503,7 +11503,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -11526,7 +11526,7 @@
               "notes": "Maverick field walk transcript 4 Apr 2026: counted 3 mulberry (farmOS had 2). One additional — possible self-rooted or unlogged nursery transplant. Pending James verification."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -11543,7 +11543,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -11566,7 +11566,7 @@
               "notes": "Maverick field walk transcript 4 Apr 2026: counted 3 wattles (farmOS had 1). Two additional plants — self-seeded or unlogged transplant. Pending James recount to verify."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -11583,7 +11583,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Geranium",
@@ -11600,7 +11600,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Ginger",
@@ -11617,7 +11617,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Rough Barked Apple",
@@ -11640,7 +11640,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/rough-barked-apple.jpg"
         },
         {
           "species": "Prickly-leaved Paperbark",
@@ -11663,7 +11663,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/prickly-leaved-paperbark.jpg"
         },
         {
           "species": "Sunflower",
@@ -11686,7 +11686,7 @@
               "notes": "Maverick field walk 5 Apr 2026: counted 2 sunflowers (farmOS had 1). +1 likely self-seeded. Pending James verification."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sunflower.jpg"
         },
         {
           "species": "Pumpkin",
@@ -11703,7 +11703,7 @@
               "notes": "Maverick transcript 4 Apr 2026. Self-seeded from compost/scattered seeds. Pending James verification."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pumpkin.jpg"
         },
         {
           "species": "Jacaranda",
@@ -11726,7 +11726,7 @@
               "notes": "Maverick transcript 4 Apr 2026. Tree species — not self-seeded. Possible unlogged transplant or section boundary error (Jacaranda exists in P2R5.29-38). Needs James investigation."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -11743,7 +11743,7 @@
               "notes": "Maverick transcript 5 Apr 2026. Variety assumed Italian (most common in field). May have spread from P2R5.29-38 where Parsley is established. Pending James verification."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-italian.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -11823,7 +11823,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -11840,7 +11840,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -11857,7 +11857,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -11874,7 +11874,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -11891,7 +11891,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Apple",
@@ -11914,7 +11914,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/apple.jpg"
         },
         {
           "species": "Avocado",
@@ -11937,7 +11937,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -11954,7 +11954,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-italian.jpg"
         },
         {
           "species": "Parsley (Moss Curled)",
@@ -11971,7 +11971,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-moss-curled.jpg"
         },
         {
           "species": "Butternut Pumpkin",
@@ -11988,7 +11988,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/butternut-pumpkin.jpg"
         }
       ]
     },
@@ -12034,7 +12034,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -12051,7 +12051,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -12068,7 +12068,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Wattle - Cootamundra (Baileyana)",
@@ -12085,7 +12085,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12108,7 +12108,7 @@
               "notes": "Inventory update: Maverick QR observation 3 Apr 2026. Count 10→9."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -12131,7 +12131,7 @@
               "notes": "Inventory update: Maverick QR observation 3 Apr 2026. Count 4→2."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-italian.jpg"
         },
         {
           "species": "Parsley (Moss Curled)",
@@ -12154,7 +12154,7 @@
               "notes": "Inventory update: Maverick QR observation 3 Apr 2026. Count 4→2."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/parsley-moss-curled.jpg"
         },
         {
           "species": "Comfrey",
@@ -12177,7 +12177,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Ginger",
@@ -12194,7 +12194,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ginger.jpg"
         },
         {
           "species": "Okra",
@@ -12217,7 +12217,7 @@
               "notes": "Maverick field walk 5 Apr 2026: counted ~11 okra (farmOS had 6). Multiple with decent-sized fruits on both north and south sides. Includes 2-3 very short but heavily fruiting plants. Significant incre"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/okra.jpg"
         },
         {
           "species": "Pumpkin",
@@ -12234,7 +12234,7 @@
               "notes": "Maverick transcript 4 Apr 2026: ~3 pumpkin plants including \"growing out into the walking path.\" Self-seeded. Pending James recount."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pumpkin.jpg"
         },
         {
           "species": "Sunflower",
@@ -12251,7 +12251,7 @@
               "notes": "Maverick QR observation 3 Apr 2026. North side of the row."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sunflower.jpg"
         }
       ]
     },
@@ -12280,7 +12280,7 @@
               "notes": "Kerstin QR observation 3 Apr 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/okra.jpg"
         },
         {
           "species": "Pumpkin",
@@ -12297,7 +12297,7 @@
               "notes": "Kerstin QR observation 3 Apr 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pumpkin.jpg"
         },
         {
           "species": "Cowpea",
@@ -12314,7 +12314,7 @@
               "notes": "Kerstin QR observation 3 Apr 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cowpea.jpg"
         }
       ]
     },
@@ -12360,7 +12360,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -12377,7 +12377,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -12394,7 +12394,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12411,7 +12411,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -12486,7 +12486,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -12532,7 +12532,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12549,7 +12549,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -12583,7 +12583,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Dianella",
@@ -12617,7 +12617,7 @@
               "notes": "Seeded January 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         }
       ]
     },
@@ -12675,7 +12675,7 @@
               "notes": "previous section"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tallowood-gum.jpg"
         },
         {
           "species": "Forest Red Gum",
@@ -12721,7 +12721,7 @@
               "notes": "Can only find 2 of 6. Observed by James March 18."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -12738,7 +12738,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -12789,7 +12789,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Geranium",
@@ -12806,7 +12806,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Coriander",
@@ -12823,7 +12823,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -12840,7 +12840,7 @@
               "notes": "Added via field observation"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -12857,7 +12857,7 @@
               "notes": "Seeded/planted January-February 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         }
       ]
     },
@@ -12886,7 +12886,7 @@
               "notes": "Maverick QR observation 3 Apr 2026. Most doing well, most crawling out of the row. Different varieties of pumpkins but all look similar."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/butternut-pumpkin.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -12920,7 +12920,7 @@
               "notes": "Maverick QR observation 3 Apr 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sunflower.jpg"
         },
         {
           "species": "Papaya",
@@ -12954,7 +12954,7 @@
               "notes": "Maverick QR observation 3 Apr 2026. Close to each other in middle of section."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/jacaranda.jpg"
         },
         {
           "species": "Avocado (Hass)",
@@ -12971,7 +12971,7 @@
               "notes": "Maverick QR observation 3 Apr 2026. Close to each other in middle of section."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/avocado-hass.jpg"
         },
         {
           "species": "Coriander",
@@ -12988,7 +12988,7 @@
               "notes": "Maverick QR observation 3 Apr 2026."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Eucalypt-Gum (Generic)",
@@ -13022,7 +13022,7 @@
               "notes": "Maverick QR observation 3 Apr 2026. Observer reported as Mulberry — mapped to Mulberry (White) per taxonomy."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mulberry-white.jpg"
         },
         {
           "species": "Basil - Perennial (Thai)",
@@ -13039,7 +13039,7 @@
               "notes": "Maverick QR observation 3 Apr 2026. Observer reported as Basil - Perennial — mapped to Basil - Perennial (Thai) per taxonomy."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         }
       ],
       "green_manure": [
@@ -13096,7 +13096,7 @@
               "notes": "Inventory update: Maverick QR observation 3 Apr 2026. Updated from transcript count 10 to QR count 13."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/okra.jpg"
         },
         {
           "species": "Sunflower",
@@ -13119,7 +13119,7 @@
               "notes": "Inventory update: Maverick QR observation 3 Apr 2026. Updated from transcript count 10 to QR count 22."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sunflower.jpg"
         },
         {
           "species": "Radish",
@@ -13159,7 +13159,7 @@
               "notes": "Inventory update: Maverick QR observation 3 Apr 2026. Updated from transcript count 1 to QR count 4. Relatively small in comparison to the rest of the row."
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pumpkin.jpg"
         }
       ],
       "green_manure": [
@@ -13211,7 +13211,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Butternut Pumpkin - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/butternut-pumpkin.jpg"
         },
         {
           "species": "Cabbage (Golden Acre)",
@@ -13228,7 +13228,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-golden-acre.jpg"
         },
         {
           "species": "Cabbage (Red)",
@@ -13245,7 +13245,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         },
         {
           "species": "Chilli",
@@ -13268,7 +13268,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -13285,7 +13285,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -13302,7 +13302,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Coriander",
@@ -13312,7 +13312,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Coriander - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -13322,7 +13322,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Corn (Manning Pride) - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -13332,7 +13332,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Cowpea (Red) - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -13349,7 +13349,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/ice-cream-bean.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -13359,7 +13359,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Marigold (French - Dwarf) - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/marigold-french-dwarf.jpg"
         },
         {
           "species": "Millet (White French)",
@@ -13379,7 +13379,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Oat - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -13396,7 +13396,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -13416,7 +13416,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Zucchini (Lebanese) - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/zucchini-lebanese.jpg"
         }
       ]
     },
@@ -13438,7 +13438,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Butternut Pumpkin - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/butternut-pumpkin.jpg"
         },
         {
           "species": "Comfrey",
@@ -13455,7 +13455,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Coriander",
@@ -13465,7 +13465,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Coriander - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -13475,7 +13475,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Corn (Manning Pride) - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -13485,7 +13485,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Cowpea (Red) - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -13495,7 +13495,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Marigold (French - Dwarf) - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/marigold-french-dwarf.jpg"
         },
         {
           "species": "Millet (White French)",
@@ -13515,7 +13515,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Oat - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -13547,7 +13547,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Bean - Dwarf (Borlotti) - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf-borlotti.jpg"
         },
         {
           "species": "Broccoli (Summer Green)",
@@ -13557,7 +13557,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Broccoli (Summer Green) - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/broccoli-summer-green.jpg"
         },
         {
           "species": "Buckwheat",
@@ -13584,7 +13584,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/capsicum-red.jpg"
         },
         {
           "species": "Chilli",
@@ -13607,7 +13607,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -13624,7 +13624,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -13641,7 +13641,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -13651,7 +13651,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Corn (Manning Pride) - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Fennel",
@@ -13661,7 +13661,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Fennel - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/fennel.jpg"
         },
         {
           "species": "Geranium",
@@ -13678,7 +13678,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Lavender",
@@ -13695,7 +13695,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -13705,7 +13705,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Marigold (French - Dwarf) - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/marigold-french-dwarf.jpg"
         },
         {
           "species": "Millet (White French)",
@@ -13732,7 +13732,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Mung Bean",
@@ -13742,7 +13742,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Mung Bean - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/mung-bean.jpg"
         },
         {
           "species": "Rosemary",
@@ -13759,7 +13759,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/rosemary.jpg"
         },
         {
           "species": "Spring Onion",
@@ -13769,7 +13769,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Spring Onion - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/spring-onion.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -13796,7 +13796,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tagasaste-tree-lucerne.jpg"
         },
         {
           "species": "Tomato",
@@ -13813,7 +13813,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -13835,7 +13835,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Basil - Sweet (Classic) - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Bean - Dwarf (Borlotti)",
@@ -13845,7 +13845,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Bean - Dwarf (Borlotti) - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf-borlotti.jpg"
         },
         {
           "species": "Buckwheat",
@@ -13872,7 +13872,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-golden-acre.jpg"
         },
         {
           "species": "Capsicum (Red)",
@@ -13889,7 +13889,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/capsicum-red.jpg"
         },
         {
           "species": "Celery",
@@ -13906,7 +13906,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/celery.jpg"
         },
         {
           "species": "Chilli",
@@ -13929,7 +13929,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -13946,7 +13946,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (Red Persian)",
@@ -13956,7 +13956,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Clover (Red Persian) - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-red-persian.jpg"
         },
         {
           "species": "Coriander",
@@ -13966,7 +13966,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Coriander - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn",
@@ -13976,7 +13976,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Corn - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -13986,7 +13986,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Cowpea (Red) - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Lavender",
@@ -14003,7 +14003,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Millet",
@@ -14013,7 +14013,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Millet - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Oat",
@@ -14023,7 +14023,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Oat - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Parsnip (Hollow Grown)",
@@ -14033,7 +14033,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Parsnip (Hollow Grown) - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/parsnip-hollow-grown.jpg"
         },
         {
           "species": "Pea-Sugar Snap",
@@ -14043,7 +14043,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Pea-Sugar Snap - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/pea-sugar-snap.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -14060,7 +14060,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Rosemary",
@@ -14077,7 +14077,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/rosemary.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -14104,7 +14104,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -14126,7 +14126,7 @@
           "first_planted": "2025-10-04",
           "asset_name": "4 OCT 2025 - Bean - Dwarf - P1R1.29-39",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf.jpg"
         },
         {
           "species": "Celery",
@@ -14143,7 +14143,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/celery.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -14160,7 +14160,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Corn",
@@ -14170,7 +14170,7 @@
           "first_planted": "2025-10-04",
           "asset_name": "4 OCT 2025 - Corn - P1R1.29-39",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -14180,7 +14180,7 @@
           "first_planted": "2025-10-04",
           "asset_name": "4 OCT 2025 - Cowpea (Red) - P1R1.29-39",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Mint",
@@ -14197,7 +14197,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Nasturtium",
@@ -14207,7 +14207,7 @@
           "first_planted": "2025-10-04",
           "asset_name": "4 OCT 2025 - Nasturtium - P1R1.29-39",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/nasturtium.jpg"
         },
         {
           "species": "Oat",
@@ -14217,7 +14217,7 @@
           "first_planted": "2025-10-04",
           "asset_name": "4 OCT 2025 - Oat - P1R1.29-39",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -14234,7 +14234,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pigeon-pea.jpg"
         },
         {
           "species": "Sage",
@@ -14251,7 +14251,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sage.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -14278,7 +14278,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -14318,7 +14318,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -14335,7 +14335,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Bean - Dwarf",
@@ -14345,7 +14345,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Bean - Dwarf - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf.jpg"
         },
         {
           "species": "Cabbage (Red)",
@@ -14362,7 +14362,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         },
         {
           "species": "Calendula",
@@ -14379,7 +14379,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -14389,7 +14389,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Carrot - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/carrot.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -14406,7 +14406,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (White Haifa)",
@@ -14416,7 +14416,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Clover (White Haifa) - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-white-haifa.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -14426,7 +14426,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Corn (Manning Pride) - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -14436,7 +14436,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Cowpea (Red) - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Cucumber (Burpless)",
@@ -14453,7 +14453,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cucumber-burpless.jpg"
         },
         {
           "species": "Eggplant (Long Purple)",
@@ -14470,7 +14470,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant-long-purple.jpg"
         },
         {
           "species": "Millet",
@@ -14480,7 +14480,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Millet - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Okra",
@@ -14490,7 +14490,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Okra - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/okra.jpg"
         },
         {
           "species": "Pak Choi",
@@ -14517,7 +14517,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Radish (Tillage) - P1R3.0-3",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/radish-tillage.jpg"
         },
         {
           "species": "Tomato",
@@ -14534,7 +14534,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -14563,7 +14563,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Bean - Dwarf",
@@ -14573,7 +14573,7 @@
           "first_planted": "2025-11-05",
           "asset_name": "5 NOV 2025 - Bean - Dwarf - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf.jpg"
         },
         {
           "species": "Bean - Dwarf (Borlotti)",
@@ -14583,7 +14583,7 @@
           "first_planted": "2025-11-05",
           "asset_name": "5 NOV 2025 - Bean - Dwarf (Borlotti) - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf-borlotti.jpg"
         },
         {
           "species": "Buckwheat",
@@ -14610,7 +14610,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Capsicum (Red)",
@@ -14627,7 +14627,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/capsicum-red.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -14644,7 +14644,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (Crimson)",
@@ -14654,7 +14654,7 @@
           "first_planted": "2025-11-05",
           "asset_name": "5 NOV 2025 - Clover (Crimson) - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-crimson.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -14664,7 +14664,7 @@
           "first_planted": "2025-11-05",
           "asset_name": "5 NOV 2025 - Corn (Manning Pride) - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Eggplant (Long Purple)",
@@ -14681,7 +14681,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant-long-purple.jpg"
         },
         {
           "species": "Millet",
@@ -14691,7 +14691,7 @@
           "first_planted": "2025-11-05",
           "asset_name": "5 NOV 2025 - Millet - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Onion",
@@ -14708,7 +14708,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/onion.jpg"
         },
         {
           "species": "Pak Choi",
@@ -14742,7 +14742,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         },
         {
           "species": "Zucchini (Blackjack)",
@@ -14752,7 +14752,7 @@
           "first_planted": "2025-11-05",
           "asset_name": "5 NOV 2025 - Zucchini (Blackjack) - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/zucchini-blackjack.jpg"
         }
       ]
     },
@@ -14774,7 +14774,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Bean - Dwarf - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf.jpg"
         },
         {
           "species": "Buckwheat",
@@ -14801,7 +14801,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -14811,7 +14811,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Carrot - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/carrot.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -14828,7 +14828,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (Crimson)",
@@ -14838,7 +14838,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Clover (Crimson) - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-crimson.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -14848,7 +14848,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Corn (Manning Pride) - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Eggplant (Long Purple)",
@@ -14865,7 +14865,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant-long-purple.jpg"
         },
         {
           "species": "Millet",
@@ -14875,7 +14875,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Millet - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Pak Choi",
@@ -14902,7 +14902,7 @@
           "first_planted": "2025-11-04",
           "asset_name": "4 NOV 2025 - Pea-Sugar Snap - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/pea-sugar-snap.jpg"
         },
         {
           "species": "Sage",
@@ -14919,7 +14919,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sage.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -14946,7 +14946,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -14975,7 +14975,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Buckwheat",
@@ -15002,7 +15002,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -15019,7 +15019,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Coriander",
@@ -15029,7 +15029,7 @@
           "first_planted": "2025-10-27",
           "asset_name": "27 OCT 2025 - Coriander - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -15039,7 +15039,7 @@
           "first_planted": "2025-10-27",
           "asset_name": "27 OCT 2025 - Corn (Manning Pride) - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -15049,7 +15049,7 @@
           "first_planted": "2025-10-27",
           "asset_name": "27 OCT 2025 - Cowpea (Red) - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -15059,7 +15059,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Marigold (French - Dwarf) - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/marigold-french-dwarf.jpg"
         },
         {
           "species": "Oat",
@@ -15069,7 +15069,7 @@
           "first_planted": "2025-10-27",
           "asset_name": "27 OCT 2025 - Oat - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Pak Choi",
@@ -15103,7 +15103,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pumpkin-queensland-blue.jpg"
         },
         {
           "species": "Sunn Hemp",
@@ -15130,7 +15130,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -15159,7 +15159,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Bean - Climbing (Blue Lake)",
@@ -15169,7 +15169,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Bean - Climbing (Blue Lake) - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-climbing-blue-lake.jpg"
         },
         {
           "species": "Buckwheat",
@@ -15189,7 +15189,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Butternut Pumpkin - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/butternut-pumpkin.jpg"
         },
         {
           "species": "Calendula",
@@ -15206,7 +15206,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -15216,7 +15216,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Carrot - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/carrot.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -15233,7 +15233,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Citrus (Yuzu)",
@@ -15250,7 +15250,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/citrus-yuzu.jpg"
         },
         {
           "species": "Clover (Red Persian)",
@@ -15260,7 +15260,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Clover (Red Persian) - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-red-persian.jpg"
         },
         {
           "species": "Clover (White Haifa)",
@@ -15270,7 +15270,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Clover (White Haifa) - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-white-haifa.jpg"
         },
         {
           "species": "Comfrey",
@@ -15287,7 +15287,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -15297,7 +15297,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Marigold (French - Dwarf) - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/marigold-french-dwarf.jpg"
         },
         {
           "species": "Millet",
@@ -15307,7 +15307,7 @@
           "first_planted": "2025-11-04",
           "asset_name": "4 NOV 2025 - Millet - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Oat",
@@ -15317,7 +15317,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Oat - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Pumpkin (Queensland Blue)",
@@ -15334,7 +15334,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pumpkin-queensland-blue.jpg"
         },
         {
           "species": "Spinach-Perpetual",
@@ -15351,7 +15351,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/spinach-perpetual.jpg"
         },
         {
           "species": "Spring Onion",
@@ -15361,7 +15361,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Spring Onion - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/spring-onion.jpg"
         },
         {
           "species": "Tomato",
@@ -15378,7 +15378,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -15407,7 +15407,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-perennial-thai.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -15424,7 +15424,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/basil-sweet-classic.jpg"
         },
         {
           "species": "Bean - Dwarf",
@@ -15434,7 +15434,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Bean - Dwarf - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf.jpg"
         },
         {
           "species": "Cabbage (Red)",
@@ -15451,7 +15451,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         },
         {
           "species": "Calendula",
@@ -15468,7 +15468,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/calendula.jpg"
         },
         {
           "species": "Carrot",
@@ -15478,7 +15478,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Carrot - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/carrot.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -15495,7 +15495,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Clover (White Haifa)",
@@ -15505,7 +15505,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Clover (White Haifa) - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/clover-white-haifa.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -15515,7 +15515,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Corn (Manning Pride) - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Cowpea (Red)",
@@ -15525,7 +15525,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Cowpea (Red) - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/cowpea-red.jpg"
         },
         {
           "species": "Cucumber (Burpless)",
@@ -15542,7 +15542,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cucumber-burpless.jpg"
         },
         {
           "species": "Eggplant (Long Purple)",
@@ -15559,7 +15559,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eggplant-long-purple.jpg"
         },
         {
           "species": "Millet",
@@ -15569,7 +15569,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Millet - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Okra",
@@ -15579,7 +15579,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Okra - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/okra.jpg"
         },
         {
           "species": "Pak Choi",
@@ -15606,7 +15606,7 @@
           "first_planted": "2025-11-08",
           "asset_name": "8 NOV 2025 - Radish (Tillage) - P1R5.0-10",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/radish-tillage.jpg"
         },
         {
           "species": "Tomato",
@@ -15623,7 +15623,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/tomato.jpg"
         }
       ]
     },
@@ -15667,7 +15667,7 @@
           "first_planted": "2025-09-01",
           "asset_name": "SPRING 2025 - Bean - Dwarf - P1R5.30-35",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf.jpg"
         },
         {
           "species": "Corn",
@@ -15677,7 +15677,7 @@
           "first_planted": "2025-09-01",
           "asset_name": "SPRING 2025 - Corn - P1R5.30-35",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn.jpg"
         },
         {
           "species": "Millet",
@@ -15694,7 +15694,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/millet.jpg"
         },
         {
           "species": "Watermelon (Sugar baby)",
@@ -15726,7 +15726,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Bean - Dwarf (Borlotti) - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/bean-dwarf-borlotti.jpg"
         },
         {
           "species": "Buckwheat",
@@ -15753,7 +15753,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-golden-acre.jpg"
         },
         {
           "species": "Cabbage (Red)",
@@ -15770,7 +15770,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/cabbage-red.jpg"
         },
         {
           "species": "Chilli",
@@ -15793,7 +15793,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli.jpg"
         },
         {
           "species": "Chilli (Jalapeño)",
@@ -15810,7 +15810,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/chilli-jalape-o.jpg"
         },
         {
           "species": "Comfrey",
@@ -15827,7 +15827,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/comfrey.jpg"
         },
         {
           "species": "Coriander",
@@ -15837,7 +15837,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Coriander - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/coriander.jpg"
         },
         {
           "species": "Corn (Manning Pride)",
@@ -15847,7 +15847,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Corn (Manning Pride) - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/corn-manning-pride.jpg"
         },
         {
           "species": "Lavender",
@@ -15864,7 +15864,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lavender.jpg"
         },
         {
           "species": "Marigold (French - Dwarf)",
@@ -15874,7 +15874,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Marigold (French - Dwarf) - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/marigold-french-dwarf.jpg"
         },
         {
           "species": "Mint",
@@ -15891,7 +15891,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mint.jpg"
         },
         {
           "species": "Oat",
@@ -15901,7 +15901,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Oat - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/oat.jpg"
         },
         {
           "species": "Onion (Red)",
@@ -15911,7 +15911,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Onion (Red) - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/onion-red.jpg"
         },
         {
           "species": "Sage",
@@ -15928,7 +15928,7 @@
               "notes": ""
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sage.jpg"
         },
         {
           "species": "Zucchini (Lebanese)",
@@ -15938,7 +15938,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Zucchini (Lebanese) - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/zucchini-lebanese.jpg"
         }
       ]
     }
