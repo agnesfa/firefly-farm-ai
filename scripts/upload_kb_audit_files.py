@@ -115,16 +115,22 @@ def extract_summary(md_body: str) -> str:
     return "\n".join(out)
 
 
-# Match an audit file bullet like:
+# Format A — audit_row.py generated files (P2R1-P2R4):
 #   "- **P2R3.2-9 — Jaboticaba** (Medium): all lost (was 5)"
-# or the "missing" variant:
-#   "- **P2R3.15-21 — Forest Red Gum** (Emergent): in sheet (1), missing..."
-#
-# We capture the species between the " — " and the closing "**" — whatever
-# strata marker follows in "(...)" is not part of the species name.
-_RED_ROW_RE = re.compile(
+# Captured between "— " and "**"; strata in parens is not part of the name.
+_RED_BULLET_RE = re.compile(
     r"^\s*-\s*\*\*(?P<section>[PR0-9.\-]+)\s+—\s+(?P<species>[^*]+?)\*\*"
 )
+
+# Format B — manual P2R5 file uses inline 🔴 markers in per-section
+# pipe tables. First column is the species, one of the cells contains
+# 🔴. We want the species from any such row.
+#
+# Example rows from P2R5:
+#   "| Rough Barked Apple | 3 planted (May 25) | 1 | 🔴 | 3 planted..."
+#   "| Black She-oak | 2 planted (May 25) | 0 (not in farmOS) | 🔴 | MISSING..."
+#
+_PIPE_TABLE_ROW_RE = re.compile(r"^\s*\|(?P<species>[^|]+)\|")
 
 
 def extract_red_species(md_body: str) -> list[str]:
@@ -133,9 +139,17 @@ def extract_red_species(md_body: str) -> list[str]:
     Used to populate the `related_plants` field on the KB entry so species-
     scoped searches (e.g. "where have we lost Ice Cream Bean?") surface
     the audit entries that mention it.
+
+    Handles two audit file formats:
+      - Format A (audit_row.py output): dedicated
+        `### 🔴 Rows that need a field check` section with bulleted list.
+      - Format B (manual P2R5 file): 🔴 markers inline in per-section
+        pipe tables, no dedicated summary section.
     """
     species: list[str] = []
     seen: set[str] = set()
+
+    # Pass 1 — Format A: dedicated 🔴 summary section
     in_red_section = False
     for line in md_body.splitlines():
         if line.startswith("### 🔴") or line.strip().startswith("### 🔴"):
@@ -144,12 +158,38 @@ def extract_red_species(md_body: str) -> list[str]:
         if in_red_section:
             if line.startswith("### ") or line.startswith("## "):
                 break
-            m = _RED_ROW_RE.match(line)
+            m = _RED_BULLET_RE.match(line)
             if m:
                 name = m.group("species").strip()
                 if name and name not in seen:
                     seen.add(name)
                     species.append(name)
+
+    # Pass 2 — Format B (fallback): inline 🔴 in pipe-table rows. Only
+    # runs if Pass 1 found nothing. Format B only works for files whose
+    # table structure has Species in the first column (manual P2R5
+    # file). audit_row.py output has Strata in column 1, which would
+    # contaminate the list with "Low", "Medium", etc. — Format A already
+    # picks up the right species for those files via the bullet list.
+    if not species:
+        _STRATA_WORDS = {"strata", "species", "emergent", "high", "medium", "low"}
+        for line in md_body.splitlines():
+            if "🔴" not in line:
+                continue
+            m = _PIPE_TABLE_ROW_RE.match(line)
+            if not m:
+                continue
+            cell = m.group("species").strip()
+            if not cell or cell.lower() in ("species", ":----", ":---", "---"):
+                continue
+            cleaned = re.sub(r"[*`_]", "", cell).strip()
+            # Skip strata labels and empty cells
+            if cleaned.lower() in _STRATA_WORDS:
+                continue
+            if cleaned and cleaned not in seen:
+                seen.add(cleaned)
+                species.append(cleaned)
+
     return species
 
 
