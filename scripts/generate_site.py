@@ -157,8 +157,23 @@ def format_planted_date_display(iso_date: str) -> str:
         return iso_date
 
 
-def render_log_timeline(logs: list) -> str:
-    """Render a compact log timeline for expanded plant card view."""
+def log_detail_page_name(section_id: str, log: dict) -> str:
+    """Build the detail page filename for a single log.
+
+    Uses the first 8 chars of the log UUID so filenames stay short and stable.
+    """
+    uuid = log.get("uuid", "")
+    short = uuid.split("-")[0] if uuid else (log.get("date", "") + "-" + log.get("type", ""))
+    return f"{section_id}-log-{short}.html"
+
+
+def render_log_timeline(logs: list, section_id: str = "", base_url: str = "") -> str:
+    """Render a compact log timeline for expanded plant card view.
+
+    Each entry is a link to a per-log detail page showing the full farmOS
+    log record with provenance (InteractionStamp). This gives Claire and
+    WWOOFers a way to click through and trust what's in the data.
+    """
     if not logs:
         return ""
 
@@ -167,6 +182,7 @@ def render_log_timeline(logs: list) -> str:
         "observation": "📊",
         "activity": "🔧",
         "harvest": "🧺",
+        "seeding": "🌰",
     }
 
     items = []
@@ -181,19 +197,193 @@ def render_log_timeline(logs: list) -> str:
             date_display = date
 
         log_type = log.get("type", "").replace("_", " ").title()
-        name = log.get("name", "")
-        # Shorten log name for display
-        short = name[:50] + "..." if len(name) > 50 else name
 
-        items.append(
-            f'<div class="log-entry">'
-            f'<span class="log-icon">{icon}</span>'
-            f'<span class="log-date">{esc(date_display)}</span>'
-            f'<span class="log-type">{esc(log_type)}</span>'
-            f'</div>'
-        )
+        if log.get("uuid") and section_id:
+            href = base_url + log_detail_page_name(section_id, log)
+            items.append(
+                f'<a class="log-entry log-entry-link" href="{esc(href)}">'
+                f'<span class="log-icon">{icon}</span>'
+                f'<span class="log-date">{esc(date_display)}</span>'
+                f'<span class="log-type">{esc(log_type)}</span>'
+                f'<span class="log-arrow">›</span>'
+                f'</a>'
+            )
+        else:
+            items.append(
+                f'<div class="log-entry">'
+                f'<span class="log-icon">{icon}</span>'
+                f'<span class="log-date">{esc(date_display)}</span>'
+                f'<span class="log-type">{esc(log_type)}</span>'
+                f'</div>'
+            )
 
     return f'<div class="log-timeline"><div class="log-timeline-title">History</div>{"".join(items)}</div>'
+
+
+def parse_interaction_stamp(stamp_line: str) -> dict:
+    """Parse a [ontology:InteractionStamp] line into its key=value fields."""
+    out: dict = {}
+    if not stamp_line or "[ontology:InteractionStamp]" not in stamp_line:
+        return out
+    # Strip the prefix
+    body = stamp_line.split("[ontology:InteractionStamp]", 1)[1].strip()
+    for part in body.split("|"):
+        part = part.strip()
+        if "=" in part:
+            k, v = part.split("=", 1)
+            out[k.strip()] = v.strip()
+    return out
+
+
+def render_log_detail_page(
+    section_id: str,
+    section: dict,
+    row_info: dict,
+    log: dict,
+    plant_db: dict,
+    base_url: str = "",
+) -> str:
+    """Render a standalone HTML page for a single farmOS log record.
+
+    Shows: type, date, species, full notes, parsed InteractionStamp
+    (initiator, role, channel, executor, action, target, outcome, ts),
+    and a "back to section" link. This is the first piece of the provenance
+    layer — every fact in the farm now has a URL you can click through to.
+    """
+    has_trees = section.get("has_trees", False)
+    grad = (
+        "linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)"
+        if has_trees
+        else "linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)"
+    )
+
+    species = log.get("species", "")
+    log_type = log.get("type", "observation").replace("_", " ").title()
+    date = log.get("date", "")
+    log_name = log.get("name", "")
+    notes_full = log.get("notes_full", "") or log.get("notes", "")
+    uuid = log.get("uuid", "")
+
+    # Parse the InteractionStamp if present; otherwise derive what we can from notes
+    stamp_line = log.get("interaction_stamp", "")
+    stamp = parse_interaction_stamp(stamp_line)
+
+    # Strip the stamp line out of the visible notes (it's shown separately)
+    visible_notes = "\n".join(
+        ln for ln in notes_full.splitlines() if "[ontology:InteractionStamp]" not in ln
+    ).strip()
+
+    # Plant metadata (for context)
+    plant_meta = plant_db.get(species, {})
+    botanical = plant_meta.get("botanical", "")
+    strata = plant_meta.get("strata", "")
+
+    provenance_rows = ""
+    if stamp:
+        def row(label: str, key: str, icon: str) -> str:
+            val = stamp.get(key, "")
+            if not val:
+                return ""
+            return (
+                f'<div class="prov-row">'
+                f'<span class="prov-icon">{icon}</span>'
+                f'<span class="prov-label">{label}</span>'
+                f'<span class="prov-value">{esc(val)}</span>'
+                f'</div>'
+            )
+        provenance_rows = (
+            row("Initiated by", "initiator", "👤")
+            + row("Role", "role", "🏷")
+            + row("Channel", "channel", "📡")
+            + row("Executed by", "executor", "⚙️")
+            + row("Action", "action", "▶")
+            + row("Target", "target", "🎯")
+            + row("Outcome", "outcome", "✓")
+            + row("Timestamp", "ts", "🕒")
+        )
+
+    provenance_block = ""
+    if provenance_rows:
+        provenance_block = (
+            '<div class="log-detail-section">'
+            '<h3 class="log-detail-h3">Provenance</h3>'
+            '<div class="prov-card">' + provenance_rows + '</div>'
+            '</div>'
+        )
+    elif stamp_line:
+        provenance_block = (
+            '<div class="log-detail-section">'
+            '<h3 class="log-detail-h3">Provenance</h3>'
+            '<div class="prov-card prov-raw">' + esc(stamp_line) + '</div>'
+            '</div>'
+        )
+
+    notes_block = ""
+    if visible_notes:
+        notes_html = esc(visible_notes).replace("\n", "<br>")
+        notes_block = (
+            '<div class="log-detail-section">'
+            '<h3 class="log-detail-h3">Notes</h3>'
+            '<div class="log-notes-body">' + notes_html + '</div>'
+            '</div>'
+        )
+
+    meta_rows = (
+        f'<div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date</span><span class="prov-value">{esc(date)}</span></div>'
+        f'<div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type</span><span class="prov-value">{esc(log_type)}</span></div>'
+        f'<div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species</span><span class="prov-value">{esc(species)}{" · " + esc(botanical) if botanical else ""}</span></div>'
+        + (f'<div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Strata</span><span class="prov-value">{esc(strata)}</span></div>' if strata else "")
+        + f'<div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name</span><span class="prov-value mono">{esc(log_name)}</span></div>'
+        + (f'<div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID</span><span class="prov-value mono">{esc(uuid)}</span></div>' if uuid else "")
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{esc(species)} · {esc(date)} · {esc(section_id)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{base_url}styles.css">
+<link rel="stylesheet" href="{base_url}styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:{grad}">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · {esc(row_info.get('paddock',''))} · {esc(row_info.get('row',''))} · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">{esc(section.get('range', ''))}</h1>
+    </div>
+    <div class="obs-subtitle">{esc(log_type)} · {esc(date)} · {esc(species)}</div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        {meta_rows}
+      </div>
+    </div>
+
+    {notes_block}
+
+    {provenance_block}
+  </div>
+
+  <div class="obs-nav">
+    <a href="{base_url}{section_id}.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+</body>
+</html>"""
 
 
 def render_care_tips(plant):
@@ -305,8 +495,8 @@ def render_plant_card(planting, plant_db, section_id="", base_url=""):
     # Care tips (expanded view)
     care_html = render_care_tips(plant)
 
-    # Log timeline (expanded view)
-    timeline_html = render_log_timeline(logs)
+    # Log timeline (expanded view) — each entry links to a log detail page
+    timeline_html = render_log_timeline(logs, section_id=section_id, base_url=base_url)
 
     # Species reference photo
     photo_html = ""
@@ -628,10 +818,28 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 /* Log timeline */
 .log-timeline { margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0ec; }
 .log-timeline-title { font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.log-entry { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; color: #6b7280; }
+.log-entry { display: flex; align-items: center; gap: 6px; padding: 6px 8px; font-size: 12px; color: #6b7280; border-radius: 6px; }
+.log-entry-link { text-decoration: none; color: inherit; transition: background 0.15s; cursor: pointer; }
+.log-entry-link:hover, .log-entry-link:focus { background: #f7f6f0; color: #1a1a1a; }
+.log-entry-link:hover .log-type, .log-entry-link:focus .log-type { color: #e67e22; }
 .log-icon { font-size: 13px; flex-shrink: 0; }
 .log-date { font-weight: 500; min-width: 65px; color: #4b5563; }
-.log-type { color: #9ca3af; }
+.log-type { color: #9ca3af; flex: 1; }
+.log-arrow { color: #d1d5db; font-size: 16px; font-weight: 300; }
+
+/* Log detail page */
+.log-detail-wrap { padding: 16px; max-width: 430px; margin: 0 auto; }
+.log-detail-section { margin-bottom: 20px; }
+.log-detail-h3 { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px; }
+.prov-card { background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 10px; padding: 12px 14px; }
+.prov-card.prov-raw { font-family: 'SF Mono', monospace; font-size: 11px; color: #6b7280; word-break: break-word; }
+.prov-row { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; font-size: 13px; line-height: 1.4; border-bottom: 1px solid #eceae2; }
+.prov-row:last-child { border-bottom: none; }
+.prov-icon { font-size: 14px; flex-shrink: 0; width: 20px; }
+.prov-label { color: #9ca3af; min-width: 80px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+.prov-value { color: #1a1a1a; flex: 1; word-break: break-word; }
+.prov-value.mono { font-family: 'SF Mono', Consolas, monospace; font-size: 11px; color: #6b7280; }
+.log-notes-body { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.5; color: #1a1a1a; white-space: pre-wrap; }
 
 /* Explainer */
 .explainer-toggle { margin: 16px; padding: 12px 16px; background: #f7f6f0; border-radius: 10px 10px 0 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5e0; border-bottom: none; }
@@ -740,6 +948,10 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
             botanical = plant_db.get(species, {}).get("botanical", "")
             display_count = count if count is not None else "—"
             data_count = count if count is not None else ""
+            # Prefill the "Now" input with the current count so that if the
+            # observer doesn't change it, submission is a no-op on inventory.
+            # Observers focused on photos don't accidentally zero counts.
+            count_value_attr = f'value="{data_count}"' if data_count != "" else ""
             rows_html += f"""
             <div class="inv-plant-row" data-species="{esc(species)}" data-strata="{esc(strata_key)}" data-current="{data_count}">
               <div class="inv-plant-info">
@@ -754,7 +966,7 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
                 <div class="inv-now">
                   <label>Now</label>
                   <input type="number" inputmode="numeric" min="0" step="1"
-                         class="inv-count-input" placeholder="—" aria-label="New count for {esc(species)}">
+                         class="inv-count-input" placeholder="—" {count_value_attr} aria-label="New count for {esc(species)}">
                 </div>
                 <select class="inv-condition" aria-label="Condition of {esc(species)}">
                   <option value="alive">OK</option>
@@ -1207,6 +1419,30 @@ def get_observe_css():
 /* Navigation */
 .obs-nav { padding: 16px; text-align: center; }
 .obs-back-link { color: #e67e22; text-decoration: none; font-size: 14px; font-weight: 500; }
+
+/* Recent submissions (pending-review cards) */
+.recent-submissions { padding: 12px 16px 4px; background: #fefbea; border-bottom: 1px solid #f3e8bf; }
+.recent-header { display: flex; align-items: center; gap: 8px; font-weight: 600; color: #92400e; font-size: 14px; margin-bottom: 4px; }
+.recent-icon { font-size: 16px; }
+.recent-intro { font-size: 12px; color: #78350f; line-height: 1.4; margin-bottom: 10px; opacity: 0.85; }
+.recent-card { background: #fff; border: 1px solid #f3e8bf; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; }
+.recent-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.recent-when { font-size: 11px; color: #6b7280; flex: 1; }
+.recent-state-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 12px; letter-spacing: 0.02em; }
+.recent-state-badge.pending { background: #fef3c7; color: #92400e; }
+.recent-state-badge.offline { background: #e0e7ff; color: #3730a3; }
+.recent-dismiss { background: transparent; border: none; color: #9ca3af; font-size: 14px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.recent-dismiss:hover { background: #f3f4f6; color: #4b5563; }
+.recent-thumbs { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.recent-thumb { width: 56px; height: 56px; border-radius: 6px; overflow: hidden; background: #f3f4f6; position: relative; }
+.recent-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.recent-thumb.more { display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 12px; font-weight: 600; }
+.recent-card-body { display: flex; flex-direction: column; gap: 6px; }
+.recent-obs-row { font-size: 13px; color: #1a1a1a; line-height: 1.4; }
+.recent-kind { margin-right: 2px; }
+.recent-count-change { color: #d97706; font-weight: 600; font-variant-numeric: tabular-nums; }
+.recent-count { color: #374151; font-variant-numeric: tabular-nums; }
+.recent-note { font-size: 12px; color: #6b7280; font-style: italic; margin-top: 2px; padding-left: 20px; }
 """
 
 
@@ -1285,6 +1521,29 @@ def main():
         with open(obs_path, "w", encoding="utf-8") as f:
             f.write(observe_html)
         print(f"  Generated: {section_id}-observe.html")
+
+        # Log detail pages — one per observation/activity/transplanting log.
+        # Each page is the click target from the HISTORY row on the section
+        # view and surfaces full notes + InteractionStamp provenance. First
+        # piece of the Farm Intelligence Navigator Claire asked for.
+        section_log_count = 0
+        seen_log_uuids: set = set()
+        for plant in section.get("plants", []):
+            for log in plant.get("logs", []) or []:
+                uuid = log.get("uuid")
+                if not uuid or uuid in seen_log_uuids:
+                    continue
+                seen_log_uuids.add(uuid)
+                log_html = render_log_detail_page(
+                    section_id, section, row_info, log, plant_db, args.base_url
+                )
+                log_filename = log_detail_page_name(section_id, log)
+                log_path = output_dir / log_filename
+                with open(log_path, "w", encoding="utf-8") as f:
+                    f.write(log_html)
+                section_log_count += 1
+        if section_log_count:
+            print(f"  Generated: {section_log_count} log detail pages for {section_id}")
 
     # Generate index page (skip if hand-managed collapsible version exists)
     idx_path = output_dir / "index.html"

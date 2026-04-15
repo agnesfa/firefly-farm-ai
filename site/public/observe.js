@@ -24,6 +24,9 @@ function initObservePage() {
     });
   }
 
+  // Restore and render any recently-submitted observations for this section
+  renderRecentSubmissions();
+
   // Set current date/time
   var dtInput = document.getElementById("obs-datetime");
   if (dtInput) {
@@ -539,9 +542,23 @@ function selectPlantFromPicker(species) {
   var nameEl = document.getElementById("selected-plant-name");
   var countEl = document.getElementById("selected-plant-count");
   if (nameEl) nameEl.textContent = species;
+  var currentCount = plant ? plant.count : null;
   if (countEl) {
-    var count = plant ? (plant.count !== null ? plant.count : "—") : "new";
-    countEl.textContent = "Current count: " + count;
+    var display = currentCount !== null && currentCount !== undefined ? currentCount : "—";
+    countEl.textContent = "Current count: " + display;
+  }
+
+  // PREFILL the New count input with the current farmOS count so that
+  // if the observer doesn't change it, submission is a no-op on inventory.
+  // Workers focused on photos / condition notes no longer accidentally
+  // reset counts to zero or to a rough eyeball number.
+  var countInput = document.getElementById("single-count");
+  if (countInput) {
+    if (currentCount !== null && currentCount !== undefined) {
+      countInput.value = String(currentCount);
+    } else {
+      countInput.value = "";
+    }
   }
 }
 
@@ -828,6 +845,8 @@ function submitObservation(formData) {
           (result.duplicate ? " (already recorded)" : "") +
           (result.message ? " " + result.message : "")
         );
+        storeRecentSubmission(payload, "pending");
+        renderRecentSubmissions();
         resetForm(formData.mode);
       } else {
         showStatus("error", "Error: " + (result.error || "Unknown error"));
@@ -837,6 +856,8 @@ function submitObservation(formData) {
       if (!navigator.onLine) {
         saveToLocalQueue(payload);
         showStatus("offline", "Saved locally — will sync when back online.");
+        storeRecentSubmission(payload, "offline");
+        renderRecentSubmissions();
         resetForm(formData.mode);
       } else {
         showStatus("error", "Failed to send: " + err.message);
@@ -1076,6 +1097,200 @@ function escapeHtml(text) {
   var div = document.createElement("div");
   div.appendChild(document.createTextNode(text));
   return div.innerHTML;
+}
+
+// ─── RECENT SUBMISSIONS (pending-review card) ──────────────────
+//
+// After a worker submits an observation, show a "Pending review" card with
+// what they just sent. Persists in localStorage per section_id so the card
+// survives page reload — the worker sees their submission is recorded even
+// if farmOS hasn't processed it yet. Entries age out after 24 hours and
+// are manually dismissible.
+
+var RECENT_SUBMISSIONS_KEY = "firefly_recent_submissions";
+var RECENT_SUBMISSIONS_MAX_AGE_MS = 24 * 60 * 60 * 1000;  // 24 hours
+var RECENT_SUBMISSIONS_MAX_PER_SECTION = 10;
+
+function getSectionId() {
+  return (typeof SECTION_DATA !== "undefined" && SECTION_DATA.id) || "unknown";
+}
+
+function loadRecentSubmissions() {
+  try {
+    var raw = localStorage.getItem(RECENT_SUBMISSIONS_KEY);
+    if (!raw) return {};
+    var parsed = JSON.parse(raw);
+    // Prune expired entries section-by-section
+    var cutoff = Date.now() - RECENT_SUBMISSIONS_MAX_AGE_MS;
+    for (var sid in parsed) {
+      if (!parsed.hasOwnProperty(sid)) continue;
+      parsed[sid] = (parsed[sid] || []).filter(function (s) {
+        return s.stored_at && s.stored_at > cutoff;
+      });
+      if (parsed[sid].length === 0) delete parsed[sid];
+    }
+    return parsed;
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveRecentSubmissions(data) {
+  try {
+    localStorage.setItem(RECENT_SUBMISSIONS_KEY, JSON.stringify(data));
+  } catch (e) { /* quota — drop silently */ }
+}
+
+function storeRecentSubmission(payload, state) {
+  var sid = payload.section_id || getSectionId();
+  var data = loadRecentSubmissions();
+  if (!data[sid]) data[sid] = [];
+
+  // Keep only the serializable bits + a small thumbnail preview per media
+  var mediaPreviews = [];
+  (payload.media || []).forEach(function (m) {
+    if (m && m.data) {
+      mediaPreviews.push({
+        filename: m.filename || "photo.jpg",
+        data: m.data,  // full base64 (small, and we cap total entries)
+        target: m.target || "section",
+      });
+    }
+  });
+
+  var entry = {
+    submission_id: payload.submission_id,
+    stored_at: Date.now(),
+    timestamp: payload.timestamp,
+    observer: payload.observer,
+    mode: payload.mode,
+    state: state || "pending",
+    observations: (payload.observations || []).map(function (o) {
+      return {
+        species: o.species,
+        new_count: o.new_count,
+        previous_count: o.previous_count,
+        condition: o.condition,
+        notes: o.notes,
+        obs_type: o.obs_type,
+        mode: o.mode,
+      };
+    }),
+    section_notes: payload.section_notes || "",
+    media: mediaPreviews,
+  };
+
+  data[sid].unshift(entry);
+  // Cap per-section to prevent runaway storage
+  data[sid] = data[sid].slice(0, RECENT_SUBMISSIONS_MAX_PER_SECTION);
+  saveRecentSubmissions(data);
+}
+
+function dismissRecentSubmission(submissionId) {
+  var sid = getSectionId();
+  var data = loadRecentSubmissions();
+  if (!data[sid]) return;
+  data[sid] = data[sid].filter(function (e) { return e.submission_id !== submissionId; });
+  if (data[sid].length === 0) delete data[sid];
+  saveRecentSubmissions(data);
+  renderRecentSubmissions();
+}
+
+function renderRecentSubmissions() {
+  var sid = getSectionId();
+  var data = loadRecentSubmissions();
+  var entries = data[sid] || [];
+
+  var container = document.getElementById("recent-submissions");
+  if (!container) {
+    // Insert at top of page, just after the section header
+    var page = document.querySelector(".page");
+    if (!page) return;
+    container = document.createElement("div");
+    container.id = "recent-submissions";
+    container.className = "recent-submissions";
+    // Place after the queue banner if present, else right after section header
+    var queueBanner = document.getElementById("queue-banner");
+    var afterEl = queueBanner || document.querySelector(".section-header");
+    if (afterEl && afterEl.parentNode) {
+      afterEl.parentNode.insertBefore(container, afterEl.nextSibling);
+    } else {
+      page.insertBefore(container, page.firstChild);
+    }
+  }
+
+  if (entries.length === 0) {
+    container.innerHTML = "";
+    container.style.display = "none";
+    return;
+  }
+
+  var header = '<div class="recent-header">' +
+    '<span class="recent-icon">⏳</span>' +
+    '<span class="recent-title">Your recent submissions — pending review</span>' +
+    '</div>' +
+    '<div class="recent-intro">These observations have been saved. Agnes or Claire ' +
+    'will review and sync them into farmOS shortly. You can keep observing.</div>';
+
+  var cards = entries.map(function (e) {
+    var when = new Date(e.timestamp || e.stored_at).toLocaleString(undefined, {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+    });
+    var stateBadge = e.state === "offline"
+      ? '<span class="recent-state-badge offline">📴 offline — will sync</span>'
+      : '<span class="recent-state-badge pending">⏳ pending review</span>';
+
+    var thumbs = "";
+    if (e.media && e.media.length > 0) {
+      thumbs = '<div class="recent-thumbs">' +
+        e.media.slice(0, 4).map(function (m) {
+          return '<div class="recent-thumb"><img src="' + escapeHtml(m.data) + '" alt=""></div>';
+        }).join("") +
+        (e.media.length > 4 ? '<div class="recent-thumb more">+' + (e.media.length - 4) + '</div>' : '') +
+        '</div>';
+    }
+
+    var rows = (e.observations || []).map(function (o) {
+      var kind = o.obs_type === "activity" ? "🔧"
+               : o.obs_type === "todo" ? "📌"
+               : o.mode === "new_plant" ? "🌱 new"
+               : "👁";
+      var countChange = "";
+      if (o.new_count !== null && o.new_count !== undefined) {
+        if (o.previous_count !== null && o.previous_count !== undefined &&
+            Number(o.new_count) !== Number(o.previous_count)) {
+          countChange = ' · <span class="recent-count-change">' + o.previous_count + ' → ' + o.new_count + '</span>';
+        } else {
+          countChange = ' · <span class="recent-count">' + o.new_count + '</span>';
+        }
+      }
+      var noteHtml = o.notes ? '<div class="recent-note">' + escapeHtml(o.notes) + '</div>' : '';
+      return '<div class="recent-obs-row">' +
+        '<span class="recent-kind">' + kind + '</span> ' +
+        '<strong>' + escapeHtml(o.species || "—") + '</strong>' +
+        countChange +
+        noteHtml +
+        '</div>';
+    }).join("");
+
+    if (e.section_notes) {
+      rows += '<div class="recent-obs-row"><span class="recent-kind">📋</span> <strong>Section notes:</strong> <div class="recent-note">' +
+        escapeHtml(e.section_notes) + '</div></div>';
+    }
+
+    return '<div class="recent-card">' +
+      '<div class="recent-card-header">' +
+        '<span class="recent-when">' + when + '</span>' +
+        stateBadge +
+        '<button class="recent-dismiss" onclick="dismissRecentSubmission(\'' + e.submission_id + '\')" title="Dismiss">✕</button>' +
+      '</div>' +
+      thumbs +
+      '<div class="recent-card-body">' + rows + '</div>' +
+      '</div>';
+  }).join("");
+
+  container.innerHTML = header + cards;
+  container.style.display = "block";
 }
 
 function dataUrlToBlob(dataUrl) {

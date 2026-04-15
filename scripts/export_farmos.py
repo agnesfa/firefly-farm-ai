@@ -548,12 +548,26 @@ class SectionsExporter:
                         log_ts = self.format_log_timestamp(
                             log.get("attributes", {}).get("timestamp")
                         )
-                        log_notes = self.extract_log_notes(log)
+                        # Full notes (not truncated) — the log detail page needs them
+                        log_notes_full = self.extract_log_notes(log) or ""
+                        # Parse InteractionStamp if present (see interaction_stamp.py semantics)
+                        interaction_stamp = ""
+                        if "[ontology:InteractionStamp]" in log_notes_full:
+                            # Keep just the stamp line for provenance
+                            for ln in log_notes_full.splitlines():
+                                if "[ontology:InteractionStamp]" in ln:
+                                    interaction_stamp = ln.strip()
+                                    break
+                        log_id = log.get("id", "")
                         plant_logs.append({
+                            "uuid": log_id,
                             "type": log_type,
                             "date": log_ts,
                             "name": log_name,
-                            "notes": log_notes[:200] if log_notes else "",
+                            "notes": log_notes_full[:200] if log_notes_full else "",
+                            "notes_full": log_notes_full,
+                            "interaction_stamp": interaction_stamp,
+                            "species": species,
                         })
 
                         # Track latest observation date for section
