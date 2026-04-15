@@ -60,6 +60,7 @@ is obsolete, its number stays in the folder.
 | 0001 | Photo pipeline: always attach, verify to promote | accepted — 2026-04-15 |
 | 0002 | Knowledge Base file upload via KnowledgeBase.gs | accepted — 2026-04-15 |
 | 0003 | Field-sheet reconciliation audit tool and storage | accepted — 2026-04-15 |
+| 0004 | Batch observation tools + Python-server photo pipeline parity | accepted — 2026-04-15 |
 
 New entries go at the bottom of the table. Supersedings keep the old
 row but mark it `superseded by ADR NNNN`.

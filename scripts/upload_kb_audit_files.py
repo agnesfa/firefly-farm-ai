@@ -21,6 +21,7 @@ import argparse
 import base64
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from urllib import request as urlrequest
@@ -114,6 +115,44 @@ def extract_summary(md_body: str) -> str:
     return "\n".join(out)
 
 
+# Match an audit file bullet like:
+#   "- **P2R3.2-9 — Jaboticaba** (Medium): all lost (was 5)"
+# or the "missing" variant:
+#   "- **P2R3.15-21 — Forest Red Gum** (Emergent): in sheet (1), missing..."
+#
+# We capture the species between the " — " and the closing "**" — whatever
+# strata marker follows in "(...)" is not part of the species name.
+_RED_ROW_RE = re.compile(
+    r"^\s*-\s*\*\*(?P<section>[PR0-9.\-]+)\s+—\s+(?P<species>[^*]+?)\*\*"
+)
+
+
+def extract_red_species(md_body: str) -> list[str]:
+    """Pull the unique species names from the 🔴 field-check list.
+
+    Used to populate the `related_plants` field on the KB entry so species-
+    scoped searches (e.g. "where have we lost Ice Cream Bean?") surface
+    the audit entries that mention it.
+    """
+    species: list[str] = []
+    seen: set[str] = set()
+    in_red_section = False
+    for line in md_body.splitlines():
+        if line.startswith("### 🔴") or line.strip().startswith("### 🔴"):
+            in_red_section = True
+            continue
+        if in_red_section:
+            if line.startswith("### ") or line.startswith("## "):
+                break
+            m = _RED_ROW_RE.match(line)
+            if m:
+                name = m.group("species").strip()
+                if name and name not in seen:
+                    seen.add(name)
+                    species.append(name)
+    return species
+
+
 def add_kb_entry(endpoint: str, row: str, file_url: str, md_body: str) -> dict:
     """Create a KB entry that points at the uploaded audit file."""
     title = f"{row} — Spreadsheet vs farmOS Reconciliation (April 2026)"
@@ -130,6 +169,10 @@ def add_kb_entry(endpoint: str, row: str, file_url: str, md_body: str) -> dict:
     )
     if len(content) > 45000:
         content = content[:44900] + "\n\n… (truncated — see Drive file link above)"
+    # Populate related_plants from the 🔴 field-check list so Claire's
+    # Claude surfaces the audit entry when she asks about a specific
+    # species (e.g. "where have we lost Ice Cream Bean?").
+    red_species = extract_red_species(md_body)
     payload = {
         "action": "add",
         "title": title,
@@ -141,6 +184,7 @@ def add_kb_entry(endpoint: str, row: str, file_url: str, md_body: str) -> dict:
         "source_type": KB_ENTRY_SOURCE_TYPE,
         "media_links": file_url,
         "related_sections": row,
+        "related_plants": ",".join(red_species) if red_species else "",
     }
     return post_json(endpoint, payload)
 

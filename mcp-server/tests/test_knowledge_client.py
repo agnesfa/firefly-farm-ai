@@ -35,7 +35,14 @@ def test_connect_success(monkeypatch):
 
 
 def test_connect_missing_env(monkeypatch):
+    """Missing KNOWLEDGE_ENDPOINT raises ValueError.
+
+    Also stubs out load_dotenv so a .env file on the developer's machine
+    that happens to contain KNOWLEDGE_ENDPOINT cannot mask the test.
+    Mirrors the pattern used in test_observe_client.py.
+    """
     monkeypatch.delenv("KNOWLEDGE_ENDPOINT", raising=False)
+    monkeypatch.setattr("knowledge_client.load_dotenv", lambda: None)
     c = KnowledgeClient()
     with pytest.raises(ValueError, match="Missing KNOWLEDGE_ENDPOINT"):
         c.connect()

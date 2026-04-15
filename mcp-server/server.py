@@ -1552,20 +1552,64 @@ def _decode_media_file(file: dict) -> Optional[tuple]:
     return filename, mime_type, binary
 
 
-def _upload_media_to_log(client, log_type: str, log_id: str, files: list) -> list:
+def _new_photo_pipeline_report() -> dict:
+    """Build a fresh per-import PhotoPipelineReport.
+
+    Mirrors the TypeScript server's PhotoPipelineReport interface
+    (see ADR 0001). Every photo failure mode is captured here so the
+    operator can see what happened without querying farmOS — no more
+    silent zero counts while photos vanish or land blindly.
+    """
+    return {
+        "media_files_fetched": 0,
+        "decode_failures": 0,
+        "photos_uploaded": 0,
+        "upload_errors": [],
+        "species_reference_photos_updated": 0,
+        "verification": {
+            "plantnet_key_present": False,
+            "botanical_lookup_size": 0,
+            "plantnet_api_calls": 0,
+            "photos_verified": 0,
+            "photos_rejected": 0,
+            "degraded": False,
+            "degraded_reason": "",
+        },
+    }
+
+
+def _upload_media_to_log(
+    client,
+    log_type: str,
+    log_id: str,
+    files: list,
+    report: dict,
+    context_label: str = "",
+) -> list:
     """Attach a list of decoded media files to a farmOS log.
 
     Returns a list of farmOS file UUIDs that were successfully uploaded.
-    Failures are swallowed — photo upload must never block an observation
-    import. Errors are stashed on the returned dict if you need them, but
-    the design doc specifies import continues on photo failures.
+    Every failure mode is recorded in ``report`` (decode_failures,
+    upload_errors with reasons) instead of being swallowed silently.
+    Photo failures still never block the import — they're visible in
+    the response instead of invisible.
+
+    Mirrors the TypeScript uploadMediaToLog signature. ADR 0001.
     """
     uploaded = []
-    if not log_id or not files:
+    if not log_id:
+        report["upload_errors"].append(f"{context_label}: missing log id")
+        return uploaded
+    if not files:
         return uploaded
     for f in files:
         decoded = _decode_media_file(f)
         if decoded is None:
+            report["decode_failures"] += 1
+            fname = f.get("filename", "unknown") if isinstance(f, dict) else "unknown"
+            report["upload_errors"].append(
+                f"{context_label}: decode_failed ({fname})"
+            )
             continue
         filename, mime_type, binary = decoded
         try:
@@ -1579,9 +1623,20 @@ def _upload_media_to_log(client, log_type: str, log_id: str, files: list) -> lis
             )
             if file_id:
                 uploaded.append(file_id)
-        except Exception:
-            # Do not block import on photo failure.
-            continue
+                report["photos_uploaded"] += 1
+            else:
+                # upload_file returned None — file may still have landed
+                # in farmOS but we lost the id. Log loudly so the operator
+                # can investigate.
+                report["upload_errors"].append(
+                    f"{context_label}: upload_returned_null ({filename})"
+                )
+        except Exception as err:
+            # Continue the loop on a per-file failure — import must not
+            # abort, but the operator MUST see this.
+            report["upload_errors"].append(
+                f"{context_label}: upload_threw ({filename}): {err}"
+            )
     return uploaded
 
 
@@ -1720,60 +1775,132 @@ def import_observations(
     mode = observations[0].get("mode", "")
     obs_date = observations[0].get("timestamp", "")[:10]  # YYYY-MM-DD
 
-    # Photo pipeline — fetch all media files for this submission once.
-    # Photos attach at the submission level (one set of photos per QR form
-    # submission), not per species row, so we fetch once and distribute.
-    # Swallow failures: absence of photos must never block observation import.
-    submission_media = []
+    # ── Photo pipeline setup (April 15 2026 redesign — ADR 0001) ──
+    #
+    # Architecture: always attach photos to the log unconditionally.
+    # PlantNet verification is used ONLY to decide whether to promote a
+    # photo as the plant_type reference photo. Verification failure never
+    # loses the photo, only demotes the quality signal.
+    #
+    # Every failure mode surfaces in ``photo_pipeline_report`` so the
+    # operator can see what actually happened. No more silent zero counts.
+    from plantnet_verify import (
+        build_botanical_lookup,
+        verify_species_photo,
+        get_call_count,
+        reset_call_count,
+    )
+
+    actions = []
+    errors: list = []
+    report = _new_photo_pipeline_report()
+    reset_call_count()
+    report["verification"]["plantnet_key_present"] = bool(
+        os.getenv("PLANTNET_API_KEY", "").strip()
+    )
+
+    submission_media: list = []
     any_media_listed = any((obs.get("media_files") or "").strip() for obs in observations)
     if not dry_run and any_media_listed:
         try:
             media_resp = obs_client.get_media(submission_id)
             if media_resp.get("success"):
                 submission_media = media_resp.get("files") or []
-        except Exception:
-            submission_media = []
-
-    species_photo_updates = set()  # Track (species) we've already refreshed.
-
-    # PlantNet verification — build botanical lookup once per import session.
-    # Each photo is checked against PlantNet before attaching to farmOS.
-    from plantnet_verify import build_botanical_lookup, verify_species_photo, get_call_count
-    botanical_lookup = build_botanical_lookup() if submission_media else {}
-    photos_verified = 0
-    photos_rejected = 0
-
-    def _verify_media_for_species(media_files: list, species: str) -> list:
-        """Filter media files through PlantNet verification.
-
-        Returns only files where PlantNet confirms the species match (>=30%).
-        For section comments (no species), returns all files unchanged.
-        """
-        nonlocal photos_verified, photos_rejected
-        if not media_files or not botanical_lookup:
-            return media_files
-        if not species:
-            return media_files  # Section comments — no species to verify against
-
-        verified = []
-        for f in media_files:
-            decoded = _decode_media_file(f)
-            if decoded is None:
-                continue
-            _filename, _mime, binary = decoded
-            result = verify_species_photo(binary, species, botanical_lookup)
-            if result["verified"]:
-                verified.append(f)
-                photos_verified += 1
             else:
-                print(
-                    f"  [plantnet] Photo rejected for {species}: {result['reason']}"
+                errors.append(
+                    f"Media fetch returned not-ok: {media_resp.get('error', 'unknown')}"
                 )
-                photos_rejected += 1
-        return verified
+        except Exception as exc:
+            errors.append(f"Media fetch threw: {exc}")
+            submission_media = []
+    report["media_files_fetched"] = len(submission_media)
 
-    actions = []
-    errors = []
+    botanical_lookup = build_botanical_lookup() if submission_media else {}
+    # Strip the internal "__reverse__" key before measuring size
+    _reverse = botanical_lookup.get("__reverse__", {}) if botanical_lookup else {}
+    report["verification"]["botanical_lookup_size"] = len(_reverse) if isinstance(_reverse, dict) else 0
+
+    species_photo_updates: set = set()  # Track species we've already refreshed.
+
+    def _verify_one_photo(media: dict, species: str) -> dict:
+        """Run a single photo through PlantNet. Records results in the report.
+
+        Once verification is marked degraded (e.g. first call hits HTTP 403),
+        short-circuits for the rest of the import so we don't burn quota
+        on calls that will all fail.
+        """
+        if report["verification"]["degraded"]:
+            return {"verified": False, "reason": "verification_degraded"}
+        if not report["verification"]["plantnet_key_present"]:
+            return {"verified": False, "reason": "no_api_key"}
+        if not botanical_lookup or report["verification"]["botanical_lookup_size"] == 0:
+            return {"verified": False, "reason": "no_botanical_lookup"}
+        if not species:
+            return {"verified": True, "reason": "no_species_claim"}
+        decoded = _decode_media_file(media)
+        if decoded is None:
+            return {"verified": False, "reason": "decode_failed"}
+        _filename, _mime, binary = decoded
+        result = verify_species_photo(binary, species, botanical_lookup)
+        # Auth-failure short-circuit — disable verification for rest of import
+        reason = result.get("reason", "")
+        if (not result.get("verified")) and ("api_http_401" in reason or "api_http_403" in reason):
+            report["verification"]["degraded"] = True
+            report["verification"]["degraded_reason"] = (
+                f"PlantNet authentication failed ({reason}). "
+                f"Check the API key and its authorized domains on my.plantnet.org. "
+                f"Photos are still being attached to logs — only species-reference "
+                f"promotion is disabled."
+            )
+            print(f"  [plantnet] {report['verification']['degraded_reason']}")
+        return result
+
+    def _attach_and_maybe_promote(
+        log_id: Optional[str],
+        log_type: str,
+        species: str,
+        context_label: str,
+    ) -> int:
+        """Attach all submission photos to the log; promote if verified.
+
+        Every photo is uploaded UNCONDITIONALLY. Verification only affects
+        species-reference-photo promotion. Returns the count of successfully
+        uploaded photos for this log.
+        """
+        if not log_id or not submission_media:
+            return 0
+
+        before = report["photos_uploaded"]
+        _upload_media_to_log(
+            client, log_type, log_id, submission_media, report, context_label
+        )
+        uploaded_count = report["photos_uploaded"] - before
+
+        # Species-reference-photo promotion — not a gate on attachment.
+        if not species or species in species_photo_updates:
+            return uploaded_count
+
+        verified_for_promotion = []
+        for f in submission_media:
+            v = _verify_one_photo(f, species)
+            if v.get("verified"):
+                report["verification"]["photos_verified"] += 1
+                verified_for_promotion.append(f)
+                # First verified photo is enough — stop burning PlantNet calls
+                break
+            elif v.get("reason") not in (
+                "verification_degraded", "no_api_key", "no_botanical_lookup"
+            ):
+                report["verification"]["photos_rejected"] += 1
+
+        if verified_for_promotion:
+            ref_id = _update_species_reference_photo(
+                client, species, verified_for_promotion
+            )
+            if ref_id:
+                species_photo_updates.add(species)
+                report["species_reference_photos_updated"] += 1
+        return uploaded_count
 
     for obs in observations:
         species = obs.get("species", "").strip()
@@ -1802,13 +1929,12 @@ def import_observations(
                     ))
                     action["result"] = result_json.get("status", "unknown")
                     action["log_id"] = result_json.get("log_id")
-                    if submission_media and action.get("log_id"):
-                        # Case A: section comment — no species verification
-                        photos = _upload_media_to_log(
-                            client, "activity", action["log_id"], submission_media,
-                        )
-                        if photos:
-                            action["photos_uploaded"] = len(photos)
+                    photo_count = _attach_and_maybe_promote(
+                        action.get("log_id"), "activity", "",
+                        f"activity/{obs_section}",
+                    )
+                    if photo_count > 0:
+                        action["photos_uploaded"] = photo_count
                 except Exception as e:
                     action["result"] = "error"
                     errors.append(f"Activity for {obs_section}: {e}")
@@ -1847,20 +1973,14 @@ def import_observations(
                     # result_json["observation_log"]["id"]. Attach photos there
                     # so the media is associated with the planting event.
                     photo_log_id = (result_json.get("observation_log") or {}).get("id")
-                    verified_media = _verify_media_for_species(submission_media, species)
-                    if verified_media and photo_log_id:
-                        photos = _upload_media_to_log(
-                            client, "observation", photo_log_id, verified_media,
-                        )
-                        if photos:
-                            action["photos_uploaded"] = len(photos)
-                    if verified_media and species not in species_photo_updates:
-                        ref_id = _update_species_reference_photo(
-                            client, species, verified_media,
-                        )
-                        if ref_id:
-                            action["species_reference_photo"] = True
-                            species_photo_updates.add(species)
+                    photo_count = _attach_and_maybe_promote(
+                        photo_log_id, "observation", species,
+                        f"new_plant/{obs_section}/{species}",
+                    )
+                    if photo_count > 0:
+                        action["photos_uploaded"] = photo_count
+                    if species in species_photo_updates:
+                        action["species_reference_photo"] = True
                 except Exception as e:
                     action["result"] = "error"
                     errors.append(f"Create {species} in {obs_section}: {e}")
@@ -1929,20 +2049,14 @@ def import_observations(
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["log_id"] = result_json.get("log_id")
-                        verified_media = _verify_media_for_species(submission_media, species)
-                        if verified_media and action.get("log_id"):
-                            photos = _upload_media_to_log(
-                                client, "observation", action["log_id"], verified_media,
-                            )
-                            if photos:
-                                action["photos_uploaded"] = len(photos)
-                        if verified_media and species not in species_photo_updates:
-                            ref_id = _update_species_reference_photo(
-                                client, species, verified_media,
-                            )
-                            if ref_id:
-                                action["species_reference_photo"] = True
-                                species_photo_updates.add(species)
+                        photo_count = _attach_and_maybe_promote(
+                            action.get("log_id"), "observation", species,
+                            f"observation/{obs_section}/{species}",
+                        )
+                        if photo_count > 0:
+                            action["photos_uploaded"] = photo_count
+                        if species in species_photo_updates:
+                            action["species_reference_photo"] = True
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Observation for {species} in {obs_section}: {e}")
@@ -1957,20 +2071,14 @@ def import_observations(
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["type"] = "activity"
-                        verified_media = _verify_media_for_species(submission_media, species)
-                        if verified_media and result_json.get("log_id"):
-                            photos = _upload_media_to_log(
-                                client, "activity", result_json["log_id"], verified_media,
-                            )
-                            if photos:
-                                action["photos_uploaded"] = len(photos)
-                        if verified_media and species not in species_photo_updates:
-                            ref_id = _update_species_reference_photo(
-                                client, species, verified_media,
-                            )
-                            if ref_id:
-                                action["species_reference_photo"] = True
-                                species_photo_updates.add(species)
+                        photo_count = _attach_and_maybe_promote(
+                            result_json.get("log_id"), "activity", species,
+                            f"activity/{obs_section}/{species}",
+                        )
+                        if photo_count > 0:
+                            action["photos_uploaded"] = photo_count
+                        if species in species_photo_updates:
+                            action["species_reference_photo"] = True
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Activity for {species} in {obs_section}: {e}")
@@ -2045,10 +2153,37 @@ def import_observations(
                 "with the project repo, or ask Agnes."
             )
 
-    total_photos = sum(a.get("photos_uploaded", 0) or 0 for a in actions)
-    species_reference_updates = sum(
-        1 for a in actions if a.get("species_reference_photo")
-    )
+    # Snapshot PlantNet call count into the report (counter was reset at
+    # the start of the import, so this is the per-import total).
+    report["verification"]["plantnet_api_calls"] = get_call_count()
+
+    # Emit loud warnings if the pipeline is silently degraded — the
+    # operator should never have to go digging in farmOS to find out
+    # what happened. Matches ADR 0001 / the TypeScript server.
+    photo_health_warnings = []
+    if report["media_files_fetched"] > 0 and report["photos_uploaded"] == 0:
+        photo_health_warnings.append(
+            f"CRITICAL: {report['media_files_fetched']} media files fetched but "
+            f"0 uploaded. Check upload_errors in photo_pipeline for specifics."
+        )
+    if (
+        report["media_files_fetched"] > 0
+        and report["verification"]["photos_verified"] == 0
+        and report["verification"]["plantnet_api_calls"] == 0
+        and report["verification"]["plantnet_key_present"]
+        and report["verification"]["botanical_lookup_size"] > 0
+        and not report["verification"]["degraded"]
+    ):
+        photo_health_warnings.append(
+            "WARNING: PlantNet is configured but was never called. "
+            "Verification may be silently short-circuiting."
+        )
+    if report["verification"]["degraded"]:
+        photo_health_warnings.append(
+            f"INFO: Verification degraded mid-import. Photos still attached "
+            f"to logs; species-reference-photo promotion disabled. "
+            f"Reason: {report['verification']['degraded_reason']}"
+        )
 
     return json.dumps({
         "submission_id": submission_id,
@@ -2059,12 +2194,231 @@ def import_observations(
         "errors": errors if errors else None,
         "sheet_status": sheet_status,
         "pages_regenerated": regen_message,
-        "photos_uploaded": total_photos,
-        "photos_verified": photos_verified,
-        "photos_rejected": photos_rejected,
-        "plantnet_api_calls": get_call_count(),
-        "species_reference_photos_updated": species_reference_updates,
+
+        # Flat metrics — backwards compatible with earlier callers that
+        # still read these keys directly.
+        "photos_uploaded": report["photos_uploaded"],
+        "photos_verified": report["verification"]["photos_verified"],
+        "photos_rejected": report["verification"]["photos_rejected"],
+        "plantnet_api_calls": report["verification"]["plantnet_api_calls"],
+        "species_reference_photos_updated": report["species_reference_photos_updated"],
         "submission_media_fetched": len(submission_media) if not dry_run else 0,
+
+        # Rich pipeline diagnostics — this is where the operator looks to
+        # understand what actually happened. "photos_uploaded: 0" is never
+        # a mystery anymore. Mirrors the TypeScript response shape. ADR 0001.
+        "photo_pipeline": {
+            **report,
+            "warnings": photo_health_warnings if photo_health_warnings else None,
+        },
+    }, indent=2)
+
+
+# ═══════════════════════════════════════════════════════════════
+# TOOLS — Batch observation management (April 15 2026)
+# ═══════════════════════════════════════════════════════════════
+#
+# The batch tools exist to collapse many tool calls into one for
+# multi-submission flows. The trigger was Leah's April 14 walk: 15
+# submissions required ~45 tool calls through the single-submission
+# tools (1 approve + 1 import per submission + overhead). These
+# batch versions reduce that to a handful of calls.
+
+
+@mcp.tool
+def update_observation_status_batch(
+    submission_ids: list,
+    new_status: str,
+    reviewer: str,
+    notes: str = "",
+) -> str:
+    """Batch version of update_observation_status.
+
+    Updates the review status of many submissions in ONE Apps Script call.
+    Use this when you need to flip more than 2-3 submissions at once — e.g.
+    marking a whole WWOOFer walk as 'approved' before running
+    import_observations_batch. For single submissions, prefer the
+    non-batch tool.
+
+    Args:
+        submission_ids: List of submission IDs to update (1+).
+        new_status: New status applied to all: reviewed, approved, rejected, or imported.
+        reviewer: Name of the reviewer.
+        notes: Review notes applied to every entry. Optional.
+
+    Returns:
+        Batch update summary with per-submission outcome and total row count.
+    """
+    valid_statuses = ["reviewed", "approved", "rejected", "imported"]
+    if new_status not in valid_statuses:
+        return json.dumps({
+            "error": f"Invalid status '{new_status}'. Must be one of: {', '.join(valid_statuses)}"
+        })
+
+    if not submission_ids:
+        return json.dumps({"error": "submission_ids must contain at least one id"})
+
+    ids = list(dict.fromkeys(submission_ids))  # dedupe preserving order
+    entries = [
+        {
+            "submission_id": sid,
+            "status": new_status,
+            "reviewer": reviewer,
+            "notes": notes,
+        }
+        for sid in ids
+    ]
+
+    obs_client = get_observe_client()
+    result = obs_client.update_status(entries)
+
+    if not result.get("success"):
+        return json.dumps({
+            "error": result.get("error", "Failed to update status"),
+            "submission_ids": ids,
+        })
+
+    return json.dumps({
+        "status": "updated",
+        "submission_count": len(ids),
+        "submission_ids": ids,
+        "new_status": new_status,
+        "reviewer": reviewer,
+        "notes": notes,
+        "rows_updated": result.get("updated", 0),
+    }, indent=2)
+
+
+@mcp.tool
+def import_observations_batch(
+    submission_ids: list,
+    reviewer: str = "Claude",
+    dry_run: bool = False,
+    continue_on_error: bool = True,
+) -> str:
+    """Batch version of import_observations.
+
+    Imports many submissions in one tool call by looping the existing
+    single-submission importer internally. The loop is sequential — parallel
+    imports would race on farmOS deduplication checks and PlantNet rate
+    limits.
+
+    Use this when you need to import more than 2-3 submissions at once
+    (e.g. clearing a WWOOFer's walk). For single submissions, prefer the
+    non-batch tool.
+
+    Args:
+        submission_ids: List of submission IDs to import (1+).
+        reviewer: Who is performing the import. Default "Claude".
+        dry_run: If true, preview only without making changes.
+        continue_on_error: If true (default), keep importing after a failure.
+            If false, abort on the first error.
+
+    Returns:
+        Per-submission results + aggregated photo_pipeline metrics + errors.
+    """
+    if not submission_ids:
+        return json.dumps({"error": "submission_ids must contain at least one id"})
+
+    unique_ids = list(dict.fromkeys(submission_ids))
+
+    per_submission: list = []
+    batch_errors: list = []
+    total_actions = 0
+
+    # Aggregated photo pipeline report — sum per-submission reports into
+    # one roll-up the operator can scan without flipping between entries.
+    aggregate = {
+        "media_files_fetched": 0,
+        "decode_failures": 0,
+        "photos_uploaded": 0,
+        "upload_errors": [],
+        "species_reference_photos_updated": 0,
+        "verification": {
+            "plantnet_key_present": False,
+            "botanical_lookup_size": 0,
+            "plantnet_api_calls": 0,
+            "photos_verified": 0,
+            "photos_rejected": 0,
+            "degraded": False,
+            "degraded_reason": "",
+        },
+    }
+
+    for sid in unique_ids:
+        try:
+            raw = import_observations(
+                submission_id=sid, reviewer=reviewer, dry_run=dry_run,
+            )
+            parsed = json.loads(raw)
+        except Exception as exc:
+            msg = f"import threw for {sid}: {exc}"
+            batch_errors.append(msg)
+            per_submission.append({"submission_id": sid, "error": msg})
+            if not continue_on_error:
+                break
+            continue
+
+        if parsed.get("error"):
+            msg = f"import returned error for {sid}: {parsed['error']}"
+            batch_errors.append(msg)
+            per_submission.append({"submission_id": sid, "error": msg})
+            if not continue_on_error:
+                break
+            continue
+
+        per_submission.append({
+            "submission_id": sid,
+            "section_id": parsed.get("section_id"),
+            "total_actions": parsed.get("total_actions"),
+            "sheet_status": parsed.get("sheet_status"),
+            "photos_uploaded": parsed.get("photos_uploaded"),
+            "species_reference_photos_updated": parsed.get("species_reference_photos_updated"),
+            "errors": parsed.get("errors"),
+        })
+        total_actions += parsed.get("total_actions") or 0
+
+        pp = parsed.get("photo_pipeline") or {}
+        aggregate["media_files_fetched"] += pp.get("media_files_fetched") or 0
+        aggregate["decode_failures"] += pp.get("decode_failures") or 0
+        aggregate["photos_uploaded"] += pp.get("photos_uploaded") or 0
+        aggregate["species_reference_photos_updated"] += pp.get("species_reference_photos_updated") or 0
+        upload_errors = pp.get("upload_errors") or []
+        for e in upload_errors:
+            aggregate["upload_errors"].append(f"[{sid}] {e}")
+        vv = pp.get("verification") or {}
+        aggregate["verification"]["plantnet_key_present"] = (
+            aggregate["verification"]["plantnet_key_present"] or bool(vv.get("plantnet_key_present"))
+        )
+        aggregate["verification"]["botanical_lookup_size"] = max(
+            aggregate["verification"]["botanical_lookup_size"],
+            vv.get("botanical_lookup_size") or 0,
+        )
+        aggregate["verification"]["plantnet_api_calls"] += vv.get("plantnet_api_calls") or 0
+        aggregate["verification"]["photos_verified"] += vv.get("photos_verified") or 0
+        aggregate["verification"]["photos_rejected"] += vv.get("photos_rejected") or 0
+        if vv.get("degraded"):
+            aggregate["verification"]["degraded"] = True
+            if not aggregate["verification"]["degraded_reason"]:
+                aggregate["verification"]["degraded_reason"] = vv.get("degraded_reason", "")
+
+        nested_errors = parsed.get("errors") or []
+        for e in nested_errors:
+            batch_errors.append(f"[{sid}] {e}")
+
+    processed = len(per_submission)
+    succeeded = sum(1 for r in per_submission if "error" not in r)
+
+    return json.dumps({
+        "status": "ok" if succeeded == len(unique_ids) else "partial",
+        "submitted": len(unique_ids),
+        "processed": processed,
+        "succeeded": succeeded,
+        "dry_run": dry_run,
+        "total_actions": total_actions,
+        "submissions": per_submission,
+        "errors": batch_errors if batch_errors else None,
+        "photo_pipeline": aggregate,
     }, indent=2)
 
 

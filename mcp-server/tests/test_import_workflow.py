@@ -476,10 +476,24 @@ class TestPhotoPipeline:
 
         mock_farmos_client.upload_file = fake_upload
         mock_farmos_client.get_plant_type_uuid = MagicMock(return_value="pt-uuid-pigeonpea")
+        # Needed by the photo_source tagging step in _update_species_reference_photo
+        mock_farmos_client.get_all_plant_types_cached = MagicMock(return_value=[])
+        mock_farmos_client.update_plant_type = MagicMock(return_value={"success": True})
 
-        # Bypass PlantNet verification in tests — always approve photos.
-        # PlantNet verification is tested separately in test_plantnet_verify.py.
+        # The new (April 15 2026) photo pipeline design gates species-reference
+        # promotion on three things being true: PlantNet key present, botanical
+        # lookup non-empty, and verification returning true. Provide all three.
+        monkeypatch.setenv("PLANTNET_API_KEY", "test-plantnet-key")
         import plantnet_verify
+        monkeypatch.setattr(
+            plantnet_verify, "build_botanical_lookup",
+            lambda *a, **kw: {
+                "cajanus cajan": "Pigeon Pea",
+                "__reverse__": {"Pigeon Pea": "cajanus cajan"},
+            },
+        )
+        # Bypass the actual PlantNet HTTP call — tests don't hit the network.
+        # PlantNet verification logic itself is tested in test_plantnet_verify.py.
         monkeypatch.setattr(
             plantnet_verify, "verify_species_photo",
             lambda *args, **kwargs: {"verified": True, "plantnet_top": "", "confidence": 1.0, "reason": "test_bypass"},
@@ -617,6 +631,67 @@ class TestPhotoPipeline:
         assert result["actions"][0]["result"] == "created"
         assert result["photos_uploaded"] == 0  # upload failed but import succeeded
         assert result["errors"] is None  # photo failures don't surface as errors
+        # April 15 2026 redesign: failures are visible in photo_pipeline.upload_errors
+        # so the operator can diagnose without querying farmOS.
+        assert result["photo_pipeline"]["upload_errors"]
+        assert any("upload_threw" in e for e in result["photo_pipeline"]["upload_errors"])
+        assert result["photo_pipeline"]["warnings"] is not None
+
+    def test_verification_degradation_does_not_block_photo_upload(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Regression: April 14 2026 Leah walk.
+
+        Before the photo pipeline redesign, a missing/failing PlantNet gate
+        meant photos never reached the log. The new design uploads first,
+        verifies after — photos always make it to the log even when
+        PlantNet is down or unconfigured.
+        """
+        sub_id = "sub-verification-off"
+        # Clear the key to simulate PLANTNET_API_KEY missing on the server
+        monkeypatch.delenv("PLANTNET_API_KEY", raising=False)
+        obs = make_observation(
+            species="Pigeon Pea",
+            new_count=4,
+            previous_count=3,
+            submission_id=sub_id,
+            status="approved",
+            media_files="a.jpg,b.jpg,c.jpg",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_observe_client.get_media = MagicMock(return_value={
+            "success": True,
+            "files": [_media_file("a.jpg"), _media_file("b.jpg"), _media_file("c.jpg")],
+        })
+        uploaded = []
+
+        def fake_upload(entity_type, entity_id, field_name, filename, binary_data, mime_type="image/jpeg"):
+            uploaded.append(entity_type)
+            return f"file-{len(uploaded)}"
+
+        mock_farmos_client.upload_file = fake_upload
+        mock_farmos_client.get_plant_assets.return_value = [
+            make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21"),
+        ]
+        _mock_tool_success(monkeypatch, "create_observation")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        # Photos attached unconditionally
+        assert result["photos_uploaded"] == 3
+        assert result["actions"][0]["photos_uploaded"] == 3
+        # Verification was skipped (no key)
+        assert result["photo_pipeline"]["verification"]["plantnet_key_present"] is False
+        assert result["photo_pipeline"]["verification"]["plantnet_api_calls"] == 0
+        assert result["photo_pipeline"]["verification"]["photos_verified"] == 0
+        # Species reference photo is NOT promoted because verification couldn't run
+        assert result["species_reference_photos_updated"] == 0
+        # Upload errors are empty — actual uploads worked
+        assert result["photo_pipeline"]["upload_errors"] == []
 
     def test_undecodable_media_is_skipped(
         self, monkeypatch, mock_farmos_client, mock_observe_client,

@@ -278,3 +278,19 @@ def verify_species_photo(
 def get_call_count() -> int:
     """Return total PlantNet API calls made in this process."""
     return _plantnet_calls
+
+
+def reset_call_count() -> None:
+    """Reset the module-level PlantNet call counter to zero.
+
+    The counter is per-process and accumulates across import sessions on a
+    long-running STDIO MCP server. That made it useless for per-import
+    diagnostics — one import session could never tell how many calls IT
+    made, only how many the process had made since startup. Callers now
+    snapshot the counter at the start of each import and read it at the
+    end for an accurate per-import total.
+
+    Mirrors resetPlantnetCallCount in the TypeScript server.
+    """
+    global _plantnet_calls
+    _plantnet_calls = 0

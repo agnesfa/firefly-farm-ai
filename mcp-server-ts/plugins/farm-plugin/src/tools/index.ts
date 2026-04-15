@@ -1,4 +1,4 @@
-// Barrel export — all 34 farm tools
+// Barrel export — all 36 farm tools
 import { helloTool } from './hello.js';
 
 // READ TOOLS (7)
@@ -18,10 +18,12 @@ import { updateInventoryTool } from './update-inventory.js';
 import { createPlantTool } from './create-plant.js';
 import { archivePlantTool } from './archive-plant.js';
 
-// OBSERVATION MANAGEMENT (3)
+// OBSERVATION MANAGEMENT (5)
 import { listObservationsTool } from './list-observations.js';
 import { updateObservationStatusTool } from './update-observation-status.js';
+import { updateObservationStatusBatchTool } from './update-observation-status-batch.js';
 import { importObservationsTool } from './import-observations.js';
+import { importObservationsBatchTool } from './import-observations-batch.js';
 
 // TEAM MEMORY (4)
 import { writeSessionSummaryTool } from './write-session-summary.js';
@@ -70,10 +72,12 @@ export const farmTools = [
   updateInventoryTool,
   createPlantTool,
   archivePlantTool,
-  // Observation management (3)
+  // Observation management (5)
   listObservationsTool,
   updateObservationStatusTool,
+  updateObservationStatusBatchTool,
   importObservationsTool,
+  importObservationsBatchTool,
   // Team memory (4)
   writeSessionSummaryTool,
   readTeamActivityTool,
@@ -104,7 +108,7 @@ export { helloTool };
 export { queryPlantsTool, querySectionsTool, getPlantDetailTool, queryLogsTool };
 export { getInventoryTool, searchPlantTypesTool, getAllPlantTypesTool };
 export { createObservationTool, createActivityTool, completeTaskTool, updateInventoryTool, createPlantTool, archivePlantTool };
-export { listObservationsTool, updateObservationStatusTool, importObservationsTool };
+export { listObservationsTool, updateObservationStatusTool, updateObservationStatusBatchTool, importObservationsTool, importObservationsBatchTool };
 export { writeSessionSummaryTool, readTeamActivityTool, searchTeamMemoryTool, acknowledgeMemoryTool };
 export { addPlantTypeTool, updatePlantTypeTool, reconcilePlantTypesTool };
 export { searchKnowledgeTool, listKnowledgeTool, addKnowledgeTool, updateKnowledgeTool };
