@@ -25,13 +25,19 @@
     <div class="log-detail-section">
       <h3 class="log-detail-h3">Record</h3>
       <div class="prov-card">
-        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date</span><span class="prov-value">2025-11-12</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species</span><span class="prov-value">Apple · Malus domestica</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Strata</span><span class="prov-value">medium</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name</span><span class="prov-value mono">Inventory P2R3.26-38 — Apple</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID</span><span class="prov-value mono">68066134-945c-4fb6-8afb-a1e9a4cefeac</span></div>
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2025-11-12</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Apple · Malus domestica</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">medium</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Inventory P2R3.26-38 — Apple</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">68066134-945c-4fb6-8afb-a1e9a4cefeac</span></div>
       </div>
     </div>
 
     
 
     
+
+    
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
   </div>
 
   <div class="obs-nav">
@@ -43,5 +49,20 @@
   </div>
 
 </div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
 </body>
 </html>

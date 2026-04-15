@@ -25,13 +25,19 @@
     <div class="log-detail-section">
       <h3 class="log-detail-h3">Record</h3>
       <div class="prov-card">
-        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date</span><span class="prov-value">2026-03-13</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species</span><span class="prov-value">Blackberry · Rubus fruticosus</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Strata</span><span class="prov-value">low</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name</span><span class="prov-value mono">Observation P2R2.28-38 — Blackberry</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID</span><span class="prov-value mono">9e3f81ff-9c7f-4d89-a6a2-385da625c192</span></div>
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-03-13</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Blackberry · Rubus fruticosus</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">low</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Observation P2R2.28-38 — Blackberry</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">9e3f81ff-9c7f-4d89-a6a2-385da625c192</span></div>
       </div>
     </div>
+
+    
 
     <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">Reporter: Claire<br>Submitted: 2026-03-14T01:32:00<br>Mode: inventory<br>Section notes: Look like this section suffering of lack of water more than the others sections/ rows<br>Plant notes: To do: Transplant another from P1DE1<br>Count: 1 → 1</div></div>
 
     
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
   </div>
 
   <div class="obs-nav">
@@ -43,5 +49,20 @@
   </div>
 
 </div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
 </body>
 </html>

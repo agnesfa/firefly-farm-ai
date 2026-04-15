@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-15T15:16:59.678867+10:00",
+  "generated_at": "2026-04-15T18:39:07.088449+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -222,7 +222,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Thyme"
+              "species": "Thyme",
+              "photos": [
+                "photos/logs/750f1a27-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/thyme.jpg"
@@ -283,7 +286,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Mint"
+              "species": "Mint",
+              "photos": [
+                "photos/logs/b9a51bad-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/mint.jpg"
@@ -304,7 +310,10 @@
               "notes": "Added via field observation",
               "notes_full": "Added via field observation",
               "interaction_stamp": "",
-              "species": "Geranium"
+              "species": "Geranium",
+              "photos": [
+                "photos/logs/e9e58a60-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/geranium.jpg"
@@ -325,7 +334,10 @@
               "notes": "Added via field observation",
               "notes_full": "Added via field observation",
               "interaction_stamp": "",
-              "species": "Oregano"
+              "species": "Oregano",
+              "photos": [
+                "photos/logs/45bae733-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/oregano.jpg"
@@ -399,7 +411,10 @@
               "notes": "1 strawberry guava + 2 Thai white",
               "notes_full": "1 strawberry guava + 2 Thai white",
               "interaction_stamp": "",
-              "species": "Guava"
+              "species": "Guava",
+              "photos": [
+                "photos/logs/26224376-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/guava.jpg"
@@ -501,7 +516,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Pigeon Pea"
+              "species": "Pigeon Pea",
+              "photos": [
+                "photos/logs/80ea0a77-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/pigeon-pea.jpg"
@@ -542,7 +560,11 @@
               "notes": "Inventory update: Registration error — figs were never planted in this section. Count corrected to 0.",
               "notes_full": "Inventory update: Registration error — figs were never planted in this section. Count corrected to 0.",
               "interaction_stamp": "",
-              "species": "Fig"
+              "species": "Fig",
+              "photos": [
+                "photos/logs/781b978d-0.jpg",
+                "photos/logs/781b978d-1.jpg"
+              ]
             }
           ],
           "photo_url": "photos/fig.jpg"
@@ -623,7 +645,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Lemon"
+              "species": "Lemon",
+              "photos": [
+                "photos/logs/221e074b-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/lemon.jpg"
@@ -664,7 +689,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Tea Tree Oil (Melaleuca) (Alternifolia)"
+              "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "photos": [
+                "photos/logs/bbf7e44a-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
@@ -746,7 +774,10 @@
               "notes": "The 3 oregano are now in the first 0-3m section",
               "notes_full": "The 3 oregano are now in the first 0-3m section",
               "interaction_stamp": "",
-              "species": "Oregano"
+              "species": "Oregano",
+              "photos": [
+                "photos/logs/13abc9de-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/oregano.jpg"
@@ -869,7 +900,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Geranium"
+              "species": "Geranium",
+              "photos": [
+                "photos/logs/8d43a10c-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/geranium.jpg"
@@ -910,7 +944,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Tansy"
+              "species": "Tansy",
+              "photos": [
+                "photos/logs/250d5f28-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tansy.jpg"
@@ -952,7 +989,10 @@
               "notes": "Added via field observation",
               "notes_full": "Added via field observation",
               "interaction_stamp": "",
-              "species": "Lavender"
+              "species": "Lavender",
+              "photos": [
+                "photos/logs/1207853d-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/lavender.jpg"
@@ -5775,7 +5815,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Ice Cream Bean"
+              "species": "Ice Cream Bean",
+              "photos": [
+                "photos/logs/5045e0cc-0.jpg"
+              ]
             },
             {
               "uuid": "ca99a071-3953-43e1-b72e-ad326c48bea4",
@@ -5836,7 +5879,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Malabar Chestnut"
+              "species": "Malabar Chestnut",
+              "photos": [
+                "photos/logs/0d49a566-0.jpg"
+              ]
             },
             {
               "uuid": "c44f6573-791d-4cdd-863f-912d25ef5aab",
@@ -5897,7 +5943,10 @@
               "notes": "Major loss",
               "notes_full": "Major loss",
               "interaction_stamp": "",
-              "species": "Macadamia"
+              "species": "Macadamia",
+              "photos": [
+                "photos/logs/7569a8d0-0.jpg"
+              ]
             },
             {
               "uuid": "8cc71a7f-9630-4ff5-a86b-f7815533268e",
@@ -6009,7 +6058,10 @@
               "notes": "2 very small + 3 high OK",
               "notes_full": "2 very small + 3 high OK",
               "interaction_stamp": "",
-              "species": "Pigeon Pea"
+              "species": "Pigeon Pea",
+              "photos": [
+                "photos/logs/92851ae7-0.jpg"
+              ]
             },
             {
               "uuid": "bdbcea00-2fd7-4214-95a4-824bf2612e3f",
@@ -6193,7 +6245,10 @@
               "notes": "Species correction: plant was actually Curry Leaf, not Tea Tree Oil. All tea trees are in P2R3.50-62.",
               "notes_full": "Species correction: plant was actually Curry Leaf, not Tea Tree Oil. All tea trees are in P2R3.50-62.",
               "interaction_stamp": "",
-              "species": "Tea Tree Oil (Melaleuca) (Alternifolia)"
+              "species": "Tea Tree Oil (Melaleuca) (Alternifolia)",
+              "photos": [
+                "photos/logs/2ddf3d34-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tea-tree-oil-melaleuca-alternifolia.jpg"
@@ -6428,7 +6483,10 @@
               "notes": "All dead",
               "notes_full": "All dead",
               "interaction_stamp": "",
-              "species": "Lemon"
+              "species": "Lemon",
+              "photos": [
+                "photos/logs/5267e5fd-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/lemon.jpg"
@@ -6520,7 +6578,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Chilli (Jalapeño)"
+              "species": "Chilli (Jalapeño)",
+              "photos": [
+                "photos/logs/78a879ef-0.jpg"
+              ]
             },
             {
               "uuid": "7bf0ea1d-88c2-4ed8-b0fc-ef3f949537c2",
@@ -6581,7 +6642,10 @@
               "notes": "Reclassified: was previously identified as Tea Tree Oil",
               "notes_full": "Reclassified: was previously identified as Tea Tree Oil",
               "interaction_stamp": "",
-              "species": "Curry Leaf"
+              "species": "Curry Leaf",
+              "photos": [
+                "photos/logs/9f73cba3-0.jpg"
+              ]
             },
             {
               "uuid": "1bdb8aff-5082-4906-9539-360c3fb06379",
@@ -6724,7 +6788,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Cape Gooseberry"
+              "species": "Cape Gooseberry",
+              "photos": [
+                "photos/logs/6121dfe0-0.jpg"
+              ]
             },
             {
               "uuid": "98d71fb0-f30e-4a1c-b34a-8624487f9283",
@@ -6785,7 +6852,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Comfrey"
+              "species": "Comfrey",
+              "photos": [
+                "photos/logs/edcdfdbc-0.jpg"
+              ]
             },
             {
               "uuid": "69b7fa8e-03ca-4b7e-97fd-a1c6c64588d4",
@@ -6907,7 +6977,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Tansy"
+              "species": "Tansy",
+              "photos": [
+                "photos/logs/e0ae6054-0.jpg"
+              ]
             },
             {
               "uuid": "494274f8-3afd-4942-9acf-5ca2bf67af78",
@@ -6979,7 +7052,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Sweet Potato"
+              "species": "Sweet Potato",
+              "photos": [
+                "photos/logs/2ba934cb-0.jpg"
+              ]
             },
             {
               "uuid": "fa8f92f2-259f-42ff-8251-c97f44241f0c",
@@ -11324,7 +11400,10 @@
               "notes": "5 added 20 Feb 2026",
               "notes_full": "5 added 20 Feb 2026",
               "interaction_stamp": "",
-              "species": "Pigeon Pea"
+              "species": "Pigeon Pea",
+              "photos": [
+                "photos/logs/9cfa9d88-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/pigeon-pea.jpg"
@@ -11385,7 +11464,10 @@
               "notes": "5 lost, replaced by Devil's Brew",
               "notes_full": "5 lost, replaced by Devil's Brew",
               "interaction_stamp": "",
-              "species": "Chilli (Jalapeño)"
+              "species": "Chilli (Jalapeño)",
+              "photos": [
+                "photos/logs/38ad49ce-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/chilli-jalape-o.jpg"
@@ -11446,7 +11528,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Lemon"
+              "species": "Lemon",
+              "photos": [
+                "photos/logs/87277426-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/lemon.jpg"
@@ -11507,7 +11592,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Comfrey"
+              "species": "Comfrey",
+              "photos": [
+                "photos/logs/74554336-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/comfrey.jpg"
@@ -11671,7 +11759,10 @@
               "notes": "Condition: damaged. Almost all dead",
               "notes_full": "Condition: damaged. Almost all dead",
               "interaction_stamp": "",
-              "species": "Calendula"
+              "species": "Calendula",
+              "photos": [
+                "photos/logs/44f1fe8d-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/calendula.jpg"
@@ -11722,7 +11813,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Pumpkin (Generic)"
+              "species": "Pumpkin (Generic)",
+              "photos": [
+                "photos/logs/bea22389-0.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -11763,7 +11857,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Geranium"
+              "species": "Geranium",
+              "photos": [
+                "photos/logs/9906af02-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/geranium.jpg"
@@ -11784,7 +11881,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Pluot (Black Adder)"
+              "species": "Pluot (Black Adder)",
+              "photos": [
+                "photos/logs/e8d348a6-0.jpg"
+              ]
             },
             {
               "uuid": "5f686267-cc66-4baa-8ed3-2f5de34571b9",
@@ -11815,7 +11915,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Chilli (Devil's Brew)"
+              "species": "Chilli (Devil's Brew)",
+              "photos": [
+                "photos/logs/c1cedc91-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/chilli-devil-s-brew.jpg"
@@ -11836,7 +11939,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Jacaranda"
+              "species": "Jacaranda",
+              "photos": [
+                "photos/logs/3e1d9a2b-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/jacaranda.jpg"
@@ -12194,7 +12300,10 @@
               "notes": "Added via field observation",
               "notes_full": "Added via field observation",
               "interaction_stamp": "",
-              "species": "Achiote"
+              "species": "Achiote",
+              "photos": [
+                "photos/logs/83565b16-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/achiote.jpg"
@@ -15077,7 +15186,10 @@
               "notes": "2 different species (one is black)",
               "notes_full": "2 different species (one is black)",
               "interaction_stamp": "",
-              "species": "Guava (Strawberry)"
+              "species": "Guava (Strawberry)",
+              "photos": [
+                "photos/logs/b6795585-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/guava-strawberry.jpg"
@@ -15128,7 +15240,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Macadamia"
+              "species": "Macadamia",
+              "photos": [
+                "photos/logs/bdc33196-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/macadamia.jpg"
@@ -15179,7 +15294,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Pigeon Pea"
+              "species": "Pigeon Pea",
+              "photos": [
+                "photos/logs/d62b9802-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/pigeon-pea.jpg"
@@ -15220,7 +15338,10 @@
               "notes": "Major loss",
               "notes_full": "Major loss",
               "interaction_stamp": "",
-              "species": "Chilli (Jalapeño)"
+              "species": "Chilli (Jalapeño)",
+              "photos": [
+                "photos/logs/18f016f1-0.jpg"
+              ]
             },
             {
               "uuid": "b1909215-34ac-4e35-9e36-969aa7df0d0c",
@@ -15230,7 +15351,10 @@
               "notes": "Corrected from 1→2 (Claire's March 15 inventory, could not update via her Claude)",
               "notes_full": "Corrected from 1→2 (Claire's March 15 inventory, could not update via her Claude)",
               "interaction_stamp": "",
-              "species": "Chilli (Jalapeño)"
+              "species": "Chilli (Jalapeño)",
+              "photos": [
+                "photos/logs/b1909215-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/chilli-jalape-o.jpg"
@@ -15342,7 +15466,10 @@
               "notes": "Corrected from 2→5 (Claire's March 15 inventory, could not update via her Claude)",
               "notes_full": "Corrected from 2→5 (Claire's March 15 inventory, could not update via her Claude)",
               "interaction_stamp": "",
-              "species": "Comfrey"
+              "species": "Comfrey",
+              "photos": [
+                "photos/logs/0928246f-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/comfrey.jpg"
@@ -15393,7 +15520,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Tansy"
+              "species": "Tansy",
+              "photos": [
+                "photos/logs/e5452368-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tansy.jpg"
@@ -15454,7 +15584,10 @@
               "notes": "3 suffering a lot",
               "notes_full": "3 suffering a lot",
               "interaction_stamp": "",
-              "species": "Blueberry"
+              "species": "Blueberry",
+              "photos": [
+                "photos/logs/e59036e4-0.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -15495,7 +15628,10 @@
               "notes": "All dead",
               "notes_full": "All dead",
               "interaction_stamp": "",
-              "species": "Pak Choi"
+              "species": "Pak Choi",
+              "photos": [
+                "photos/logs/4954dc25-0.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -15516,7 +15652,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Davidson Plum"
+              "species": "Davidson Plum",
+              "photos": [
+                "photos/logs/c55a25ae-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/davidson-plum.jpg"
@@ -15725,7 +15864,7 @@
       "length": "8m",
       "has_trees": true,
       "first_planted": "2025-04-30",
-      "inventory_date": "2026-04-05",
+      "inventory_date": "2026-04-14",
       "plants": [
         {
           "species": "Papaya",
@@ -15744,6 +15883,30 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Papaya"
+            },
+            {
+              "uuid": "87322054-24b7-4c84-9125-5325a5a2e3ea",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Papaya — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:04:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. exhibiting healthy growth overall; one shows partial leaf yellowing and wilting\nCount: 2 → 2\n[ontolo",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:04:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. exhibiting healthy growth overall; one shows partial leaf yellowing and wilting\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:24:46.106Z | related=Papaya,P2R5.0-8 | submission=3cc4d0c7-d64a-4c68-8220-21a79f3a5e0f",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:24:46.106Z | related=Papaya,P2R5.0-8 | submission=3cc4d0c7-d64a-4c68-8220-21a79f3a5e0f",
+              "species": "Papaya",
+              "photos": [
+                "photos/logs/87322054-0.jpg",
+                "photos/logs/87322054-1.jpg",
+                "photos/logs/87322054-2.jpg",
+                "photos/logs/87322054-3.jpg",
+                "photos/logs/87322054-4.jpg",
+                "photos/logs/87322054-5.jpg",
+                "photos/logs/87322054-6.jpg",
+                "photos/logs/87322054-7.jpg",
+                "photos/logs/87322054-8.jpg",
+                "photos/logs/87322054-9.jpg",
+                "photos/logs/87322054-10.jpg",
+                "photos/logs/87322054-11.jpg"
+              ]
             }
           ],
           "photo_url": "photos/papaya.jpg"
@@ -15796,6 +15959,30 @@
               "notes_full": "Maverick field walk transcript 4 Apr 2026: counted 3 mulberry (farmOS had 2). One additional — possible self-rooted or unlogged nursery transplant. Pending James verification.",
               "interaction_stamp": "",
               "species": "Mulberry (White)"
+            },
+            {
+              "uuid": "71ff17b7-81cf-44b2-b8db-bacd2711b686",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Mulberry (White) — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:53:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. basal leaves yellowing; upper growth remains stable.\nCount: 3 → 3\n[ontology:InteractionStamp] initia",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:53:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. basal leaves yellowing; upper growth remains stable.\nCount: 3 → 3\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:26:29.436Z | related=Mulberry (White),P2R5.0-8 | submission=06cfcc3c-f390-423d-960d-fc1627ccffc5",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:26:29.436Z | related=Mulberry (White),P2R5.0-8 | submission=06cfcc3c-f390-423d-960d-fc1627ccffc5",
+              "species": "Mulberry (White)",
+              "photos": [
+                "photos/logs/71ff17b7-0.jpg",
+                "photos/logs/71ff17b7-1.jpg",
+                "photos/logs/71ff17b7-2.jpg",
+                "photos/logs/71ff17b7-3.jpg",
+                "photos/logs/71ff17b7-4.jpg",
+                "photos/logs/71ff17b7-5.jpg",
+                "photos/logs/71ff17b7-6.jpg",
+                "photos/logs/71ff17b7-7.jpg",
+                "photos/logs/71ff17b7-8.jpg",
+                "photos/logs/71ff17b7-9.jpg",
+                "photos/logs/71ff17b7-10.jpg",
+                "photos/logs/71ff17b7-11.jpg"
+              ]
             }
           ],
           "photo_url": "photos/mulberry-white.jpg"
@@ -15848,6 +16035,40 @@
               "notes_full": "Maverick field walk transcript 4 Apr 2026: counted 3 wattles (farmOS had 1). Two additional plants — self-seeded or unlogged transplant. Pending James recount to verify.",
               "interaction_stamp": "",
               "species": "Wattle - Cootamundra (Baileyana)"
+            },
+            {
+              "uuid": "a1f8ef71-c26e-464b-8690-e7c28562ac1e",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Wattle - Cootamundra (Baileyana) — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:47:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; partial loss of feathery foliage observed\nCount: 3 → 1\n[ontology:Interaction",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:47:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; partial loss of feathery foliage observed\nCount: 3 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:27:16.268Z | related=Wattle - Cootamundra (Baileyana),P2R5.0-8 | submission=3589fc69-c7c6-4889-b950-e0e311937713",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:27:16.268Z | related=Wattle - Cootamundra (Baileyana),P2R5.0-8 | submission=3589fc69-c7c6-4889-b950-e0e311937713",
+              "species": "Wattle - Cootamundra (Baileyana)",
+              "photos": [
+                "photos/logs/a1f8ef71-0.jpg",
+                "photos/logs/a1f8ef71-1.jpg",
+                "photos/logs/a1f8ef71-2.jpg",
+                "photos/logs/a1f8ef71-3.jpg",
+                "photos/logs/a1f8ef71-4.jpg",
+                "photos/logs/a1f8ef71-5.jpg",
+                "photos/logs/a1f8ef71-6.jpg",
+                "photos/logs/a1f8ef71-7.jpg",
+                "photos/logs/a1f8ef71-8.jpg",
+                "photos/logs/a1f8ef71-9.jpg",
+                "photos/logs/a1f8ef71-10.jpg",
+                "photos/logs/a1f8ef71-11.jpg"
+              ]
+            },
+            {
+              "uuid": "28e28982-e1cd-42f8-9c1c-e075c69ed7d0",
+              "type": "observation",
+              "date": "2026-04-14",
+              "name": "Observation P2R5.0-8 — Wattle - Cootamundra (Baileyana) — 2026-04-15",
+              "notes": "Inventory update: Restored pre-Leah-walk count — Leah's observation was photo-focused and undercounted visually-stressed plants (partial loss of feathery foliage noted)\n[ontology:InteractionStamp] ini",
+              "notes_full": "Inventory update: Restored pre-Leah-walk count — Leah's observation was photo-focused and undercounted visually-stressed plants (partial loss of feathery foliage noted)\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=updated | target=observation | outcome=success | ts=2026-04-15T05:30:18.799Z | related=1 MAY 2025 - Wattle - Cootamundra (Baileyana) - P2R5.0-8\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:30:19.458Z | related=Wattle - Cootamundra (Baileyana),P2R5.0-8",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=updated | target=observation | outcome=success | ts=2026-04-15T05:30:18.799Z | related=1 MAY 2025 - Wattle - Cootamundra (Baileyana) - P2R5.0-8",
+              "species": "Wattle - Cootamundra (Baileyana)"
             }
           ],
           "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
@@ -15869,6 +16090,30 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Basil - Perennial (Thai)"
+            },
+            {
+              "uuid": "8a39b87c-0d4c-483b-8673-6a489e6b177e",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Basil - Perennial (Thai) — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T03:22:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Some inflorescences showing desiccation, but plant tissue remains alive.\nCount: 12 → 12\n[ontology:In",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T03:22:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Some inflorescences showing desiccation, but plant tissue remains alive.\nCount: 12 → 12\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:29:38.718Z | related=Basil - Perennial (Thai),P2R5.0-8 | submission=ae5a40f8-461a-4227-ba7e-a17212f62b75",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:29:38.718Z | related=Basil - Perennial (Thai),P2R5.0-8 | submission=ae5a40f8-461a-4227-ba7e-a17212f62b75",
+              "species": "Basil - Perennial (Thai)",
+              "photos": [
+                "photos/logs/8a39b87c-0.jpg",
+                "photos/logs/8a39b87c-1.jpg",
+                "photos/logs/8a39b87c-2.jpg",
+                "photos/logs/8a39b87c-3.jpg",
+                "photos/logs/8a39b87c-4.jpg",
+                "photos/logs/8a39b87c-5.jpg",
+                "photos/logs/8a39b87c-6.jpg",
+                "photos/logs/8a39b87c-7.jpg",
+                "photos/logs/8a39b87c-8.jpg",
+                "photos/logs/8a39b87c-9.jpg",
+                "photos/logs/8a39b87c-10.jpg",
+                "photos/logs/8a39b87c-11.jpg"
+              ]
             }
           ],
           "photo_url": "photos/basil-perennial-thai.jpg"
@@ -15993,7 +16238,11 @@
               "notes": "Maverick transcript 4 Apr 2026. Likely self-seeded or winter garden mix. Pending James verification.",
               "notes_full": "Maverick transcript 4 Apr 2026. Likely self-seeded or winter garden mix. Pending James verification.",
               "interaction_stamp": "",
-              "species": "Sunflower"
+              "species": "Sunflower",
+              "photos": [
+                "photos/logs/e7c8ddbc-0.jpg",
+                "photos/logs/e7c8ddbc-1.jpg"
+              ]
             },
             {
               "uuid": "9356f7bd-865d-4e6f-b451-f57bc378203f",
@@ -16004,6 +16253,30 @@
               "notes_full": "Maverick field walk 5 Apr 2026: counted 2 sunflowers (farmOS had 1). +1 likely self-seeded. Pending James verification.",
               "interaction_stamp": "",
               "species": "Sunflower"
+            },
+            {
+              "uuid": "f1c02440-1d61-4630-9148-a8fb7759c52c",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Sunflower — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:58:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Seeds set imminent; capitula observed drooping downward\nCount: 2 → 2\n[ontology:InteractionStamp] ini",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:58:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Seeds set imminent; capitula observed drooping downward\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:25:37.214Z | related=Sunflower,P2R5.0-8 | submission=267f5b32-f8b0-4723-920e-58fa0e99c139",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:25:37.214Z | related=Sunflower,P2R5.0-8 | submission=267f5b32-f8b0-4723-920e-58fa0e99c139",
+              "species": "Sunflower",
+              "photos": [
+                "photos/logs/f1c02440-0.jpg",
+                "photos/logs/f1c02440-1.jpg",
+                "photos/logs/f1c02440-2.jpg",
+                "photos/logs/f1c02440-3.jpg",
+                "photos/logs/f1c02440-4.jpg",
+                "photos/logs/f1c02440-5.jpg",
+                "photos/logs/f1c02440-6.jpg",
+                "photos/logs/f1c02440-7.jpg",
+                "photos/logs/f1c02440-8.jpg",
+                "photos/logs/f1c02440-9.jpg",
+                "photos/logs/f1c02440-10.jpg",
+                "photos/logs/f1c02440-11.jpg"
+              ]
             }
           ],
           "photo_url": "photos/sunflower.jpg"
@@ -16024,7 +16297,35 @@
               "notes": "Maverick transcript 4 Apr 2026. Self-seeded from compost/scattered seeds. Pending James verification.",
               "notes_full": "Maverick transcript 4 Apr 2026. Self-seeded from compost/scattered seeds. Pending James verification.",
               "interaction_stamp": "",
-              "species": "Pumpkin"
+              "species": "Pumpkin",
+              "photos": [
+                "photos/logs/db2878dc-0.jpg",
+                "photos/logs/db2878dc-1.jpg"
+              ]
+            },
+            {
+              "uuid": "bab83082-8234-475b-ba9c-9293aca4e3d6",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Pumpkin — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:13:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. One bloom observed\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:13:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. One bloom observed\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:23:53.434Z | related=Pumpkin,P2R5.0-8 | submission=4a208463-d173-4066-ad80-a880a64c91f9",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:23:53.434Z | related=Pumpkin,P2R5.0-8 | submission=4a208463-d173-4066-ad80-a880a64c91f9",
+              "species": "Pumpkin",
+              "photos": [
+                "photos/logs/bab83082-0.jpg",
+                "photos/logs/bab83082-1.jpg",
+                "photos/logs/bab83082-2.jpg",
+                "photos/logs/bab83082-3.jpg",
+                "photos/logs/bab83082-4.jpg",
+                "photos/logs/bab83082-5.jpg",
+                "photos/logs/bab83082-6.jpg",
+                "photos/logs/bab83082-7.jpg",
+                "photos/logs/bab83082-8.jpg",
+                "photos/logs/bab83082-9.jpg",
+                "photos/logs/bab83082-10.jpg",
+                "photos/logs/bab83082-11.jpg"
+              ]
             }
           ],
           "photo_url": "photos/pumpkin.jpg"
@@ -16055,7 +16356,11 @@
               "notes": "Maverick transcript 4 Apr 2026. Tree species — not self-seeded. Possible unlogged transplant or section boundary error (Jacaranda exists in P2R5.29-38). Needs James investigation.",
               "notes_full": "Maverick transcript 4 Apr 2026. Tree species — not self-seeded. Possible unlogged transplant or section boundary error (Jacaranda exists in P2R5.29-38). Needs James investigation.",
               "interaction_stamp": "",
-              "species": "Jacaranda"
+              "species": "Jacaranda",
+              "photos": [
+                "photos/logs/91e48bdc-0.jpg",
+                "photos/logs/91e48bdc-1.jpg"
+              ]
             }
           ],
           "photo_url": "photos/jacaranda.jpg"
@@ -16077,6 +16382,30 @@
               "notes_full": "Maverick transcript 5 Apr 2026. Variety assumed Italian (most common in field). May have spread from P2R5.29-38 where Parsley is established. Pending James verification.",
               "interaction_stamp": "",
               "species": "Parsley (Italian)"
+            },
+            {
+              "uuid": "1c3d67f2-8a79-421b-bab6-fc9ae0b793f4",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Parsley (Italian) — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:39:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Partial yellow observed on some leaves\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | rol",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:39:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Partial yellow observed on some leaves\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:03.169Z | related=Parsley (Italian),P2R5.0-8 | submission=7dcccbf9-f72c-4643-b7c3-974fc6b097da",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:03.169Z | related=Parsley (Italian),P2R5.0-8 | submission=7dcccbf9-f72c-4643-b7c3-974fc6b097da",
+              "species": "Parsley (Italian)",
+              "photos": [
+                "photos/logs/1c3d67f2-0.jpg",
+                "photos/logs/1c3d67f2-1.jpg",
+                "photos/logs/1c3d67f2-2.jpg",
+                "photos/logs/1c3d67f2-3.jpg",
+                "photos/logs/1c3d67f2-4.jpg",
+                "photos/logs/1c3d67f2-5.jpg",
+                "photos/logs/1c3d67f2-6.jpg",
+                "photos/logs/1c3d67f2-7.jpg",
+                "photos/logs/1c3d67f2-8.jpg",
+                "photos/logs/1c3d67f2-9.jpg",
+                "photos/logs/1c3d67f2-10.jpg",
+                "photos/logs/1c3d67f2-11.jpg"
+              ]
             }
           ],
           "photo_url": "photos/parsley-italian.jpg"
@@ -16098,6 +16427,30 @@
               "notes_full": "Maverick transcript 5 Apr 2026. Observer said \"a potato\" — resolved as Sweet Potato (regular potato not grown on farm). Runner or self-propagated. Pending James verification.",
               "interaction_stamp": "",
               "species": "Sweet Potato"
+            },
+            {
+              "uuid": "70968d0a-0d56-47b3-8964-26c9d89b1bba",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.0-8 — Sweet Potato — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:36:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Suspected potato — exhibiting healthy growth.\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Lea",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:36:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Suspected potato — exhibiting healthy growth.\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:51.168Z | related=Sweet Potato,P2R5.0-8 | submission=32584167-65b8-4b6c-b0e3-8bc291db37f2",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:51.168Z | related=Sweet Potato,P2R5.0-8 | submission=32584167-65b8-4b6c-b0e3-8bc291db37f2",
+              "species": "Sweet Potato",
+              "photos": [
+                "photos/logs/70968d0a-0.jpg",
+                "photos/logs/70968d0a-1.jpg",
+                "photos/logs/70968d0a-2.jpg",
+                "photos/logs/70968d0a-3.jpg",
+                "photos/logs/70968d0a-4.jpg",
+                "photos/logs/70968d0a-5.jpg",
+                "photos/logs/70968d0a-6.jpg",
+                "photos/logs/70968d0a-7.jpg",
+                "photos/logs/70968d0a-8.jpg",
+                "photos/logs/70968d0a-9.jpg",
+                "photos/logs/70968d0a-10.jpg",
+                "photos/logs/70968d0a-11.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -16396,7 +16749,7 @@
       "length": "9m",
       "has_trees": true,
       "first_planted": "2025-05-14",
-      "inventory_date": "2026-04-11",
+      "inventory_date": "2026-04-14",
       "plants": [
         {
           "species": "Papaya",
@@ -16414,6 +16767,34 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
+              "species": "Papaya"
+            },
+            {
+              "uuid": "6054f8b3-e714-404b-a096-0e7a6669c3db",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.29-38 — Papaya — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:21:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. pods have reached maturity\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Leah | role=farmhand |",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:21:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. pods have reached maturity\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:51.857Z | related=Papaya,P2R5.29-38 | submission=eab87b40-3e80-4962-94f2-8de04e6b502e",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:51.857Z | related=Papaya,P2R5.29-38 | submission=eab87b40-3e80-4962-94f2-8de04e6b502e",
+              "species": "Papaya",
+              "photos": [
+                "photos/logs/6054f8b3-0.jpg",
+                "photos/logs/6054f8b3-1.jpg",
+                "photos/logs/6054f8b3-2.jpg",
+                "photos/logs/6054f8b3-3.jpg",
+                "photos/logs/6054f8b3-4.jpg",
+                "photos/logs/6054f8b3-5.jpg"
+              ]
+            },
+            {
+              "uuid": "63449431-6bee-4eea-b9c1-b836a7da16d9",
+              "type": "observation",
+              "date": "2026-04-14",
+              "name": "Observation P2R5.29-38 — Papaya — 2026-04-15",
+              "notes": "Inventory update: Restored pre-Leah-walk count — Leah's observation was photo-focused and undercounted visually-stressed plants (partial leaf yellowing noted)\n[ontology:InteractionStamp] initiator=Cla",
+              "notes_full": "Inventory update: Restored pre-Leah-walk count — Leah's observation was photo-focused and undercounted visually-stressed plants (partial leaf yellowing noted)\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=updated | target=observation | outcome=success | ts=2026-04-15T05:30:15.979Z | related=30 DEC 2025 - Papaya - P2R5.29-38\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:30:17.547Z | related=Papaya,P2R5.29-38",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=updated | target=observation | outcome=success | ts=2026-04-15T05:30:15.979Z | related=30 DEC 2025 - Papaya - P2R5.29-38",
               "species": "Papaya"
             }
           ],
@@ -16457,6 +16838,24 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Jacaranda"
+            },
+            {
+              "uuid": "3d7da012-400f-4057-ba96-0833505c0c6f",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.29-38 — Jacaranda — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:41:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; plant appears healthy and actively developing\nCount: 2 → 2\n[ontology:Interac",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:41:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; plant appears healthy and actively developing\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:20:59.496Z | related=Jacaranda,P2R5.29-38 | submission=9abed4dd-fbab-43ff-8c91-9b73d85b0420",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:20:59.496Z | related=Jacaranda,P2R5.29-38 | submission=9abed4dd-fbab-43ff-8c91-9b73d85b0420",
+              "species": "Jacaranda",
+              "photos": [
+                "photos/logs/3d7da012-0.jpg",
+                "photos/logs/3d7da012-1.jpg",
+                "photos/logs/3d7da012-2.jpg",
+                "photos/logs/3d7da012-3.jpg",
+                "photos/logs/3d7da012-4.jpg",
+                "photos/logs/3d7da012-5.jpg"
+              ]
             }
           ],
           "photo_url": "photos/jacaranda.jpg"
@@ -16499,6 +16898,24 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Wattle - Cootamundra (Baileyana)"
+            },
+            {
+              "uuid": "0b121911-b717-4728-8975-7d8d8a501196",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Observation P2R5.29-38 — Wattle - Cootamundra (Baileyana) — 2026-04-14",
+              "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:29:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. small in stature but showing strong potential\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Lea",
+              "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:29:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. small in stature but showing strong potential\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:16.335Z | related=Wattle - Cootamundra (Baileyana),P2R5.29-38 | submission=1d5d0b5b-fb47-461e-8d0e-2392067a7136",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:16.335Z | related=Wattle - Cootamundra (Baileyana),P2R5.29-38 | submission=1d5d0b5b-fb47-461e-8d0e-2392067a7136",
+              "species": "Wattle - Cootamundra (Baileyana)",
+              "photos": [
+                "photos/logs/0b121911-0.jpg",
+                "photos/logs/0b121911-1.jpg",
+                "photos/logs/0b121911-2.jpg",
+                "photos/logs/0b121911-3.jpg",
+                "photos/logs/0b121911-4.jpg",
+                "photos/logs/0b121911-5.jpg"
+              ]
             }
           ],
           "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
@@ -16720,6 +17137,35 @@
             }
           ],
           "photo_url": "photos/sunflower.jpg"
+        },
+        {
+          "species": "Coriander",
+          "strata": "low",
+          "count": 1,
+          "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:33:00\nMode: new_plant\nPlant notes: Leah transcript 14 Apr 2026. A cilantro observed, approx. 5 cm in height; early growth stage, currently stable.\nCount: 0 → 1\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:21:38.858Z | related=Coriander,P2R5.29-38 | submission=4ebc2fd8-3876-4b0e-8275-1dbaa4f65d39",
+          "first_planted": "2026-04-14",
+          "asset_name": "14 APR 2026 - Coriander - P2R5.29-38",
+          "logs": [
+            {
+              "uuid": "fc5f01ed-1dc7-4a6e-8eed-ca2996d396c2",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Inventory P2R5.29-38 — Coriander",
+              "notes": "",
+              "notes_full": "",
+              "interaction_stamp": "",
+              "species": "Coriander",
+              "photos": [
+                "photos/logs/fc5f01ed-0.jpg",
+                "photos/logs/fc5f01ed-1.jpg",
+                "photos/logs/fc5f01ed-2.jpg",
+                "photos/logs/fc5f01ed-3.jpg",
+                "photos/logs/fc5f01ed-4.jpg",
+                "photos/logs/fc5f01ed-5.jpg"
+              ]
+            }
+          ],
+          "photo_url": "photos/coriander.jpg"
         }
       ]
     },
@@ -16806,7 +17252,7 @@
       "length": "9m",
       "has_trees": true,
       "first_planted": "2025-12-30",
-      "inventory_date": "2026-01-12",
+      "inventory_date": "2026-04-13",
       "plants": [
         {
           "species": "Papaya",
@@ -16933,6 +17379,56 @@
             }
           ],
           "photo_url": ""
+        },
+        {
+          "species": "Nasturtium",
+          "strata": "low",
+          "count": 1,
+          "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:46:00\nMode: new_plant\nPlant notes: Leah transcript 14 Apr 2026.  two flowers observed\nCount: 0 → 1\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:20:04.641Z | related=Nasturtium,P2R5.44-53 | submission=479332c9-6c76-44fe-a446-ada3add3138b",
+          "first_planted": "2026-04-14",
+          "asset_name": "14 APR 2026 - Nasturtium - P2R5.44-53",
+          "logs": [
+            {
+              "uuid": "944cb75c-d392-4427-9cca-ce912f395268",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Inventory P2R5.44-53 — Nasturtium",
+              "notes": "",
+              "notes_full": "",
+              "interaction_stamp": "",
+              "species": "Nasturtium",
+              "photos": [
+                "photos/logs/944cb75c-0.jpg",
+                "photos/logs/944cb75c-1.jpg"
+              ]
+            }
+          ],
+          "photo_url": "photos/nasturtium.jpg"
+        },
+        {
+          "species": "Okra",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:46:00\nMode: new_plant\nPlant notes: Leah transcript 14 Apr 2026. fruiting observed; pods nearing maturity\nCount: 0 → 2\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:20:29.591Z | related=Okra,P2R5.44-53 | submission=add3ce7a-fb74-4464-8627-203db352f307",
+          "first_planted": "2026-04-14",
+          "asset_name": "14 APR 2026 - Okra - P2R5.44-53",
+          "logs": [
+            {
+              "uuid": "795c7f8e-03ec-49ef-b60f-ed0a8d81c1b4",
+              "type": "observation",
+              "date": "2026-04-13",
+              "name": "Inventory P2R5.44-53 — Okra",
+              "notes": "",
+              "notes_full": "",
+              "interaction_stamp": "",
+              "species": "Okra",
+              "photos": [
+                "photos/logs/795c7f8e-0.jpg",
+                "photos/logs/795c7f8e-1.jpg"
+              ]
+            }
+          ],
+          "photo_url": "photos/okra.jpg"
         }
       ]
     },
@@ -16972,7 +17468,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Papaya"
+              "species": "Papaya",
+              "photos": [
+                "photos/logs/71510a8a-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/papaya.jpg"
@@ -17003,7 +17502,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Tallowood (Gum)"
+              "species": "Tallowood (Gum)",
+              "photos": [
+                "photos/logs/93f1b69e-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tallowood-gum.jpg"
@@ -17034,7 +17536,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Forest Red Gum"
+              "species": "Forest Red Gum",
+              "photos": [
+                "photos/logs/e949cb94-0.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -17065,7 +17570,10 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
-              "species": "Jacaranda"
+              "species": "Jacaranda",
+              "photos": [
+                "photos/logs/8e053260-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/jacaranda.jpg"
@@ -17128,7 +17636,10 @@
               "notes": "Added via field observation",
               "notes_full": "Added via field observation",
               "interaction_stamp": "",
-              "species": "Coriander"
+              "species": "Coriander",
+              "photos": [
+                "photos/logs/ed82a40a-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/coriander.jpg"
@@ -17149,7 +17660,10 @@
               "notes": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm",
               "notes_full": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm",
               "interaction_stamp": "",
-              "species": "Dianella"
+              "species": "Dianella",
+              "photos": [
+                "photos/logs/5804acdc-0.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -17244,7 +17758,11 @@
               "notes": "previous section",
               "notes_full": "previous section",
               "interaction_stamp": "",
-              "species": "Tallowood (Gum)"
+              "species": "Tallowood (Gum)",
+              "photos": [
+                "photos/logs/888290ac-0.jpg",
+                "photos/logs/888290ac-1.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tallowood-gum.jpg"
@@ -17275,7 +17793,11 @@
               "notes": "previous section but not seen neither",
               "notes_full": "previous section but not seen neither",
               "interaction_stamp": "",
-              "species": "Forest Red Gum"
+              "species": "Forest Red Gum",
+              "photos": [
+                "photos/logs/834a2cce-0.jpg",
+                "photos/logs/834a2cce-1.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -17369,7 +17891,11 @@
               "notes": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm",
               "notes_full": "planted on the 5th of January 2026, source : Minimbah Permaculture Farm",
               "interaction_stamp": "",
-              "species": "Dianella"
+              "species": "Dianella",
+              "photos": [
+                "photos/logs/5760c1c9-0.jpg",
+                "photos/logs/5760c1c9-1.jpg"
+              ]
             }
           ],
           "photo_url": ""

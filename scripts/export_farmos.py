@@ -470,6 +470,144 @@ class SectionsExporter:
 
         return local_photos
 
+    # ── Log photo attachments ───────────────────────────────────
+
+    def fetch_log_photo_urls(self, log_ids: list) -> dict:
+        """Fetch photo attachments for a set of observation/activity logs.
+
+        Returns ``{log_uuid: [relative_path, ...]}`` — one or more local
+        thumbnail paths per log, saved to site/public/photos/logs/.
+
+        farmOS log URLs require authentication, so we download each photo
+        at build time and serve it as a static file from GitHub Pages.
+        Mirrors the species reference photo pipeline above, but keyed by
+        log uuid instead of species name. Only logs that actually have
+        attachments appear in the result.
+
+        To avoid refetching the entire observation corpus on every export,
+        we batch-query logs in chunks of 40 and only for the log IDs
+        passed in — typically these are all the logs that plants in the
+        current export touched.
+        """
+        import re
+        if not log_ids:
+            return {}
+
+        logs_dir = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "site", "public", "photos", "logs",
+        )
+        os.makedirs(logs_dir, exist_ok=True)
+
+        remote_by_log: dict[str, list[str]] = {}
+
+        # farmOS JSON:API filter syntax: filter[id][operator]=IN&filter[id][path]=id
+        # with one filter[id][value][N]=<uuid> per id. Chunk to avoid URL length limits.
+        chunk_size = 40
+        for i in range(0, len(log_ids), chunk_size):
+            chunk = [lid for lid in log_ids[i:i + chunk_size] if lid]
+            if not chunk:
+                continue
+            # Observation logs
+            for log_type in ("observation", "activity"):
+                filter_parts = [f"filter[id][condition][path]=id",
+                                f"filter[id][condition][operator]=IN"]
+                for idx, lid in enumerate(chunk):
+                    filter_parts.append(f"filter[id][condition][value][{idx}]={lid}")
+                query = "&".join(filter_parts)
+                path = f"/api/log/{log_type}?include=image&{query}&page[limit]=50"
+                try:
+                    data = self._http_get(path)
+                except Exception:
+                    continue
+                if not data:
+                    continue
+                # Index included files
+                files_by_id: dict[str, str] = {}
+                for inc in data.get("included") or []:
+                    if inc.get("type") != "file--file":
+                        continue
+                    uri = (inc.get("attributes") or {}).get("uri") or {}
+                    url = uri.get("url") if isinstance(uri, dict) else ""
+                    if not url:
+                        continue
+                    if url.startswith("/"):
+                        url = self.hostname.rstrip("/") + url
+                    files_by_id[inc.get("id", "")] = url
+                # For each log in this chunk, pull its image relationship
+                for log in data.get("data") or []:
+                    log_uuid = log.get("id", "")
+                    if not log_uuid:
+                        continue
+                    image_rel = (log.get("relationships") or {}).get("image") or {}
+                    rel_data = image_rel.get("data") or []
+                    if isinstance(rel_data, dict):
+                        rel_data = [rel_data]
+                    urls = []
+                    for entry in rel_data:
+                        if not isinstance(entry, dict):
+                            continue
+                        fid = entry.get("id", "")
+                        if fid in files_by_id:
+                            urls.append(files_by_id[fid])
+                    if urls:
+                        remote_by_log.setdefault(log_uuid, []).extend(urls)
+
+        if not remote_by_log:
+            return {}
+
+        # Download each photo, generate thumbnail (224×224 for retina)
+        # and lightbox (1200px max) variants. Skip files that already exist
+        # on disk — idempotent across re-runs.
+        from PIL import Image
+        from io import BytesIO
+
+        THUMB_SIZE = 224   # 2× for retina at 112px CSS
+        LIGHTBOX_MAX = 1200
+        THUMB_QUALITY = 75
+        LIGHTBOX_QUALITY = 82
+
+        local_by_log: dict[str, list[str]] = {}
+        for log_uuid, urls in remote_by_log.items():
+            short = log_uuid.split("-")[0]
+            for idx, url in enumerate(urls):
+                thumb_filename = f"{short}-{idx}.jpg"
+                lightbox_filename = f"{short}-{idx}-full.jpg"
+                thumb_path = os.path.join(logs_dir, thumb_filename)
+                lightbox_path = os.path.join(logs_dir, lightbox_filename)
+                try:
+                    if os.path.exists(thumb_path) and os.path.exists(lightbox_path):
+                        local_by_log.setdefault(log_uuid, []).append(
+                            f"photos/logs/{thumb_filename}"
+                        )
+                        continue
+                    resp = self.session.get(url, timeout=30)
+                    resp.raise_for_status()
+                    img = Image.open(BytesIO(resp.content)).convert("RGB")
+
+                    lightbox_img = img.copy()
+                    lightbox_img.thumbnail((LIGHTBOX_MAX, LIGHTBOX_MAX), Image.LANCZOS)
+                    lightbox_img.save(lightbox_path, "JPEG",
+                                      quality=LIGHTBOX_QUALITY, optimize=True)
+
+                    # Thumbnail: center-crop to square, resize to 224×224
+                    w, h = img.size
+                    side = min(w, h)
+                    left = (w - side) // 2
+                    top = (h - side) // 2
+                    thumb_img = img.crop((left, top, left + side, top + side))
+                    thumb_img = thumb_img.resize((THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)
+                    thumb_img.save(thumb_path, "JPEG",
+                                   quality=THUMB_QUALITY, optimize=True)
+
+                    local_by_log.setdefault(log_uuid, []).append(
+                        f"photos/logs/{thumb_filename}"
+                    )
+                except Exception as e:
+                    print(f"    ! failed to download log photo {log_uuid[:8]} idx {idx}: {e}")
+
+        return local_by_log
+
     # ── Main export logic ──────────────────────────────────────
 
     def export_sections_json(self, output_path: str, plant_db: dict):
@@ -636,6 +774,33 @@ class SectionsExporter:
                     enriched_section["first_planted"] = min(plant_dates)
 
             enriched_sections[section_id] = enriched_section
+
+        # Second pass: fetch photos attached to observation/activity logs
+        # and stamp the local thumbnail paths back into plant_logs. This
+        # powers the log-detail pages where Claire and WWOOFers can click
+        # through from the HISTORY panel to see field photos.
+        all_log_ids: list = []
+        for sec in enriched_sections.values():
+            for p in sec.get("plants", []):
+                for l in p.get("logs", []) or []:
+                    uid = l.get("uuid")
+                    if uid:
+                        all_log_ids.append(uid)
+        if all_log_ids:
+            print(f"\nFetching photo attachments for {len(set(all_log_ids))} logs...")
+            try:
+                log_photos = self.fetch_log_photo_urls(list(set(all_log_ids)))
+                print(f"  → {len(log_photos)} logs have photo attachments")
+            except Exception as e:
+                print(f"  ! log photo fetch failed: {e}")
+                log_photos = {}
+            # Stamp paths back into enriched plant_logs
+            for sec in enriched_sections.values():
+                for p in sec.get("plants", []):
+                    for l in p.get("logs", []) or []:
+                        uid = l.get("uuid")
+                        if uid and uid in log_photos:
+                            l["photos"] = log_photos[uid]
 
         # Build output structure
         output = {

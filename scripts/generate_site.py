@@ -287,7 +287,7 @@ def render_log_detail_page(
             return (
                 f'<div class="prov-row">'
                 f'<span class="prov-icon">{icon}</span>'
-                f'<span class="prov-label">{label}</span>'
+                f'<span class="prov-label">{label}:</span>'
                 f'<span class="prov-value">{esc(val)}</span>'
                 f'</div>'
             )
@@ -328,13 +328,35 @@ def render_log_detail_page(
             '</div>'
         )
 
+    # Field photos attached to the log. Each thumbnail filename has a
+    # sibling -full.jpg variant for the lightbox view.
+    photo_paths = log.get("photos") or []
+    photos_block = ""
+    if photo_paths:
+        thumbs = []
+        for p in photo_paths:
+            full = p.replace(".jpg", "-full.jpg")
+            thumbs.append(
+                f'<a class="log-photo-thumb" href="{base_url}{esc(full)}" '
+                f'onclick="event.preventDefault();openLogLightbox(this);">'
+                f'<img src="{base_url}{esc(p)}" alt="Field photo for {esc(species)}" '
+                f'loading="lazy" decoding="async">'
+                f'</a>'
+            )
+        photos_block = (
+            '<div class="log-detail-section">'
+            f'<h3 class="log-detail-h3">Field photos ({len(photo_paths)})</h3>'
+            '<div class="log-photo-grid">' + "".join(thumbs) + '</div>'
+            '</div>'
+        )
+
     meta_rows = (
-        f'<div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date</span><span class="prov-value">{esc(date)}</span></div>'
-        f'<div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type</span><span class="prov-value">{esc(log_type)}</span></div>'
-        f'<div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species</span><span class="prov-value">{esc(species)}{" · " + esc(botanical) if botanical else ""}</span></div>'
-        + (f'<div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Strata</span><span class="prov-value">{esc(strata)}</span></div>' if strata else "")
-        + f'<div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name</span><span class="prov-value mono">{esc(log_name)}</span></div>'
-        + (f'<div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID</span><span class="prov-value mono">{esc(uuid)}</span></div>' if uuid else "")
+        f'<div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">{esc(date)}</span></div>'
+        f'<div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">{esc(log_type)}</span></div>'
+        f'<div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">{esc(species)}{" · " + esc(botanical) if botanical else ""}</span></div>'
+        + (f'<div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">{esc(strata)}</span></div>' if strata else "")
+        + f'<div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">{esc(log_name)}</span></div>'
+        + (f'<div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">{esc(uuid)}</span></div>' if uuid else "")
     )
 
     return f"""<!DOCTYPE html>
@@ -368,9 +390,15 @@ def render_log_detail_page(
       </div>
     </div>
 
+    {photos_block}
+
     {notes_block}
 
     {provenance_block}
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
   </div>
 
   <div class="obs-nav">
@@ -382,6 +410,21 @@ def render_log_detail_page(
   </div>
 
 </div>
+<script>
+  function openLogLightbox(anchor) {{
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }}
+  function closeLogLightbox() {{
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }}
+  document.addEventListener("keydown", function (e) {{
+    if (e.key === "Escape") closeLogLightbox();
+  }});
+</script>
 </body>
 </html>"""
 
@@ -815,31 +858,17 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .succession-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
 .succ-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-/* Log timeline */
+/* Log timeline — base styles used on section view pages.
+   NOTE: Additions for log-entry-link / log-arrow / log-detail-page layout
+   live in styles-observe.css because styles.css is hand-managed and this
+   generator skips overwriting it — the section-level styles below keep
+   working, and new rules ship via the always-regenerated observe CSS.   */
 .log-timeline { margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0ec; }
 .log-timeline-title { font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.log-entry { display: flex; align-items: center; gap: 6px; padding: 6px 8px; font-size: 12px; color: #6b7280; border-radius: 6px; }
-.log-entry-link { text-decoration: none; color: inherit; transition: background 0.15s; cursor: pointer; }
-.log-entry-link:hover, .log-entry-link:focus { background: #f7f6f0; color: #1a1a1a; }
-.log-entry-link:hover .log-type, .log-entry-link:focus .log-type { color: #e67e22; }
+.log-entry { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px; color: #6b7280; }
 .log-icon { font-size: 13px; flex-shrink: 0; }
 .log-date { font-weight: 500; min-width: 65px; color: #4b5563; }
-.log-type { color: #9ca3af; flex: 1; }
-.log-arrow { color: #d1d5db; font-size: 16px; font-weight: 300; }
-
-/* Log detail page */
-.log-detail-wrap { padding: 16px; max-width: 430px; margin: 0 auto; }
-.log-detail-section { margin-bottom: 20px; }
-.log-detail-h3 { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px; }
-.prov-card { background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 10px; padding: 12px 14px; }
-.prov-card.prov-raw { font-family: 'SF Mono', monospace; font-size: 11px; color: #6b7280; word-break: break-word; }
-.prov-row { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; font-size: 13px; line-height: 1.4; border-bottom: 1px solid #eceae2; }
-.prov-row:last-child { border-bottom: none; }
-.prov-icon { font-size: 14px; flex-shrink: 0; width: 20px; }
-.prov-label { color: #9ca3af; min-width: 80px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
-.prov-value { color: #1a1a1a; flex: 1; word-break: break-word; }
-.prov-value.mono { font-family: 'SF Mono', Consolas, monospace; font-size: 11px; color: #6b7280; }
-.log-notes-body { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.5; color: #1a1a1a; white-space: pre-wrap; }
+.log-type { color: #9ca3af; }
 
 /* Explainer */
 .explainer-toggle { margin: 16px; padding: 12px 16px; background: #f7f6f0; border-radius: 10px 10px 0 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5e0; border-bottom: none; }
@@ -1443,6 +1472,40 @@ def get_observe_css():
 .recent-count-change { color: #d97706; font-weight: 600; font-variant-numeric: tabular-nums; }
 .recent-count { color: #374151; font-variant-numeric: tabular-nums; }
 .recent-note { font-size: 12px; color: #6b7280; font-style: italic; margin-top: 2px; padding-left: 20px; }
+
+/* ── Log detail page ──────────────────────────────────────────
+   These live in styles-observe.css (not styles.css) because the
+   main stylesheet is hand-managed and skipped by the generator —
+   new rules need a regenerated-every-run home. */
+.log-detail-wrap { padding: 16px; max-width: 430px; margin: 0 auto; }
+.log-detail-section { margin-bottom: 20px; }
+.log-detail-h3 { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px; }
+.prov-card { background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 10px; padding: 12px 14px; }
+.prov-card.prov-raw { font-family: 'SF Mono', monospace; font-size: 11px; color: #6b7280; word-break: break-word; }
+.prov-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 0; font-size: 13px; line-height: 1.4; border-bottom: 1px solid #eceae2; }
+.prov-row:last-child { border-bottom: none; }
+.prov-icon { font-size: 14px; flex-shrink: 0; width: 22px; text-align: center; }
+.prov-label { color: #9ca3af; min-width: 80px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; flex-shrink: 0; }
+.prov-value { color: #1a1a1a; flex: 1; word-break: break-word; }
+.prov-value.mono { font-family: 'SF Mono', Consolas, monospace; font-size: 11px; color: #6b7280; }
+.log-notes-body { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.5; color: #1a1a1a; white-space: pre-wrap; }
+
+/* Clickable log entries on section view pages (upgrades the base
+   .log-entry rule in styles.css with hover + link affordances). */
+.log-entry-link { display: flex; align-items: center; gap: 6px; padding: 6px 8px; font-size: 12px; color: #6b7280; border-radius: 6px; text-decoration: none; transition: background 0.15s; cursor: pointer; }
+.log-entry-link:hover, .log-entry-link:focus { background: #f7f6f0; color: #1a1a1a; }
+.log-entry-link:hover .log-type, .log-entry-link:focus .log-type { color: #e67e22; }
+.log-entry-link .log-type { color: #9ca3af; flex: 1; }
+.log-arrow { color: #d1d5db; font-size: 16px; font-weight: 300; }
+
+/* Log photo grid + lightbox */
+.log-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+.log-photo-thumb { display: block; border-radius: 8px; overflow: hidden; background: #f3f4f6; aspect-ratio: 1 / 1; cursor: zoom-in; transition: transform 0.15s, box-shadow 0.15s; }
+.log-photo-thumb:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.log-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.log-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 1000; cursor: zoom-out; padding: 20px; }
+.log-lightbox.open { display: flex; }
+.log-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
 """
 
 

@@ -25,13 +25,19 @@
     <div class="log-detail-section">
       <h3 class="log-detail-h3">Record</h3>
       <div class="prov-card">
-        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date</span><span class="prov-value">2026-03-18</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species</span><span class="prov-value">Tagasaste - Tree Lucerne · Chamaecytisus palmensis</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Strata</span><span class="prov-value">emergent</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name</span><span class="prov-value mono">Observation P2R3.40-50 — Tagasaste - Tree Lucerne — 2026-03-19</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID</span><span class="prov-value mono">2b1375bb-dd48-46bf-adaf-1e0dd35cc370</span></div>
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-03-18</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Tagasaste - Tree Lucerne · Chamaecytisus palmensis</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">emergent</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Observation P2R3.40-50 — Tagasaste - Tree Lucerne — 2026-03-19</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">2b1375bb-dd48-46bf-adaf-1e0dd35cc370</span></div>
       </div>
     </div>
+
+    
 
     <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">Reporter: Claire<br>Submitted: 2026-03-19T05:13:00<br>Mode: inventory<br>Plant notes: 5 added today on that section<br>Count: 1 → 6</div></div>
 
     
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
   </div>
 
   <div class="obs-nav">
@@ -43,5 +49,20 @@
   </div>
 
 </div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
 </body>
 </html>

@@ -164,3 +164,61 @@
 /* Navigation */
 .obs-nav { padding: 16px; text-align: center; }
 .obs-back-link { color: #e67e22; text-decoration: none; font-size: 14px; font-weight: 500; }
+
+/* Recent submissions (pending-review cards) */
+.recent-submissions { padding: 12px 16px 4px; background: #fefbea; border-bottom: 1px solid #f3e8bf; }
+.recent-header { display: flex; align-items: center; gap: 8px; font-weight: 600; color: #92400e; font-size: 14px; margin-bottom: 4px; }
+.recent-icon { font-size: 16px; }
+.recent-intro { font-size: 12px; color: #78350f; line-height: 1.4; margin-bottom: 10px; opacity: 0.85; }
+.recent-card { background: #fff; border: 1px solid #f3e8bf; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; }
+.recent-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.recent-when { font-size: 11px; color: #6b7280; flex: 1; }
+.recent-state-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 12px; letter-spacing: 0.02em; }
+.recent-state-badge.pending { background: #fef3c7; color: #92400e; }
+.recent-state-badge.offline { background: #e0e7ff; color: #3730a3; }
+.recent-dismiss { background: transparent; border: none; color: #9ca3af; font-size: 14px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.recent-dismiss:hover { background: #f3f4f6; color: #4b5563; }
+.recent-thumbs { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.recent-thumb { width: 56px; height: 56px; border-radius: 6px; overflow: hidden; background: #f3f4f6; position: relative; }
+.recent-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.recent-thumb.more { display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 12px; font-weight: 600; }
+.recent-card-body { display: flex; flex-direction: column; gap: 6px; }
+.recent-obs-row { font-size: 13px; color: #1a1a1a; line-height: 1.4; }
+.recent-kind { margin-right: 2px; }
+.recent-count-change { color: #d97706; font-weight: 600; font-variant-numeric: tabular-nums; }
+.recent-count { color: #374151; font-variant-numeric: tabular-nums; }
+.recent-note { font-size: 12px; color: #6b7280; font-style: italic; margin-top: 2px; padding-left: 20px; }
+
+/* ── Log detail page ──────────────────────────────────────────
+   These live in styles-observe.css (not styles.css) because the
+   main stylesheet is hand-managed and skipped by the generator —
+   new rules need a regenerated-every-run home. */
+.log-detail-wrap { padding: 16px; max-width: 430px; margin: 0 auto; }
+.log-detail-section { margin-bottom: 20px; }
+.log-detail-h3 { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px; }
+.prov-card { background: #f7f6f0; border: 1px solid #e5e5e0; border-radius: 10px; padding: 12px 14px; }
+.prov-card.prov-raw { font-family: 'SF Mono', monospace; font-size: 11px; color: #6b7280; word-break: break-word; }
+.prov-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 0; font-size: 13px; line-height: 1.4; border-bottom: 1px solid #eceae2; }
+.prov-row:last-child { border-bottom: none; }
+.prov-icon { font-size: 14px; flex-shrink: 0; width: 22px; text-align: center; }
+.prov-label { color: #9ca3af; min-width: 80px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; flex-shrink: 0; }
+.prov-value { color: #1a1a1a; flex: 1; word-break: break-word; }
+.prov-value.mono { font-family: 'SF Mono', Consolas, monospace; font-size: 11px; color: #6b7280; }
+.log-notes-body { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.5; color: #1a1a1a; white-space: pre-wrap; }
+
+/* Clickable log entries on section view pages (upgrades the base
+   .log-entry rule in styles.css with hover + link affordances). */
+.log-entry-link { display: flex; align-items: center; gap: 6px; padding: 6px 8px; font-size: 12px; color: #6b7280; border-radius: 6px; text-decoration: none; transition: background 0.15s; cursor: pointer; }
+.log-entry-link:hover, .log-entry-link:focus { background: #f7f6f0; color: #1a1a1a; }
+.log-entry-link:hover .log-type, .log-entry-link:focus .log-type { color: #e67e22; }
+.log-entry-link .log-type { color: #9ca3af; flex: 1; }
+.log-arrow { color: #d1d5db; font-size: 16px; font-weight: 300; }
+
+/* Log photo grid + lightbox */
+.log-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+.log-photo-thumb { display: block; border-radius: 8px; overflow: hidden; background: #f3f4f6; aspect-ratio: 1 / 1; cursor: zoom-in; transition: transform 0.15s, box-shadow 0.15s; }
+.log-photo-thumb:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.log-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.log-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 1000; cursor: zoom-out; padding: 20px; }
+.log-lightbox.open { display: flex; }
+.log-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }

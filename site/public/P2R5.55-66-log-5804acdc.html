@@ -25,13 +25,19 @@
     <div class="log-detail-section">
       <h3 class="log-detail-h3">Record</h3>
       <div class="prov-card">
-        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date</span><span class="prov-value">2026-03-10</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species</span><span class="prov-value">Dianella · Dianella spp.</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Strata</span><span class="prov-value">low</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name</span><span class="prov-value mono">Inventory P2R5.55-66 — Dianella</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID</span><span class="prov-value mono">5804acdc-3d2e-4bcd-8194-344940e963fa</span></div>
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-03-10</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Dianella · Dianella spp.</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">low</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Inventory P2R5.55-66 — Dianella</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">5804acdc-3d2e-4bcd-8194-344940e963fa</span></div>
       </div>
     </div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Field photos (1)</h3><div class="log-photo-grid"><a class="log-photo-thumb" href="photos/logs/5804acdc-0-full.jpg" onclick="event.preventDefault();openLogLightbox(this);"><img src="photos/logs/5804acdc-0.jpg" alt="Field photo for Dianella" loading="lazy" decoding="async"></a></div></div>
 
     <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">planted on the 5th of January 2026, source : Minimbah Permaculture Farm</div></div>
 
     
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
   </div>
 
   <div class="obs-nav">
@@ -43,5 +49,20 @@
   </div>
 
 </div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
 </body>
 </html>

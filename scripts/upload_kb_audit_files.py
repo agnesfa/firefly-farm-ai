@@ -193,11 +193,97 @@ def list_folders(endpoint: str) -> dict:
     return post_json(endpoint, {"action": "list_folders"})
 
 
+def get_json(endpoint: str, params: dict) -> dict:
+    """GET the KB endpoint with query params. Used for list/search actions."""
+    from urllib.parse import urlencode
+    url = f"{endpoint}?{urlencode(params)}"
+    try:
+        with urlrequest.urlopen(url, timeout=60) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except HTTPError as e:
+        return {"success": False, "error": f"HTTP {e.code}"}
+    except URLError as e:
+        return {"success": False, "error": str(e)}
+
+
+def find_entry_by_title(endpoint: str, title_prefix: str) -> dict | None:
+    """Find a KB entry whose title starts with the given prefix.
+
+    Uses the list action (GET) rather than search — search looks at
+    content/tags as well and could match the wrong entry when the audit
+    corpus is growing. Title-prefix match is exact enough for our
+    known-title lookups.
+    """
+    result = get_json(endpoint, {
+        "action": "list",
+        "category": KB_ENTRY_CATEGORY,
+        "limit": "200",
+    })
+    if not result.get("success"):
+        return None
+    for entry in result.get("entries") or []:
+        if (entry.get("title") or "").startswith(title_prefix):
+            return entry
+    return None
+
+
+def update_kb_entry(
+    endpoint: str,
+    entry_id: str,
+    row: str,
+    file_url: str,
+    md_body: str,
+) -> dict:
+    """Update an existing KB entry in place (same content/structure as add,
+    but targets the existing row via its entry_id). Used by --refresh mode
+    to push fixes (new related_plants, cleaned content) without duplicating
+    sheet rows."""
+    title = f"{row} — Spreadsheet vs farmOS Reconciliation (April 2026)"
+    summary = extract_summary(md_body)
+    content = (
+        f"Reconciliation audit comparing Claire's field spreadsheet for {row} "
+        f"against the current farmOS state (generated 2026-04-15).\n\n"
+        f"**📄 Full audit file on Drive:** {file_url}\n\n"
+        f"Use this KB entry as a quick overview — the per-section tables with all species "
+        f"comparisons are in the linked Drive file. This entry includes the structural "
+        f"findings, the summary counts, and the 🔴 rows that need a field check.\n\n"
+        f"---\n\n"
+        f"{summary}"
+    )
+    if len(content) > 45000:
+        content = content[:44900] + "\n\n… (truncated — see Drive file link above)"
+
+    red_species = extract_red_species(md_body)
+    payload = {
+        "action": "update",
+        "entry_id": entry_id,
+        "title": title,
+        "content": content,
+        "category": KB_ENTRY_CATEGORY,
+        "topics": KB_ENTRY_TOPICS,
+        "tags": f"{KB_ENTRY_TAGS},{row.lower()}",
+        "author": KB_ENTRY_AUTHOR,
+        "source_type": KB_ENTRY_SOURCE_TYPE,
+        "media_links": file_url,
+        "related_sections": row,
+        "related_plants": ",".join(red_species) if red_species else "",
+    }
+    return post_json(endpoint, payload)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="Show the plan without writing to Drive or the KB")
     parser.add_argument("--list-only", action="store_true", help="Only list existing KB subfolders and exit")
     parser.add_argument("--skip-entries", action="store_true", help="Upload files but don't create KB sheet entries")
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="Update existing KB entries in place instead of adding new ones. "
+             "Use this after editing audit files or fixing the uploader — "
+             "it finds entries by title prefix and calls the update action. "
+             "Drive files are overwritten as usual.",
+    )
     args = parser.parse_args()
 
     endpoint = (
@@ -249,16 +335,37 @@ def main() -> int:
     if args.dry_run or args.skip_entries:
         return 0
 
-    # Create KB entries that reference the uploaded files
-    print(f"\n── Creating KB sheet entries ──")
+    # Create or refresh KB entries that reference the uploaded files.
+    # --refresh locates each entry by title prefix and calls the update
+    # action; plain mode calls add and creates new rows.
+    if args.refresh:
+        print(f"\n── Refreshing existing KB sheet entries ──")
+    else:
+        print(f"\n── Creating KB sheet entries ──")
+
     for r in results:
         if "file_url" not in r:
             continue
         md_body = r["path"].read_text()
         print(f"  • {r['row']} ... ", end="", flush=True)
-        entry = add_kb_entry(endpoint, r["row"], r["file_url"], md_body)
+
+        if args.refresh:
+            title_prefix = f"{r['row']} — Spreadsheet vs farmOS Reconciliation"
+            existing = find_entry_by_title(endpoint, title_prefix)
+            if not existing:
+                print(f"NOT FOUND (falling back to add)")
+                entry = add_kb_entry(endpoint, r["row"], r["file_url"], md_body)
+            else:
+                entry = update_kb_entry(
+                    endpoint, existing["entry_id"], r["row"], r["file_url"], md_body,
+                )
+        else:
+            entry = add_kb_entry(endpoint, r["row"], r["file_url"], md_body)
+
         if entry.get("success"):
-            print(f"OK (entry_id={entry.get('entry_id', '?')[:8]}…)")
+            eid = entry.get("entry_id") or entry.get("updated_id") or "?"
+            action = "updated" if args.refresh and "updated" in str(entry) else "ok"
+            print(f"{action} (entry_id={eid[:8]}…)")
         else:
             print(f"FAIL: {entry.get('error', 'unknown')}")
 
