@@ -41,3 +41,4 @@ htmlcov/
 
 # Node (if ever needed)
 node_modules/
+fieldsheets/audits/

@@ -41,6 +41,12 @@
 
 var SHEET_NAME = "Knowledge";
 
+// Root of the Knowledge Base Drive folder (Firefly Corner - Knowledge Base).
+// Subfolders hold the actual files (guides/, sop/, reference/, tutorials/,
+// data-quality/ etc.). Files get Drive URLs that are stored in the
+// media_links column of the corresponding KB entry.
+var KB_DRIVE_FOLDER_ID = "1z7nBdELcIoqXaeQqhcSypwPHJ5hu7JUw";
+
 var COLS = {
   entry_id: 0,
   title: 1,
@@ -119,8 +125,12 @@ function doPost(e) {
       return handleUpdate(body);
     } else if (action === "archive") {
       return handleArchive(body);
+    } else if (action === "upload_file") {
+      return handleUploadFile(body);
+    } else if (action === "list_folders") {
+      return handleListFolders();
     } else {
-      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: add, update, archive" });
+      return jsonResponse({ success: false, error: "Unknown action: " + action + ". Use: add, update, archive, upload_file, list_folders" });
     }
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
@@ -443,6 +453,107 @@ function handleArchive(body) {
     success: true,
     message: "Archived entry: " + entryId
   });
+}
+
+// ── Drive file upload (for KB media: .md audits, PDFs, images) ─
+
+/**
+ * Upload a file into a subfolder of the KB Drive folder.
+ * Creates the subfolder if it doesn't already exist.
+ *
+ * body = {
+ *   action: "upload_file",
+ *   subfolder: "data-quality",      // required, subfolder name under KB root
+ *   filename: "P2R3-reconciliation.md", // required
+ *   content_base64: "<base64>",     // required (file body as base64)
+ *   mime_type: "text/markdown",     // optional, default "application/octet-stream"
+ *   overwrite: true                 // optional, default true — replace same-named files
+ * }
+ *
+ * Returns: { success, file_id, file_url, subfolder_id, subfolder_url }
+ */
+function handleUploadFile(body) {
+  var subfolder = body.subfolder || "";
+  var filename = body.filename || "";
+  var contentB64 = body.content_base64 || "";
+  var mimeType = body.mime_type || "application/octet-stream";
+  var overwrite = body.overwrite !== false;
+
+  if (!subfolder) {
+    return jsonResponse({ success: false, error: "Missing 'subfolder' field" });
+  }
+  if (!filename) {
+    return jsonResponse({ success: false, error: "Missing 'filename' field" });
+  }
+  if (!contentB64) {
+    return jsonResponse({ success: false, error: "Missing 'content_base64' field" });
+  }
+
+  try {
+    var root = DriveApp.getFolderById(KB_DRIVE_FOLDER_ID);
+
+    // Find or create the subfolder
+    var subFolder;
+    var existing = root.getFoldersByName(subfolder);
+    if (existing.hasNext()) {
+      subFolder = existing.next();
+    } else {
+      subFolder = root.createFolder(subfolder);
+    }
+
+    // Optionally remove an existing file with the same name
+    if (overwrite) {
+      var prior = subFolder.getFilesByName(filename);
+      while (prior.hasNext()) {
+        var oldFile = prior.next();
+        oldFile.setTrashed(true);
+      }
+    }
+
+    var decoded = Utilities.base64Decode(contentB64);
+    var blob = Utilities.newBlob(decoded, mimeType, filename);
+    var file = subFolder.createFile(blob);
+
+    return jsonResponse({
+      success: true,
+      file_id: file.getId(),
+      file_url: file.getUrl(),
+      file_name: file.getName(),
+      subfolder: subfolder,
+      subfolder_id: subFolder.getId(),
+      subfolder_url: subFolder.getUrl()
+    });
+  } catch (err) {
+    return jsonResponse({ success: false, error: "Upload failed: " + err.message });
+  }
+}
+
+/**
+ * List the immediate subfolders of the KB Drive root.
+ * Used to discover whether a subfolder exists before uploading.
+ */
+function handleListFolders() {
+  try {
+    var root = DriveApp.getFolderById(KB_DRIVE_FOLDER_ID);
+    var folders = root.getFolders();
+    var out = [];
+    while (folders.hasNext()) {
+      var f = folders.next();
+      out.push({
+        name: f.getName(),
+        id: f.getId(),
+        url: f.getUrl()
+      });
+    }
+    return jsonResponse({
+      success: true,
+      root_id: KB_DRIVE_FOLDER_ID,
+      root_url: root.getUrl(),
+      folders: out
+    });
+  } catch (err) {
+    return jsonResponse({ success: false, error: "List folders failed: " + err.message });
+  }
 }
 
 // ── Utility ────────────────────────────────────────────────────
