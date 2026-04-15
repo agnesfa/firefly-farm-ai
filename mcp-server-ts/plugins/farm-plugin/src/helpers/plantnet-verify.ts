@@ -19,6 +19,19 @@ const CONFIDENCE_THRESHOLD = 0.30;
 
 let _plantnetCalls = 0;
 
+/** Reset the module-level PlantNet call counter.
+ *
+ * The counter is per-process, which means it accumulates across import
+ * sessions on a long-running Railway deploy. That made the counter
+ * useless for per-import diagnostics — one import session could never
+ * tell how many calls IT made, only how many the process had made since
+ * startup. Callers now snapshot the counter at the start of each import
+ * and diff at the end via `getCallDelta`.
+ */
+export function resetPlantnetCallCount(): void {
+  _plantnetCalls = 0;
+}
+
 export interface VerifyResult {
   verified: boolean;
   plantnetTop: string;

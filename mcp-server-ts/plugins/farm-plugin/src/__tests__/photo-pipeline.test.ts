@@ -13,6 +13,7 @@ import {
   decodeMediaFile,
   uploadMediaToLog,
   updateSpeciesReferencePhoto,
+  newPhotoPipelineReport,
 } from '../helpers/photo-pipeline.js';
 
 const TINY_PNG_B64 =
@@ -56,11 +57,12 @@ describe('decodeMediaFile', () => {
 });
 
 describe('uploadMediaToLog', () => {
-  it('uploads every file and returns their UUIDs', async () => {
+  it('uploads every file, records the count in the report, and returns UUIDs', async () => {
     const client = {
       uploadFile: vi.fn().mockResolvedValueOnce('uuid-a').mockResolvedValueOnce('uuid-b'),
       getPlantTypeUuid: vi.fn(),
     };
+    const report = newPhotoPipelineReport();
     const ids = await uploadMediaToLog(
       client,
       'observation',
@@ -69,31 +71,85 @@ describe('uploadMediaToLog', () => {
         { filename: 'a.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
         { filename: 'b.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
       ],
+      report,
+      'test',
     );
     expect(ids).toEqual(['uuid-a', 'uuid-b']);
+    expect(report.photos_uploaded).toBe(2);
+    expect(report.upload_errors).toHaveLength(0);
     expect(client.uploadFile).toHaveBeenCalledTimes(2);
     expect(client.uploadFile.mock.calls[0][0]).toBe('log/observation');
     expect(client.uploadFile.mock.calls[0][1]).toBe('log-1');
   });
 
-  it('swallows upload errors so the import continues', async () => {
+  it('records thrown upload errors loudly in report.upload_errors', async () => {
     const client = {
       uploadFile: vi.fn().mockRejectedValue(new Error('farmOS 500')),
       getPlantTypeUuid: vi.fn(),
     };
+    const report = newPhotoPipelineReport();
     const ids = await uploadMediaToLog(
       client,
       'activity',
       'log-1',
       [{ filename: 'a.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 }],
+      report,
+      'test',
     );
     expect(ids).toEqual([]);
+    expect(report.photos_uploaded).toBe(0);
+    expect(report.upload_errors).toHaveLength(1);
+    expect(report.upload_errors[0]).toMatch(/upload_threw.*farmOS 500/);
+  });
+
+  it('records null-returning upload as an error, not a silent no-op', async () => {
+    const client = {
+      uploadFile: vi.fn().mockResolvedValue(null),
+      getPlantTypeUuid: vi.fn(),
+    };
+    const report = newPhotoPipelineReport();
+    const ids = await uploadMediaToLog(
+      client,
+      'observation',
+      'log-1',
+      [{ filename: 'a.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 }],
+      report,
+      'test',
+    );
+    expect(ids).toEqual([]);
+    expect(report.photos_uploaded).toBe(0);
+    expect(report.upload_errors).toHaveLength(1);
+    expect(report.upload_errors[0]).toMatch(/upload_returned_null/);
+  });
+
+  it('records decode failures and continues with remaining files', async () => {
+    const client = {
+      uploadFile: vi.fn().mockResolvedValueOnce('uuid-b'),
+      getPlantTypeUuid: vi.fn(),
+    };
+    const report = newPhotoPipelineReport();
+    const ids = await uploadMediaToLog(
+      client,
+      'observation',
+      'log-1',
+      [
+        { filename: 'a.jpg', data_base64: '' },  // will fail to decode
+        { filename: 'b.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+      ],
+      report,
+      'test',
+    );
+    expect(ids).toEqual(['uuid-b']);
+    expect(report.photos_uploaded).toBe(1);
+    expect(report.decode_failures).toBe(1);
+    expect(report.upload_errors.some((e) => e.includes('decode_failed'))).toBe(true);
   });
 
   it('short-circuits on empty inputs', async () => {
     const client = { uploadFile: vi.fn(), getPlantTypeUuid: vi.fn() };
-    expect(await uploadMediaToLog(client, 'activity', '', [])).toEqual([]);
-    expect(await uploadMediaToLog(client, 'activity', 'log-1', [])).toEqual([]);
+    const report = newPhotoPipelineReport();
+    expect(await uploadMediaToLog(client, 'activity', '', [], report, '')).toEqual([]);
+    expect(await uploadMediaToLog(client, 'activity', 'log-1', [], report, '')).toEqual([]);
     expect(client.uploadFile).not.toHaveBeenCalled();
   });
 });

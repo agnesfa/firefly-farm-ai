@@ -7,23 +7,45 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { makePlantAsset, makeObservation } from './fixtures.js';
 
+// Populated plant_type taxonomy used by buildBotanicalLookupResilient.
+// Description format matches parsePlantTypeMetadata's expected schema.
+const MOCK_PLANT_TYPES = [
+  {
+    id: 'pt-uuid-pigeonpea',
+    attributes: {
+      name: 'Pigeon Pea',
+      description: {
+        value: 'Syntropic Agriculture Data\n**Botanical Name:** Cajanus cajan\n**Strata:** high',
+      },
+    },
+  },
+];
+
 const mockClient = {
   fetchByName: vi.fn(),
   getPlantAssets: vi.fn(),
   getSectionUuid: vi.fn().mockResolvedValue('section-uuid-1'),
   getSectionType: vi.fn().mockResolvedValue('asset--land'),
   getPlantTypeUuid: vi.fn().mockResolvedValue('type-uuid-1'),
+  getAllPlantTypesCached: vi.fn().mockResolvedValue(MOCK_PLANT_TYPES),
   plantAssetExists: vi.fn().mockResolvedValue(null),
   logExists: vi.fn().mockResolvedValue(null),
   createQuantity: vi.fn().mockResolvedValue('qty-id'),
   createObservationLog: vi.fn().mockResolvedValue('obs-log-id'),
   createActivityLog: vi.fn().mockResolvedValue('activity-log-id'),
   createPlantAsset: vi.fn().mockResolvedValue('new-plant-id'),
+  updatePlantType: vi.fn().mockResolvedValue(true),
   archivePlant: vi.fn(),
   uploadFile: vi.fn().mockResolvedValue('file-uuid'),
   connect: vi.fn(),
   isConnected: true,
 };
+
+// Photo pipeline needs a non-empty PlantNet key to attempt verification
+// (the mocked verifySpeciesPhoto will always approve). Without this the
+// pipeline short-circuits at the "no_api_key" check and nothing gets
+// promoted as species reference photo.
+process.env.PLANTNET_API_KEY = process.env.PLANTNET_API_KEY || 'test-plantnet-key';
 
 const mockObsClient = {
   listObservations: vi.fn(),
@@ -45,6 +67,7 @@ vi.mock('../helpers/plantnet-verify.js', () => ({
   buildBotanicalLookupFromCsv: () => ({ forward: new Map(), reverse: new Map() }),
   verifySpeciesPhoto: async () => ({ verified: true, plantnetTop: '', confidence: 1.0, reason: 'test_bypass' }),
   getPlantnetCallCount: () => 0,
+  resetPlantnetCallCount: () => {},
 }));
 
 import { importObservationsTool } from '../tools/import-observations.js';
@@ -354,6 +377,10 @@ describe('import_observations photo pipeline', () => {
 
     expect(result.photos_uploaded).toBe(2);
     expect(result.species_reference_photos_updated).toBe(1);
+    expect(result.photo_pipeline.verification.plantnet_key_present).toBe(true);
+    expect(result.photo_pipeline.verification.botanical_lookup_size).toBeGreaterThan(0);
+    expect(result.photo_pipeline.verification.photos_verified).toBeGreaterThanOrEqual(1);
+    expect(result.photo_pipeline.upload_errors).toEqual([]);
 
     const calls = mockClient.uploadFile.mock.calls;
     const logCalls = calls.filter((c: any[]) => c[0] === 'log/observation');
@@ -411,8 +438,62 @@ describe('import_observations photo pipeline', () => {
     expect(result.total_actions).toBe(1);
     expect(result.actions[0].result).toBe('created');
     expect(result.photos_uploaded).toBe(0);
-    // Photo failures don't surface as errors
+    // Photo failures don't surface as top-level errors but they DO
+    // surface in photo_pipeline.upload_errors so the operator sees them.
     expect(result.errors).toBeNull();
+    expect(result.photo_pipeline.upload_errors.length).toBeGreaterThan(0);
+    expect(result.photo_pipeline.upload_errors[0]).toMatch(/upload_threw.*farmOS down/);
+    expect(result.photo_pipeline.warnings).toBeTruthy();
+  });
+
+  it('verification degradation does NOT block photo upload (regression: Leah Apr 14 walk)', async () => {
+    // This is the bug that silently broke Leah's field walk. Before the
+    // April 15 redesign, a failing PlantNet gate meant photos never
+    // reached the log. The new design uploads first, verifies after —
+    // photos always make it to the log even when PlantNet is down.
+    const originalKey = process.env.PLANTNET_API_KEY;
+    process.env.PLANTNET_API_KEY = '';  // simulate missing key on Railway
+
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [
+        makeObservation({
+          species: 'Pigeon Pea',
+          newCount: 4,
+          previousCount: 3,
+          mediaFiles: 'a.jpg,b.jpg,c.jpg',
+        }),
+      ],
+    });
+    mockObsClient.getMedia.mockResolvedValue({
+      success: true,
+      files: [mediaFile('a.jpg'), mediaFile('b.jpg'), mediaFile('c.jpg')],
+    });
+    mockClient.getPlantAssets.mockResolvedValue([
+      makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R3.15-21' }),
+    ]);
+
+    const result = parseResult(
+      await importObservationsTool.handler({
+        submission_id: 'sub-verification-off',
+        reviewer: 'Claude',
+        dry_run: false,
+      }),
+    );
+
+    // Photos attach unconditionally
+    expect(result.photos_uploaded).toBe(3);
+    expect(result.actions[0].photos_uploaded).toBe(3);
+    // Verification was skipped (no key)
+    expect(result.photo_pipeline.verification.plantnet_key_present).toBe(false);
+    expect(result.photo_pipeline.verification.plantnet_api_calls).toBe(0);
+    expect(result.photo_pipeline.verification.photos_verified).toBe(0);
+    // Species reference photo is NOT promoted because verification couldn't run
+    expect(result.species_reference_photos_updated).toBe(0);
+    // Upload errors are empty because the uploads actually worked
+    expect(result.photo_pipeline.upload_errors).toEqual([]);
+
+    process.env.PLANTNET_API_KEY = originalKey;
   });
 
   it('undecodable base64 is skipped without crashing', async () => {
