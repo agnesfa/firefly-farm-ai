@@ -674,17 +674,30 @@ function handleGetMedia(params) {
     var files = sectionFolder.getFiles();
     var results = [];
 
+    // Filter files by submission_id prefix. New observe.js (April 15 2026,
+    // ADR 0005) names files as {submission_id_8}_{section}_{target}_{counter}.jpg
+    // so we can match on the first 8 chars of the submission UUID. Old-format
+    // files (no UUID prefix) are returned unconditionally for backward compat.
+    var prefix = submissionId.substring(0, 8);
+
     while (files.hasNext()) {
       var file = files.next();
+      var name = file.getName();
+      // New-format: UUID-prefixed filename → filter by submission
+      // Old-format: section-prefixed filename → return all (backward compat)
+      var hasUuidPrefix = /^[0-9a-f]{8}_/.test(name);
+      if (hasUuidPrefix && !name.startsWith(prefix)) {
+        continue;  // Different submission's file — skip
+      }
       var blob = file.getBlob();
       results.push({
-        filename: file.getName(),
+        filename: name,
         mime_type: blob.getContentType(),
         data_base64: Utilities.base64Encode(blob.getBytes()),
       });
     }
 
-    return jsonResponse({ success: true, files: results });
+    return jsonResponse({ success: true, files: results, submission_prefix: prefix });
   } catch (err) {
     return jsonResponse({ success: false, error: "Drive error: " + err.message });
   }

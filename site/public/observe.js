@@ -803,16 +803,17 @@ function submitObservation(formData) {
 
   localStorage.setItem("firefly_observer_name", nameInput.value.trim());
 
+  var subId = generateUUID();
   var payload = {
     version: "1",
-    submission_id: generateUUID(),
+    submission_id: subId,
     section_id: typeof SECTION_DATA !== "undefined" ? SECTION_DATA.id : "",
     observer: nameInput.value.trim(),
     timestamp: dtInput ? new Date(dtInput.value).toISOString() : new Date().toISOString(),
     mode: formData.mode,
     observations: formData.observations,
     section_notes: formData.section_notes,
-    media: collectMediaData(),
+    media: collectMediaData(subId),
   };
 
   if (typeof OBSERVE_ENDPOINT === "undefined" || !OBSERVE_ENDPOINT) {
@@ -922,10 +923,16 @@ function compressImage(file, maxDim, quality, callback) {
   reader.readAsDataURL(file);
 }
 
-function collectMediaData() {
+function collectMediaData(submissionId) {
   var media = [];
   var counter = 1;
   var sectionId = typeof SECTION_DATA !== "undefined" ? SECTION_DATA.id : "unknown";
+  // Prefix every filename with the first 8 chars of the submission ID so
+  // Observations.gs handleGetMedia can filter files by submission when the
+  // Drive folder groups multiple submissions. Without this, get_media
+  // returns the entire date+section folder (bug discovered April 15 2026,
+  // Leah's walk: 180 photos cross-contaminated across 15 logs). ADR 0005.
+  var prefix = submissionId ? submissionId.substring(0, 8) : "00000000";
 
   // Collect hero photo
   var heroPreview = document.getElementById("camera-hero-preview");
@@ -933,7 +940,7 @@ function collectMediaData() {
     media.push({
       type: "photo",
       target: "plant",
-      filename: sectionId + "_plant_" + String(counter).padStart(3, "0") + ".jpg",
+      filename: prefix + "_" + sectionId + "_plant_" + String(counter).padStart(3, "0") + ".jpg",
       data: heroPreview.dataset.base64,
     });
     counter++;
@@ -945,7 +952,7 @@ function collectMediaData() {
       media.push({
         type: "photo",
         target: preview.dataset.target || "section",
-        filename: sectionId + "_" + (preview.dataset.target || "section") + "_" + String(counter).padStart(3, "0") + ".jpg",
+        filename: prefix + "_" + sectionId + "_" + (preview.dataset.target || "section") + "_" + String(counter).padStart(3, "0") + ".jpg",
         data: preview.dataset.base64,
       });
       counter++;
@@ -1051,11 +1058,13 @@ function resetForm(mode) {
     if (condition) condition.value = "alive";
     if (notes) notes.value = "";
 
-    // Reset camera hero
+    // Reset camera hero — clear dataset.base64 too (not just innerHTML).
+    // Without this, the old photo leaks into the next submission via
+    // collectMediaData which reads heroPreview.dataset.base64.
     var heroBtn = document.getElementById("camera-hero-btn");
     var heroPreview = document.getElementById("camera-hero-preview");
     if (heroBtn) heroBtn.style.display = "";
-    if (heroPreview) { heroPreview.style.display = "none"; heroPreview.innerHTML = ""; }
+    if (heroPreview) { heroPreview.style.display = "none"; heroPreview.innerHTML = ""; delete heroPreview.dataset.base64; }
 
     // Reset PlantNet
     plantnetPhotos = [];

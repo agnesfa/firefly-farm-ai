@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-15T18:39:07.088449+10:00",
+  "generated_at": "2026-04-16T12:22:03.856197+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -15892,21 +15892,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:04:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. exhibiting healthy growth overall; one shows partial leaf yellowing and wilting\nCount: 2 → 2\n[ontolo",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:04:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. exhibiting healthy growth overall; one shows partial leaf yellowing and wilting\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:24:46.106Z | related=Papaya,P2R5.0-8 | submission=3cc4d0c7-d64a-4c68-8220-21a79f3a5e0f",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:24:46.106Z | related=Papaya,P2R5.0-8 | submission=3cc4d0c7-d64a-4c68-8220-21a79f3a5e0f",
-              "species": "Papaya",
-              "photos": [
-                "photos/logs/87322054-0.jpg",
-                "photos/logs/87322054-1.jpg",
-                "photos/logs/87322054-2.jpg",
-                "photos/logs/87322054-3.jpg",
-                "photos/logs/87322054-4.jpg",
-                "photos/logs/87322054-5.jpg",
-                "photos/logs/87322054-6.jpg",
-                "photos/logs/87322054-7.jpg",
-                "photos/logs/87322054-8.jpg",
-                "photos/logs/87322054-9.jpg",
-                "photos/logs/87322054-10.jpg",
-                "photos/logs/87322054-11.jpg"
-              ]
+              "species": "Papaya"
             }
           ],
           "photo_url": "photos/papaya.jpg"
@@ -15968,21 +15954,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:53:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. basal leaves yellowing; upper growth remains stable.\nCount: 3 → 3\n[ontology:InteractionStamp] initia",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:53:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. basal leaves yellowing; upper growth remains stable.\nCount: 3 → 3\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:26:29.436Z | related=Mulberry (White),P2R5.0-8 | submission=06cfcc3c-f390-423d-960d-fc1627ccffc5",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:26:29.436Z | related=Mulberry (White),P2R5.0-8 | submission=06cfcc3c-f390-423d-960d-fc1627ccffc5",
-              "species": "Mulberry (White)",
-              "photos": [
-                "photos/logs/71ff17b7-0.jpg",
-                "photos/logs/71ff17b7-1.jpg",
-                "photos/logs/71ff17b7-2.jpg",
-                "photos/logs/71ff17b7-3.jpg",
-                "photos/logs/71ff17b7-4.jpg",
-                "photos/logs/71ff17b7-5.jpg",
-                "photos/logs/71ff17b7-6.jpg",
-                "photos/logs/71ff17b7-7.jpg",
-                "photos/logs/71ff17b7-8.jpg",
-                "photos/logs/71ff17b7-9.jpg",
-                "photos/logs/71ff17b7-10.jpg",
-                "photos/logs/71ff17b7-11.jpg"
-              ]
+              "species": "Mulberry (White)"
             }
           ],
           "photo_url": "photos/mulberry-white.jpg"
@@ -16044,21 +16016,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:47:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; partial loss of feathery foliage observed\nCount: 3 → 1\n[ontology:Interaction",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:47:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; partial loss of feathery foliage observed\nCount: 3 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:27:16.268Z | related=Wattle - Cootamundra (Baileyana),P2R5.0-8 | submission=3589fc69-c7c6-4889-b950-e0e311937713",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:27:16.268Z | related=Wattle - Cootamundra (Baileyana),P2R5.0-8 | submission=3589fc69-c7c6-4889-b950-e0e311937713",
-              "species": "Wattle - Cootamundra (Baileyana)",
-              "photos": [
-                "photos/logs/a1f8ef71-0.jpg",
-                "photos/logs/a1f8ef71-1.jpg",
-                "photos/logs/a1f8ef71-2.jpg",
-                "photos/logs/a1f8ef71-3.jpg",
-                "photos/logs/a1f8ef71-4.jpg",
-                "photos/logs/a1f8ef71-5.jpg",
-                "photos/logs/a1f8ef71-6.jpg",
-                "photos/logs/a1f8ef71-7.jpg",
-                "photos/logs/a1f8ef71-8.jpg",
-                "photos/logs/a1f8ef71-9.jpg",
-                "photos/logs/a1f8ef71-10.jpg",
-                "photos/logs/a1f8ef71-11.jpg"
-              ]
+              "species": "Wattle - Cootamundra (Baileyana)"
             },
             {
               "uuid": "28e28982-e1cd-42f8-9c1c-e075c69ed7d0",
@@ -16099,21 +16057,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T03:22:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Some inflorescences showing desiccation, but plant tissue remains alive.\nCount: 12 → 12\n[ontology:In",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T03:22:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Some inflorescences showing desiccation, but plant tissue remains alive.\nCount: 12 → 12\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:29:38.718Z | related=Basil - Perennial (Thai),P2R5.0-8 | submission=ae5a40f8-461a-4227-ba7e-a17212f62b75",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:29:38.718Z | related=Basil - Perennial (Thai),P2R5.0-8 | submission=ae5a40f8-461a-4227-ba7e-a17212f62b75",
-              "species": "Basil - Perennial (Thai)",
-              "photos": [
-                "photos/logs/8a39b87c-0.jpg",
-                "photos/logs/8a39b87c-1.jpg",
-                "photos/logs/8a39b87c-2.jpg",
-                "photos/logs/8a39b87c-3.jpg",
-                "photos/logs/8a39b87c-4.jpg",
-                "photos/logs/8a39b87c-5.jpg",
-                "photos/logs/8a39b87c-6.jpg",
-                "photos/logs/8a39b87c-7.jpg",
-                "photos/logs/8a39b87c-8.jpg",
-                "photos/logs/8a39b87c-9.jpg",
-                "photos/logs/8a39b87c-10.jpg",
-                "photos/logs/8a39b87c-11.jpg"
-              ]
+              "species": "Basil - Perennial (Thai)"
             }
           ],
           "photo_url": "photos/basil-perennial-thai.jpg"
@@ -16262,21 +16206,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:58:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Seeds set imminent; capitula observed drooping downward\nCount: 2 → 2\n[ontology:InteractionStamp] ini",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:58:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Seeds set imminent; capitula observed drooping downward\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:25:37.214Z | related=Sunflower,P2R5.0-8 | submission=267f5b32-f8b0-4723-920e-58fa0e99c139",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:25:37.214Z | related=Sunflower,P2R5.0-8 | submission=267f5b32-f8b0-4723-920e-58fa0e99c139",
-              "species": "Sunflower",
-              "photos": [
-                "photos/logs/f1c02440-0.jpg",
-                "photos/logs/f1c02440-1.jpg",
-                "photos/logs/f1c02440-2.jpg",
-                "photos/logs/f1c02440-3.jpg",
-                "photos/logs/f1c02440-4.jpg",
-                "photos/logs/f1c02440-5.jpg",
-                "photos/logs/f1c02440-6.jpg",
-                "photos/logs/f1c02440-7.jpg",
-                "photos/logs/f1c02440-8.jpg",
-                "photos/logs/f1c02440-9.jpg",
-                "photos/logs/f1c02440-10.jpg",
-                "photos/logs/f1c02440-11.jpg"
-              ]
+              "species": "Sunflower"
             }
           ],
           "photo_url": "photos/sunflower.jpg"
@@ -16311,21 +16241,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:13:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. One bloom observed\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:13:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. One bloom observed\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:23:53.434Z | related=Pumpkin,P2R5.0-8 | submission=4a208463-d173-4066-ad80-a880a64c91f9",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:23:53.434Z | related=Pumpkin,P2R5.0-8 | submission=4a208463-d173-4066-ad80-a880a64c91f9",
-              "species": "Pumpkin",
-              "photos": [
-                "photos/logs/bab83082-0.jpg",
-                "photos/logs/bab83082-1.jpg",
-                "photos/logs/bab83082-2.jpg",
-                "photos/logs/bab83082-3.jpg",
-                "photos/logs/bab83082-4.jpg",
-                "photos/logs/bab83082-5.jpg",
-                "photos/logs/bab83082-6.jpg",
-                "photos/logs/bab83082-7.jpg",
-                "photos/logs/bab83082-8.jpg",
-                "photos/logs/bab83082-9.jpg",
-                "photos/logs/bab83082-10.jpg",
-                "photos/logs/bab83082-11.jpg"
-              ]
+              "species": "Pumpkin"
             }
           ],
           "photo_url": "photos/pumpkin.jpg"
@@ -16391,21 +16307,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:39:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Partial yellow observed on some leaves\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | rol",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:39:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Partial yellow observed on some leaves\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:03.169Z | related=Parsley (Italian),P2R5.0-8 | submission=7dcccbf9-f72c-4643-b7c3-974fc6b097da",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:03.169Z | related=Parsley (Italian),P2R5.0-8 | submission=7dcccbf9-f72c-4643-b7c3-974fc6b097da",
-              "species": "Parsley (Italian)",
-              "photos": [
-                "photos/logs/1c3d67f2-0.jpg",
-                "photos/logs/1c3d67f2-1.jpg",
-                "photos/logs/1c3d67f2-2.jpg",
-                "photos/logs/1c3d67f2-3.jpg",
-                "photos/logs/1c3d67f2-4.jpg",
-                "photos/logs/1c3d67f2-5.jpg",
-                "photos/logs/1c3d67f2-6.jpg",
-                "photos/logs/1c3d67f2-7.jpg",
-                "photos/logs/1c3d67f2-8.jpg",
-                "photos/logs/1c3d67f2-9.jpg",
-                "photos/logs/1c3d67f2-10.jpg",
-                "photos/logs/1c3d67f2-11.jpg"
-              ]
+              "species": "Parsley (Italian)"
             }
           ],
           "photo_url": "photos/parsley-italian.jpg"
@@ -16436,21 +16338,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T05:36:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Suspected potato — exhibiting healthy growth.\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Lea",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T05:36:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. Suspected potato — exhibiting healthy growth.\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:51.168Z | related=Sweet Potato,P2R5.0-8 | submission=32584167-65b8-4b6c-b0e3-8bc291db37f2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:28:51.168Z | related=Sweet Potato,P2R5.0-8 | submission=32584167-65b8-4b6c-b0e3-8bc291db37f2",
-              "species": "Sweet Potato",
-              "photos": [
-                "photos/logs/70968d0a-0.jpg",
-                "photos/logs/70968d0a-1.jpg",
-                "photos/logs/70968d0a-2.jpg",
-                "photos/logs/70968d0a-3.jpg",
-                "photos/logs/70968d0a-4.jpg",
-                "photos/logs/70968d0a-5.jpg",
-                "photos/logs/70968d0a-6.jpg",
-                "photos/logs/70968d0a-7.jpg",
-                "photos/logs/70968d0a-8.jpg",
-                "photos/logs/70968d0a-9.jpg",
-                "photos/logs/70968d0a-10.jpg",
-                "photos/logs/70968d0a-11.jpg"
-              ]
+              "species": "Sweet Potato"
             }
           ],
           "photo_url": ""
@@ -16777,15 +16665,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:21:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. pods have reached maturity\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Leah | role=farmhand |",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:21:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. pods have reached maturity\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:51.857Z | related=Papaya,P2R5.29-38 | submission=eab87b40-3e80-4962-94f2-8de04e6b502e",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:51.857Z | related=Papaya,P2R5.29-38 | submission=eab87b40-3e80-4962-94f2-8de04e6b502e",
-              "species": "Papaya",
-              "photos": [
-                "photos/logs/6054f8b3-0.jpg",
-                "photos/logs/6054f8b3-1.jpg",
-                "photos/logs/6054f8b3-2.jpg",
-                "photos/logs/6054f8b3-3.jpg",
-                "photos/logs/6054f8b3-4.jpg",
-                "photos/logs/6054f8b3-5.jpg"
-              ]
+              "species": "Papaya"
             },
             {
               "uuid": "63449431-6bee-4eea-b9c1-b836a7da16d9",
@@ -16847,15 +16727,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:41:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; plant appears healthy and actively developing\nCount: 2 → 2\n[ontology:Interac",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:41:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. approx 30 cm in height; plant appears healthy and actively developing\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:20:59.496Z | related=Jacaranda,P2R5.29-38 | submission=9abed4dd-fbab-43ff-8c91-9b73d85b0420",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:20:59.496Z | related=Jacaranda,P2R5.29-38 | submission=9abed4dd-fbab-43ff-8c91-9b73d85b0420",
-              "species": "Jacaranda",
-              "photos": [
-                "photos/logs/3d7da012-0.jpg",
-                "photos/logs/3d7da012-1.jpg",
-                "photos/logs/3d7da012-2.jpg",
-                "photos/logs/3d7da012-3.jpg",
-                "photos/logs/3d7da012-4.jpg",
-                "photos/logs/3d7da012-5.jpg"
-              ]
+              "species": "Jacaranda"
             }
           ],
           "photo_url": "photos/jacaranda.jpg"
@@ -16907,15 +16779,7 @@
               "notes": "Reporter: Leah\nSubmitted: 2026-04-14T06:29:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. small in stature but showing strong potential\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Lea",
               "notes_full": "Reporter: Leah\nSubmitted: 2026-04-14T06:29:00\nMode: quick\nPlant notes: Leah transcript 14 Apr 2026. small in stature but showing strong potential\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:16.335Z | related=Wattle - Cootamundra (Baileyana),P2R5.29-38 | submission=1d5d0b5b-fb47-461e-8d0e-2392067a7136",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Leah | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-15T05:22:16.335Z | related=Wattle - Cootamundra (Baileyana),P2R5.29-38 | submission=1d5d0b5b-fb47-461e-8d0e-2392067a7136",
-              "species": "Wattle - Cootamundra (Baileyana)",
-              "photos": [
-                "photos/logs/0b121911-0.jpg",
-                "photos/logs/0b121911-1.jpg",
-                "photos/logs/0b121911-2.jpg",
-                "photos/logs/0b121911-3.jpg",
-                "photos/logs/0b121911-4.jpg",
-                "photos/logs/0b121911-5.jpg"
-              ]
+              "species": "Wattle - Cootamundra (Baileyana)"
             }
           ],
           "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
