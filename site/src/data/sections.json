@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-18T17:47:08.002619+10:00",
+  "generated_at": "2026-04-18T18:58:19.874845+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -1712,7 +1712,8 @@
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:31:52.316Z | related=Lavender,P2R1.16-25 | submission=299d53f5-bf02-4bce-9ff5-0f6739722fd5",
               "species": "Lavender",
               "photos": [
-                "photos/logs/7879bd40-0.jpg"
+                "photos/logs/7879bd40-0.jpg",
+                "photos/logs/7879bd40-1.jpg"
               ]
             }
           ],
@@ -5930,7 +5931,8 @@
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:30:16.993Z | related=Malabar Chestnut,P2R3.40-50 | submission=c3dda7ee-1474-4d6e-83ef-ae7294c9384a",
               "species": "Malabar Chestnut",
               "photos": [
-                "photos/logs/18880f7f-0.jpg"
+                "photos/logs/18880f7f-0.jpg",
+                "photos/logs/18880f7f-1.jpg"
               ]
             }
           ],
@@ -6058,7 +6060,8 @@
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:30:40.056Z | related=Tagasaste - Tree Lucerne,P2R3.40-50 | submission=667b0af7-7755-4235-9e14-6fee84b7442a",
               "species": "Tagasaste - Tree Lucerne",
               "photos": [
-                "photos/logs/77a32ae1-0.jpg"
+                "photos/logs/77a32ae1-0.jpg",
+                "photos/logs/77a32ae1-1.jpg"
               ]
             }
           ],
@@ -11580,7 +11583,8 @@
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:21:50.231Z | related=Rose Apple,P2R2.0-3 | submission=ac186da5-b834-4087-ba26-855af4486086",
               "species": "Rose Apple",
               "photos": [
-                "photos/logs/ed37e99b-0.jpg"
+                "photos/logs/ed37e99b-0.jpg",
+                "photos/logs/ed37e99b-1.jpg"
               ]
             }
           ],
@@ -11658,7 +11662,9 @@
               "species": "Pigeon Pea",
               "photos": [
                 "photos/logs/7dcd6333-0.jpg",
-                "photos/logs/7dcd6333-1.jpg"
+                "photos/logs/7dcd6333-1.jpg",
+                "photos/logs/7dcd6333-2.jpg",
+                "photos/logs/7dcd6333-3.jpg"
               ]
             }
           ],
@@ -11986,7 +11992,8 @@
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:21:25.398Z | related=Cape Gooseberry,P2R2.0-3 | submission=c22d4c7a-6d4d-4bcb-bb82-20366176e303",
               "species": "Cape Gooseberry",
               "photos": [
-                "photos/logs/11c9c55e-0.jpg"
+                "photos/logs/11c9c55e-0.jpg",
+                "photos/logs/11c9c55e-1.jpg"
               ]
             }
           ],
@@ -12244,7 +12251,8 @@
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:23:06.550Z | related=Guava (Purple),P2R2.0-3 | submission=2e7b3afc-1b0d-4ecc-8dbc-35ce0eaf99d3",
               "species": "Guava (Purple)",
               "photos": [
-                "photos/logs/ce870ee4-0.jpg"
+                "photos/logs/ce870ee4-0.jpg",
+                "photos/logs/ce870ee4-1.jpg"
               ]
             }
           ],
@@ -13010,7 +13018,11 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:17:00\nMode: inventory\nSection notes: Confirming no gingers in this section\nCount: 3 → 3\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=a",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:17:00\nMode: inventory\nSection notes: Confirming no gingers in this section\nCount: 3 → 3\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:23:33.952Z | related=Apple,P2R2.9-16 | submission=af37788b-8566-4876-a282-684e16e82c53",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:23:33.952Z | related=Apple,P2R2.9-16 | submission=af37788b-8566-4876-a282-684e16e82c53",
-              "species": "Apple"
+              "species": "Apple",
+              "photos": [
+                "photos/logs/90712754-0.jpg",
+                "photos/logs/90712754-1.jpg"
+              ]
             },
             {
               "uuid": "2db5b0f0-b202-4af6-90b4-df59d79d9d68",
@@ -13405,7 +13417,11 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:17:00\nMode: inventory\nSection notes: Confirming no gingers in this section\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=a",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:17:00\nMode: inventory\nSection notes: Confirming no gingers in this section\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:23:53.378Z | related=Turmeric,P2R2.9-16 | submission=af37788b-8566-4876-a282-684e16e82c53",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:23:53.378Z | related=Turmeric,P2R2.9-16 | submission=af37788b-8566-4876-a282-684e16e82c53",
-              "species": "Turmeric"
+              "species": "Turmeric",
+              "photos": [
+                "photos/logs/b41c4f88-0.jpg",
+                "photos/logs/b41c4f88-1.jpg"
+              ]
             },
             {
               "uuid": "0ddd5d2b-2b08-45e9-971e-619bbf7cfa5a",
@@ -14332,7 +14348,10 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:28:00\nMode: inventory\nSection notes: No lemon tree , probably dead\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:28:00\nMode: inventory\nSection notes: No lemon tree , probably dead\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:24:55.649Z | related=Quince,P2R2.23-26 | submission=711a7942-98b0-4a06-aa50-8aa45c41613f",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:24:55.649Z | related=Quince,P2R2.23-26 | submission=711a7942-98b0-4a06-aa50-8aa45c41613f",
-              "species": "Quince"
+              "species": "Quince",
+              "photos": [
+                "photos/logs/8c0817fd-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/quince.jpg"
@@ -14812,7 +14831,11 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:28:00\nMode: inventory\nSection notes: No lemon tree , probably dead\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:28:00\nMode: inventory\nSection notes: No lemon tree , probably dead\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:25:08.634Z | related=Guava (Purple),P2R2.23-26 | submission=711a7942-98b0-4a06-aa50-8aa45c41613f",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:25:08.634Z | related=Guava (Purple),P2R2.23-26 | submission=711a7942-98b0-4a06-aa50-8aa45c41613f",
-              "species": "Guava (Purple)"
+              "species": "Guava (Purple)",
+              "photos": [
+                "photos/logs/76c09998-0.jpg",
+                "photos/logs/76c09998-1.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -14843,7 +14866,11 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:28:00\nMode: inventory\nSection notes: No lemon tree , probably dead\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:28:00\nMode: inventory\nSection notes: No lemon tree , probably dead\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:25:11.202Z | related=Guava (Thai White),P2R2.23-26 | submission=711a7942-98b0-4a06-aa50-8aa45c41613f",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:25:11.202Z | related=Guava (Thai White),P2R2.23-26 | submission=711a7942-98b0-4a06-aa50-8aa45c41613f",
-              "species": "Guava (Thai White)"
+              "species": "Guava (Thai White)",
+              "photos": [
+                "photos/logs/f269f956-0.jpg",
+                "photos/logs/f269f956-1.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -14986,7 +15013,11 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nSection notes: No ice-cream beans\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nSection notes: No ice-cream beans\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:26:50.106Z | related=Forest Red Gum,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:26:50.106Z | related=Forest Red Gum,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
-              "species": "Forest Red Gum"
+              "species": "Forest Red Gum",
+              "photos": [
+                "photos/logs/d965ae7d-0.jpg",
+                "photos/logs/d965ae7d-1.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -15750,7 +15781,10 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nSection notes: No ice-cream beans\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nSection notes: No ice-cream beans\nCount: 1 → 1\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:27.090Z | related=Ginger,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:27.090Z | related=Ginger,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
-              "species": "Ginger"
+              "species": "Ginger",
+              "photos": [
+                "photos/logs/d6228dc6-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/ginger.jpg"
@@ -16221,7 +16255,10 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:51:00\nMode: inventory\nSection notes: No tagasaste in this section\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated ",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:51:00\nMode: inventory\nSection notes: No tagasaste in this section\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:28:35.071Z | related=Macadamia,P2R2.38-46 | submission=45aa920b-bd54-4bb5-b66b-c73dd98b6ea6",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:28:35.071Z | related=Macadamia,P2R2.38-46 | submission=45aa920b-bd54-4bb5-b66b-c73dd98b6ea6",
-              "species": "Macadamia"
+              "species": "Macadamia",
+              "photos": [
+                "photos/logs/6fdf6a30-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/macadamia.jpg"
@@ -16625,7 +16662,11 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:51:00\nMode: inventory\nSection notes: No tagasaste in this section\nCount: 6 → 6\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated ",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:51:00\nMode: inventory\nSection notes: No tagasaste in this section\nCount: 6 → 6\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:29:02.391Z | related=Blueberry,P2R2.38-46 | submission=45aa920b-bd54-4bb5-b66b-c73dd98b6ea6",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:29:02.391Z | related=Blueberry,P2R2.38-46 | submission=45aa920b-bd54-4bb5-b66b-c73dd98b6ea6",
-              "species": "Blueberry"
+              "species": "Blueberry",
+              "photos": [
+                "photos/logs/420910fb-0.jpg",
+                "photos/logs/420910fb-1.jpg"
+              ]
             }
           ],
           "photo_url": ""
@@ -16765,7 +16806,10 @@
               "notes": "Reporter: Agnes\nSubmitted: 2026-04-17T04:51:00\nMode: inventory\nSection notes: No tagasaste in this section\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated ",
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:51:00\nMode: inventory\nSection notes: No tagasaste in this section\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:28:45.559Z | related=Wattle - Cootamundra (Baileyana),P2R2.38-46 | submission=45aa920b-bd54-4bb5-b66b-c73dd98b6ea6",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:28:45.559Z | related=Wattle - Cootamundra (Baileyana),P2R2.38-46 | submission=45aa920b-bd54-4bb5-b66b-c73dd98b6ea6",
-              "species": "Wattle - Cootamundra (Baileyana)"
+              "species": "Wattle - Cootamundra (Baileyana)",
+              "photos": [
+                "photos/logs/970a28b9-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/wattle-cootamundra-baileyana.jpg"
