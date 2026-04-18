@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Guava (Strawberry) · 2026-04-16 · P2R2.28-38</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 2 · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">28–38</h1>
+    </div>
+    <div class="obs-subtitle">Observation · 2026-04-16 · Guava (Strawberry)</div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-04-16</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Guava (Strawberry) · Psidium cattleianum</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">medium</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Observation P2R2.28-38 — Guava (Strawberry) — 2026-04-17</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">4089af5b-e22b-4977-ac6f-64d7f139e463</span></div>
+      </div>
+    </div>
+
+    
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">Reporter: Agnes<br>Submitted: 2026-04-17T04:37:00<br>Mode: inventory<br>Section notes: No ice-cream beans<br>Count: 3 → 3</div></div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Provenance</h3><div class="prov-card"><div class="prov-row"><span class="prov-icon">👤</span><span class="prov-label">Initiated by:</span><span class="prov-value">Agnes</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Role:</span><span class="prov-value">farmhand</span></div><div class="prov-row"><span class="prov-icon">📡</span><span class="prov-label">Channel:</span><span class="prov-value">automated</span></div><div class="prov-row"><span class="prov-icon">⚙️</span><span class="prov-label">Executed by:</span><span class="prov-value">farmos_api</span></div><div class="prov-row"><span class="prov-icon">▶</span><span class="prov-label">Action:</span><span class="prov-value">created</span></div><div class="prov-row"><span class="prov-icon">🎯</span><span class="prov-label">Target:</span><span class="prov-value">observation</span></div><div class="prov-row"><span class="prov-icon">✓</span><span class="prov-label">Outcome:</span><span class="prov-value">success</span></div><div class="prov-row"><span class="prov-icon">🕒</span><span class="prov-label">Timestamp:</span><span class="prov-value">2026-04-18T07:26:58.926Z</span></div></div></div>
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
+  </div>
+
+  <div class="obs-nav">
+    <a href="P2R2.28-38.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
+</body>
+</html>
