@@ -166,12 +166,34 @@ export const importObservationsTool: Tool = {
     if (!result.success) return { content: [{ type: 'text' as const, text: JSON.stringify({ error: result.error ?? 'Failed to fetch observations' }) }] };
 
     const observations: any[] = result.observations ?? [];
-    if (observations.length === 0) return { content: [{ type: 'text' as const, text: JSON.stringify({ error: `No observations found for submission '${params.submission_id}'` }) }] };
+    if (observations.length === 0) {
+      // Empty result can mean either (a) submission_id is truly unknown, or
+      // (b) the submission was previously imported and delete_imported
+      // cleaned up its rows. ADR 0007 Fix 2: treat this as idempotent
+      // "already imported" rather than a hard error, so retries are safe.
+      return { content: [{ type: 'text' as const, text: JSON.stringify({
+        status: 'already_imported_or_unknown',
+        submission_id: params.submission_id,
+        message: `No observations found for submission '${params.submission_id}'. This submission may already have been imported (rows deleted after successful import) or the ID is unknown. Check farmOS for logs with "submission=${params.submission_id}" in notes.`,
+        actions: 0,
+      }) }] };
+    }
 
     const statuses = new Set(observations.map((o: any) => o.status));
-    const invalidStatuses = [...statuses].filter((s) => s !== 'reviewed' && s !== 'approved');
+    // ADR 0007 Fix 2: if all observations for this submission are already
+    // imported, skip gracefully with success. Retries must be idempotent.
+    if ([...statuses].every((s) => s === 'imported')) {
+      return { content: [{ type: 'text' as const, text: JSON.stringify({
+        status: 'already_imported',
+        submission_id: params.submission_id,
+        message: 'All observations for this submission have already been imported. Skipping.',
+        observation_count: observations.length,
+        actions: 0,
+      }) }] };
+    }
+    const invalidStatuses = [...statuses].filter((s) => s !== 'reviewed' && s !== 'approved' && s !== 'imported');
     if (invalidStatuses.length > 0) {
-      return { content: [{ type: 'text' as const, text: JSON.stringify({ error: `Submission has unexpected statuses: ${[...statuses].join(', ')}. Only 'reviewed' or 'approved' can be imported.` }) }] };
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ error: `Submission has unexpected statuses: ${[...statuses].join(', ')}. Only 'reviewed', 'approved', or 'imported' (skipped) can be processed.` }) }] };
     }
 
     const sectionId = observations[0].section_id ?? '';

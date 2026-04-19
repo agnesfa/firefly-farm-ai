@@ -1761,14 +1761,38 @@ def import_observations(
 
     observations = result.get("observations", [])
     if not observations:
-        return json.dumps({"error": f"No observations found for submission '{submission_id}'"})
+        # ADR 0007 Fix 2: empty result can mean the submission was already
+        # imported (delete_imported cleaned up rows after success) or that
+        # the ID is unknown. Treat as idempotent "already imported" rather
+        # than a hard error so retries are safe.
+        return json.dumps({
+            "status": "already_imported_or_unknown",
+            "submission_id": submission_id,
+            "message": (
+                f"No observations found for submission '{submission_id}'. "
+                "This submission may already have been imported (rows deleted "
+                "after successful import) or the ID is unknown. Check farmOS "
+                f"for logs with 'submission={submission_id}' in notes."
+            ),
+            "actions": 0,
+        })
 
-    # Validate status — must be reviewed or approved
+    # Validate status — must be reviewed, approved, or already imported
     statuses = set(obs.get("status") for obs in observations)
-    if statuses - {"reviewed", "approved"}:
+    # ADR 0007 Fix 2: if all observations are already imported, skip
+    # gracefully with success — retries must be idempotent.
+    if statuses == {"imported"}:
+        return json.dumps({
+            "status": "already_imported",
+            "submission_id": submission_id,
+            "message": "All observations for this submission have already been imported. Skipping.",
+            "observation_count": len(observations),
+            "actions": 0,
+        })
+    if statuses - {"reviewed", "approved", "imported"}:
         return json.dumps({
             "error": f"Submission has unexpected statuses: {statuses}. "
-                     "Only 'reviewed' or 'approved' observations can be imported.",
+                     "Only 'reviewed', 'approved', or 'imported' (skipped) can be processed.",
         })
 
     section_id = observations[0].get("section_id", "")

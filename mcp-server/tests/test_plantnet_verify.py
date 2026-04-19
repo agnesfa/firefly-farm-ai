@@ -185,3 +185,25 @@ class TestVerifySpeciesPhoto:
         result = verify_species_photo(b"\xff\xd8\xff", "Pigeon Pea", lookup, api_key="test-key")
         assert result["verified"] is True
         assert result["confidence"] == 0.35
+
+    @patch("plantnet_verify.requests.post")
+    def test_sends_origin_header(self, mock_post, lookup):
+        """Origin header must be sent so PlantNet's CORS allowlist accepts us
+        regardless of outbound IP. See reference_plantnet_cors.md — without
+        this, server-side verification silently fails HTTP 403 on any IP not
+        on PlantNet's allowlist (breaks Railway if its IP changes, breaks
+        local dev, breaks CI).
+        """
+        mock_resp = MagicMock()
+        mock_resp.ok = True
+        mock_resp.json.return_value = {"results": []}
+        mock_post.return_value = mock_resp
+
+        verify_species_photo(b"\xff\xd8\xff", "Pigeon Pea", lookup, api_key="test-key")
+
+        _, kwargs = mock_post.call_args
+        headers = kwargs.get("headers") or {}
+        assert headers.get("Origin") == "https://agnesfa.github.io", (
+            "PlantNet request must include Origin header matching an "
+            "authorised domain from the API key allowlist"
+        )

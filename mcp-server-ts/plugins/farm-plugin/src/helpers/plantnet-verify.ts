@@ -187,12 +187,18 @@ export async function verifySpeciesPhoto(
   formData.append('images', blob, 'photo.jpg');
   formData.append('organs', 'auto');
 
+  // The Origin header matches one of the API key's authorised domains;
+  // without it, PlantNet rejects the request with HTTP 403 unless our IP
+  // is on the allowlist. Sending a browser-style Origin is portable
+  // across deployments (Railway, local, CI) regardless of outbound IP.
+  // See reference_plantnet_cors.md memory.
   try {
     _plantnetCalls++;
     const url = `${PLANTNET_URL}?api-key=${encodeURIComponent(key)}&lang=en&nb-results=3`;
     const resp = await fetch(url, {
       method: 'POST',
       body: formData,
+      headers: { Origin: 'https://agnesfa.github.io' },
       signal: AbortSignal.timeout(15000),
     });
 

@@ -333,7 +333,12 @@ class TestDryRun:
 class TestErrorResilience:
 
     def test_import_empty_submission(self, monkeypatch, mock_farmos_client, mock_observe_client):
-        """No observations for submission → error JSON."""
+        """No observations for submission → already_imported_or_unknown (ADR 0007 Fix 2 idempotency).
+
+        Empty list is ambiguous: the submission may have been imported already
+        and its rows cleaned up by delete_imported, or the ID is unknown.
+        Treat as skip-with-success so retries are safe.
+        """
         sub_id = "sub-empty"
         mock_observe_client.list_observations.return_value = {
             "success": True,
@@ -343,8 +348,10 @@ class TestErrorResilience:
 
         result = json.loads(import_observations(submission_id=sub_id))
 
-        assert "error" in result
-        assert sub_id in result["error"]
+        assert "error" not in result
+        assert result["status"] == "already_imported_or_unknown"
+        assert result["actions"] == 0
+        assert result["submission_id"] == sub_id
 
     def test_import_one_fails_others_succeed(self, monkeypatch, mock_farmos_client, mock_observe_client):
         """When one observation raises, others still process — partial results."""

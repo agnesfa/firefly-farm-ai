@@ -210,13 +210,18 @@ def verify_species_photo(
     # Resize for API
     resized = _resize_for_plantnet(image_bytes)
 
-    # Call PlantNet
+    # Call PlantNet. The Origin header matches one of the API key's
+    # authorised domains; without it, PlantNet rejects the request with
+    # HTTP 403 unless our IP happens to be on the allowlist. Sending a
+    # browser-style Origin is portable across deployments (Railway, local,
+    # CI) regardless of outbound IP. See reference_plantnet_cors.md memory.
     try:
         _plantnet_calls += 1
         resp = requests.post(
             f"{PLANTNET_URL}?api-key={api_key}&lang=en&nb-results=3",
             files={"images": ("photo.jpg", resized, "image/jpeg")},
             data={"organs": "auto"},
+            headers={"Origin": "https://agnesfa.github.io"},
             timeout=15,
         )
         if not resp.ok:

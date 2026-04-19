@@ -245,7 +245,7 @@ describe('import_observations workflow', () => {
 
   // ── Error resilience ──────────────────────────────────────
 
-  it('returns error for empty submission', async () => {
+  it('empty submission is treated as already-imported (ADR 0007 Fix 2 idempotency)', async () => {
     mockObsClient.listObservations.mockResolvedValue({
       success: true, observations: [],
     });
@@ -253,7 +253,27 @@ describe('import_observations workflow', () => {
     const result = parseResult(await importObservationsTool.handler({
       submission_id: 'sub-999', reviewer: 'Claude', dry_run: false,
     }));
-    expect(result.error).toContain('No observations found');
+    // Not an error — delete_imported may have cleaned up rows after a prior
+    // successful import. Retries must be safe.
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe('already_imported_or_unknown');
+    expect(result.actions).toBe(0);
+  });
+
+  it('all-imported submission is skipped gracefully (ADR 0007 Fix 2)', async () => {
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [
+        makeObservation({ species: 'Pigeon Pea', status: 'imported' }),
+      ],
+    });
+
+    const result = parseResult(await importObservationsTool.handler({
+      submission_id: 'sub-already-done', reviewer: 'Claude', dry_run: false,
+    }));
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe('already_imported');
+    expect(result.actions).toBe(0);
   });
 
   it('continues when one action fails', async () => {
