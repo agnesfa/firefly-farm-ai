@@ -587,6 +587,9 @@ function submitSinglePlantObservation() {
   }
 
   var plant = getSectionPlant(selectedPlantSpecies);
+  // ADR 0008 I11: obs-type radios removed from the UI (2026-04-20).
+  // Log type + status are derived from notes text by the importer's
+  // classifier. Guard left for backwards compat with cached pages.
   var obsType = document.querySelector('input[name="obs-type"]:checked');
   var count = document.getElementById("single-count");
   var condition = document.getElementById("single-condition");
@@ -944,6 +947,26 @@ function collectMediaData(submissionId) {
       data: heroPreview.dataset.base64,
     });
     counter++;
+  }
+
+  // Collect additional PlantNet identification angles as evidence
+  // photos on the log (ADR 0008 Step 3 / I9 UX clarity). The hero
+  // above is plantnetPhotos[0]; angles 2..N are added here. Tagged
+  // target=plant so they attach to the plant log on import. Skip
+  // the first entry since it's already covered by the hero preview
+  // read above.
+  if (typeof plantnetPhotos !== "undefined" && plantnetPhotos.length > 1) {
+    for (var pi = 1; pi < plantnetPhotos.length; pi++) {
+      var p = plantnetPhotos[pi];
+      if (!p || !p.dataUrl) continue;
+      media.push({
+        type: "photo",
+        target: "plant",
+        filename: prefix + "_" + sectionId + "_plant_" + String(counter).padStart(3, "0") + ".jpg",
+        data: p.dataUrl,
+      });
+      counter++;
+    }
   }
 
   // Collect additional photos

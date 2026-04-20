@@ -1011,6 +1011,7 @@ def create_observation(
     count: int,
     notes: str = "",
     date: Optional[str] = None,
+    status: str = "done",
 ) -> str:
     """Create an observation log with inventory count for a plant asset.
 
@@ -1021,6 +1022,9 @@ def create_observation(
         count: New inventory count (number of living plants).
         notes: Observation notes (e.g., "2 lost to frost, 3 healthy"). Optional.
         date: Observation date in ISO format (e.g., "2026-03-09"). Defaults to today.
+        status: Log status — "done" (completed observation) or "pending"
+            (action needed / TODO). Default "done". Set to "pending" when
+            the classifier (ADR 0008 I11) detects a TODO intent.
 
     Returns:
         Created log details or error message.
@@ -1077,6 +1081,7 @@ def create_observation(
         timestamp=timestamp,
         name=log_name,
         notes=stamped_notes,
+        status=status,
     )
 
     return json.dumps({
@@ -1086,6 +1091,7 @@ def create_observation(
         "plant": plant_name,
         "count": count,
         "notes": notes,
+        "log_status": status,
         "timestamp": format_timestamp(timestamp),
     }, indent=2)
 
@@ -1300,8 +1306,11 @@ def create_plant(
     )
     stamped_notes = append_stamp(notes, stamp)
 
-    # Create plant asset
-    plant_id = client.create_plant_asset(asset_name, plant_type_uuid, notes=stamped_notes)
+    # I8 — asset notes must carry only stable planting-context text.
+    # Strip import-payload headers + InteractionStamp; those belong on
+    # the observation log created below, not on the plant asset.
+    asset_notes = _sanitise_asset_notes(notes)
+    plant_id = client.create_plant_asset(asset_name, plant_type_uuid, notes=asset_notes)
     if not plant_id:
         return json.dumps({"error": "Failed to create plant asset"})
 
@@ -1525,6 +1534,12 @@ def update_observation_status(
         "notes": notes,
         "rows_updated": result.get("updated", 0),
     }, indent=2)
+
+
+# ── ADR 0008 I8 — asset notes hygiene (re-exported) ───────────
+# Implementation lives in `asset_notes.py` so scripts in the main repo
+# venv (no fastmcp dep) can import it too. See that module.
+from asset_notes import sanitise_asset_notes as _sanitise_asset_notes  # noqa: E402
 
 
 # ── ADR 0008 I5 — field-photo tier classification ─────────────
@@ -1830,11 +1845,15 @@ def _update_species_reference_photo(client, species: str, files: list) -> Option
     return file_id
 
 
-def _build_import_notes(obs: dict, extra: str = "") -> str:
+def _build_import_notes(obs: dict, extra: str = "", *, include_section_notes: bool = True) -> str:
     """Build rich notes from observation data for farmOS log.
 
     Preserves ALL raw data from the field observation so the Google Sheet
     rows can be safely deleted after import.
+
+    `include_section_notes=False` suppresses the `Section notes:` line;
+    used by the importer when section_notes are being routed to a
+    dedicated section-level log (ADR 0008 I3 / Phase 3c).
     """
     parts = []
     if obs.get("observer"):
@@ -1845,7 +1864,7 @@ def _build_import_notes(obs: dict, extra: str = "") -> str:
         parts.append(f"Mode: {obs['mode']}")
     if obs.get("condition") and obs["condition"] != "alive":
         parts.append(f"Condition: {obs['condition']}")
-    if obs.get("section_notes"):
+    if include_section_notes and obs.get("section_notes"):
         parts.append(f"Section notes: {obs['section_notes']}")
     if obs.get("plant_notes"):
         parts.append(f"Plant notes: {obs['plant_notes']}")
@@ -1986,6 +2005,125 @@ def import_observations(
 
     species_photo_updates: set = set()  # Track species we've already refreshed.
 
+    # ── ADR 0008 I9 + Phase 3c — submission-level photo routing ──
+    # Rule: in a multi-observation submission, photos attach to ONE
+    # section-level log (asset_ids=[]) rather than fanning across
+    # every per-plant log. In a single-observation submission, the
+    # one log receives its own photos as before.
+    # Also: section_notes are consolidated onto the section log and
+    # removed from per-plant log notes (Phase 3c).
+    _species_obs = [o for o in observations if (o.get("species") or "").strip()]
+    _has_plant_obs = bool(_species_obs)
+    _is_multi_plant = len(_species_obs) > 1
+    _combined_section_notes = "\n\n".join(
+        (o.get("section_notes") or "").strip()
+        for o in observations
+        if (o.get("section_notes") or "").strip()
+    ).strip()
+    _route_photos_to_section = bool(_is_multi_plant and submission_media)
+    # A dedicated section log is needed only when plant observations
+    # ALSO exist (otherwise the section-only Case A already creates
+    # the single section log itself).
+    _needs_section_log = (
+        (_has_plant_obs and bool(_combined_section_notes))
+        or _route_photos_to_section
+    )
+    _section_log_info: dict = {"id": None, "created": False}
+    _first_section_id = observations[0].get("section_id") if observations else None
+
+    def _ensure_section_log() -> Optional[str]:
+        """Create the submission's section-level log on first need.
+
+        Idempotent per submission. Attaches all submission media once
+        when created. Returns the log id (or None on dry_run / error).
+        """
+        if _section_log_info["created"]:
+            return _section_log_info["id"]
+        _section_log_info["created"] = True
+        if not _needs_section_log or dry_run or not _first_section_id:
+            return None
+        first_obs = _species_obs[0] if _species_obs else observations[0]
+        section_notes_text = _combined_section_notes or (
+            "Section-level submission evidence"
+            if _route_photos_to_section else ""
+        )
+        section_log_obs = {
+            "observer": first_obs.get("observer"),
+            "timestamp": first_obs.get("timestamp"),
+            "mode": first_obs.get("mode"),
+            "section_notes": section_notes_text,
+            "section_id": _first_section_id,
+            "submission_id": submission_id,
+        }
+        try:
+            result_json = json.loads(create_activity(
+                section_id=_first_section_id,
+                activity_type="observation",
+                notes=_build_import_notes(section_log_obs),
+                date=(first_obs.get("timestamp") or "")[:10] or None,
+            ))
+            _section_log_info["id"] = result_json.get("log_id")
+            # Attach all submission media to the section log exactly once.
+            photos_attached = 0
+            if submission_media and _section_log_info["id"]:
+                before = report["photos_uploaded"]
+                _upload_media_to_log(
+                    client, "activity", _section_log_info["id"],
+                    submission_media, report,
+                    f"section/{_first_section_id}",
+                )
+                photos_attached = report["photos_uploaded"] - before
+            # Record the section-log creation as an action so the
+            # import report surfaces it.
+            actions.append({
+                "type": "activity",
+                "section": _first_section_id,
+                "scope": "section_level",
+                "log_id": _section_log_info["id"],
+                "result": result_json.get("status", "unknown"),
+                "photos_uploaded": photos_attached,
+                "notes": _combined_section_notes[:200] if _combined_section_notes else "",
+            })
+        except Exception as e:
+            errors.append(f"Section log creation: {e}")
+            _section_log_info["id"] = None
+        return _section_log_info["id"]
+
+    def _should_attach_per_log() -> bool:
+        """Per-plant logs receive photos only in single-plant submissions."""
+        return not _route_photos_to_section
+
+    # I11 — classifier: derive log type and status from notes content.
+    from classifier import classify_observation
+
+    def _classify_and_annotate(notes: str, default_log_type: str) -> tuple[str, str, str]:
+        """Run the classifier. Return (possibly-annotated notes, status, type_hint).
+
+        - If classifier confidence is low/ambiguous, prepend a flag marker so
+          the log surfaces for human review.
+        - If the classified type differs from `default_log_type` (e.g. notes
+          read as 'seeded' but we're routing through `create_observation`),
+          prepend a `[CLASSIFIER-HINT: type=<x>]` line so auditor can re-type.
+        - Return the classifier-determined status ('done' or 'pending').
+        """
+        if not notes:
+            return notes or "", "done", ""
+        classified = classify_observation(notes)
+        status = classified["status"]
+        ctype = classified["type"]
+        annotations = []
+        if classified.get("ambiguous"):
+            annotations.append(
+                f"[FLAG classifier-ambiguous: {classified.get('reason','unknown')}]"
+            )
+        # Only hint when the classifier strongly disagrees with the default
+        # route (e.g. seeding/transplanting/harvest going through observation).
+        if ctype not in (default_log_type, "observation") and not classified.get("ambiguous"):
+            annotations.append(f"[CLASSIFIER-HINT: type={ctype}]")
+        if annotations:
+            return "\n".join(annotations) + "\n" + notes, status, ctype
+        return notes, status, ctype
+
     def _verify_one_photo(media: dict, species: str) -> dict:
         """Run a single photo through PlantNet. Records results in the report.
 
@@ -2078,6 +2216,26 @@ def import_observations(
 
         # Case A: Section comment only (no species)
         if not species and section_notes:
+            # I9 / Phase 3c: if this submission also has plant
+            # observations, the dedicated section log is created lazily
+            # via _ensure_section_log and captures section_notes from
+            # all obs plus media. Route to it to avoid duplication.
+            if _needs_section_log:
+                # _ensure_section_log appends its own action on creation
+                # (scope=section_level). Just route here without adding
+                # a duplicate entry. In dry_run we still record the
+                # intent so the report surfaces it.
+                if dry_run:
+                    actions.append({
+                        "type": "activity",
+                        "section": obs_section,
+                        "notes": "[will route to section-level submission log]",
+                        "result": "dry_run",
+                        "scope": "section_level",
+                    })
+                else:
+                    _ensure_section_log()
+                continue
             action = {
                 "type": "activity",
                 "section": obs_section,
@@ -2093,12 +2251,14 @@ def import_observations(
                     ))
                     action["result"] = result_json.get("status", "unknown")
                     action["log_id"] = result_json.get("log_id")
-                    photo_count = _attach_and_maybe_promote(
-                        action.get("log_id"), "activity", "",
-                        f"activity/{obs_section}",
-                    )
-                    if photo_count > 0:
-                        action["photos_uploaded"] = photo_count
+                    # Single-obs section log gets its own photos.
+                    if _should_attach_per_log():
+                        photo_count = _attach_and_maybe_promote(
+                            action.get("log_id"), "activity", "",
+                            f"activity/{obs_section}",
+                        )
+                        if photo_count > 0:
+                            action["photos_uploaded"] = photo_count
                 except Exception as e:
                     action["result"] = "error"
                     errors.append(f"Activity for {obs_section}: {e}")
@@ -2128,7 +2288,10 @@ def import_observations(
                         section_id=obs_section,
                         count=count,
                         planted_date=obs_date or None,
-                        notes=_build_import_notes(obs, "New plant added via field observation"),
+                        notes=_build_import_notes(
+                            obs, "New plant added via field observation",
+                            include_section_notes=not _needs_section_log,
+                        ),
                     ))
                     action["result"] = result_json.get("status", "unknown")
                     action["plant_name"] = result_json.get("plant", {}).get("name")
@@ -2137,14 +2300,21 @@ def import_observations(
                     # result_json["observation_log"]["id"]. Attach photos there
                     # so the media is associated with the planting event.
                     photo_log_id = (result_json.get("observation_log") or {}).get("id")
-                    photo_count = _attach_and_maybe_promote(
-                        photo_log_id, "observation", species,
-                        f"new_plant/{obs_section}/{species}",
-                    )
-                    if photo_count > 0:
-                        action["photos_uploaded"] = photo_count
-                    if species in species_photo_updates:
-                        action["species_reference_photo"] = True
+                    # I9: attach photos to this per-plant log only if this
+                    # is a single-plant submission; otherwise photos go to
+                    # the section log (via _ensure_section_log).
+                    if _should_attach_per_log():
+                        photo_count = _attach_and_maybe_promote(
+                            photo_log_id, "observation", species,
+                            f"new_plant/{obs_section}/{species}",
+                        )
+                        if photo_count > 0:
+                            action["photos_uploaded"] = photo_count
+                        if species in species_photo_updates:
+                            action["species_reference_photo"] = True
+                    else:
+                        _ensure_section_log()
+                        action["photos_routed"] = "section_log"
                 except Exception as e:
                     action["result"] = "error"
                     errors.append(f"Create {species} in {obs_section}: {e}")
@@ -2168,8 +2338,12 @@ def import_observations(
             plant_name = plant.get("attributes", {}).get("name", "")
             formatted = format_plant_asset(plant)
 
-            # Build notes — preserve all raw data from the field observation
-            combined_notes = _build_import_notes(obs)
+            # Build notes — preserve all raw data from the field observation.
+            # I3 / Phase 3c: strip section_notes when they're routed to a
+            # section-level log instead.
+            combined_notes = _build_import_notes(
+                obs, include_section_notes=not _needs_section_log,
+            )
 
             # Split observation + action text into separate farmOS logs
             # Nursery inline forms send "Observation: X\nAction: Y" in plant_notes
@@ -2190,7 +2364,9 @@ def import_observations(
 
             if count_changed or combined_notes:
                 # 1. Observation log (inventory count + observation text)
-                obs_notes = _build_import_notes(obs)
+                obs_notes = _build_import_notes(
+                    obs, include_section_notes=not _needs_section_log,
+                )
                 if obs_text:
                     obs_notes += f"\nObservation: {obs_text}"
 
@@ -2203,46 +2379,80 @@ def import_observations(
                     "new_count": count_val,
                     "notes": obs_notes,
                 }
+                # I11: classify from plant_notes (human-authored text only,
+                # skipping the import-payload headers the classifier would
+                # otherwise trip on). Attach hints/flags to the farmOS log.
+                _classifier_source = (plant_notes or "").strip()
+                _annotated_notes, _classified_status, _ = _classify_and_annotate(
+                    obs_notes, default_log_type="observation",
+                ) if _classifier_source else (obs_notes, "done", "")
                 if not dry_run and count_val is not None:
                     try:
                         result_json = json.loads(create_observation(
                             plant_name=plant_name,
                             count=count_val,
-                            notes=obs_notes,
+                            notes=_annotated_notes,
                             date=obs_date or None,
+                            status=_classified_status,
                         ))
                         action["result"] = result_json.get("status", "unknown")
+                        action["log_status"] = _classified_status
                         action["log_id"] = result_json.get("log_id")
-                        photo_count = _attach_and_maybe_promote(
-                            action.get("log_id"), "observation", species,
-                            f"observation/{obs_section}/{species}",
-                        )
-                        if photo_count > 0:
-                            action["photos_uploaded"] = photo_count
-                        if species in species_photo_updates:
-                            action["species_reference_photo"] = True
+                        # I9: attach photos here only if single-plant submission.
+                        if _should_attach_per_log():
+                            photo_count = _attach_and_maybe_promote(
+                                action.get("log_id"), "observation", species,
+                                f"observation/{obs_section}/{species}",
+                            )
+                            if photo_count > 0:
+                                action["photos_uploaded"] = photo_count
+                            if species in species_photo_updates:
+                                action["species_reference_photo"] = True
+                        else:
+                            _ensure_section_log()
+                            action["photos_routed"] = "section_log"
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Observation for {species} in {obs_section}: {e}")
                 elif not dry_run and count_val is None and not action_text:
-                    # Notes-only, no action text — create activity
+                    # Notes-only, no action text — classifier decides
+                    # activity_type + status (I11).
+                    _annot_notes, _act_status, _classified_type = _classify_and_annotate(
+                        obs_notes, default_log_type="activity",
+                    )
+                    # Use the classified verb as activity_type when it's
+                    # a recognised action; fall back to "observation".
+                    _activity_type = (
+                        _classified_type
+                        if _classified_type in ("activity", "seeding",
+                                                 "transplanting", "harvest")
+                        else "observation"
+                    )
                     try:
                         result_json = json.loads(create_activity(
                             section_id=obs_section,
-                            activity_type="observation",
-                            notes=obs_notes,
+                            activity_type=_activity_type,
+                            notes=_annot_notes,
                             date=obs_date or None,
+                            status=_act_status,
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["type"] = "activity"
-                        photo_count = _attach_and_maybe_promote(
-                            result_json.get("log_id"), "activity", species,
-                            f"activity/{obs_section}/{species}",
-                        )
-                        if photo_count > 0:
-                            action["photos_uploaded"] = photo_count
-                        if species in species_photo_updates:
-                            action["species_reference_photo"] = True
+                        action["log_status"] = _act_status
+                        action["classified_type"] = _classified_type
+                        # I9: same routing rule for activity logs.
+                        if _should_attach_per_log():
+                            photo_count = _attach_and_maybe_promote(
+                                result_json.get("log_id"), "activity", species,
+                                f"activity/{obs_section}/{species}",
+                            )
+                            if photo_count > 0:
+                                action["photos_uploaded"] = photo_count
+                            if species in species_photo_updates:
+                                action["species_reference_photo"] = True
+                        else:
+                            _ensure_section_log()
+                            action["photos_routed"] = "section_log"
                     except Exception as e:
                         action["result"] = "error"
                         errors.append(f"Activity for {species} in {obs_section}: {e}")
@@ -2277,6 +2487,13 @@ def import_observations(
                     else:
                         act_action["result"] = "dry_run"
                     actions.append(act_action)
+
+    # I9 / Phase 3c — end-of-loop guarantee: if a section log was needed
+    # (section_notes present or multi-plant-with-photos) but wasn't
+    # triggered via _ensure_section_log (e.g. all per-plant writes
+    # erred out), create it now so section_notes + photos aren't lost.
+    if _needs_section_log and not _section_log_info["created"]:
+        _ensure_section_log()
 
     # Update Sheet status to imported (unless dry_run or all failed)
     imported_count = sum(1 for a in actions if a.get("result") == "created")

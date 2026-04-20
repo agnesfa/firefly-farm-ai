@@ -463,13 +463,18 @@ class FarmOSClient:
 
     def create_observation_log(self, plant_id: str, section_uuid: str,
                                 quantity_id: Optional[str], timestamp: int,
-                                name: str, notes: str = "") -> Optional[str]:
-        """Create an observation log with optional inventory count and movement."""
+                                name: str, notes: str = "",
+                                status: str = "done") -> Optional[str]:
+        """Create an observation log with optional inventory count and movement.
+
+        status: "done" (default) or "pending" (TODO / action needed per
+        ADR 0008 I11 classifier).
+        """
         log_data = {
             "attributes": {
                 "name": name,
                 "timestamp": str(timestamp),
-                "status": "done",
+                "status": status,
                 "is_movement": True,
             },
             "relationships": {

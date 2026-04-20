@@ -348,12 +348,13 @@ export class FarmOSClient {
     timestamp: number,
     name: string,
     notes = '',
+    logStatus: 'done' | 'pending' = 'done',
   ): Promise<string | null> {
     const logData: any = {
       attributes: {
         name,
         timestamp: String(timestamp),
-        status: 'done',
+        status: logStatus,
         is_movement: true,
       },
       relationships: {

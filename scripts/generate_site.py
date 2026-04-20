@@ -26,6 +26,7 @@ import csv
 import json
 import html
 import os
+import re
 from pathlib import Path
 
 
@@ -511,7 +512,32 @@ def render_plant_card(planting, plant_db, section_id="", base_url=""):
         f'📷</a>'
     ) if section_id else ""
 
-    notes_html = f'<div class="plant-notes">{esc(notes)}</div>' if notes else ""
+    # I10 — QR render hygiene: strip InteractionStamp + submission= lines
+    # from asset notes (those belong on the log, not the asset per I8) and
+    # truncate to 120 chars. Omit block entirely if stripped content is
+    # trivial. See ADR 0008 amendment 2026-04-20.
+    notes_html = ""
+    if notes:
+        stripped_lines = [
+            ln for ln in notes.splitlines()
+            if "[ontology:InteractionStamp]" not in ln
+            and not ln.strip().lower().startswith("submission=")
+            and not ln.strip().lower().startswith("reporter:")
+            and not ln.strip().lower().startswith("submitted:")
+            and not ln.strip().lower().startswith("mode:")
+            and not ln.strip().lower().startswith("count:")
+        ]
+        stripped = " ".join(ln.strip() for ln in stripped_lines if ln.strip())
+        # Remove common import-boilerplate phrases
+        for boilerplate in (
+            "New plant added via field observation",
+            "Plant notes:",
+        ):
+            stripped = stripped.replace(boilerplate, "").strip()
+        stripped = " ".join(stripped.split())  # collapse whitespace
+        if len(stripped) >= 3:
+            display = stripped if len(stripped) <= 120 else stripped[:117] + "..."
+            notes_html = f'<div class="plant-notes">{esc(display)}</div>'
 
     # First planted date (shown in collapsed view)
     planted_display = format_planted_date_display(first_planted)
@@ -660,6 +686,78 @@ def render_section_tabs(row_info, sections_data, active_section_id, base_url="")
     return f'<div class="section-tabs">{"".join(tabs)}</div>'
 
 
+def render_section_log_block(section_logs, section_id, base_url=""):
+    """Render a section-level log block (ADR 0008 I10 / Phase 3c).
+
+    section-level logs have asset_ids=[] and carry submission-level
+    evidence (section_notes + photos). They render at the top of the
+    section page so visitors see field observations before the plant
+    inventory.
+    """
+    if not section_logs:
+        return ""
+    entries_html = []
+    for log in section_logs[:5]:  # cap to latest 5
+        date = log.get("date", "") or ""
+        notes_full = log.get("notes_full") or log.get("notes") or ""
+        visible = "\n".join(
+            ln for ln in notes_full.splitlines()
+            if "[ontology:InteractionStamp]" not in ln
+            and not ln.strip().lower().startswith("submission=")
+        ).strip()
+        # Extract reporter if present, then strip the header line for display
+        reporter = ""
+        reporter_m = re.search(r"^Reporter:\s*(.+)$", visible, re.M | re.I)
+        if reporter_m:
+            reporter = reporter_m.group(1).strip()
+            visible = re.sub(r"^Reporter:.*$\n?", "", visible, count=1, flags=re.M | re.I).strip()
+        # Trim to first ~200 chars
+        snippet = visible if len(visible) <= 240 else visible[:237] + "..."
+        photos = log.get("photos", []) or []
+        photo_thumbs = "".join(
+            f'<img class="sec-log-thumb" loading="lazy" '
+            f'src="{esc(ph.get("thumb") or ph.get("url", ""))}" '
+            f'alt="Field photo" onclick="openLightbox(this)">'
+            for ph in photos[:6]
+        )
+        log_uuid = log.get("uuid", "")
+        detail_link = (
+            f'<a href="{base_url}{section_id}-log-{log_uuid[:8]}.html" class="sec-log-more">Details →</a>'
+            if log_uuid else ""
+        )
+        reporter_html = (
+            f'<span class="sec-log-reporter">· {esc(reporter)}</span>' if reporter else ""
+        )
+        entries_html.append(f"""
+        <div class="sec-log-entry">
+          <div class="sec-log-head">
+            <span class="sec-log-date">{esc(date)}</span>
+            {reporter_html}
+            {detail_link}
+          </div>
+          {f'<div class="sec-log-notes">{esc(snippet)}</div>' if snippet else ""}
+          {f'<div class="sec-log-photos">{photo_thumbs}</div>' if photo_thumbs else ""}
+        </div>""")
+    return f"""
+  <div class="section-log-block">
+    <div class="section-log-title">🗒 Field observations for this section</div>
+    {''.join(entries_html)}
+  </div>
+  <style>
+    .section-log-block {{ margin: 16px 0; padding: 12px 14px; background: #fbfaf5; border-left: 3px solid #6b9e3c; border-radius: 8px; }}
+    .section-log-title {{ font-weight: 600; font-family: 'Playfair Display', serif; color: #2d5016; margin-bottom: 8px; }}
+    .sec-log-entry {{ margin: 6px 0 10px; padding-top: 6px; border-top: 1px solid #eee; }}
+    .sec-log-entry:first-of-type {{ border-top: none; padding-top: 0; }}
+    .sec-log-head {{ display: flex; gap: 8px; align-items: baseline; font-size: 13px; color: #555; }}
+    .sec-log-date {{ font-weight: 600; color: #333; }}
+    .sec-log-reporter {{ color: #888; font-size: 12px; }}
+    .sec-log-more {{ margin-left: auto; color: #2d5016; text-decoration: none; font-size: 12px; }}
+    .sec-log-notes {{ font-size: 14px; line-height: 1.4; color: #222; margin-top: 4px; }}
+    .sec-log-photos {{ display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }}
+    .sec-log-thumb {{ width: 72px; height: 72px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid #e5e5e0; }}
+  </style>"""
+
+
 def render_section_page(section_id, section, row_info, sections_data, plant_db, base_url=""):
     """Render a complete section landing page."""
     
@@ -708,6 +806,11 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     green_manure_html = render_green_manure_box(green_manure_plants)
     row_bar_html = render_row_bar(row_info, sections_data, section_id, base_url)
     tabs_html = render_section_tabs(row_info, sections_data, section_id, base_url)
+    # I10 / Phase 3c — section-level log block (submission-level
+    # evidence: section_notes + photos, asset_ids=[]).
+    section_logs_html = render_section_log_block(
+        section.get("section_logs", []) or [], section_id, base_url,
+    )
     
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -739,6 +842,8 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
 
   {row_bar_html}
   {tabs_html}
+
+  {section_logs_html}
 
   <div class="plant-inventory">
     {strata_html}
@@ -1128,20 +1233,11 @@ def render_observe_page(section_id, section, row_info, plant_db, observe_endpoin
           <span id="selected-plant-count" class="selected-plant-count"></span>
         </div>
 
-        <div class="obs-type-group">
-          <label class="obs-type-radio">
-            <input type="radio" name="obs-type" value="observation" id="obs-type-observation" checked>
-            <span class="obs-type-label">👁 I observed</span>
-          </label>
-          <label class="obs-type-radio">
-            <input type="radio" name="obs-type" value="activity">
-            <span class="obs-type-label">🔧 I did</span>
-          </label>
-          <label class="obs-type-radio">
-            <input type="radio" name="obs-type" value="todo">
-            <span class="obs-type-label">📌 Action needed</span>
-          </label>
-        </div>
+        <!-- ADR 0008 I11: log type + status are derived from notes
+             content by the importer's classifier, not by a UI radio.
+             Previous "I observed / I did / Action needed" radios were
+             dead UI — ignored by the pipeline — and absent from Full-
+             Section mode. Dropped 2026-04-20. -->
 
         <div class="obs-field-row">
           <div class="obs-field-group obs-field-small">

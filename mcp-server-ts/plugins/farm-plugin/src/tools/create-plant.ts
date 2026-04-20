@@ -1,6 +1,6 @@
 import { z, type Tool } from '@fireflyagents/mcp-server-plugin-sdk';
 import { getFarmOSClient } from '../clients/index.js';
-import { parseDate, buildAssetName, buildMcpStamp, appendStamp } from '../helpers/index.js';
+import { parseDate, buildAssetName, buildMcpStamp, appendStamp, sanitiseAssetNotes } from '../helpers/index.js';
 
 export const createPlantTool: Tool = {
   namespace: 'fc',
@@ -37,7 +37,11 @@ export const createPlantTool: Tool = {
     const stamp = buildMcpStamp('created', 'plant', { relatedEntities: [params.species, params.section_id] });
     const stampedNotes = appendStamp(params.notes ?? '', stamp);
 
-    const plantId = await client.createPlantAsset(assetName, plantTypeUuid, stampedNotes);
+    // I8 — asset notes hygiene: strip InteractionStamp + submission-body
+    // headers; that content belongs on the observation log below, not on
+    // the plant asset.
+    const assetNotes = sanitiseAssetNotes(params.notes);
+    const plantId = await client.createPlantAsset(assetName, plantTypeUuid, assetNotes);
     if (!plantId) {
       return { content: [{ type: 'text' as const, text: JSON.stringify({ error: 'Failed to create plant asset' }) }] };
     }

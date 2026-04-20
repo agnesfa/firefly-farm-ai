@@ -753,6 +753,37 @@ class SectionsExporter:
             total_plants += len(enriched_plants)
             total_logs += len(all_logs)
 
+            # I10 / Phase 3c — section-level logs: those with asset_ids=[]
+            # (submission-level evidence with section_notes + photos).
+            # Collect them here so the QR page can render a dedicated block.
+            section_level_logs: list = []
+            for log in all_logs:
+                rels = log.get("relationships", {})
+                asset_refs = (rels.get("asset", {}) or {}).get("data") or []
+                if asset_refs:
+                    continue
+                log_type = log.get("type", "").replace("log--", "")
+                log_ts = self.format_log_timestamp(
+                    log.get("attributes", {}).get("timestamp")
+                )
+                log_notes_full = self.extract_log_notes(log) or ""
+                interaction_stamp = ""
+                if "[ontology:InteractionStamp]" in log_notes_full:
+                    for ln in log_notes_full.splitlines():
+                        if "[ontology:InteractionStamp]" in ln:
+                            interaction_stamp = ln.strip()
+                            break
+                section_level_logs.append({
+                    "uuid": log.get("id", ""),
+                    "type": log_type,
+                    "date": log_ts,
+                    "name": log.get("attributes", {}).get("name", ""),
+                    "notes": log_notes_full[:200] if log_notes_full else "",
+                    "notes_full": log_notes_full,
+                    "interaction_stamp": interaction_stamp,
+                })
+            section_level_logs.sort(key=lambda l: l["date"], reverse=True)
+
             # Build enriched section — preserve metadata from existing
             enriched_section = {
                 "id": section_id,
@@ -764,6 +795,7 @@ class SectionsExporter:
                 "first_planted": first_planted if enriched_plants else section_meta.get("first_planted", ""),
                 "inventory_date": latest_obs_date or section_meta.get("inventory_date", ""),
                 "plants": enriched_plants,
+                "section_logs": section_level_logs,
             }
 
             # Preserve green_manure data from existing sections.json
@@ -789,6 +821,11 @@ class SectionsExporter:
                     uid = l.get("uuid")
                     if uid:
                         all_log_ids.append(uid)
+            # Include section-level logs so their photos render too
+            for sl in sec.get("section_logs", []) or []:
+                uid = sl.get("uuid")
+                if uid:
+                    all_log_ids.append(uid)
         if all_log_ids:
             print(f"\nFetching photo attachments for {len(set(all_log_ids))} logs...")
             try:
@@ -797,13 +834,17 @@ class SectionsExporter:
             except Exception as e:
                 print(f"  ! log photo fetch failed: {e}")
                 log_photos = {}
-            # Stamp paths back into enriched plant_logs
+            # Stamp paths back into enriched plant_logs + section_logs
             for sec in enriched_sections.values():
                 for p in sec.get("plants", []):
                     for l in p.get("logs", []) or []:
                         uid = l.get("uuid")
                         if uid and uid in log_photos:
                             l["photos"] = log_photos[uid]
+                for sl in sec.get("section_logs", []) or []:
+                    uid = sl.get("uuid")
+                    if uid and uid in log_photos:
+                        sl["photos"] = log_photos[uid]
 
         # Build output structure
         output = {

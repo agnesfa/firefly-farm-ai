@@ -177,20 +177,11 @@
           <span id="selected-plant-count" class="selected-plant-count"></span>
         </div>
 
-        <div class="obs-type-group">
-          <label class="obs-type-radio">
-            <input type="radio" name="obs-type" value="observation" id="obs-type-observation" checked>
-            <span class="obs-type-label">👁 I observed</span>
-          </label>
-          <label class="obs-type-radio">
-            <input type="radio" name="obs-type" value="activity">
-            <span class="obs-type-label">🔧 I did</span>
-          </label>
-          <label class="obs-type-radio">
-            <input type="radio" name="obs-type" value="todo">
-            <span class="obs-type-label">📌 Action needed</span>
-          </label>
-        </div>
+        <!-- ADR 0008 I11: log type + status are derived from notes
+             content by the importer's classifier, not by a UI radio.
+             Previous "I observed / I did / Action needed" radios were
+             dead UI — ignored by the pipeline — and absent from Full-
+             Section mode. Dropped 2026-04-20. -->
 
         <div class="obs-field-row">
           <div class="obs-field-group obs-field-small">

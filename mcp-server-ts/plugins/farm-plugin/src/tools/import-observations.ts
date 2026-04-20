@@ -11,6 +11,8 @@ import {
   appendStamp,
   parsePlantTypeMetadata,
   buildPlantTypeDescription,
+  sanitiseAssetNotes,
+  classifyObservation,
 } from '../helpers/index.js';
 import { newPhotoPipelineReport, decodeMediaFile, type PhotoPipelineReport } from '../helpers/photo-pipeline.js';
 import {
@@ -105,13 +107,20 @@ async function buildBotanicalLookupResilient(
   };
 }
 
-function buildImportNotes(obs: any, extra = ''): string {
+/**
+ * Build rich notes from observation data for farmOS log.
+ *
+ * `includeSectionNotes=false` suppresses the "Section notes:" line; used
+ * by the importer when section_notes are being routed to a dedicated
+ * section-level log (ADR 0008 I3/I9 / Phase 3c).
+ */
+function buildImportNotes(obs: any, extra = '', includeSectionNotes = true): string {
   const parts: string[] = [];
   if (obs.observer) parts.push(`Reporter: ${obs.observer}`);
   if (obs.timestamp) parts.push(`Submitted: ${(obs.timestamp ?? '').slice(0, 19)}`);
   if (obs.mode) parts.push(`Mode: ${obs.mode}`);
   if (obs.condition && obs.condition !== 'alive') parts.push(`Condition: ${obs.condition}`);
-  if (obs.section_notes) parts.push(`Section notes: ${obs.section_notes}`);
+  if (includeSectionNotes && obs.section_notes) parts.push(`Section notes: ${obs.section_notes}`);
   if (obs.plant_notes) parts.push(`Plant notes: ${obs.plant_notes}`);
   if (obs.previous_count != null && obs.new_count != null) parts.push(`Count: ${obs.previous_count} → ${obs.new_count}`);
   if (extra) parts.push(extra);
@@ -351,6 +360,103 @@ export const importObservationsTool: Tool = {
       return uploadedIds.length;
     }
 
+    // ── ADR 0008 I9 + Phase 3c — submission-level photo routing ──
+    const speciesObs = observations.filter((o: any) => (o.species ?? '').trim());
+    const hasPlantObs = speciesObs.length > 0;
+    const isMultiPlant = speciesObs.length > 1;
+    const combinedSectionNotes = observations
+      .map((o: any) => (o.section_notes ?? '').trim())
+      .filter(Boolean)
+      .join('\n\n')
+      .trim();
+    const routePhotosToSection = Boolean(isMultiPlant && submissionMedia.length > 0);
+    const needsSectionLog =
+      (hasPlantObs && Boolean(combinedSectionNotes)) || routePhotosToSection;
+    const sectionLogInfo = { id: null as string | null, created: false };
+    const firstSectionId: string | undefined = observations[0]?.section_id;
+
+    async function ensureSectionLog(): Promise<string | null> {
+      if (sectionLogInfo.created) return sectionLogInfo.id;
+      sectionLogInfo.created = true;
+      if (!needsSectionLog || params.dry_run || !firstSectionId) return null;
+      const firstObs = speciesObs[0] ?? observations[0];
+      const sectionNotesText =
+        combinedSectionNotes ||
+        (routePhotosToSection ? 'Section-level submission evidence' : '');
+      const sectionLogObs = {
+        observer: firstObs?.observer,
+        timestamp: firstObs?.timestamp,
+        mode: firstObs?.mode,
+        section_notes: sectionNotesText,
+        section_id: firstSectionId,
+        submission_id: params.submission_id,
+      };
+      try {
+        const secUuid = await client.getSectionUuid(firstSectionId);
+        if (!secUuid) {
+          errors.push(`Section log creation: section ${firstSectionId} not found`);
+          return null;
+        }
+        const ts = parseDate((firstObs?.timestamp ?? '').slice(0, 10) || undefined);
+        const logId = await client.createActivityLog(
+          secUuid,
+          ts,
+          `Observation — ${firstSectionId}`,
+          buildImportNotes(sectionLogObs),
+        );
+        sectionLogInfo.id = logId ?? null;
+        let photosAttached = 0;
+        if (submissionMedia.length > 0 && sectionLogInfo.id) {
+          const before = report.photos_uploaded;
+          await uploadMediaToLog(
+            client as any,
+            'activity',
+            sectionLogInfo.id,
+            submissionMedia,
+            report,
+            `section/${firstSectionId}`,
+          );
+          photosAttached = report.photos_uploaded - before;
+        }
+        actions.push({
+          type: 'activity',
+          section: firstSectionId,
+          scope: 'section_level',
+          log_id: sectionLogInfo.id,
+          result: 'created',
+          photos_uploaded: photosAttached,
+          notes: combinedSectionNotes.slice(0, 200),
+        });
+      } catch (e: any) {
+        errors.push(`Section log creation: ${e.message}`);
+        sectionLogInfo.id = null;
+      }
+      return sectionLogInfo.id;
+    }
+
+    const shouldAttachPerLog = (): boolean => !routePhotosToSection;
+
+    // I11 classifier — derive log type + status from notes content.
+    function classifyAndAnnotate(
+      notes: string,
+      defaultLogType: 'observation' | 'activity',
+      humanAuthored: string,
+    ): { notes: string; status: 'done' | 'pending'; type: string } {
+      if (!humanAuthored || !humanAuthored.trim()) {
+        return { notes, status: 'done', type: defaultLogType };
+      }
+      const c = classifyObservation(notes);
+      const annotations: string[] = [];
+      if (c.ambiguous) {
+        annotations.push(`[FLAG classifier-ambiguous: ${c.reason}]`);
+      }
+      if (c.type !== defaultLogType && c.type !== 'observation' && !c.ambiguous) {
+        annotations.push(`[CLASSIFIER-HINT: type=${c.type}]`);
+      }
+      const out = annotations.length > 0 ? `${annotations.join('\n')}\n${notes}` : notes;
+      return { notes: out, status: c.status, type: c.type };
+    }
+
     for (const obs of observations) {
       const species = (obs.species ?? '').trim();
       const newCount = obs.new_count;
@@ -361,6 +467,23 @@ export const importObservationsTool: Tool = {
 
       // Case A: Section comment only
       if (!species && sectionNotes) {
+        // I9: if this submission also has plant observations, route
+        // the section comment through the shared section log created
+        // by ensureSectionLog. Otherwise, this IS the section log.
+        if (needsSectionLog) {
+          if (params.dry_run) {
+            actions.push({
+              type: 'activity',
+              section: obsSection,
+              notes: '[will route to section-level submission log]',
+              result: 'dry_run',
+              scope: 'section_level',
+            });
+          } else {
+            await ensureSectionLog();
+          }
+          continue;
+        }
         const action: any = { type: 'activity', section: obsSection, notes: sectionNotes };
         if (!params.dry_run) {
           try {
@@ -369,8 +492,10 @@ export const importObservationsTool: Tool = {
               const ts = parseDate(obsDate || undefined);
               const logId = await client.createActivityLog(sectionUuid, ts, `Observation — ${obsSection}`, buildImportNotes(obs));
               action.result = 'created'; action.log_id = logId;
-              const count = await attachAndMaybePromote(logId, 'activity', '', `activity/${obsSection}`);
-              if (count > 0) action.photos_uploaded = count;
+              if (shouldAttachPerLog()) {
+                const count = await attachAndMaybePromote(logId, 'activity', '', `activity/${obsSection}`);
+                if (count > 0) action.photos_uploaded = count;
+              }
             } else { action.result = 'error'; errors.push(`Section ${obsSection} not found`); }
           } catch (e: any) { action.result = 'error'; errors.push(`Activity for ${obsSection}: ${e.message}`); }
         } else { action.result = 'dry_run'; }
@@ -393,19 +518,29 @@ export const importObservationsTool: Tool = {
             const assetName = buildAssetName(dateStr, species, obsSection);
             const existing = await client.plantAssetExists(assetName);
             if (existing) { action.result = 'skipped'; action.plant_name = assetName; actions.push(action); continue; }
-            const plantId = await client.createPlantAsset(assetName, ptUuid, buildImportNotes(obs, 'New plant added via field observation'));
+            // I8: asset notes stripped of InteractionStamp + import-payload headers.
+            // Full stamped content stays on the observation log below.
+            const logNotes = buildImportNotes(obs, 'New plant added via field observation', !needsSectionLog);
+            const assetNotes = sanitiseAssetNotes(logNotes);
+            const plantId = await client.createPlantAsset(assetName, ptUuid, assetNotes);
             if (plantId) {
               const qtyId = await client.createQuantity(plantId, count, 'reset');
-              const inventoryLogId = await client.createObservationLog(plantId, secUuid, qtyId, parseDate(dateStr), `Inventory ${obsSection} — ${species}`, '');
+              const inventoryLogId = await client.createObservationLog(plantId, secUuid, qtyId, parseDate(dateStr), `Inventory ${obsSection} — ${species}`, logNotes);
               action.result = 'created'; action.plant_name = assetName;
-              const photoCount = await attachAndMaybePromote(
-                inventoryLogId,
-                'observation',
-                species,
-                `new_plant/${obsSection}/${species}`,
-              );
-              if (photoCount > 0) action.photos_uploaded = photoCount;
-              if (speciesPhotoUpdates.has(species)) action.species_reference_photo = true;
+              // I9: attach photos here only if single-plant submission.
+              if (shouldAttachPerLog()) {
+                const photoCount = await attachAndMaybePromote(
+                  inventoryLogId,
+                  'observation',
+                  species,
+                  `new_plant/${obsSection}/${species}`,
+                );
+                if (photoCount > 0) action.photos_uploaded = photoCount;
+                if (speciesPhotoUpdates.has(species)) action.species_reference_photo = true;
+              } else {
+                await ensureSectionLog();
+                action.photos_routed = 'section_log';
+              }
             }
           } catch (e: any) { action.result = 'error'; errors.push(`Create ${species} in ${obsSection}: ${e.message}`); }
         } else { action.result = 'dry_run'; }
@@ -419,7 +554,9 @@ export const importObservationsTool: Tool = {
         if (plants.length === 0) { errors.push(`Plant '${species}' not found in section ${obsSection}`); continue; }
         const plant = plants[0];
         const plantName = plant.attributes?.name ?? '';
-        const combinedNotes = buildImportNotes(obs);
+        // I3 / Phase 3c: strip section_notes from per-plant log when
+        // they route to the section log instead.
+        const combinedNotes = buildImportNotes(obs, '', !needsSectionLog);
         const countVal = newCount != null ? parseInt(newCount) : null;
         const prevVal = previousCount != null ? parseInt(previousCount) : null;
         const countChanged = countVal != null && countVal !== prevVal;
@@ -438,32 +575,62 @@ export const importObservationsTool: Tool = {
                   const existing = await client.logExists(logName, 'observation');
                   if (existing) { action.result = 'skipped'; } else {
                     const qtyId = await client.createQuantity(plant.id, countVal, 'reset');
-                    const obsLogId = await client.createObservationLog(plant.id, secUuid, qtyId, ts, logName, combinedNotes);
+                    const classified = classifyAndAnnotate(
+                      combinedNotes, 'observation', obs.plant_notes ?? '',
+                    );
+                    const obsLogId = await client.createObservationLog(
+                      plant.id, secUuid, qtyId, ts, logName,
+                      classified.notes, classified.status,
+                    );
+                    action.log_status = classified.status;
+                    action.classified_type = classified.type;
                     action.result = 'created';
                     if (obsLogId) action.log_id = obsLogId;
-                    const photoCount = await attachAndMaybePromote(
-                      obsLogId,
-                      'observation',
-                      species,
-                      `observation/${obsSection}/${species}`,
-                    );
-                    if (photoCount > 0) action.photos_uploaded = photoCount;
-                    if (speciesPhotoUpdates.has(species)) action.species_reference_photo = true;
+                    // I9: attach photos here only if single-plant submission.
+                    if (shouldAttachPerLog()) {
+                      const photoCount = await attachAndMaybePromote(
+                        obsLogId,
+                        'observation',
+                        species,
+                        `observation/${obsSection}/${species}`,
+                      );
+                      if (photoCount > 0) action.photos_uploaded = photoCount;
+                      if (speciesPhotoUpdates.has(species)) action.species_reference_photo = true;
+                    } else {
+                      await ensureSectionLog();
+                      action.photos_routed = 'section_log';
+                    }
                   }
                 }
               } else {
                 const secUuid = await client.getSectionUuid(obsSection);
                 if (secUuid) {
-                  const activityLogId = await client.createActivityLog(secUuid, parseDate(obsDate || undefined), `Observation — ${obsSection}`, combinedNotes);
-                  action.result = 'created'; action.type = 'activity';
-                  const photoCount = await attachAndMaybePromote(
-                    activityLogId,
-                    'activity',
-                    species,
-                    `activity/${obsSection}/${species}`,
+                  // I11: classifier selects activity status (done vs pending).
+                  const classifiedAct = classifyAndAnnotate(
+                    combinedNotes, 'activity', obs.plant_notes ?? '',
                   );
-                  if (photoCount > 0) action.photos_uploaded = photoCount;
-                  if (speciesPhotoUpdates.has(species)) action.species_reference_photo = true;
+                  const activityLogId = await client.createActivityLog(
+                    secUuid, parseDate(obsDate || undefined),
+                    `Observation — ${obsSection}`, classifiedAct.notes,
+                    undefined, undefined, classifiedAct.status,
+                  );
+                  action.result = 'created'; action.type = 'activity';
+                  action.log_status = classifiedAct.status;
+                  action.classified_type = classifiedAct.type;
+                  // I9: same routing rule.
+                  if (shouldAttachPerLog()) {
+                    const photoCount = await attachAndMaybePromote(
+                      activityLogId,
+                      'activity',
+                      species,
+                      `activity/${obsSection}/${species}`,
+                    );
+                    if (photoCount > 0) action.photos_uploaded = photoCount;
+                    if (speciesPhotoUpdates.has(species)) action.species_reference_photo = true;
+                  } else {
+                    await ensureSectionLog();
+                    action.photos_routed = 'section_log';
+                  }
                 }
               }
             } catch (e: any) { action.result = 'error'; errors.push(`Observation for ${species} in ${obsSection}: ${e.message}`); }
@@ -471,6 +638,13 @@ export const importObservationsTool: Tool = {
           actions.push(action);
         }
       }
+    }
+
+    // I9 / Phase 3c — end-of-loop guarantee: if a section log was needed
+    // but wasn't triggered via ensureSectionLog (e.g. all per-plant
+    // writes erred out), create it now so section_notes + photos aren't lost.
+    if (needsSectionLog && !sectionLogInfo.created) {
+      await ensureSectionLog();
     }
 
     // Update Sheet status
