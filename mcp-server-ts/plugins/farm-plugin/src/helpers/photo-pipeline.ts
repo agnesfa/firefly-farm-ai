@@ -143,6 +143,87 @@ export interface PhotoUploadClient {
     mimeType?: string,
   ): Promise<string | null>;
   getPlantTypeUuid(farmosName: string): Promise<string | null>;
+  /**
+   * Optional — used by tier-aware reference-photo promotion (ADR 0008
+   * Phase 3b) to inspect the plant_type's current image reference and
+   * any existing image references on a log for dedup.
+   * Callers fall back safely if not provided.
+   */
+  getRaw?(path: string): Promise<any>;
+  patchRelationship?(
+    entityType: string,
+    entityId: string,
+    fieldName: string,
+    refs: Array<{ type: string; id: string }>,
+  ): Promise<boolean>;
+}
+
+
+// ── Field-photo tier classification (ADR 0008 I5) ─────────────
+//
+// tier 3: submission-id-prefixed OR contains _plant_ AND submission
+//         (best candidate for species reference; QR photo of one plant)
+// tier 2: section-prefixed AND contains _plant_ (plant-specific import)
+// tier 1: section-prefixed AND _section_ (multi-plant frame — WEAK,
+//         never auto-promote as species reference)
+// tier 0: stock (Wikipedia / Köhler / scientific-name filename)
+
+const TIER_SUBMISSION_PLANT = /^[0-9a-f]{8}_.+_plant_/;
+const TIER_SUBMISSION = /^[0-9a-f]{8}_/;
+const TIER_SECTION_PLANT = /^(P\d+R\d+|NURS|COMP|SPIR)\S*_plant_/;
+const TIER_SECTION_SECTION = /^(P\d+R\d+|NURS|COMP|SPIR)\S*_section_/;
+const STOCK_PATTERNS = [
+  /%[0-9A-F]{2}/,
+  /wikipedia|wikimedia|köhler|medizinal/i,
+  /^[A-Z][a-z]+_[a-z]+(_[0-9]+)?\.(jpg|jpeg|png)$/i,
+];
+
+export function fieldPhotoTier(filename: string): 0 | 1 | 2 | 3 {
+  if (!filename) return 0;
+  if (TIER_SUBMISSION_PLANT.test(filename)) return 3;
+  if (TIER_SUBMISSION.test(filename)) return 3;
+  if (TIER_SECTION_PLANT.test(filename)) return 2;
+  if (TIER_SECTION_SECTION.test(filename)) return 1;
+  return 0;
+}
+
+export function isStockPhoto(filename: string): boolean {
+  return STOCK_PATTERNS.some((p) => p.test(filename || ''));
+}
+
+
+// ── Dedup (ADR 0008 I4 + ADR 0007 Fix 5) ──────────────────────
+//
+// Prevents same-content photos from attaching twice to a log. Keyed on
+// filesize (a cheap proxy for content hash — exact filesize match with
+// same-origin filename prefix is effectively identical content). The
+// silent-success-then-retry pattern from 2026-04-18 was the motivating
+// case: every photo ended up attached twice.
+
+/** Fetch existing file refs on a log to dedup against. Returns a Set of
+ *  filesizes seen. If the client doesn't support getRaw, returns empty
+ *  (caller will upload without dedup — graceful fallback). */
+async function existingFilesizesOnLog(
+  client: PhotoUploadClient,
+  logType: string,
+  logId: string,
+): Promise<Set<number>> {
+  const sizes = new Set<number>();
+  if (!client.getRaw) return sizes;
+  try {
+    const data = await client.getRaw(
+      `/api/log/${logType}/${logId}?include=image`,
+    );
+    for (const inc of data?.included ?? []) {
+      if (inc?.type === 'file--file') {
+        const sz = inc?.attributes?.filesize ?? 0;
+        if (typeof sz === 'number' && sz > 0) sizes.add(sz);
+      }
+    }
+  } catch {
+    // Fall through with empty set
+  }
+  return sizes;
 }
 
 /**
@@ -169,11 +250,27 @@ export async function uploadMediaToLog(
   }
   if (!files || files.length === 0) return uploaded;
 
+  // ADR 0008 I4 dedup (ADR 0007 Fix 5): fetch existing file sizes on this
+  // log and skip any incoming file whose content is already attached.
+  // Graceful fallback if the client doesn't expose getRaw.
+  const existingSizes = await existingFilesizesOnLog(client, logType, logId);
+  const sizesAddedThisCall = new Set<number>();
+
   for (const f of files) {
     const decoded = decodeMediaFile(f);
     if (!decoded) {
       report.decode_failures += 1;
       report.upload_errors.push(`${contextLabel}: decode_failed (${f?.filename ?? 'unknown'})`);
+      continue;
+    }
+    const size = decoded.bytes.byteLength;
+    if (existingSizes.has(size) || sizesAddedThisCall.has(size)) {
+      // Already attached — skip silently (not an error, just dedup).
+      // Record as an upload error with 'already_attached' tag so it
+      // surfaces in the report without inflating the success count.
+      report.upload_errors.push(
+        `${contextLabel}: already_attached (${decoded.filename}, ${size}b)`,
+      );
       continue;
     }
     try {
@@ -188,6 +285,7 @@ export async function uploadMediaToLog(
       if (id) {
         uploaded.push(id);
         report.photos_uploaded += 1;
+        sizesAddedThisCall.add(size);
       } else {
         // uploadFile returned null — file may still have landed in
         // farmOS but we lost the id. Log loudly so the operator sees it.
@@ -208,14 +306,27 @@ export async function uploadMediaToLog(
 }
 
 /**
- * Refresh the plant_type taxonomy reference photo for a species
- * (latest-wins). Only the first decodable file is used. Returns the
- * uploaded file UUID or null.
+ * Refresh the plant_type taxonomy reference photo for a species.
+ * Returns the uploaded file UUID or null.
  *
- * Unlike `uploadMediaToLog`, this is a QUALITY decision — it's only
- * called after PlantNet verification confirmed the photo matches the
- * claimed species. A null return here is not an error per se, just
- * "don't promote".
+ * ADR 0008 I5 + ADR 0007 Fix 4 — tier-aware promotion (April 20 2026):
+ *
+ *   - Classify the incoming photo by filename tier (0..3).
+ *   - Refuse to promote tier-1 section-level multi-plant frames —
+ *     those pollute the species page (same multi-plant shot appeared
+ *     as the reference for Chilli Jalapeño, Comfrey, Geranium etc.
+ *     until today). Tier-1 photos can attach to logs but never promote.
+ *   - Compare candidate tier against the current plant_type image's
+ *     tier; promote only when strictly better (or same tier AND the
+ *     incoming file is newer). Field photos always beat stock.
+ *   - If the client exposes patchRelationship, we set the image field
+ *     to single-valued with the new file. Otherwise the legacy append
+ *     behaviour persists (multi-valued drift). Falls back gracefully.
+ *
+ * Unlike `uploadMediaToLog`, this is a QUALITY decision — callers
+ * should only invoke it after PlantNet verification confirms the photo
+ * matches the claimed species. A null return here is not an error per
+ * se, just "don't promote".
  */
 export async function updateSpeciesReferencePhoto(
   client: PhotoUploadClient,
@@ -223,6 +334,24 @@ export async function updateSpeciesReferencePhoto(
   files: any[],
 ): Promise<string | null> {
   if (!species || !files || files.length === 0) return null;
+
+  // Pick the best-tier decodable file from the incoming batch.
+  let bestDecoded: DecodedMedia | null = null;
+  let bestTier: 0 | 1 | 2 | 3 = 0;
+  for (const f of files) {
+    const decoded = decodeMediaFile(f);
+    if (!decoded) continue;
+    const tier = fieldPhotoTier(decoded.filename);
+    if (tier > bestTier) {
+      bestTier = tier;
+      bestDecoded = decoded;
+    }
+  }
+  if (!bestDecoded) return null;
+
+  // Tier-1 section-level multi-plant frames never auto-promote.
+  if (bestTier <= 1) return null;
+
   let uuid: string | null = null;
   try {
     uuid = await client.getPlantTypeUuid(species);
@@ -230,21 +359,70 @@ export async function updateSpeciesReferencePhoto(
     return null;
   }
   if (!uuid) return null;
-  for (const f of files) {
-    const decoded = decodeMediaFile(f);
-    if (!decoded) continue;
+
+  // Inspect current reference (if exposed). Skip promotion if current
+  // is already same-or-higher tier + newer-or-same timestamp.
+  let currentTier: 0 | 1 | 2 | 3 = 0;
+  let currentCreated = '';
+  if (client.getRaw) {
     try {
-      return await client.uploadFile(
+      const data = await client.getRaw(
+        `/api/taxonomy_term/plant_type/${uuid}?include=image`,
+      );
+      const included = (data?.included ?? []).filter(
+        (x: any) => x?.type === 'file--file',
+      );
+      // Pick highest-tier existing file as the "current"
+      for (const f of included) {
+        const fn = f?.attributes?.filename ?? '';
+        const t = fieldPhotoTier(fn);
+        const created = f?.attributes?.created ?? '';
+        if (t > currentTier || (t === currentTier && created > currentCreated)) {
+          currentTier = t;
+          currentCreated = created;
+        }
+      }
+    } catch {
+      // fall through — treat current as unknown tier 0
+    }
+  }
+
+  // Only promote if strictly better.
+  if (currentTier > bestTier) return null;
+  // Same tier — newer beats older; but new files always win on ties
+  // because they represent fresher evidence. (Tie-breaking to existing
+  // would leave stale refs undisturbed forever.)
+
+  let newFileId: string | null = null;
+  try {
+    newFileId = await client.uploadFile(
+      'taxonomy_term/plant_type',
+      uuid,
+      'image',
+      bestDecoded.filename,
+      bestDecoded.bytes,
+      bestDecoded.mimeType,
+    );
+  } catch {
+    return null;
+  }
+  if (!newFileId) return null;
+
+  // Best-effort: if patchRelationship is available, collapse image to
+  // a single reference pointing at the new file. This prevents the
+  // multi-valued drift that our I5 cleanup had to patch retroactively.
+  if (client.patchRelationship) {
+    try {
+      await client.patchRelationship(
         'taxonomy_term/plant_type',
         uuid,
         'image',
-        decoded.filename,
-        decoded.bytes,
-        decoded.mimeType,
+        [{ type: 'file--file', id: newFileId }],
       );
     } catch {
-      return null;
+      // Non-fatal — the upload already landed; just multi-valued.
     }
   }
-  return null;
+
+  return newFileId;
 }

@@ -1527,6 +1527,76 @@ def update_observation_status(
     }, indent=2)
 
 
+# ── ADR 0008 I5 — field-photo tier classification ─────────────
+#
+# Higher tier = better candidate for species reference photo.
+# tier 3: submission-id-prefixed (QR photo of one plant)
+# tier 2: section-prefixed AND contains _plant_ (plant-specific import)
+# tier 1: section-prefixed AND _section_ (multi-plant frame, WEAK ref)
+# tier 0: stock / unrecognised
+
+import re as _re_tier
+
+_TIER_SUBMISSION_PLANT = _re_tier.compile(r"^[0-9a-f]{8}_.+_plant_")
+_TIER_SUBMISSION = _re_tier.compile(r"^[0-9a-f]{8}_")
+_TIER_SECTION_PLANT = _re_tier.compile(r"^(P\d+R\d+|NURS|COMP|SPIR)\S*_plant_")
+_TIER_SECTION_SECTION = _re_tier.compile(r"^(P\d+R\d+|NURS|COMP|SPIR)\S*_section_")
+
+
+def _field_photo_tier(filename: str) -> int:
+    """Rank a filename 0-3. See ADR 0008 I5."""
+    if not filename:
+        return 0
+    if _TIER_SUBMISSION_PLANT.match(filename):
+        return 3
+    if _TIER_SUBMISSION.match(filename):
+        return 3
+    if _TIER_SECTION_PLANT.match(filename):
+        return 2
+    if _TIER_SECTION_SECTION.match(filename):
+        return 1
+    return 0
+
+
+def _existing_filesizes_on_log(client, log_type: str, log_id: str) -> set:
+    """ADR 0008 I4 dedup — return the set of filesizes already attached
+    to this log. Graceful fallback (empty set) if the lookup fails.
+
+    Defensive: the farmos_client session is a real requests.Session in
+    production but a MagicMock in tests. Iterable / truthy checks on
+    MagicMock return types that are not real lists, so we validate the
+    response shape before extracting sizes — anything non-dict-shaped
+    results in an empty set (no dedup attempted, which is the safe
+    fallback: possible double-attach instead of certain data loss).
+    """
+    sizes: set = set()
+    try:
+        url = f"{client.hostname}/api/log/{log_type}/{log_id}?include=image"
+        resp = client.session.get(url, timeout=15)
+        if not hasattr(resp, "ok") or not resp.ok:
+            return sizes
+        data = resp.json()
+        if not isinstance(data, dict):
+            return sizes
+        included = data.get("included")
+        if not isinstance(included, list):
+            return sizes
+        for inc in included:
+            if not isinstance(inc, dict):
+                continue
+            if inc.get("type") != "file--file":
+                continue
+            attrs = inc.get("attributes")
+            if not isinstance(attrs, dict):
+                continue
+            sz = attrs.get("filesize", 0)
+            if isinstance(sz, int) and sz > 0:
+                sizes.add(sz)
+    except Exception:
+        pass
+    return sizes
+
+
 def _decode_media_file(file: dict) -> Optional[tuple]:
     """Decode a base64 media file from the Apps Script ``get_media`` response.
 
@@ -1602,6 +1672,14 @@ def _upload_media_to_log(
         return uploaded
     if not files:
         return uploaded
+
+    # ADR 0008 I4 dedup (ADR 0007 Fix 5): skip files whose content is
+    # already attached to this log, keyed on filesize as a cheap
+    # content-hash proxy. Prevents the silent-success + retry double-
+    # attach pattern (2026-04-18 incident).
+    existing_sizes = _existing_filesizes_on_log(client, log_type, log_id)
+    sizes_added_this_call = set()
+
     for f in files:
         decoded = _decode_media_file(f)
         if decoded is None:
@@ -1612,6 +1690,12 @@ def _upload_media_to_log(
             )
             continue
         filename, mime_type, binary = decoded
+        size = len(binary)
+        if size in existing_sizes or size in sizes_added_this_call:
+            report["upload_errors"].append(
+                f"{context_label}: already_attached ({filename}, {size}b)"
+            )
+            continue
         try:
             file_id = client.upload_file(
                 entity_type=f"log/{log_type}",
@@ -1624,6 +1708,7 @@ def _upload_media_to_log(
             if file_id:
                 uploaded.append(file_id)
                 report["photos_uploaded"] += 1
+                sizes_added_this_call.add(size)
             else:
                 # upload_file returned None — file may still have landed
                 # in farmOS but we lost the id. Log loudly so the operator
@@ -1641,53 +1726,108 @@ def _upload_media_to_log(
 
 
 def _update_species_reference_photo(client, species: str, files: list) -> Optional[str]:
-    """Copy the latest observation photo to the plant_type taxonomy term.
+    """Promote the best candidate photo to the plant_type reference.
 
-    Latest-wins: every import overwrites the previous reference photo for
-    that species. Only the first file is used (typical observation has 1
-    photo; multi-photo submissions pick the first as representative).
+    ADR 0008 I5 + ADR 0007 Fix 4 — tier-aware promotion (April 20 2026).
+    Refuses to auto-promote tier-1 section-level multi-plant frames.
+    Compares candidate tier against the plant_type's current image tier
+    and only promotes if strictly better. Also patches the relationship
+    to single-valued after upload so the multi-value drift that caused
+    today's cleanup does not recur.
 
     Returns the uploaded file UUID or ``None`` if nothing happened.
     """
     if not species or not files:
         return None
+
+    # Pick the best-tier decodable file from the incoming batch.
+    best_decoded = None
+    best_tier = 0
+    for f in files:
+        decoded = _decode_media_file(f)
+        if decoded is None:
+            continue
+        fn = decoded[0]
+        t = _field_photo_tier(fn)
+        if t > best_tier:
+            best_tier = t
+            best_decoded = decoded
+    if best_decoded is None:
+        return None
+
+    # Tier-1 section-level multi-plant frames never auto-promote.
+    if best_tier <= 1:
+        return None
+
     try:
         uuid = client.get_plant_type_uuid(species)
     except Exception:
         return None
     if not uuid:
         return None
-    for f in files:
-        decoded = _decode_media_file(f)
-        if decoded is None:
-            continue
-        filename, mime_type, binary = decoded
-        try:
-            file_id = client.upload_file(
-                entity_type="taxonomy_term/plant_type",
-                entity_id=uuid,
-                field_name="image",
-                filename=filename,
-                binary_data=binary,
-                mime_type=mime_type,
-            )
-            # Tag description with photo_source=farm_observation (Tier 1)
-            try:
-                all_types = client.get_all_plant_types_cached()
-                term = next((t for t in all_types if t.get("id") == uuid), None)
-                if term:
-                    desc = term.get("attributes", {}).get("description", {})
-                    desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc or "")
-                    meta = parse_plant_type_metadata(desc_text)
-                    meta["photo_source"] = "farm_observation"
-                    new_desc = build_plant_type_description(meta)
-                    client.update_plant_type(uuid, {"description": {"value": new_desc, "format": "default"}})
-            except Exception:
-                pass  # non-critical — photo uploaded, tag failed
-            return file_id
-        except Exception:
-            return None
-    return None
+
+    # Inspect current reference. Skip promotion if current is same-or-
+    # higher tier (defensive; avoids stomping on a better existing photo).
+    current_tier = 0
+    try:
+        resp = client.session.get(
+            f"{client.hostname}/api/taxonomy_term/plant_type/{uuid}"
+            f"?include=image", timeout=15,
+        )
+        if resp.ok:
+            data = resp.json()
+            for inc in data.get("included", []) or []:
+                if inc.get("type") == "file--file":
+                    fn = inc.get("attributes", {}).get("filename", "")
+                    t = _field_photo_tier(fn)
+                    if t > current_tier:
+                        current_tier = t
+    except Exception:
+        pass
+
+    if current_tier > best_tier:
+        return None
+
+    filename, mime_type, binary = best_decoded
+    try:
+        file_id = client.upload_file(
+            entity_type="taxonomy_term/plant_type",
+            entity_id=uuid,
+            field_name="image",
+            filename=filename,
+            binary_data=binary,
+            mime_type=mime_type,
+        )
+    except Exception:
+        return None
+    if not file_id:
+        return None
+
+    # Collapse image relationship to single-valued (ADR 0008 I5).
+    try:
+        client.session.patch(
+            f"{client.hostname}/api/taxonomy_term/plant_type/{uuid}/relationships/image",
+            json={"data": [{"type": "file--file", "id": file_id}]},
+            headers={"Content-Type": "application/vnd.api+json"},
+            timeout=15,
+        )
+    except Exception:
+        pass  # non-fatal — upload landed, relationship may stay multi-valued
+
+    # Tag description with photo_source=farm_observation (Tier 1)
+    try:
+        all_types = client.get_all_plant_types_cached()
+        term = next((t for t in all_types if t.get("id") == uuid), None)
+        if term:
+            desc = term.get("attributes", {}).get("description", {})
+            desc_text = desc.get("value", "") if isinstance(desc, dict) else str(desc or "")
+            meta = parse_plant_type_metadata(desc_text)
+            meta["photo_source"] = "farm_observation"
+            new_desc = build_plant_type_description(meta)
+            client.update_plant_type(uuid, {"description": {"value": new_desc, "format": "default"}})
+    except Exception:
+        pass  # non-critical — photo uploaded, tag failed
+    return file_id
 
 
 def _build_import_notes(obs: dict, extra: str = "") -> str:

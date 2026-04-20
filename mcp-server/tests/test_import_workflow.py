@@ -440,13 +440,28 @@ import base64
 _TINY_PNG_B64 = (
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
 )
-
-
 def _media_file(filename="photo.jpg", b64=None):
+    """Build a fake media file record.
+
+    Content length varies by hash of filename so ADR 0008 I4 dedup
+    treats distinct filenames as distinct-size content, regardless of
+    filename character length. Tests that intentionally pass the same
+    filename twice will still trigger dedup — which is the behaviour
+    under test.
+    """
+    if b64 is None:
+        import base64 as _b64
+        import hashlib
+        # Pad by 1 + (hash % 32) bytes so each unique filename produces
+        # a unique filesize (range 1..33 padding bytes).
+        h = hashlib.sha1(filename.encode("utf-8")).digest()
+        pad_len = 1 + (h[0] % 32)
+        raw = _b64.b64decode(_TINY_PNG_B64) + bytes([h[0]]) * pad_len
+        b64 = _b64.b64encode(raw).decode("ascii")
     return {
         "filename": filename,
         "mime_type": "image/jpeg",
-        "data_base64": b64 or _TINY_PNG_B64,
+        "data_base64": b64,
     }
 
 
@@ -463,10 +478,18 @@ class TestPhotoPipeline:
     """
 
     def _setup_media(self, monkeypatch, mock_farmos_client, mock_observe_client):
-        """Install a get_media mock, upload_file recorder, and PlantNet bypass."""
+        """Install a get_media mock, upload_file recorder, and PlantNet bypass.
+
+        Uses tier-3 plant-specific filenames (submission-id prefix + _plant_)
+        so ADR 0008 I5 tier gate permits species-reference promotion in the
+        tests that exercise it.
+        """
         mock_observe_client.get_media = MagicMock(return_value={
             "success": True,
-            "files": [_media_file("first.jpg"), _media_file("second.jpg")],
+            "files": [
+                _media_file("abc12345_P2R3.15-21_plant_001.jpg"),
+                _media_file("def67890_P2R3.15-21_plant_002.jpg"),
+            ],
         })
         uploaded = []
 
@@ -539,7 +562,10 @@ class TestPhotoPipeline:
         ]
         assert all(u["entity_id"] == activity_log_id for u in uploaded)
         assert all(u["field_name"] == "image" for u in uploaded)
-        assert [u["filename"] for u in uploaded] == ["first.jpg", "second.jpg"]
+        assert [u["filename"] for u in uploaded] == [
+            "abc12345_P2R3.15-21_plant_001.jpg",
+            "def67890_P2R3.15-21_plant_002.jpg",
+        ]
         # Each upload decoded to >0 bytes (the tiny PNG)
         assert all(u["bytes_len"] > 0 for u in uploaded)
 
@@ -555,7 +581,9 @@ class TestPhotoPipeline:
             previous_count=3,
             submission_id=sub_id,
             status="approved",
-            media_files="first.jpg,second.jpg",
+            # Tier-3 plant-specific filenames so ADR 0008 I5 tier gate
+            # allows species-reference promotion.
+            media_files="abc12345_P2R3.15-21_plant_001.jpg,def67890_P2R3.15-21_plant_002.jpg",
         )
         mock_observe_client.list_observations.return_value = {
             "success": True,

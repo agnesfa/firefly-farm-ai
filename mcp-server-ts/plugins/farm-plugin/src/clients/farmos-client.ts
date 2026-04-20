@@ -852,6 +852,38 @@ export class FarmOSClient {
     return result.data?.id ?? null;
   }
 
+  /**
+   * Raw JSON:API GET — used by the photo pipeline (ADR 0008 I4 dedup,
+   * I5 tier-aware promotion) to inspect existing file relationships
+   * before uploading. Returns the parsed JSON response or throws.
+   */
+  async getRaw(path: string): Promise<any> {
+    const url = path.startsWith('http') ? path : `${this.baseUrl}${path}`;
+    const resp = await this._fetchWithRetry(url, { method: 'GET' });
+    if (!resp.ok) throw new Error(`farmOS GET ${path}: HTTP ${resp.status}`);
+    return resp.json();
+  }
+
+  /**
+   * PATCH a relationship on an entity — used by the photo pipeline
+   * (ADR 0008 I5) to collapse plant_type.image to single-valued after
+   * promoting a new reference photo. Idempotent; graceful on 204.
+   */
+  async patchRelationship(
+    entityType: string,
+    entityId: string,
+    fieldName: string,
+    refs: Array<{ type: string; id: string }>,
+  ): Promise<boolean> {
+    const url = `${this.baseUrl}/api/${entityType}/${entityId}/relationships/${fieldName}`;
+    const resp = await this._fetchWithRetry(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/vnd.api+json' },
+      body: JSON.stringify({ data: refs }),
+    });
+    return resp.ok;
+  }
+
   // ── Utilities ──────────────────────────────────────────────
 
   private getNextLink(data: any): string | null {

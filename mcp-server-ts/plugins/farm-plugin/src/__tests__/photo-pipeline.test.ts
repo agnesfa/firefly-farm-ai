@@ -18,6 +18,18 @@ import {
 
 const TINY_PNG_B64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+// Second payload with different byte length — the ADR 0008 I4 dedup in
+// uploadMediaToLog would otherwise skip identical-content files. Tests
+// that need two files to both upload must use distinct content.
+// 100 bytes (vs TINY_PNG_B64 = 70 bytes) — distinct filesize so dedup
+// treats them as different content.
+const TINY_PNG_B64_VARIANT =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQg==';
+// Plant-specific (tier-3) filename prefix — submission_id 8 hex chars + _plant_
+// matches FIELD_SUBMISSION_PLANT / FIELD_SUBMISSION in photo-pipeline.ts.
+// Needed for updateSpeciesReferencePhoto tests (ADR 0008 I5 tier gate).
+const TIER3_FN = '1234abcd_P2R2.0-3_plant_001.jpg';
+const TIER3_FN_B = '5678ef90_P2R2.0-3_plant_001.jpg';
 
 describe('decodeMediaFile', () => {
   it('decodes a plain base64 payload', () => {
@@ -68,8 +80,9 @@ describe('uploadMediaToLog', () => {
       'observation',
       'log-1',
       [
+        // Distinct payloads so ADR 0008 I4 dedup does not collapse them.
         { filename: 'a.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
-        { filename: 'b.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+        { filename: 'b.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64_VARIANT },
       ],
       report,
       'test',
@@ -80,6 +93,30 @@ describe('uploadMediaToLog', () => {
     expect(client.uploadFile).toHaveBeenCalledTimes(2);
     expect(client.uploadFile.mock.calls[0][0]).toBe('log/observation');
     expect(client.uploadFile.mock.calls[0][1]).toBe('log-1');
+  });
+
+  it('ADR 0008 I4 dedup: skips same-content files already attached or added this call', async () => {
+    const client = {
+      uploadFile: vi.fn().mockResolvedValueOnce('uuid-a'),
+      getPlantTypeUuid: vi.fn(),
+    };
+    const report = newPhotoPipelineReport();
+    const ids = await uploadMediaToLog(
+      client,
+      'observation',
+      'log-1',
+      [
+        { filename: 'a.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+        // Same content → should be skipped as already_attached
+        { filename: 'a_retry.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+      ],
+      report,
+      'test',
+    );
+    expect(ids).toEqual(['uuid-a']);
+    expect(report.photos_uploaded).toBe(1);
+    expect(report.upload_errors.some((e) => e.includes('already_attached'))).toBe(true);
+    expect(client.uploadFile).toHaveBeenCalledTimes(1);
   });
 
   it('records thrown upload errors loudly in report.upload_errors', async () => {
@@ -155,19 +192,44 @@ describe('uploadMediaToLog', () => {
 });
 
 describe('updateSpeciesReferencePhoto', () => {
-  it('uploads only the first decodable file to the taxonomy term', async () => {
+  it('promotes a tier-3 plant-specific field photo to the taxonomy term', async () => {
     const client = {
       uploadFile: vi.fn().mockResolvedValue('file-uuid'),
       getPlantTypeUuid: vi.fn().mockResolvedValue('pt-uuid'),
     };
     const id = await updateSpeciesReferencePhoto(client, 'Pigeon Pea', [
-      { filename: 'first.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
-      { filename: 'second.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+      { filename: TIER3_FN, mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+      { filename: TIER3_FN_B, mime_type: 'image/jpeg', data_base64: TINY_PNG_B64_VARIANT },
     ]);
     expect(id).toBe('file-uuid');
     expect(client.uploadFile).toHaveBeenCalledTimes(1);
     expect(client.uploadFile.mock.calls[0][0]).toBe('taxonomy_term/plant_type');
     expect(client.uploadFile.mock.calls[0][1]).toBe('pt-uuid');
+  });
+
+  it('ADR 0008 I5: refuses to promote a tier-1 section-level multi-plant photo', async () => {
+    const client = {
+      uploadFile: vi.fn().mockResolvedValue('file-uuid'),
+      getPlantTypeUuid: vi.fn().mockResolvedValue('pt-uuid'),
+    };
+    const id = await updateSpeciesReferencePhoto(client, 'Pigeon Pea', [
+      // tier 1: section-prefixed + _section_
+      { filename: 'P2R2.0-3_section_001.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+    ]);
+    expect(id).toBeNull();
+    expect(client.uploadFile).not.toHaveBeenCalled();
+  });
+
+  it('ADR 0008 I5: refuses to promote an unrecognised/stock-style filename (tier 0)', async () => {
+    const client = {
+      uploadFile: vi.fn().mockResolvedValue('file-uuid'),
+      getPlantTypeUuid: vi.fn().mockResolvedValue('pt-uuid'),
+    };
+    const id = await updateSpeciesReferencePhoto(client, 'Pigeon Pea', [
+      { filename: 'some_random_name.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+    ]);
+    expect(id).toBeNull();
+    expect(client.uploadFile).not.toHaveBeenCalled();
   });
 
   it('returns null when the species has no taxonomy term', async () => {
@@ -176,7 +238,7 @@ describe('updateSpeciesReferencePhoto', () => {
       getPlantTypeUuid: vi.fn().mockResolvedValue(null),
     };
     const id = await updateSpeciesReferencePhoto(client, 'Unknown Species', [
-      { filename: 'first.jpg', mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
+      { filename: TIER3_FN, mime_type: 'image/jpeg', data_base64: TINY_PNG_B64 },
     ]);
     expect(id).toBeNull();
     expect(client.uploadFile).not.toHaveBeenCalled();

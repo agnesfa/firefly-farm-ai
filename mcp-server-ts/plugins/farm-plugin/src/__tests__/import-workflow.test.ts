@@ -309,9 +309,20 @@ describe('import_observations workflow', () => {
 
 const TINY_PNG_B64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
-
-function mediaFile(filename = 'photo.jpg', b64 = TINY_PNG_B64) {
-  return { filename, mime_type: 'image/jpeg', data_base64: b64 };
+// Distinct payloads are required for tests that attach multiple files
+// to the same log — ADR 0008 I4 dedup (photo-pipeline.ts) now skips
+// same-filesize attachments. Counters indexed by the filename's last
+// char keep each fixture call distinct.
+const TINY_PNG_VARIANTS = [
+  TINY_PNG_B64,
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQg==',
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggkNDQ0NDQ0NDQw==',
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggkREREREREREREREREREREREQ==',
+];
+let mediaFileCounter = 0;
+function mediaFile(filename = 'photo.jpg', b64?: string) {
+  const data_base64 = b64 ?? TINY_PNG_VARIANTS[(mediaFileCounter++) % TINY_PNG_VARIANTS.length];
+  return { filename, mime_type: 'image/jpeg', data_base64 };
 }
 
 describe('import_observations photo pipeline', () => {
@@ -375,13 +386,18 @@ describe('import_observations photo pipeline', () => {
           species: 'Pigeon Pea',
           newCount: 4,
           previousCount: 3,
-          mediaFiles: 'first.jpg,second.jpg',
+          // Tier-3 plant-specific filenames so ADR 0008 I5 gate allows
+          // species-reference promotion.
+          mediaFiles: 'abc12345_P2R3.15-21_plant_001.jpg,def67890_P2R3.15-21_plant_002.jpg',
         }),
       ],
     });
     mockObsClient.getMedia.mockResolvedValue({
       success: true,
-      files: [mediaFile('first.jpg'), mediaFile('second.jpg')],
+      files: [
+        mediaFile('abc12345_P2R3.15-21_plant_001.jpg'),
+        mediaFile('def67890_P2R3.15-21_plant_002.jpg'),
+      ],
     });
     mockClient.getPlantAssets.mockResolvedValue([
       makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R3.15-21' }),
