@@ -48,46 +48,19 @@ def fetch_all_terms(client):
     NOTE: farmOS JSON:API pagination caps at ~250 entries (5 pages of 50).
     This is unreliable for complete enumeration. Use fetch_terms_by_name()
     for guaranteed complete results.
+
+    Uses offset-based pagination via the shared _paginate helper —
+    links.next is unreliable past ~250 results (arch decision #11).
     """
-    seen = {}  # UUID → term dict, deduplicates across pages
-
-    session = client.session
-    hostname = client.session.hostname
-    url = "/api/taxonomy_term/plant_type?page[limit]=50"
-
-    page = 0
-    while url:
-        page += 1
-        resp = session.http_request(url)
-        if resp.status_code != 200:
-            print(f"  ERROR: HTTP {resp.status_code} fetching page {page}")
-            break
-
-        data = resp.json()
-        terms = data.get("data", [])
-
-        for term in terms:
-            tid = term.get("id", "")
-            if tid:
-                seen[tid] = term
-
-        next_url = data.get("links", {}).get("next", {})
-        if isinstance(next_url, dict):
-            full_url = next_url.get("href", "")
-        elif isinstance(next_url, str):
-            full_url = next_url
-        else:
-            full_url = ""
-
-        if full_url:
-            if full_url.startswith(hostname):
-                url = full_url[len(hostname):]
-            else:
-                url = full_url
-        else:
-            url = None
-
-    return list(seen.values())
+    import sys as _sys
+    from pathlib import Path as _Path
+    _sys.path.insert(0, str(_Path(__file__).resolve().parent))
+    from _paginate import paginate_all
+    return paginate_all(
+        client.session, client.session.hostname,
+        "taxonomy_term/plant_type",
+        sort="drupal_internal__tid",
+    )
 
 
 def fetch_terms_by_name(client, name):

@@ -151,21 +151,29 @@ def farmos_connect():
 
 
 def farmos_fetch_all(session, url, api_path, filters=""):
-    """Fetch all paginated results from farmOS API, deduplicating by UUID."""
-    results = {}
-    page_url = f"{url}/api/{api_path}?page[limit]=50{filters}"
-    while page_url:
-        resp = session.get(page_url)
-        if resp.status_code != 200:
-            print(f"  Warning: {api_path} returned {resp.status_code}")
-            break
-        data = resp.json()
-        for item in data.get("data", []):
-            results[item["id"]] = item
-        page_url = data.get("links", {}).get("next", {})
-        if isinstance(page_url, dict):
-            page_url = page_url.get("href")
-    return list(results.values())
+    """Fetch all paginated results from farmOS API via offset-based pagination.
+
+    Uses the shared _paginate helper — links.next is unreliable past
+    ~250 results (architecture decision #11).
+    """
+    import sys as _sys
+    from pathlib import Path as _Path
+    _sys.path.insert(0, str(_Path(__file__).resolve().parent))
+    from _paginate import paginate_all
+
+    # Decode legacy filter-string format (e.g. "&filter[status]=active")
+    filter_dict: dict[str, str] = {}
+    if filters:
+        for chunk in filters.lstrip("&").split("&"):
+            if not chunk or "=" not in chunk:
+                continue
+            k, v = chunk.split("=", 1)
+            # strip "filter[" prefix and "]" suffix if present
+            if k.startswith("filter[") and k.endswith("]"):
+                k = k[7:-1]
+            filter_dict[k] = v
+
+    return paginate_all(session, url, api_path, filters=filter_dict)
 
 
 def parse_farmos_notes(notes_text):

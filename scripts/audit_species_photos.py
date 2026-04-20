@@ -53,57 +53,49 @@ def main():
     reverse = lookup.get("__reverse__", {})
     print(f"Loaded {len(reverse)} species with botanical names")
 
-    # Fetch all plant_type terms with images
+    # Fetch all plant_type terms with images via offset-based pagination
+    # (shared _paginate helper — avoids farmOS links.next 250-item bug).
+    import sys as _sys
+    from pathlib import Path as _Path
+    _sys.path.insert(0, str(_Path(__file__).resolve().parent))
+    from _paginate import paginate_offset
+
     print("Fetching plant_type taxonomy with images...")
     terms_with_photos = []
-    path = "/api/taxonomy_term/plant_type?include=image&page[limit]=50"
-    while path:
-        data = farmos._get(path)
-        if not data:
-            break
-
-        files_by_id = {}
-        for inc in data.get("included", []) or []:
-            if inc.get("type") != "file--file":
-                continue
-            uri = (inc.get("attributes") or {}).get("uri") or {}
-            url = uri.get("url") if isinstance(uri, dict) else ""
-            if url and url.startswith("/"):
-                url = farmos.hostname.rstrip("/") + url
-            if url:
-                files_by_id[inc.get("id", "")] = url
-
-        for term in data.get("data", []) or []:
-            attrs = term.get("attributes") or {}
-            name = attrs.get("name", "")
-            term_id = term.get("id", "")
-            image_rel = (term.get("relationships") or {}).get("image") or {}
-            rel_data = image_rel.get("data")
-            if isinstance(rel_data, list) and rel_data:
-                file_id = rel_data[-1].get("id", "")
-            elif isinstance(rel_data, dict):
-                file_id = rel_data.get("id", "")
-            else:
-                file_id = ""
-            if file_id and file_id in files_by_id and name:
-                terms_with_photos.append({
-                    "name": name,
-                    "term_id": term_id,
-                    "file_id": file_id,
-                    "photo_url": files_by_id[file_id],
-                })
-
-        next_link = (data.get("links") or {}).get("next", {})
-        if isinstance(next_link, dict):
-            full_url = next_link.get("href", "")
-        elif isinstance(next_link, str):
-            full_url = next_link
+    for term, included in paginate_offset(
+        farmos.session, farmos.hostname, "taxonomy_term/plant_type",
+        filters={"status": "1"},
+        sort="drupal_internal__tid",
+        include="image",
+    ):
+        attrs = term.get("attributes") or {}
+        name = attrs.get("name", "")
+        term_id = term.get("id", "")
+        image_rel = (term.get("relationships") or {}).get("image") or {}
+        rel_data = image_rel.get("data")
+        if isinstance(rel_data, list) and rel_data:
+            file_id = rel_data[-1].get("id", "")
+        elif isinstance(rel_data, dict):
+            file_id = rel_data.get("id", "")
         else:
-            full_url = ""
-        if full_url:
-            path = full_url[len(farmos.hostname):] if full_url.startswith(farmos.hostname) else full_url
-        else:
-            path = None
+            file_id = ""
+        if not (file_id and name):
+            continue
+        file_rec = included.get(("file--file", file_id))
+        if not file_rec:
+            continue
+        uri = (file_rec.get("attributes") or {}).get("uri") or {}
+        url = uri.get("url") if isinstance(uri, dict) else ""
+        if url and url.startswith("/"):
+            url = farmos.hostname.rstrip("/") + url
+        if not url:
+            continue
+        terms_with_photos.append({
+            "name": name,
+            "term_id": term_id,
+            "file_id": file_id,
+            "photo_url": url,
+        })
 
     print(f"Found {len(terms_with_photos)} species with reference photos\n")
 

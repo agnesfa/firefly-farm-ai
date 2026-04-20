@@ -32,9 +32,11 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "mcp-server"))
+sys.path.insert(0, str(_REPO_ROOT / "scripts"))
 
 from dotenv import load_dotenv
 from farmos_client import FarmOSClient
+from _paginate import paginate_all
 
 load_dotenv(str(_REPO_ROOT / ".env"))
 
@@ -60,18 +62,11 @@ class Violation:
 
 
 def fetch_land_assets(fc, scope: str) -> list[dict]:
-    all_assets = []
-    url = f"{fc.hostname}/api/asset/land?page[limit]=50&sort=name"
-    guard = 0
-    while url and guard < 20:
-        resp = fc.session.get(url, timeout=30)
-        if not resp.ok:
-            break
-        body = resp.json()
-        all_assets.extend(body.get("data", []))
-        nxt = body.get("links", {}).get("next", {})
-        url = nxt.get("href") if isinstance(nxt, dict) else nxt
-        guard += 1
+    """Offset-based pagination — see scripts/_paginate.py docstring."""
+    all_assets = paginate_all(
+        fc.session, fc.hostname, "asset/land",
+        sort="name",
+    )
     return [
         a for a in all_assets
         if a.get("attributes", {}).get("name", "").startswith(scope)

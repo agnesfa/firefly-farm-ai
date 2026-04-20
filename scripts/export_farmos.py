@@ -137,50 +137,44 @@ class SectionsExporter:
                         extra_filters: str = "", sort: str = "") -> list:
         """Fetch entities using CONTAINS filter on name, with full pagination.
 
-        This is the reliable pattern for querying 400+ entities.
-        Pushes filtering to farmOS server side, then follows pagination links.
+        Uses offset-based pagination (page[offset]) instead of links.next
+        to avoid the farmOS JSON:API 250-item truncation bug (architecture
+        decision #11). Previously a per-section query with 200+ logs could
+        silently drop late entries; now it is reliable up to `max_pages`.
         """
         encoded = urllib.parse.quote(name_contains)
-        path = (f"/api/{api_path}"
-                f"?filter[name][operator]=CONTAINS"
-                f"&filter[name][value]={encoded}"
-                f"&page[limit]=50")
+        effective_sort = sort or "drupal_internal__id"
+        base_path = (f"/api/{api_path}"
+                     f"?filter[name][operator]=CONTAINS"
+                     f"&filter[name][value]={encoded}"
+                     f"&sort={effective_sort}"
+                     f"&page[limit]=50")
         if extra_filters:
-            path += f"&{extra_filters}"
-        if sort:
-            path += f"&sort={sort}"
+            base_path += f"&{extra_filters}"
 
         all_items = []
         seen_ids = set()
+        offset = 0
+        max_pages = 50  # safety cap (2500 items)
 
-        while path:
+        for _ in range(max_pages):
+            path = f"{base_path}&page[offset]={offset}"
             data = self._http_get(path)
             if not data:
                 break
+            items = data.get("data", []) or []
+            if not items:
+                break
 
-            for item in data.get("data", []):
+            for item in items:
                 item_id = item.get("id", "")
                 if item_id and item_id not in seen_ids:
                     seen_ids.add(item_id)
                     all_items.append(item)
 
-            # Follow pagination
-            next_link = data.get("links", {}).get("next", {})
-            if isinstance(next_link, dict):
-                full_url = next_link.get("href", "")
-            elif isinstance(next_link, str):
-                full_url = next_link
-            else:
-                full_url = ""
-
-            if full_url:
-                # Strip hostname prefix since http_request prepends it
-                if full_url.startswith(self.hostname):
-                    path = full_url[len(self.hostname):]
-                else:
-                    path = full_url
-            else:
-                path = None
+            if len(items) < 50:
+                break
+            offset += 50
 
         return all_items
 

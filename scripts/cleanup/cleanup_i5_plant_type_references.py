@@ -34,9 +34,11 @@ from typing import Optional
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "mcp-server"))
+sys.path.insert(0, str(_REPO_ROOT / "scripts"))
 
 from dotenv import load_dotenv
 from farmos_client import FarmOSClient
+from _paginate import paginate_offset, paginate_all
 
 load_dotenv(str(_REPO_ROOT / ".env"))
 
@@ -46,28 +48,55 @@ STOCK_PATTERNS = [
     re.compile(r"wikipedia|wikimedia|köhler|medizinal", re.I),
     re.compile(r"^[A-Z][a-z]+_[a-z]+(_[0-9]+)?\.(jpg|jpeg|png)$", re.I),
 ]
-FIELD_PATTERNS = [
-    re.compile(r"^[0-9a-f]{8}_"),
-    re.compile(r"^(P\d+R\d+|NURS|COMP|SPIR)"),
-]
+# Tiered field-photo classification.
+# Higher tier = better candidate for species reference photo.
+FIELD_SUBMISSION_PLANT = re.compile(r"^[0-9a-f]{8}_.+_plant_")   # tier 3 — submission + plant-specific
+FIELD_SUBMISSION = re.compile(r"^[0-9a-f]{8}_")                  # tier 3 — submission-prefixed (fallback)
+FIELD_SECTION_PLANT = re.compile(r"^(P\d+R\d+|NURS|COMP|SPIR)\S*_plant_")  # tier 2
+FIELD_SECTION_SECTION = re.compile(r"^(P\d+R\d+|NURS|COMP|SPIR)\S*_section_")  # tier 1 — multi-plant, weak reference
 
 
 def is_stock(fn: str) -> bool:
     return any(p.search(fn or "") for p in STOCK_PATTERNS)
 
 
+def field_tier(fn: str) -> int:
+    """Rank field photos. Higher = better species reference candidate.
+
+    3: plant-specific, submission-id-prefixed (best — QR observation of one plant)
+    3: submission-id-prefixed without _plant_ (still user-submitted, plant-specific in practice)
+    2: section-prefixed AND contains _plant_ (plant-specific import)
+    1: section-prefixed with _section_ (multi-plant frame, weak reference)
+    0: not a field photo
+    """
+    if not fn:
+        return 0
+    if FIELD_SUBMISSION_PLANT.match(fn):
+        return 3
+    if FIELD_SUBMISSION.match(fn):
+        return 3
+    if FIELD_SECTION_PLANT.match(fn):
+        return 2
+    if FIELD_SECTION_SECTION.match(fn):
+        return 1
+    return 0
+
+
 def is_field(fn: str) -> bool:
-    return any(p.match(fn or "") for p in FIELD_PATTERNS)
+    return field_tier(fn) > 0
 
 
 def file_record(f):
+    fn = f.get("attributes", {}).get("filename", "")
+    tier = field_tier(fn)
     return {
         "id": f["id"],
-        "filename": f.get("attributes", {}).get("filename", ""),
+        "filename": fn,
         "filesize": f.get("attributes", {}).get("filesize", 0),
         "created": f.get("attributes", {}).get("created", ""),
-        "is_field": is_field(f.get("attributes", {}).get("filename", "")),
-        "is_stock": is_stock(f.get("attributes", {}).get("filename", "")),
+        "is_field": tier > 0,
+        "is_stock": is_stock(fn),
+        "field_tier": tier,
     }
 
 
@@ -89,61 +118,47 @@ def get_plant_type_files(fc, uuid):
 
 
 def get_active_plants_of_type(fc, plant_type_uuid, limit=50):
-    """All active plant assets matching this plant_type (paginated)."""
-    all_plants = []
-    url = (f"{fc.hostname}/api/asset/plant"
-           f"?filter[plant_type.id]={plant_type_uuid}"
-           f"&filter[status]=active&page[limit]=50")
-    guard = 0
-    while url and guard < 10:
-        resp = fc.session.get(url, timeout=30)
-        if not resp.ok:
-            break
-        body = resp.json()
-        all_plants.extend(body.get("data", []))
-        nxt = body.get("links", {}).get("next", {})
-        url = nxt.get("href") if isinstance(nxt, dict) else nxt
-        guard += 1
-    return all_plants
+    """All active plant assets matching this plant_type.
+
+    Uses offset-based pagination via the shared `_paginate` helper to
+    avoid the farmOS links.next 250-item bug (see architecture #11).
+    """
+    return paginate_all(
+        fc.session, fc.hostname, "asset/plant",
+        filters={"plant_type.id": plant_type_uuid, "status": "active"},
+        sort="drupal_internal__id",
+    )
 
 
 def get_field_photos_from_plant_logs(fc, plant_asset_ids, cache):
-    """Collect all field-photo file records across logs on these plants."""
+    """Collect all field-photo file records across logs on these plants.
+
+    Uses offset pagination (via `_paginate`) for each per-plant log
+    query. Per-plant log counts are small so pagination is mainly a
+    correctness guarantee, not a scale concern.
+    """
     candidates = []
-    # Approach: query observation logs filtered by asset ID
-    for pid in plant_asset_ids[:20]:  # cap to avoid huge scans
+    for pid in plant_asset_ids[:20]:
         if pid in cache:
             candidates.extend(cache[pid])
             continue
         per_plant = []
-        url = (f"{fc.hostname}/api/log/observation"
-               f"?filter[asset.id]={pid}"
-               f"&include=image&page[limit]=50")
-        guard = 0
-        while url and guard < 5:
-            resp = fc.session.get(url, timeout=30)
-            if not resp.ok:
-                break
-            body = resp.json()
-            files_by_id = {
-                f["id"]: f
-                for f in body.get("included", [])
-                if f.get("type") == "file--file"
-            }
-            for lg in body.get("data", []):
-                img_refs = ((lg.get("relationships", {}).get("image") or {}).get("data")) or []
-                if isinstance(img_refs, dict):
-                    img_refs = [img_refs]
-                for ref in img_refs:
-                    f = files_by_id.get(ref.get("id"))
-                    if not f:
-                        continue
-                    rec = file_record(f)
-                    if rec["is_field"]:
-                        per_plant.append(rec)
-            nxt = body.get("links", {}).get("next", {})
-            url = nxt.get("href") if isinstance(nxt, dict) else nxt
-            guard += 1
+        for lg, included in paginate_offset(
+            fc.session, fc.hostname, "log/observation",
+            filters={"asset.id": pid},
+            include="image",
+            sort="drupal_internal__id",
+        ):
+            img_refs = ((lg.get("relationships", {}).get("image") or {}).get("data")) or []
+            if isinstance(img_refs, dict):
+                img_refs = [img_refs]
+            for ref in img_refs:
+                f = included.get(("file--file", ref.get("id", "")))
+                if not f:
+                    continue
+                rec = file_record(f)
+                if rec["is_field"]:
+                    per_plant.append(rec)
         cache[pid] = per_plant
         candidates.extend(per_plant)
     return candidates
@@ -151,12 +166,18 @@ def get_field_photos_from_plant_logs(fc, plant_asset_ids, cache):
 
 def pick_best(files):
     """Best-field-photo per I5 ranking rules.
-    Sort by: field > stock (desc), created (desc)."""
+
+    Sort by: field_tier (desc), created (desc).
+    tier 3 = plant-specific submission photo (best)
+    tier 2 = plant-specific section-import photo
+    tier 1 = section-level multi-plant photo (weak — avoid if possible)
+    tier 0 = stock
+    """
     if not files:
         return None
     sorted_files = sorted(
         files,
-        key=lambda f: (1 if f["is_field"] else 0, f["created"]),
+        key=lambda f: (f.get("field_tier", 1 if f["is_field"] else 0), f["created"]),
         reverse=True,
     )
     return sorted_files[0]
@@ -182,30 +203,28 @@ def main():
     fc = FarmOSClient()
     fc.connect()
 
-    # Gather all active plant_types used by plants in scope sections
+    # Gather all active plant_types used by plants in scope sections.
+    # Offset-based pagination via the shared helper — avoids the farmOS
+    # links.next 250-item bug (arch decision #11). We have 669 active
+    # plants total; with links.next the alphabetically-late plants were
+    # silently dropped, and any plant_type only used by those plants
+    # never got checked.
     print("Gathering plant_types in scope...", file=sys.stderr)
-    url = (f"{fc.hostname}/api/asset/plant"
-           f"?filter[status]=active&page[limit]=50&include=plant_type")
     all_plants = []
     all_plant_types = {}  # uuid -> name
-    guard = 0
-    while url and guard < 30:
-        resp = fc.session.get(url, timeout=30)
-        if not resp.ok:
-            break
-        body = resp.json()
-        for p in body.get("data", []):
-            name = p.get("attributes", {}).get("name", "")
-            if name and any(name.find(f"- {args.scope}") >= 0 for _ in [0]) and (
-                args.scope in name
-            ):
-                all_plants.append(p)
-        for inc in body.get("included", []):
-            if inc.get("type") == "taxonomy_term--plant_type":
-                all_plant_types[inc["id"]] = inc.get("attributes", {}).get("name", "?")
-        nxt = body.get("links", {}).get("next", {})
-        url = nxt.get("href") if isinstance(nxt, dict) else nxt
-        guard += 1
+    for p, included in paginate_offset(
+        fc.session, fc.hostname, "asset/plant",
+        filters={"status": "active"},
+        include="plant_type",
+        sort="drupal_internal__id",
+    ):
+        name = p.get("attributes", {}).get("name", "")
+        if name and args.scope in name:
+            all_plants.append(p)
+        # Merge included plant_types across pages
+        for key, inc in included.items():
+            if key[0] == "taxonomy_term--plant_type":
+                all_plant_types[key[1]] = inc.get("attributes", {}).get("name", "?")
 
     # Filter to plant_types that actually have plants in P2
     used_plant_types = set()
@@ -215,7 +234,7 @@ def main():
 
     to_check = sorted([(uuid, all_plant_types.get(uuid, uuid)) for uuid in used_plant_types],
                       key=lambda x: x[1])
-    print(f"  {len(to_check)} plant_types to check", file=sys.stderr)
+    print(f"  {len(all_plants)} active plants in {args.scope}, {len(to_check)} plant_types to check", file=sys.stderr)
 
     plant_log_cache = {}
     stats = defaultdict(int)
@@ -231,60 +250,54 @@ def main():
             stats["no_image"] += 1
             continue
 
-        # Case A: already single-valued field photo — nothing to do
-        if len(files) == 1 and files[0]["is_field"]:
-            stats["already_field_single"] += 1
-            continue
+        # Compute the best candidate available ANYWHERE:
+        # 1. The plant_type's current files
+        # 2. Field photos on the plant logs of active plants of this species
+        # Pick the highest-ranked. Only skip if current state already matches
+        # the best candidate (i.e., no-op).
 
-        # Case B: multi-valued with at least one field photo
-        field_files = [f for f in files if f["is_field"]]
-        if len(files) > 1 and field_files:
-            best = pick_best(field_files)
-            if patch_single(fc, uuid, best["id"], dry_run=args.dry_run):
-                stats["multi_to_field"] += 1
-                actions.append(("multi→field", name, best["filename"]))
-                print(f"  ✓ {name:<35} → field {best['filename']}  ({len(files)} → 1)")
+        current_best = pick_best(files)
+        plants_of_type = get_active_plants_of_type(fc, uuid, limit=20)
+        plant_ids = [p["id"] for p in plants_of_type]
+        log_field_photos = get_field_photos_from_plant_logs(fc, plant_ids, plant_log_cache)
+
+        all_candidates = list(files) + list(log_field_photos)
+        best = pick_best(all_candidates)
+
+        # No-op case: already pointing at the best candidate
+        if len(files) == 1 and best and best["id"] == files[0]["id"]:
+            if files[0]["field_tier"] >= 2:
+                stats["already_plant_specific"] += 1
+            elif files[0]["field_tier"] == 1:
+                stats["already_section_level_no_better"] += 1
+                print(f"  · {name:<35}  section-level photo (tier 1), no plant-specific available — kept")
             else:
-                stats["patch_failed"] += 1
+                stats["already_stock_no_field_available"] += 1
             continue
 
-        # Case C: single-valued stock — look for field photo in plant logs
-        if len(files) == 1 and files[0]["is_stock"]:
-            plants_of_type = get_active_plants_of_type(fc, uuid, limit=20)
-            plant_ids = [p["id"] for p in plants_of_type]
-            log_field_photos = get_field_photos_from_plant_logs(fc, plant_ids, plant_log_cache)
-            if log_field_photos:
-                best = pick_best(log_field_photos)
-                if patch_single(fc, uuid, best["id"], dry_run=args.dry_run):
-                    stats["stock_to_field"] += 1
-                    actions.append(("stock→field", name, best["filename"]))
-                    print(f"  ✓ {name:<35} → field {best['filename']}  (was stock-only)")
-                else:
-                    stats["patch_failed"] += 1
+        if not best:
+            stats["no_candidate"] += 1
+            continue
+
+        # Execute: patch to single file with the best candidate
+        old_desc = f"{len(files)} file(s), current tier {current_best['field_tier']}"
+        new_tier = best.get("field_tier", 0)
+        tier_labels = {3: "plant-specific/submission", 2: "plant-specific/import", 1: "section-level", 0: "stock"}
+        if patch_single(fc, uuid, best["id"], dry_run=args.dry_run):
+            # Categorise the upgrade for reporting
+            if current_best["field_tier"] < new_tier:
+                stats[f"upgraded_to_tier_{new_tier}"] += 1
+                mark = "✓"
+            elif len(files) > 1 and new_tier == current_best["field_tier"]:
+                stats["collapsed_to_single"] += 1
+                mark = "~"
             else:
-                stats["stock_no_field_available"] += 1
-                print(f"  · {name:<35}  stock-only, no field photo in logs — skipped")
-            continue
-
-        # Case D: multi-valued all stock — look for field photo in plant logs
-        # first (same as Case C), only fall back to collapsing to newest stock
-        # if no field photo exists anywhere.
-        if len(files) > 1 and not field_files:
-            plants_of_type = get_active_plants_of_type(fc, uuid, limit=20)
-            plant_ids = [p["id"] for p in plants_of_type]
-            log_field_photos = get_field_photos_from_plant_logs(fc, plant_ids, plant_log_cache)
-            if log_field_photos:
-                best = pick_best(log_field_photos)
-                if patch_single(fc, uuid, best["id"], dry_run=args.dry_run):
-                    stats["multi_stock_to_field"] += 1
-                    actions.append(("multi-stock→field", name, best["filename"]))
-                    print(f"  ✓ {name:<35} → field {best['filename']}  ({len(files)} → 1, was all stock)")
-                continue
-            best = pick_best(files)
-            if patch_single(fc, uuid, best["id"], dry_run=args.dry_run):
-                stats["multi_stock_collapsed"] += 1
-                actions.append(("multi-stock-collapsed", name, best["filename"]))
-                print(f"  ~ {name:<35} → stock (collapsed) {best['filename']}  ({len(files)} → 1, no field photo)")
+                stats["patched_other"] += 1
+                mark = "~"
+            actions.append((f"tier{current_best['field_tier']}→tier{new_tier}", name, best["filename"]))
+            print(f"  {mark} {name:<35} → {tier_labels.get(new_tier,'?')} {best['filename']}  ({old_desc} → tier {new_tier})")
+        else:
+            stats["patch_failed"] += 1
 
     print()
     print("=" * 60)

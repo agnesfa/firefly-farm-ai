@@ -35,10 +35,12 @@ from typing import Any, Optional
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT / "mcp-server"))
+sys.path.insert(0, str(_REPO_ROOT / "scripts"))
 
 from dotenv import load_dotenv
 
 from farmos_client import FarmOSClient
+from _paginate import paginate_all
 
 load_dotenv(str(_REPO_ROOT / ".env"))
 
@@ -415,27 +417,14 @@ def main() -> int:
     fc = FarmOSClient()
     fc.connect()
 
-    # Gather sections
+    # Gather sections via offset-based pagination (scripts/_paginate.py).
+    # Filter client-side for names matching the scope prefix AND containing
+    # a dot (actual sections, not row-level parents like "P2R2").
     if args.section:
         sections = [args.section]
     else:
-        # Paginate through all land assets, filter client-side for names
-        # matching the scope prefix AND containing a dot (actual sections,
-        # not row-level parents like "P2R2"). farmOS JSON:API caps page
-        # size around 50 regardless of page[limit], so follow links.next.
-        all_assets = []
-        url = f"{fc.hostname}/api/asset/land?page[limit]=50&sort=name"
-        guard = 0
-        while url and guard < 20:
-            resp = fc.session.get(url, timeout=30)
-            if not resp.ok:
-                break
-            body = resp.json()
-            all_assets.extend(body.get("data", []))
-            next_link = body.get("links", {}).get("next", {})
-            url = next_link.get("href") if isinstance(next_link, dict) else next_link
-            guard += 1
-        print(f"  (fetched {len(all_assets)} land assets across {guard} page(s))", file=sys.stderr)
+        all_assets = paginate_all(fc.session, fc.hostname, "asset/land", sort="name")
+        print(f"  (fetched {len(all_assets)} land assets)", file=sys.stderr)
         sections = sorted({
             a.get("attributes", {}).get("name", "")
             for a in all_assets
