@@ -16,6 +16,7 @@ Usage:
 """
 
 import argparse
+import sys
 from dotenv import load_dotenv as _load_dotenv
 # Load .env before argparse default values are computed — otherwise the
 # OBSERVE_ENDPOINT fallback below resolves to empty and every QR observe
@@ -1638,6 +1639,28 @@ def main():
 
     total = len(sections) * 2 + 1  # view + observe + index
     print(f"\nDone! {total} pages in {output_dir} ({len(sections)} view + {len(sections)} observe + index)")
+
+    # Post-gen assertion: every observe page must have a non-empty
+    # OBSERVE_ENDPOINT. This is the last line of defence against the
+    # 2026-04-15 / 2026-04-20 regression where every QR submission
+    # returned "Observation endpoint not configured." because the env
+    # fallback was silently empty.
+    observe_pages = sorted(Path(output_dir).glob("*-observe.html"))
+    empty = []
+    for p in observe_pages:
+        text = p.read_text(encoding="utf-8")
+        if 'const OBSERVE_ENDPOINT = ""' in text or 'const OBSERVE_ENDPOINT = "";' in text:
+            empty.append(p.name)
+    if empty:
+        print(
+            f"\nFATAL: {len(empty)}/{len(observe_pages)} observe pages have "
+            f"empty OBSERVE_ENDPOINT — QR submissions will fail.\n"
+            f"       Set OBSERVE_ENDPOINT in .env OR pass --observe-endpoint.\n"
+            f"       First few affected: {empty[:3]}",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    print(f"✓ All {len(observe_pages)} observe pages have OBSERVE_ENDPOINT wired.")
 
 
 def render_index(rows, sections, plant_db, base_url=""):
