@@ -16,6 +16,11 @@ Usage:
 """
 
 import argparse
+from dotenv import load_dotenv as _load_dotenv
+# Load .env before argparse default values are computed — otherwise the
+# OBSERVE_ENDPOINT fallback below resolves to empty and every QR observe
+# page ships with the "Observation endpoint not configured" regression.
+_load_dotenv()
 import csv
 import json
 import html
@@ -1515,8 +1520,20 @@ def main():
     parser.add_argument("--plants", default="knowledge/plant_types.csv", help="Path to plant_types.csv")
     parser.add_argument("--output", default="site/public/", help="Output directory")
     parser.add_argument("--base-url", default="", help="Base URL prefix for links")
-    parser.add_argument("--observe-endpoint", default="", help="Google Apps Script URL for observations")
-    parser.add_argument("--seedbank-endpoint", default="", help="Google Apps Script URL for seed bank")
+    parser.add_argument(
+        "--observe-endpoint",
+        default=os.environ.get("OBSERVE_ENDPOINT", ""),
+        help="Google Apps Script URL for observations. "
+             "Defaults to $OBSERVE_ENDPOINT from env/.env — regenerating without "
+             "this wired up is the 2026-04-15 / 2026-04-20 Kacper regression "
+             "(all observe pages get empty endpoint, every QR submission "
+             "returns 'Observation endpoint not configured').",
+    )
+    parser.add_argument(
+        "--seedbank-endpoint",
+        default=os.environ.get("SEED_BANK_ENDPOINT", os.environ.get("SEEDBANK_ENDPOINT", "")),
+        help="Google Apps Script URL for seed bank (defaults to env)",
+    )
     args = parser.parse_args()
     
     output_dir = Path(args.output)
