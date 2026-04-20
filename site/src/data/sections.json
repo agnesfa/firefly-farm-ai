@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-20T13:33:57.186051+10:00",
+  "generated_at": "2026-04-20T13:51:47.078302+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -361,7 +361,7 @@
               "species": "Mint (Australian)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/mint-australian.jpg"
         }
       ]
     },
@@ -811,7 +811,7 @@
               "species": "Lemon Balm"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon-balm.jpg"
         },
         {
           "species": "Hyssop",
@@ -852,7 +852,7 @@
               "species": "Hyssop"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/hyssop.jpg"
         },
         {
           "species": "Geranium",
@@ -1427,7 +1427,7 @@
               "species": "Eucalypt-Gum (Generic)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eucalypt-gum-generic.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -1970,7 +1970,7 @@
               "species": "Lemon Balm"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/lemon-balm.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -2021,7 +2021,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Parsley (Italian)",
@@ -3408,7 +3408,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         }
       ],
       "green_manure": [
@@ -3671,7 +3671,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -4017,7 +4017,7 @@
               "species": "Forest Red Gum"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -4598,7 +4598,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -4639,7 +4639,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -4985,7 +4985,7 @@
               "species": "Forest Red Gum"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -5780,7 +5780,7 @@
               "species": "Forest Red Gum"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -6344,7 +6344,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Zucchini (Blackjack)",
@@ -6971,7 +6971,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Tansy",
@@ -7120,7 +7120,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -7282,7 +7282,7 @@
               "species": "Forest Red Gum"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -7805,7 +7805,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Zucchini (Blackjack)",
@@ -8417,7 +8417,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Tansy",
@@ -8736,7 +8736,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Ice Cream Bean",
@@ -8916,7 +8916,7 @@
               "species": "Banana"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banana.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -9052,7 +9052,7 @@
               "species": "Arrowroot"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/arrowroot.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -9166,7 +9166,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         }
       ]
     },
@@ -9292,7 +9292,7 @@
               "species": "Banana"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banana.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -9438,7 +9438,7 @@
               "species": "Arrowroot"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/arrowroot.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -9562,7 +9562,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Marigold",
@@ -9730,7 +9730,7 @@
               "species": "Banana"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banana.jpg"
         },
         {
           "species": "Mango",
@@ -9960,7 +9960,7 @@
               "species": "Arrowroot"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/arrowroot.jpg"
         },
         {
           "species": "Pepino plant",
@@ -9981,7 +9981,7 @@
               "species": "Pepino plant"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pepino-plant.jpg"
         },
         {
           "species": "Basil - Sweet (Classic)",
@@ -10126,7 +10126,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Passionfruit",
@@ -10264,7 +10264,7 @@
               "species": "Banana"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banana.jpg"
         },
         {
           "species": "Mango",
@@ -10411,7 +10411,7 @@
               "species": "Arrowroot"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/arrowroot.jpg"
         },
         {
           "species": "Pepino plant",
@@ -10432,7 +10432,7 @@
               "species": "Pepino plant"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pepino-plant.jpg"
         },
         {
           "species": "Achiote",
@@ -10558,7 +10558,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Turmeric",
@@ -10579,7 +10579,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Marigold",
@@ -10664,7 +10664,7 @@
               "species": "Banana"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/banana.jpg"
         },
         {
           "species": "Tagasaste - Tree Lucerne",
@@ -10936,7 +10936,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Marigold",
@@ -11584,7 +11584,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/rose-apple.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -11895,7 +11895,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -12248,7 +12248,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-purple.jpg"
         },
         {
           "species": "Guava (Strawberry)",
@@ -12508,7 +12508,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -12641,7 +12641,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Achiote",
@@ -12840,7 +12840,7 @@
               "species": "Forest Red Gum"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Pear (Williams)",
@@ -13426,7 +13426,7 @@
               "species": "Turmeric"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/turmeric.jpg"
         },
         {
           "species": "Sweet Potato",
@@ -13497,7 +13497,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -14077,7 +14077,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -14159,7 +14159,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -14651,7 +14651,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Pumpkin (Generic)",
@@ -14830,7 +14830,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-purple.jpg"
         },
         {
           "species": "Guava (Thai White)",
@@ -14865,7 +14865,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/guava-thai-white.jpg"
         },
         {
           "species": "Geranium",
@@ -15012,7 +15012,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Guava (Strawberry)",
@@ -15931,7 +15931,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Tansy",
@@ -16033,7 +16033,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Blueberry",
@@ -16064,7 +16064,7 @@
               "species": "Blueberry"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/blueberry.jpg"
         }
       ],
       "green_manure": [
@@ -16661,7 +16661,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/blueberry.jpg"
         },
         {
           "species": "Pak Choi",
@@ -16705,7 +16705,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Davidson Plum",
@@ -17473,7 +17473,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         }
       ]
     },
@@ -17527,7 +17527,7 @@
               "species": "Forest Red Gum"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -18551,7 +18551,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -18675,7 +18675,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/dianella.jpg"
         },
         {
           "species": "Pigeon Pea",
@@ -18809,7 +18809,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/forest-red-gum.jpg"
         },
         {
           "species": "Jacaranda",
@@ -18907,7 +18907,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/dianella.jpg"
         },
         {
           "species": "Comfrey",
@@ -19066,7 +19066,7 @@
               "species": "Sweet Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/sweet-potato.jpg"
         },
         {
           "species": "Sunflower",
@@ -19192,7 +19192,7 @@
               "species": "Eucalypt-Gum (Generic)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/eucalypt-gum-generic.jpg"
         },
         {
           "species": "Mulberry (White)",
@@ -19351,7 +19351,7 @@
               "species": "Radish"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/radish.jpg"
         },
         {
           "species": "Pumpkin",
@@ -19620,7 +19620,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Millet (White French) - P1R1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet-white-french.jpg"
         },
         {
           "species": "Oat",
@@ -19764,7 +19764,7 @@
           "first_planted": "2025-10-17",
           "asset_name": "17 OCT 2025 - Millet (White French) - P1R1.5-9",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet-white-french.jpg"
         },
         {
           "species": "Oat",
@@ -19826,7 +19826,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Buckwheat - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Capsicum (Red)",
@@ -20002,7 +20002,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Millet (White French) - P1R1.9-19",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/millet-white-french.jpg"
         },
         {
           "species": "Mint",
@@ -20158,7 +20158,7 @@
           "first_planted": "2025-10-12",
           "asset_name": "12 OCT 2025 - Buckwheat - P1R1.19-29",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Cabbage (Golden Acre)",
@@ -20906,7 +20906,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Radish (Tillage)",
@@ -21000,7 +21000,7 @@
           "first_planted": "2025-11-06",
           "asset_name": "6 NOV 2025 - Buckwheat - P1R3.3-13",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Calendula",
@@ -21156,7 +21156,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Tomato",
@@ -21219,7 +21219,7 @@
           "first_planted": "2025-11-03",
           "asset_name": "3 NOV 2025 - Buckwheat - P1R3.13-23",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Calendula",
@@ -21343,7 +21343,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Pea-Sugar Snap",
@@ -21448,7 +21448,7 @@
           "first_planted": "2025-10-27",
           "asset_name": "27 OCT 2025 - Buckwheat - P1R3.23-33",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Cabbage (Red)",
@@ -21561,7 +21561,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Pumpkin (Queensland Blue)",
@@ -21666,7 +21666,7 @@
           "first_planted": "2025-10-30",
           "asset_name": "30 OCT 2025 - Buckwheat - P1R3.33-42",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Butternut Pumpkin",
@@ -22143,7 +22143,7 @@
               "species": "Pak Choi"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/pak-choi.jpg"
         },
         {
           "species": "Radish (Tillage)",
@@ -22259,7 +22259,7 @@
           "first_planted": "2025-09-01",
           "asset_name": "SPRING 2025 - Watermelon (Sugar baby) - P1R5.30-35",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/watermelon-sugar-baby.jpg"
         }
       ]
     },
@@ -22291,7 +22291,7 @@
           "first_planted": "2025-10-16",
           "asset_name": "16 OCT 2025 - Buckwheat - P1ED1.0-5",
           "logs": [],
-          "photo_url": ""
+          "photo_url": "photos/buckwheat.jpg"
         },
         {
           "species": "Cabbage (Golden Acre)",

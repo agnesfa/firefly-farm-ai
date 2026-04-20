@@ -376,12 +376,28 @@ class SectionsExporter:
         os.makedirs(photos_dir, exist_ok=True)
 
         remote_photos: dict[str, str] = {}  # {farmos_name: farmOS_url}
-        # include=image pulls the file entities into included[]. page[limit]
-        # is capped at 50 by farmOS; we paginate via links.next.
-        path = "/api/taxonomy_term/plant_type?include=image&page[limit]=50"
-        while path:
+        # Offset-based pagination with stable sort — farmOS `links.next`
+        # is unreliable past ~250 results (CLAUDE.md architecture decision
+        # #11). We have ~300 plant_types, so links.next silently skips
+        # alphabetically-late entries (e.g. "Rose Apple" never appeared
+        # in the paginated response even though the term exists and has
+        # an image reference). Using filter[status]=1 + page[offset] +
+        # stable sort by drupal_internal__tid is reliable.
+        page_size = 50
+        offset = 0
+        guard = 0
+        while guard < 20:  # safety: max 1000 terms
+            guard += 1
+            path = (
+                "/api/taxonomy_term/plant_type?"
+                "filter[status]=1&sort=drupal_internal__tid&include=image"
+                f"&page[limit]={page_size}&page[offset]={offset}"
+            )
             data = self._http_get(path)
             if not data:
+                break
+            terms = data.get("data", []) or []
+            if not terms:
                 break
 
             # Index included files by UUID so we can resolve the relationship.
@@ -398,12 +414,13 @@ class SectionsExporter:
                     url = self.hostname.rstrip("/") + url
                 files_by_id[inc.get("id", "")] = url
 
-            for term in data.get("data", []) or []:
+            for term in terms:
                 attrs = term.get("attributes") or {}
                 name = attrs.get("name", "")
                 image_rel = (term.get("relationships") or {}).get("image") or {}
                 rel_data = image_rel.get("data")
-                # The image field is multi-value on taxonomy terms (data is a list)
+                # The image field is multi-value on taxonomy terms (data is a list).
+                # After ADR 0008 cleanup it should be single-valued, but handle both.
                 if isinstance(rel_data, list) and rel_data:
                     file_id = rel_data[-1].get("id", "")  # latest
                 elif isinstance(rel_data, dict):
@@ -413,18 +430,10 @@ class SectionsExporter:
                 if file_id and file_id in files_by_id and name:
                     remote_photos[name] = files_by_id[file_id]
 
-            # Follow pagination
-            next_link = (data.get("links") or {}).get("next", {})
-            if isinstance(next_link, dict):
-                full_url = next_link.get("href", "")
-            elif isinstance(next_link, str):
-                full_url = next_link
-            else:
-                full_url = ""
-            if full_url:
-                path = full_url[len(self.hostname):] if full_url.startswith(self.hostname) else full_url
-            else:
-                path = None
+            # Advance offset; stop when page is short
+            if len(terms) < page_size:
+                break
+            offset += page_size
 
         # Download each photo, create two versions:
         # 1. Thumbnail: 112×112 square crop (2× retina for 56px CSS cards) ~5KB
