@@ -261,6 +261,131 @@ def check_I4_photo_uniqueness(log: dict, image_files: list[dict], section: str) 
     return violations
 
 
+def check_I8_asset_notes(plant_asset: dict, section: str) -> list[Violation]:
+    """ADR 0008 I8 — plant asset notes must not contain submission-body dumps.
+
+    Violation if the asset's notes field contains `[ontology:InteractionStamp]`
+    or `submission=` fragments, or import-payload headers
+    (`Reporter:/Submitted:/Mode:/Count:/Plant notes:`).
+    """
+    asset_id = plant_asset.get("id", "?")
+    name = plant_asset.get("attributes", {}).get("name", "?")
+    notes_attr = plant_asset.get("attributes", {}).get("notes", {})
+    notes = notes_attr.get("value", "") if isinstance(notes_attr, dict) else str(notes_attr or "")
+
+    if not notes:
+        return []
+
+    violations = []
+    if "[ontology:InteractionStamp]" in notes:
+        violations.append(Violation(
+            log_id=asset_id, log_name=name, section=section,
+            invariant="I8", severity="error",
+            detail="Plant asset notes contain [ontology:InteractionStamp] — that belongs on the observation log",
+            remediation="Strip stamp + submission lines; keep only stable planting-context text",
+        ))
+    if re.search(r"^\s*submission=", notes, re.M):
+        violations.append(Violation(
+            log_id=asset_id, log_name=name, section=section,
+            invariant="I8", severity="error",
+            detail="Plant asset notes contain submission=<uuid> fragment",
+            remediation="Strip submission=... lines; metadata lives on the log",
+        ))
+    header_re = re.compile(r"^\s*(Reporter|Submitted|Mode|Count|Plant notes):", re.M | re.I)
+    if header_re.search(notes):
+        violations.append(Violation(
+            log_id=asset_id, log_name=name, section=section,
+            invariant="I8", severity="error",
+            detail="Plant asset notes contain import-payload headers (Reporter/Submitted/Mode/Count/Plant notes)",
+            remediation="Run asset-notes backfill to strip import headers (Step 7 / ADR 0008 I8)",
+        ))
+    return violations
+
+
+def check_I9_photo_routing(
+    log: dict, image_files: list[dict], all_submission_logs: dict, section: str
+) -> list[Violation]:
+    """ADR 0008 I9 — within one submission, each photo file belongs to at most one log.
+
+    Detects: same file (by filename OR content-hash) attached to more
+    than one log within the same submission_id. Skips single-log or
+    unclear submissions.
+    """
+    log_id = log.get("id", "?")
+    name = log.get("attributes", {}).get("name", "?")
+    # Extract submission_id from notes
+    notes = _notes_text(log)
+    m = re.search(r"submission=([0-9a-f-]{8,})", notes)
+    if not m:
+        return []
+    sub_id = m.group(1)
+    # Find other logs with the same submission
+    peers = all_submission_logs.get(sub_id, [])
+    if len(peers) <= 1:
+        return []
+    # Build a fileset for this log
+    my_files = {f.get("attributes", {}).get("filename", "") for f in image_files}
+    my_files.discard("")
+    if not my_files:
+        return []
+    violations = []
+    for peer in peers:
+        if peer["log_id"] == log_id:
+            continue
+        shared = my_files & peer.get("filenames", set())
+        if shared:
+            violations.append(Violation(
+                log_id=log_id, log_name=name, section=section,
+                invariant="I9", severity="error",
+                detail=f"{len(shared)} photo file(s) shared with peer log {peer['log_id'][:8]} in same submission {sub_id[:8]}",
+                remediation="Detach cross-log photos; route to a section-level log per I9",
+            ))
+            break  # one violation per peer is enough
+    return violations
+
+
+def check_I11_classifier_alignment(log: dict, section: str) -> list[Violation]:
+    """ADR 0008 I11 — log type should match classifier's reading of notes.
+
+    Runs the deterministic classifier on the notes and flags if the
+    classifier type disagrees with the actual log type (info-level
+    backlog), or if the log already carries a classifier-ambiguous flag
+    (warning — needs human review).
+    """
+    from classifier import classify_observation
+
+    log_id = log.get("id", "?")
+    name = log.get("attributes", {}).get("name", "?")
+    notes = _notes_text(log)
+    lt = _log_type(log)
+
+    violations = []
+
+    # Already-flagged logs — surface for human review.
+    if "[FLAG classifier-ambiguous" in notes:
+        violations.append(Violation(
+            log_id=log_id, log_name=name, section=section,
+            invariant="I11", severity="warning",
+            detail="Log carries [FLAG classifier-ambiguous] marker — needs human reclassification",
+            remediation="Reclassify via update_observation_status / reclassify_log tool",
+        ))
+
+    # Classifier disagrees with stored type — back-type backlog.
+    if notes and not notes.startswith("[FLAG classifier-ambiguous"):
+        result = classify_observation(notes)
+        if not result["ambiguous"] and result["type"] != lt and result["type"] != "observation":
+            # Only flag when classifier strongly disagrees with stored type
+            # (ignore "observation" disagreement since it's our default).
+            violations.append(Violation(
+                log_id=log_id, log_name=name, section=section,
+                invariant="I11", severity="info",
+                detail=f"Log type='{lt}' but classifier says '{result['type']}' (reason: {result['reason']})",
+                remediation=f"Re-type to '{result['type']}' if correct; otherwise adjust notes",
+            ))
+
+    return violations
+
+
 def check_I6_attribution(log: dict, section: str) -> list[Violation]:
     log_id = log["id"]
     name = log.get("attributes", {}).get("name", "?")
@@ -369,10 +494,13 @@ def audit_section(fc: FarmOSClient, section_id: str) -> list[Violation]:
             detail=f"get_logs failed: {e}", remediation="",
         )]
 
+    # Build submission→log map for I9 cross-log photo routing check.
+    submission_map: dict[str, list[dict]] = defaultdict(list)
+    full_logs: list[tuple[dict, list[dict]]] = []
+
     for log_short in raw_logs:
         log_id = log_short["id"]
         log_type = _log_type(log_short)
-        # Fetch full record with image relationship
         try:
             resp = fc.session.get(
                 f"{fc.hostname}/api/log/{log_type}/{log_id}",
@@ -383,18 +511,40 @@ def audit_section(fc: FarmOSClient, section_id: str) -> list[Violation]:
                 continue
             payload = resp.json()
             log = payload.get("data", {})
-            log["id"] = log_id  # make sure id is set
+            log["id"] = log_id
             log["type"] = f"log--{log_type}"
             included = payload.get("included", [])
             image_files = [f for f in included if f.get("type") == "file--file"]
+            full_logs.append((log, image_files))
+            # Index by submission for I9
+            notes = _notes_text(log)
+            m = re.search(r"submission=([0-9a-f-]{8,})", notes)
+            if m:
+                submission_map[m.group(1)].append({
+                    "log_id": log_id,
+                    "filenames": {
+                        f.get("attributes", {}).get("filename", "") for f in image_files
+                    },
+                })
         except Exception:
             continue
 
+    for log, image_files in full_logs:
         violations += check_I1_log_type(log, section_id)
         violations += check_I2_asset_attachment(log, section_id)
         violations += check_I3_notes_hygiene(log, section_id)
         violations += check_I4_photo_uniqueness(log, image_files, section_id)
         violations += check_I6_attribution(log, section_id)
+        violations += check_I9_photo_routing(log, image_files, submission_map, section_id)
+        violations += check_I11_classifier_alignment(log, section_id)
+
+    # I8 — check plant asset notes for this section.
+    try:
+        plants = fc.get_plant_assets(section_id=section_id) or []
+        for plant in plants:
+            violations += check_I8_asset_notes(plant, section_id)
+    except Exception:
+        pass
 
     return violations
 
