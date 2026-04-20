@@ -286,3 +286,278 @@ advisory; for new writes it is enforced at write time.
 - ADR 0005: submission-scoped media — owns I4 file-level uniqueness
 - ADR 0006: agent skill framework — `record_fieldwork` skill implements I7
 - ADR 0007: import pipeline reliability — Fix 4 implements write-time enforcement of all invariants
+
+---
+
+## Amendment — 2026-04-20: Invariants I8, I9, I10, I11
+
+- **Status:** proposed (same governance ratification as base ADR)
+- **Authors:** Agnes, Claude
+- **Pre-reading:** `claude-docs/observation-photo-pipeline-review-2026-04-20.md`
+- **Context:** the 2026-04-20 QR-page review (Coriander, Nasturtium,
+  Okra) surfaced three new defect classes not covered by I1–I7:
+  (a) plant asset `notes` field polluted by full submission-body
+  dumps (InteractionStamp + submission_id + Reporter/Mode/Count
+  blocks); (b) photos fanned out across all per-plant logs in a
+  multi-observation submission because the importer had no
+  within-submission routing rule; (c) dead UI radios for
+  `obs_type` (I observed / I did / Action needed) that the
+  importer ignored, leaving log type effectively random. The
+  seven-invariant set is extended to eleven so the contract covers
+  the full observation record — asset, log, photos, and semantic
+  type/status — without gaps. Base invariants I1–I7 are
+  unchanged. Renumbering: the ADR becomes "The Eleven Invariants"
+  once ratified.
+
+### I8 — Asset notes hygiene
+
+A plant asset's `notes` field must contain only stable,
+planting-context text — including the **one-liner narrative** the
+submitter wrote about this plant — and NOT the full submission
+metadata envelope.
+
+- **Allowed:**
+  - Planting date, seed/cutting source, consortium role, permanent
+    notes ("grafted April 2026", "rootstock: Anna", "companion of
+    Pigeon Pea 5m west").
+  - The submitter's **narrative** from the creation submission —
+    i.e. the text AFTER `Plant notes:` in the original import
+    payload ("Leah transcript 14 Apr 2026. two flowers observed",
+    "cilantro ~5cm, early growth, stable"). This text is useful
+    context for anyone reading the QR page and survives as a
+    short-form record of the plant's origin.
+- **Forbidden:**
+  - `[ontology:InteractionStamp]` lines — belong on the log, not
+    the asset.
+  - `submission=<uuid>` fragments — same rationale.
+  - Pure-metadata headers: `Reporter:`, `Submitted:`, `Mode:`,
+    `Count:` lines. These are timestamps / mode / counts with no
+    narrative content; they're already captured on the observation
+    log.
+  - Boilerplate phrases ("New plant added via field observation").
+- **Rationale:** asset and log are not duplicates. Metadata (who,
+  when, how, count-delta, stamp) lives on the log where it belongs.
+  But the human narrative ("two flowers observed") is more useful
+  as stable asset context than as a one-shot log note — it lets the
+  QR card render `"Leah transcript 14 Apr 2026. two flowers
+  observed"` instead of an empty card. This strikes the balance
+  between clean asset records and useful public-facing context.
+- **Enforcement at write time.** `create_plant` sanitises notes
+  via `sanitise_asset_notes` / `sanitiseAssetNotes`: strips
+  InteractionStamp + submission= + metadata-header lines; strips
+  the literal `Plant notes:` PREFIX from any line but keeps the
+  narrative that follows. The full stamped / metadata-carrying
+  notes are written to the companion observation log only.
+- **Enforcement at audit time.** Validator I8 check greps
+  `asset.notes` for `[ontology:InteractionStamp]`, `submission=`,
+  or any of the metadata prefixes and flags any match. Backfill
+  script applies the same sanitiser to legacy assets.
+
+### I9 — Photo routing within a submission
+
+Every photo file attached to a log must match the log's scope.
+Given the current observe-form UX, this reduces to two cases:
+
+- **Single-observation submission** (`mode ∈ {quick, new_plant}`,
+  `observations.length = 1`): all submission photos attach to the
+  one observation log for that plant. Straightforward — there is
+  only one log to attach to.
+- **Multi-observation submission** (`mode = inventory`,
+  `observations.length > 1`): all submission photos attach to ONE
+  section-level observation log (`asset_ids=[]`,
+  `location_ids=[section_uuid]`). Per-plant observation logs get
+  zero photos — those logs are count/condition-only updates.
+- **Never:** the same photo file attached to more than one log
+  within a submission.
+- **Rationale:** the UX does not capture per-plant→photo binding
+  in inventory mode (no per-plant photo input — photos there are
+  section-scoped by form construction). The importer must respect
+  that scoping. Fanning photos onto every plant log pollutes every
+  plant card on the QR page and creates cross-plant mis-attribution
+  that takes manual review to untangle.
+- **Enforcement at write time.** `import_observations` decides log
+  routing per submission, not per observation. It creates the
+  section log lazily (only if photos or section_notes exist) and
+  attaches each media file to exactly one log. This subsumes the
+  Phase 3c addendum's section-log split.
+- **Enforcement at audit time.** Validator I9 check counts files
+  shared across multiple logs in the same submission and flags any
+  such file as a violation.
+
+### I10 — QR render hygiene
+
+The site generator must produce invariant-respecting output.
+
+- **Plant card (section view):** `plant.notes` is rendered only
+  after stripping `[ontology:InteractionStamp]` and `submission=`
+  lines. Remaining content is truncated to 120 characters; if the
+  stripped content is empty or trivial, the notes block is omitted
+  entirely from the card.
+- **Log-detail page:** full `notes.value` is rendered with the
+  InteractionStamp moved to a "Provenance" block (current
+  behaviour of `render_log_detail_page` — codified).
+- **Section page:** section-level observation logs (`asset_ids=[]`,
+  `location_ids=[section_uuid]`) render in a dedicated "Field
+  observations" block above the plant inventory. Today these logs
+  exist in farmOS (7 created during Phase 2A cleanup) but are
+  invisible on the QR page; I10 closes that render gap.
+- **Rationale:** the QR page is the primary read surface for
+  non-technical team members and visitors. If asset notes are
+  dumped raw or section-level logs don't render, what the reader
+  sees does not reflect the actual state of the record. I10 makes
+  rendering a first-class invariant.
+
+### I11 — Log type & status from notes content, not UI radios
+
+The `type` (observation / activity / transplanting / seeding /
+harvest) and `status` (pending / done) of every imported log must
+be derived from the semantic content of its notes text,
+cross-referenced with `knowledge/farm_ontology.yaml` verb/action
+mappings. They must NOT be derived from a UI form radio button.
+
+- **Rationale.** UI radios in Single-Plant mode (`obs_type`:
+  "I observed" / "I did" / "Action needed") are shipped in the
+  submission payload but are not read by any importer code — the
+  value is dead. Full-Section mode has no such radios at all, so
+  even if the plumbing were fixed, the signal is only present on
+  half the submissions. Relying on a volunteer to self-classify
+  every entry is also fragile: workers won't internalise the
+  farmOS log-type taxonomy. The text they write is ground truth;
+  the classifier reads it. This brings I1 (log-type correctness)
+  from audit-time discovery to write-time enforcement.
+
+#### I11 — Classification rules (initial, deterministic)
+
+Applied to the lowercased notes text; matches are whole-word
+unless noted. First matching rule wins in the following precedence
+order:
+
+1. `seeded`, `sowed`, `seed` (as verb), `germinated` → `type=seeding`.
+2. `transplanted`, `transplant`, `planted`, `planting`, `plant`
+   (as verb), `moved`, `relocated`, `replanted` → `type=transplanting`.
+3. `harvested`, `harvest`, `picked`, `collected`, `yielded`,
+   `gathered` → `type=harvest`.
+4. `chop`, `chopped`, `dropped`, `pruned`, `prune`, `cut back`,
+   `mulched`, `mulch`, `weeded`, `weed`, `watered`, `watering`,
+   `sprayed`, `applied`, `inoculated`, `fertilised`, `composted`,
+   `dug`, `tilled` → `type=activity`.
+5. `needs`, `should`, `to do`, `todo`, `urgent`, `action required`,
+   `action needed`, `please`, `must`, `tbd`, or any leading-
+   imperative verb → `status=pending` (tells the log it's a TODO
+   task regardless of type).
+6. Otherwise — past-tense narrative of observed state without an
+   action verb → `type=observation`, `status=done`.
+
+Rules 5 and 6 compose with rules 1–4: an activity can be `pending`
+("needs watering"), a transplanting can be `pending`
+("transplant tomorrow"), etc.
+
+#### I11 — Ambiguity handling (Q5 policy)
+
+If classifier confidence falls below threshold (e.g., competing
+verb matches without context, or a text that matches no rule):
+
+1. **The log IS created** — submissions are never lost.
+2. Default classification: `type=observation`, `status=pending`.
+3. A marker is prepended to the notes value:
+   `[FLAG classifier-ambiguous: <reason>]`. Visible on the QR
+   log-detail page and in farmOS UI.
+4. The log MUST surface to human review via all of:
+   - `query_logs(status="pending")` — session-open protocol.
+   - `validate_observations.py` as an I11 violation until
+     reclassified.
+   - A dedicated MCP tool
+     `list_classifier_ambiguous(scope=...)` returning the review
+     queue with classifier reasoning.
+   - The `farm_context` integrity gate flags the backlog size.
+5. A human reviewer reclassifies via
+   `update_observation_status` (or a new `reclassify_log` tool).
+   The correction is recorded per §I11 continuous learning below.
+
+#### I11 — Continuous learning
+
+Every human reclassification writes a persistent correction record
+to `classifier_corrections.jsonl` (or a team-memory entry with
+`category=classifier_correction`):
+
+```json
+{
+  "log_id": "<uuid>",
+  "original_notes": "<text>",
+  "classifier_output": {"type": "observation", "status": "pending", "confidence": 0.31, "reason": "..."},
+  "human_correction": {"type": "activity", "status": "done"},
+  "reviewer": "<name>",
+  "timestamp": "<iso8601>",
+  "notes": "<reviewer's explanation of the correction>"
+}
+```
+
+These records feed three loops:
+
+- **Rule tuning (now, deterministic).** When a class of
+  mis-classification recurs, Agnes/Claire add the missed verb or
+  pattern to the verb list above. The ADR is amended.
+- **Few-shot examples (post-FASF, Step 9).** When the classifier
+  is upgraded from deterministic to agent-skill
+  (`classify_observation` per ADR 0006), the corrections become
+  training data the skill references at classification time.
+- **Accuracy metric (ongoing).** `system_health()` surfaces
+  classifier first-attempt success rate across a rolling window.
+  Degradation beyond a threshold triggers a review.
+
+#### I11 — UI consequence
+
+The `obs-type` radio group at
+`generate_site.py:1131-1144` is removed. The Single-Plant form
+becomes: optional photo(s) + count + condition + free-text notes.
+That's what the submitter can judge. Semantic labeling is not
+their job.
+
+### Amendment — Implementation plan (extends base Phase 1–4)
+
+The base ADR's Phase 1 (validator) and Phase 3 (write-time
+enforcement) extend to cover I8–I11. Ordered steps (see pre-reading
+for full detail):
+
+1. **Generator strip + truncate** — I10 partial; independent.
+2. **`create_plant` notes split** — I8 write-time.
+3. **Add-new-plant: save all PlantNet angles** — UX clarity; log
+   gains complete field evidence.
+4. **Importer photo routing (Phase 3c)** — I9 write-time.
+5. **Deterministic log-type classifier + remove UI radios** —
+   I11 write-time. Classifier ships before UI change so any
+   regression has a rollback path.
+6. **Validator I8 + I9 + I10 + I11 checks** — audit-time.
+7. **Backfill script** — detach I8 content from asset notes,
+   re-route I9 cross-log photos per ADR 0005 Option B, re-type
+   I11-violating legacy logs via classifier.
+8. **Phase 3c render** — section-level log block on QR section
+   page. I10 completion.
+9. **(Post-ADR 0006 ratification)** Skill upgrade: swap
+   deterministic classifier for agent-skill with corrections as
+   few-shot examples. No invariant change — I11 contract is
+   stable across implementations.
+
+### Amendment — Open-questions status
+
+All open questions raised during the 2026-04-20 review have been
+resolved before drafting this amendment:
+
+- **Q1** (save all PlantNet angles) — yes.
+- **Q2** (legacy orphan cleanup) — detach and delete (ADR 0005
+  Option B).
+- **Q3** (ratification order) — this amendment first; skill
+  upgrade deferred until pipeline is stable.
+- **Q4** (drop UI radios) — yes, classifier-driven.
+- **Q5** (ambiguity failure-mode) — succeed-with-flag, conditional
+  on systematic surfacing to human review queue (specified in I11
+  above).
+- **Q5b** (continuous learning) — correction records persistent;
+  feed rule tuning, skill few-shot, accuracy metric.
+
+### Amendment — Links
+
+- `claude-docs/observation-photo-pipeline-review-2026-04-20.md` — full pre-reading with defect traces
+- ADR 0005 — closing note on per-plant UI scope (same date amendment)
+- ADR 0006 — FASF; receives I11 classifier as a skill post-ratification
+- `knowledge/farm_ontology.yaml` — verb mappings consumed by I11 classifier

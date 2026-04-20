@@ -224,14 +224,24 @@ Commit SHA at time of writing: _filled in when committed_
   the correct log. Low priority — Leah will do another walk, and the
   next one will work correctly from end to end.
 
-- **Per-plant photo capture UI** — the current observe.js flow lets
-  the worker take ONE hero photo per submission (in single-plant mode)
-  plus additional photos. For most workers this is correct: one
-  submission = one plant = one photo. The bug only manifests when
-  the same photo set is shared across a folder due to backend storage.
-  A future enhancement could tag each photo with the selected species
-  at capture time, enabling server-side routing even without filename
-  prefixes. Deferred.
+- **Per-plant photo capture UI — CLOSED 2026-04-20.** The 2026-04-20
+  pipeline review (`claude-docs/observation-photo-pipeline-review-2026-04-20.md`)
+  established that per-plant photo capture is **out of scope by
+  design**, not deferred. Rationale:
+  - **Single-Plant modes** (`quick`, `new_plant`) submit exactly one
+    observation per submission; all submission photos attach to that
+    one log unambiguously. No per-plant tagging needed.
+  - **Full-Section inventory mode** has no per-plant photo input by
+    design; photos in that mode are section-level and the importer
+    attaches them to a section-level observation log
+    (`asset_ids=[]`, `location_ids=[section_uuid]`) per ADR 0008
+    invariant I9.
+  - Within-submission routing is therefore a function of the
+    submission's mode, not of per-photo tagging. The filename scheme
+    `{sub_id}_{section}_{target}_{counter}.jpg` is sufficient.
+  - If a future UX ever adds per-plant photo input to inventory mode,
+    the filename scheme would extend to include a species slug and
+    I9 would revisit; until then this question is resolved.
 
 - **Observations.gs deploy coordination** — we now have TWO pending
   Apps Script deploys in this session: KnowledgeBase.gs (ADR 0002,
