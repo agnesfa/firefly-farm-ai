@@ -110,8 +110,10 @@ def paginate_offset(
         for item in items:
             yield item, included_index
 
-        if len(items) < limit:
-            break
+        # Always advance offset and continue until an empty page. farmOS
+        # may return fewer than `limit` items on a page without being the
+        # last page (e.g. permission filtering, internal limits). The only
+        # reliable "end of collection" signal is items == [].
         offset += limit
 
 
