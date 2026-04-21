@@ -2703,6 +2703,25 @@ def import_observations_batch(
 
     unique_ids = list(dict.fromkeys(submission_ids))
 
+    # ADR 0007 Fix 6 — batch-size cap. 5 is the safe ceiling given the
+    # current 60s MCP timeout (each submission takes 3-10s). Raise this
+    # only when Fix 3 (async job queue) ships.
+    MAX_BATCH_SIZE = 5
+    if len(unique_ids) > MAX_BATCH_SIZE:
+        return json.dumps({
+            "error": f"Batch size {len(unique_ids)} exceeds limit {MAX_BATCH_SIZE}.",
+            "reason": (
+                f"The synchronous import path cannot reliably complete more "
+                f"than {MAX_BATCH_SIZE} submissions within the 60s MCP "
+                f"timeout (each submission takes 3-10s). Import in chunks of "
+                f"{MAX_BATCH_SIZE} or fewer, or wait for the async job queue "
+                f"(ADR 0007 Fix 3)."
+            ),
+            "submitted_count": len(unique_ids),
+            "limit": MAX_BATCH_SIZE,
+            "suggested": f"import_observations_batch(submission_ids=submission_ids[:{MAX_BATCH_SIZE}])",
+        })
+
     per_submission: list = []
     batch_errors: list = []
     total_actions = 0

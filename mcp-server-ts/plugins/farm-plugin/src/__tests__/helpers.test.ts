@@ -66,6 +66,38 @@ describe('parseDate', () => {
     expect(ts).toBeGreaterThanOrEqual(before);
     expect(ts).toBeLessThanOrEqual(after + 1);
   });
+
+  // ── ADR 0008 I12 — future-timestamp guard ──────────────────────
+
+  it('I12: rejects year-typo future date (2026-12-18)', () => {
+    expect(() => parseDate('2026-12-18')).toThrow(/Refusing future-dated/);
+  });
+
+  it('I12: rejects arbitrary far-future date', () => {
+    expect(() => parseDate('2030-01-01')).toThrow(/ADR 0008 I12/);
+  });
+
+  it('I12: accepts today', () => {
+    const AEST_OFFSET = 10 * 60 * 60 * 1000;
+    const today = new Date(Date.now() + AEST_OFFSET).toISOString().slice(0, 10);
+    const ts = parseDate(today);
+    expect(ts).toBeGreaterThan(0);
+  });
+
+  it('I12: accepts within 24h grace window', () => {
+    // Pick a date 12h ahead — safely inside the AEST↔UTC grace
+    const AEST_OFFSET = 10 * 60 * 60 * 1000;
+    const twelveHoursAhead = new Date(Date.now() + 12 * 60 * 60 * 1000 + AEST_OFFSET)
+      .toISOString().slice(0, 10);
+    const ts = parseDate(twelveHoursAhead);
+    expect(ts).toBeGreaterThan(0);
+  });
+
+  it('I12: rejects beyond 24h grace window', () => {
+    const threeDaysAhead = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+      .toISOString().slice(0, 10);
+    expect(() => parseDate(threeDaysAhead)).toThrow(/Refusing future-dated/);
+  });
 });
 
 // ── formatPlantedLabel ────────────────────────────────────────

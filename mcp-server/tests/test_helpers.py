@@ -88,6 +88,39 @@ class TestParseDate:
         after = int(datetime.now(tz=AEST).timestamp())
         assert before <= ts <= after + 1
 
+    # ── ADR 0008 I12 — future-timestamp guard ────────────────────
+
+    def test_i12_rejects_year_typo_future_date(self):
+        """Year-typo like '2026-12-18' (when now is April) is refused."""
+        import pytest
+        with pytest.raises(ValueError, match="Refusing future-dated"):
+            parse_date("2026-12-18")
+
+    def test_i12_rejects_far_future_date(self):
+        """Arbitrary far-future date (e.g. 2030) is refused."""
+        import pytest
+        with pytest.raises(ValueError, match="ADR 0008 I12"):
+            parse_date("2030-01-01")
+
+    def test_i12_accepts_today(self):
+        """Today's date passes the guard."""
+        today = datetime.now(tz=AEST).strftime("%Y-%m-%d")
+        ts = parse_date(today)
+        assert ts > 0
+
+    def test_i12_accepts_within_24h_grace(self):
+        """Timestamp within 24h of now passes (AEST↔UTC edge case tolerance)."""
+        tomorrow = (datetime.now(tz=AEST) + timedelta(hours=12)).strftime("%Y-%m-%d")
+        ts = parse_date(tomorrow)
+        assert ts > 0
+
+    def test_i12_rejects_beyond_24h_grace(self):
+        """Timestamp more than 24h past now is refused."""
+        import pytest
+        far_tomorrow = (datetime.now(tz=AEST) + timedelta(days=3)).strftime("%Y-%m-%d")
+        with pytest.raises(ValueError, match="Refusing future-dated"):
+            parse_date(far_tomorrow)
+
 
 # ── format_planted_label ──────────────────────────────────────
 

@@ -39,6 +39,30 @@ export const importObservationsBatchTool: Tool = {
   handler: async (params, extra) => {
     const uniqueIds = Array.from(new Set(params.submission_ids));
 
+    // ADR 0007 Fix 6 — batch-size cap. 5 is the safe ceiling given the
+    // current 60s MCP timeout (each submission takes 3-10s). Raise this
+    // only when Fix 3 (async job queue) ships.
+    const MAX_BATCH_SIZE = 5;
+    if (uniqueIds.length > MAX_BATCH_SIZE) {
+      return {
+        content: [{
+          type: 'text' as const,
+          text: JSON.stringify({
+            error: `Batch size ${uniqueIds.length} exceeds limit ${MAX_BATCH_SIZE}.`,
+            reason:
+              `The synchronous import path cannot reliably complete more ` +
+              `than ${MAX_BATCH_SIZE} submissions within the 60s MCP ` +
+              `timeout (each submission takes 3-10s). Import in chunks of ` +
+              `${MAX_BATCH_SIZE} or fewer, or wait for the async job queue ` +
+              `(ADR 0007 Fix 3).`,
+            submitted_count: uniqueIds.length,
+            limit: MAX_BATCH_SIZE,
+            suggested: `import_observations_batch({ submission_ids: submission_ids.slice(0, ${MAX_BATCH_SIZE}) })`,
+          }, null, 2),
+        }],
+      };
+    }
+
     const perSubmission: any[] = [];
     let totalActions = 0;
     const batchErrors: string[] = [];

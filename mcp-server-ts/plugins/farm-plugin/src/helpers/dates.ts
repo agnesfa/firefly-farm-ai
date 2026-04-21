@@ -19,10 +19,30 @@ const MONTH_ABBREVS = [
 ];
 
 /**
+ * ADR 0008 I12: refuse timestamps more than 24h past now. 24h grace
+ * accommodates AEST↔UTC edge cases without admitting year-typos.
+ */
+function guardFutureTs(ts: number, raw: string): number {
+  const nowTs = Math.floor(Date.now() / 1000);
+  if (ts > nowTs + 86400) {
+    const human = new Date(ts * 1000).toISOString().slice(0, 10);
+    throw new Error(
+      `Refusing future-dated timestamp: '${raw}' resolved to ${human}, ` +
+      `more than 24h after now. Possible year-typo (e.g. '2026-12-18' ` +
+      `when you meant '2025-12-18'). See ADR 0008 I12.`,
+    );
+  }
+  return ts;
+}
+
+/**
  * Parse date string to Unix timestamp (farmOS format).
  *
  * Handles: ISO "2025-10-09", ISO with time "2026-03-09T03:15:00.000Z",
  * text "2025-MARCH-20 to 24TH", fallback to now.
+ *
+ * Throws if input resolves to a timestamp more than 24h in the future
+ * (ADR 0008 I12).
  */
 export function parseDate(dateStr: string | null | undefined): number {
   if (!dateStr) {
@@ -37,15 +57,14 @@ export function parseDate(dateStr: string | null | undefined): number {
       parseInt(isoMatch[2]) - 1,
       parseInt(isoMatch[3]),
     ));
-    // Treat as AEST: subtract offset so the UTC representation is correct for AEST midnight
-    return Math.floor((dt.getTime() - AEST_OFFSET_MS) / 1000);
+    return guardFutureTs(Math.floor((dt.getTime() - AEST_OFFSET_MS) / 1000), dateStr);
   }
 
   // ISO with time: 2026-03-09T03:15:00.000Z
   if (dateStr.includes('T')) {
     const dt = new Date(dateStr);
     if (!isNaN(dt.getTime())) {
-      return Math.floor(dt.getTime() / 1000);
+      return guardFutureTs(Math.floor(dt.getTime() / 1000), dateStr);
     }
   }
 
@@ -64,11 +83,12 @@ export function parseDate(dateStr: string | null | undefined): number {
         }
       }
       const dt = new Date(Date.UTC(year, MONTH_NAMES[monthStr], day));
-      return Math.floor((dt.getTime() - AEST_OFFSET_MS) / 1000);
+      return guardFutureTs(Math.floor((dt.getTime() - AEST_OFFSET_MS) / 1000), dateStr);
     }
   }
 
-  // Fallback: now
+  // Fallback: now (unparseable input is safe; a future-dated successful
+  // parse is not — guarded above).
   return Math.floor(Date.now() / 1000);
 }
 

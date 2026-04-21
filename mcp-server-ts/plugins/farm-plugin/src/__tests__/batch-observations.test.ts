@@ -233,4 +233,62 @@ describe('import_observations_batch', () => {
     expect(result.photo_pipeline.verification).toBeDefined();
     expect(result.photo_pipeline.media_files_fetched).toBe(0);  // dry run
   });
+
+  // ── ADR 0007 Fix 6 — batch-size cap ────────────────────────────
+
+  it('Fix 6: refuses batch size > 5 with a clear error', async () => {
+    const result = parse(
+      await importObservationsBatchTool.handler({
+        submission_ids: ['sub-1', 'sub-2', 'sub-3', 'sub-4', 'sub-5', 'sub-6'],
+        reviewer: 'Claude',
+        dry_run: false,
+        continue_on_error: true,
+      } as any, undefined as any),
+    );
+
+    expect(result.error).toMatch(/Batch size 6 exceeds limit 5/);
+    expect(result.reason).toMatch(/60s MCP timeout/);
+    expect(result.submitted_count).toBe(6);
+    expect(result.limit).toBe(5);
+    expect(mockObsClient.listObservations).not.toHaveBeenCalled();
+  });
+
+  it('Fix 6: accepts batch size of exactly 5', async () => {
+    mockObsClient.listObservations.mockImplementation(async (params: any) => ({
+      success: true,
+      observations: [makeObservation({ submission_id: params.submission_id })],
+    }));
+
+    const result = parse(
+      await importObservationsBatchTool.handler({
+        submission_ids: ['sub-1', 'sub-2', 'sub-3', 'sub-4', 'sub-5'],
+        reviewer: 'Claude',
+        dry_run: true,
+        continue_on_error: true,
+      } as any, undefined as any),
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(result.submitted).toBe(5);
+  });
+
+  it('Fix 6: deduplicates before counting against the cap', async () => {
+    mockObsClient.listObservations.mockImplementation(async (params: any) => ({
+      success: true,
+      observations: [makeObservation({ submission_id: params.submission_id })],
+    }));
+
+    // 6 entries but only 3 unique → should pass
+    const result = parse(
+      await importObservationsBatchTool.handler({
+        submission_ids: ['sub-1', 'sub-2', 'sub-3', 'sub-1', 'sub-2', 'sub-3'],
+        reviewer: 'Claude',
+        dry_run: true,
+        continue_on_error: true,
+      } as any, undefined as any),
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(result.submitted).toBe(3);  // unique count
+  });
 });

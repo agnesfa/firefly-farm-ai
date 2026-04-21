@@ -16,16 +16,35 @@ PLANT_UNIT_UUID = "2371b79e-a87b-4152-b6e4-ea6a9ed37fd0"
 
 # ── Date utilities ──────────────────────────────────────────────
 
+def _guard_future_ts(ts: int, raw: str) -> int:
+    # ADR 0008 I12: refuse timestamps more than 24h past now. 24h grace
+    # accommodates AEST↔UTC edge cases without admitting year-typos.
+    now_ts = int(datetime.now(tz=AEST).timestamp())
+    if ts > now_ts + 86400:
+        human = datetime.fromtimestamp(ts, tz=AEST).strftime('%Y-%m-%d')
+        raise ValueError(
+            f"Refusing future-dated timestamp: '{raw}' resolved to {human}, "
+            f"more than 24h after now. Possible year-typo (e.g. '2026-12-18' "
+            f"when you meant '2025-12-18'). See ADR 0008 I12."
+        )
+    return ts
+
+
 def parse_date(date_str: str) -> int:
     """Parse date string to Unix timestamp (farmOS format).
 
     Handles multiple formats from farm data:
     - ISO: "2025-10-09"
     - Text: "2025-MARCH-20 to 24TH"
-    - Fallback: returns April 1, 2025
+    - Fallback: returns now
+
+    Rejects future-dated inputs more than 24h past now (ADR 0008 I12).
 
     Returns:
         Unix timestamp as integer
+
+    Raises:
+        ValueError: input resolves to a timestamp more than 24h in the future.
     """
     if not date_str:
         return int(datetime.now(tz=AEST).timestamp())
@@ -33,16 +52,18 @@ def parse_date(date_str: str) -> int:
     # ISO format: 2025-10-09
     try:
         dt = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=AEST)
-        return int(dt.timestamp())
-    except ValueError:
-        pass
+        return _guard_future_ts(int(dt.timestamp()), date_str)
+    except ValueError as e:
+        if "Refusing future-dated" in str(e):
+            raise
 
     # ISO with time: 2026-03-09T03:15:00.000Z
     try:
         dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-        return int(dt.timestamp())
-    except ValueError:
-        pass
+        return _guard_future_ts(int(dt.timestamp()), date_str)
+    except ValueError as e:
+        if "Refusing future-dated" in str(e):
+            raise
 
     # "2025-MARCH-20 to 24TH" format
     try:
@@ -64,11 +85,15 @@ def parse_date(date_str: str) -> int:
                     except ValueError:
                         day = 1
                 dt = datetime(year, month_names[month_str], max(1, day), tzinfo=AEST)
-                return int(dt.timestamp())
-    except (ValueError, IndexError):
+                return _guard_future_ts(int(dt.timestamp()), date_str)
+    except ValueError as e:
+        if "Refusing future-dated" in str(e):
+            raise
+    except IndexError:
         pass
 
-    # Fallback: now
+    # Fallback: now (unparseable input is safe, but a future-dated
+    # successful parse is not — the guard above handles that case).
     return int(datetime.now(tz=AEST).timestamp())
 
 

@@ -255,3 +255,59 @@ class TestImportObservationsBatch:
         import_observations_batch(submission_ids=["a", "a", "b", "a", "b"])
 
         assert seen == ["a", "b"]
+
+    # ── ADR 0007 Fix 6 — batch-size cap ─────────────────────────
+
+    def test_fix6_refuses_batch_larger_than_5(self, monkeypatch):
+        called = []
+        monkeypatch.setattr(
+            "server.import_observations",
+            lambda submission_id, reviewer="Claude", dry_run=False: called.append(submission_id) or "{}",
+        )
+
+        result = json.loads(import_observations_batch(
+            submission_ids=["s1", "s2", "s3", "s4", "s5", "s6"],
+        ))
+
+        assert "Batch size 6 exceeds limit 5" in result["error"]
+        assert "60s MCP timeout" in result["reason"]
+        assert result["submitted_count"] == 6
+        assert result["limit"] == 5
+        assert called == []  # importer never invoked
+
+    def test_fix6_accepts_batch_of_exactly_5(self, monkeypatch):
+        monkeypatch.setattr(
+            "server.import_observations",
+            lambda submission_id, reviewer="Claude", dry_run=False: json.dumps({
+                "submission_id": submission_id,
+                "total_actions": 1,
+                "photo_pipeline": {"verification": {}},
+            }),
+        )
+
+        result = json.loads(import_observations_batch(
+            submission_ids=["s1", "s2", "s3", "s4", "s5"],
+            dry_run=True,
+        ))
+
+        assert "error" not in result
+        assert result["submitted"] == 5
+
+    def test_fix6_dedup_runs_before_size_check(self, monkeypatch):
+        monkeypatch.setattr(
+            "server.import_observations",
+            lambda submission_id, reviewer="Claude", dry_run=False: json.dumps({
+                "submission_id": submission_id,
+                "total_actions": 1,
+                "photo_pipeline": {"verification": {}},
+            }),
+        )
+
+        # 6 entries, only 3 unique → passes
+        result = json.loads(import_observations_batch(
+            submission_ids=["a", "b", "c", "a", "b", "c"],
+            dry_run=True,
+        ))
+
+        assert "error" not in result
+        assert result["submitted"] == 3
