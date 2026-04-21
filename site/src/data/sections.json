@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-20T22:31:29.389655+10:00",
+  "generated_at": "2026-04-21T14:03:56.564293+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -11148,12 +11148,12 @@
       "length": "10m",
       "has_trees": true,
       "first_planted": "2025-10-01",
-      "inventory_date": "2026-12-18",
+      "inventory_date": "2026-03-06",
       "plants": [
         {
           "species": "Papaya",
           "strata": "high",
-          "count": 0,
+          "count": 2,
           "notes": "ADD 7 PAPAYA WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Papaya - P2R4.52-62",
@@ -11161,10 +11161,10 @@
             {
               "uuid": "d17d68c2-45b0-403e-971b-256a2bb24469",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Papaya",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Papaya"
             }
@@ -11174,7 +11174,7 @@
         {
           "species": "Ice Cream Bean",
           "strata": "high",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 5 ICE CREAM BEAN WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Ice Cream Bean - P2R4.52-62",
@@ -11182,10 +11182,10 @@
             {
               "uuid": "8215e0f5-2ca7-4622-87d7-e69f870e4939",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Ice Cream Bean",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Ice Cream Bean"
             }
@@ -11195,7 +11195,7 @@
         {
           "species": "Avocado",
           "strata": "high",
-          "count": 0,
+          "count": 4,
           "notes": "REPLACE AVOCADO IF BAD STATE last 1 planted bad shape",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Avocado - P2R4.52-62",
@@ -11203,10 +11203,30 @@
             {
               "uuid": "61dae49e-c0f6-4943-985f-97ffc6fd475d",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Avocado",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Avocado"
+            },
+            {
+              "uuid": "834a93e8-32bf-404a-b61a-7ef6d885679f",
+              "type": "observation",
+              "date": "2026-03-06",
+              "name": "Inventory P2R4.52-62 — Avocado (post-planting Mar 6)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Avocado"
+            },
+            {
+              "uuid": "2ded3944-e0bf-48e6-bb25-cc12056fb339",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Avocado (+3)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Avocado"
             }
@@ -11216,7 +11236,7 @@
         {
           "species": "Pigeon Pea",
           "strata": "high",
-          "count": 0,
+          "count": 4,
           "notes": "ADD 10 PIGEON PEA WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Pigeon Pea - P2R4.52-62",
@@ -11224,10 +11244,30 @@
             {
               "uuid": "4abfd1e9-5fa7-47d7-9da3-55a4986786aa",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Pigeon Pea",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Pigeon Pea"
+            },
+            {
+              "uuid": "d6b71c36-3a89-4eaa-a1f2-3ca2eebe6627",
+              "type": "observation",
+              "date": "2026-03-06",
+              "name": "Inventory P2R4.52-62 — Pigeon Pea (post-planting Mar 6)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Pigeon Pea"
+            },
+            {
+              "uuid": "fe26f1f4-8d0e-47b0-a7cf-063e1ca89436",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Pigeon Pea (+2)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Pigeon Pea"
             }
@@ -11237,18 +11277,18 @@
         {
           "species": "Banagrass",
           "strata": "high",
-          "count": 0,
+          "count": 4,
           "notes": "ADD 4 BANAGRASS when ready",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Banagrass - P2R4.52-62",
           "logs": [
             {
-              "uuid": "60f7c603-fddf-43e6-851e-10a0c7c707c7",
-              "type": "observation",
-              "date": "2026-12-18",
-              "name": "Inventory P2R4.52-62 — Banagrass",
-              "notes": "",
-              "notes_full": "",
+              "uuid": "91335e6e-996c-4fe9-8911-f1d646ea80bb",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Banagrass (+4)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Banagrass"
             }
@@ -11258,18 +11298,18 @@
         {
           "species": "Jacaranda",
           "strata": "medium",
-          "count": 0,
+          "count": 2,
           "notes": "ADD WATTLE/JACARANDA if availability",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Jacaranda - P2R4.52-62",
           "logs": [
             {
-              "uuid": "94c65010-6f00-41fd-8761-c4b88f049754",
-              "type": "observation",
-              "date": "2026-12-18",
-              "name": "Inventory P2R4.52-62 — Jacaranda",
-              "notes": "",
-              "notes_full": "",
+              "uuid": "00b4d11d-f607-4940-9226-73be5a3d3488",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Jacaranda (+2)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Jacaranda"
             }
@@ -11279,18 +11319,18 @@
         {
           "species": "Nettle",
           "strata": "low",
-          "count": 0,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Nettle - P2R4.52-62",
           "logs": [
             {
-              "uuid": "f5538039-1f4a-42ec-9a81-dff5b534bda6",
-              "type": "observation",
-              "date": "2026-12-18",
-              "name": "Inventory P2R4.52-62 — Nettle",
-              "notes": "",
-              "notes_full": "",
+              "uuid": "702afe97-374e-40c3-b631-21cc306fea63",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Nettle (+2)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Nettle"
             }
@@ -11300,7 +11340,7 @@
         {
           "species": "Basil - Sweet (Classic)",
           "strata": "low",
-          "count": 0,
+          "count": 5,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Basil - Sweet (Classic) - P2R4.52-62",
@@ -11308,10 +11348,30 @@
             {
               "uuid": "5f9181fc-8c8e-44a0-9af9-43bfc4fd4c40",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Basil - Sweet (Classic)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Basil - Sweet (Classic)"
+            },
+            {
+              "uuid": "8c4d7564-1427-4118-82e7-66884c9002a5",
+              "type": "observation",
+              "date": "2026-03-06",
+              "name": "Inventory P2R4.52-62 — Basil - Sweet (Classic) (post-planting Mar 6)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Basil - Sweet (Classic)"
+            },
+            {
+              "uuid": "dcf6412c-aeed-4d34-9ae7-ebb963d44f99",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Basil - Sweet (Classic) (+3)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Basil - Sweet (Classic)"
             }
@@ -11321,7 +11381,7 @@
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 4 GERANIUM",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Geranium - P2R4.52-62",
@@ -11329,10 +11389,10 @@
             {
               "uuid": "f6c10dc6-4cb1-4f0e-bad6-383773efc770",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Geranium",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Geranium"
             }
@@ -11342,7 +11402,7 @@
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 0,
+          "count": 3,
           "notes": "ADD 4 COMFREY WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Comfrey - P2R4.52-62",
@@ -11350,10 +11410,30 @@
             {
               "uuid": "c836c621-515b-455c-9082-1c6699e81863",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Comfrey",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Comfrey"
+            },
+            {
+              "uuid": "71710557-99fa-4da9-ab7a-85465930519b",
+              "type": "observation",
+              "date": "2026-03-06",
+              "name": "Inventory P2R4.52-62 — Comfrey (post-planting Mar 6)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Comfrey"
+            },
+            {
+              "uuid": "5fec20e7-d4e0-4c10-896e-e16adb5d6c54",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.52-62 — Comfrey (+2)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Comfrey"
             }
@@ -11363,7 +11443,7 @@
         {
           "species": "Pumpkin (Generic)",
           "strata": "low",
-          "count": 0,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Pumpkin (Generic) - P2R4.52-62",
@@ -11371,10 +11451,10 @@
             {
               "uuid": "ca251773-9282-4fca-9e82-fe513dcac1e8",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Pumpkin (Generic)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Pumpkin (Generic)"
             }
@@ -11384,7 +11464,7 @@
         {
           "species": "Cabbage (Red)",
           "strata": "low",
-          "count": 0,
+          "count": 1,
           "notes": "CHOP N DROP greenmanure when senescent",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Cabbage (Red) - P2R4.52-62",
@@ -11392,10 +11472,10 @@
             {
               "uuid": "b0faac24-9734-4994-b35e-780ea0e5b99b",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.52-62 — Cabbage (Red)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Cabbage (Red)"
             }
@@ -11413,12 +11493,12 @@
       "length": "10m",
       "has_trees": true,
       "first_planted": "2025-10-01",
-      "inventory_date": "2026-12-18",
+      "inventory_date": "2026-03-06",
       "plants": [
         {
           "species": "Ice Cream Bean",
           "strata": "high",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 5 ICE CREAM BEAN WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Ice Cream Bean - P2R4.62-72",
@@ -11426,10 +11506,10 @@
             {
               "uuid": "ac97d059-1292-421a-9c4c-fb660f9467d6",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.62-72 — Ice Cream Bean",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Ice Cream Bean"
             }
@@ -11439,7 +11519,7 @@
         {
           "species": "Basil - Sweet (Classic)",
           "strata": "low",
-          "count": 0,
+          "count": 5,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Basil - Sweet (Classic) - P2R4.62-72",
@@ -11447,10 +11527,30 @@
             {
               "uuid": "1628b180-be58-4fa5-8ed2-8f1be9093da3",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.62-72 — Basil - Sweet (Classic)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Basil - Sweet (Classic)"
+            },
+            {
+              "uuid": "f907a77f-0696-48c3-9718-15e0ef2c7aac",
+              "type": "observation",
+              "date": "2026-03-06",
+              "name": "Inventory P2R4.62-72 — Basil - Sweet (Classic) (post-planting Mar 6)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "interaction_stamp": "",
+              "species": "Basil - Sweet (Classic)"
+            },
+            {
+              "uuid": "1436246c-a0e0-4340-bbf7-91546b4eb786",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.62-72 — Basil - Sweet (Classic) (+3)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Basil - Sweet (Classic)"
             }
@@ -11460,7 +11560,7 @@
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 4 GERANIUM",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Geranium - P2R4.62-72",
@@ -11468,10 +11568,10 @@
             {
               "uuid": "fe49a37c-955c-492b-890a-95b39e5d5b1e",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.62-72 — Geranium",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Geranium"
             }
@@ -11481,7 +11581,7 @@
         {
           "species": "Pumpkin (Generic)",
           "strata": "low",
-          "count": 0,
+          "count": 2,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Pumpkin (Generic) - P2R4.62-72",
@@ -11489,10 +11589,10 @@
             {
               "uuid": "9a819359-73b8-4adc-b6a3-d5be2620986a",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.62-72 — Pumpkin (Generic)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Pumpkin (Generic)"
             }
@@ -11502,7 +11602,7 @@
         {
           "species": "Cabbage (Red)",
           "strata": "low",
-          "count": 0,
+          "count": 2,
           "notes": "CHOP N DROP greenmanure when senescent",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Cabbage (Red) - P2R4.62-72",
@@ -11510,10 +11610,10 @@
             {
               "uuid": "2a04c85d-f856-4ecc-a083-c401762881f4",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.62-72 — Cabbage (Red)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Cabbage (Red)"
             }
@@ -11531,33 +11631,22 @@
       "length": "10m",
       "has_trees": true,
       "first_planted": "2025-10-01",
-      "inventory_date": "2026-12-18",
+      "inventory_date": "2025-12-18",
       "plants": [
         {
           "species": "Papaya",
           "strata": "high",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 7 PAPAYA WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Papaya - P2R4.72-77",
-          "logs": [
-            {
-              "uuid": "5e24b4d4-04bc-4fb3-9515-c32215c561b0",
-              "type": "observation",
-              "date": "2026-12-18",
-              "name": "Inventory P2R4.72-77 — Papaya",
-              "notes": "",
-              "notes_full": "",
-              "interaction_stamp": "",
-              "species": "Papaya"
-            }
-          ],
+          "logs": [],
           "photo_url": "photos/papaya.jpg"
         },
         {
           "species": "Ice Cream Bean",
           "strata": "high",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 5 ICE CREAM BEAN WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Ice Cream Bean - P2R4.72-77",
@@ -11565,10 +11654,10 @@
             {
               "uuid": "d1a36129-c07c-4cfa-bb01-7791408ca563",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.72-77 — Ice Cream Bean",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Ice Cream Bean"
             }
@@ -11578,18 +11667,18 @@
         {
           "species": "Basil - Sweet (Classic)",
           "strata": "low",
-          "count": 0,
+          "count": 3,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Basil - Sweet (Classic) - P2R4.72-77",
           "logs": [
             {
-              "uuid": "28baf416-1121-45ce-940f-56183f41f516",
-              "type": "observation",
-              "date": "2026-12-18",
-              "name": "Inventory P2R4.72-77 — Basil - Sweet (Classic)",
-              "notes": "",
-              "notes_full": "",
+              "uuid": "23adb02a-1b73-4bbb-8e54-096de4bbac9f",
+              "type": "activity",
+              "date": "2026-03-06",
+              "name": "Transplanting P2R4.72-77 — Basil - Sweet (Classic) (+3)",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Basil - Sweet (Classic)"
             }
@@ -11599,7 +11688,7 @@
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 4 GERANIUM",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Geranium - P2R4.72-77",
@@ -11607,10 +11696,10 @@
             {
               "uuid": "1f57dbe4-9178-4a3f-89ce-fcfd5a0e73e9",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.72-77 — Geranium",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Geranium"
             }
@@ -11620,7 +11709,7 @@
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 0,
+          "count": 1,
           "notes": "ADD 4 COMFREY WHEN READY",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Comfrey - P2R4.72-77",
@@ -11628,10 +11717,10 @@
             {
               "uuid": "e00677c8-29c0-4b9f-9b60-c80deff883e7",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.72-77 — Comfrey",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Comfrey"
             }
@@ -11641,7 +11730,7 @@
         {
           "species": "Pumpkin (Generic)",
           "strata": "low",
-          "count": 0,
+          "count": 1,
           "notes": "",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Pumpkin (Generic) - P2R4.72-77",
@@ -11649,10 +11738,10 @@
             {
               "uuid": "9a792dcf-c3da-4d16-a389-23621098671a",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.72-77 — Pumpkin (Generic)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Pumpkin (Generic)"
             }
@@ -11662,7 +11751,7 @@
         {
           "species": "Cabbage (Red)",
           "strata": "low",
-          "count": 0,
+          "count": 3,
           "notes": "CHOP N DROP greenmanure when senescent",
           "first_planted": "2025-10-01",
           "asset_name": "1 OCT 2025 - Cabbage (Red) - P2R4.72-77",
@@ -11670,10 +11759,10 @@
             {
               "uuid": "f85ca1a3-1966-4147-b89c-97127b467418",
               "type": "observation",
-              "date": "2026-12-18",
+              "date": "2025-12-18",
               "name": "Inventory P2R4.72-77 — Cabbage (Red)",
-              "notes": "",
-              "notes_full": "",
+              "notes": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
+              "notes_full": "[backfill] Agnes — reconciled from Claire's 2026FEB-P2R4 spreadsheet (session 2026-04-21).",
               "interaction_stamp": "",
               "species": "Cabbage (Red)"
             }
