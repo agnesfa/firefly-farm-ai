@@ -610,10 +610,15 @@ class TestPhotoPipeline:
         assert len(taxo_uploads) == 1
         assert taxo_uploads[0]["entity_id"] == "pt-uuid-pigeonpea"
 
-    def test_no_media_files_skips_drive_fetch(
+    def test_empty_media_files_column_and_empty_drive_returns_zero_cleanly(
         self, monkeypatch, mock_farmos_client, mock_observe_client,
     ):
-        """Observations without media_files → get_media is never called."""
+        """Post-2026-04-21: getMedia is always called for non-dry-run imports.
+
+        When Drive is also empty, the result is zero photos attached, no
+        errors surfaced. get_media IS called (no longer gated on sheet
+        media_files column).
+        """
         sub_id = "sub-no-media"
         obs = make_observation(
             species="",
@@ -632,9 +637,62 @@ class TestPhotoPipeline:
 
         result = json.loads(import_observations(submission_id=sub_id))
 
-        mock_observe_client.get_media.assert_not_called()
+        mock_observe_client.get_media.assert_called_once_with(sub_id)
         assert result["photos_uploaded"] == 0
         assert result["submission_media_fetched"] == 0
+        assert result["errors"] is None
+
+    def test_regression_2026_04_21_empty_column_but_photos_in_drive(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Regression 2026-04-21: Kacper + Sarah walks submitted photos,
+        Drive received them correctly with submission_id prefix naming,
+        but the sheet media_files column was empty (Apps Script or QR form
+        regression). The previous gate would have silently dropped ~13
+        photo attachments. New behavior: photos ARE fetched (via Apps
+        Script prefix lookup) AND an upstream warning is surfaced so the
+        operator can fix the Apps Script regression.
+        """
+        sub_id = "sub-regression-empty-column"
+        obs = make_observation(
+            species="Pigeon Pea",
+            new_count=1,
+            previous_count=3,
+            submission_id=sub_id,
+            status="approved",
+            media_files="",  # column empty — simulates the regression
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_observe_client.get_media = MagicMock(return_value={
+            "success": True,
+            "files": [_media_file("d372a4cb_P2R5.0-8_plant_001.jpg")],
+        })
+        uploaded = []
+
+        def fake_upload(entity_type, entity_id, field_name, filename, binary_data, mime_type="image/jpeg"):
+            uploaded.append({"entity_type": entity_type, "entity_id": entity_id})
+            return {"id": f"media-{len(uploaded)}"}
+
+        mock_farmos_client.upload_file = MagicMock(side_effect=fake_upload)
+        plant = make_plant_asset(name="25 APR 2025 - Pigeon Pea - P2R3.15-21")
+        mock_farmos_client.get_plant_assets.return_value = [plant]
+        _mock_tool_success(monkeypatch, "create_observation")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        mock_observe_client.get_media.assert_called_once_with(sub_id)
+        assert result["photos_uploaded"] == 1
+        assert result["submission_media_fetched"] == 1
+        # Upstream warning surfaces so operator can fix QR form / Apps Script
+        assert result["errors"] is not None
+        assert any(
+            "sheet media_files column was empty" in e
+            for e in result["errors"]
+        )
 
     def test_upload_failure_does_not_block_import(
         self, monkeypatch, mock_farmos_client, mock_observe_client,

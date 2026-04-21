@@ -1982,9 +1982,19 @@ def import_observations(
         os.getenv("PLANTNET_API_KEY", "").strip()
     )
 
+    # Always fetch media for non-dry-run imports. Apps Script handleGetMedia
+    # filters Drive files by the 8-char submission_id prefix and does not
+    # depend on the sheet's media_files column being populated. The earlier
+    # gate on any_media_listed was fragile — an upstream regression that
+    # emptied the column (observed 2026-04-21) silently dropped ~13 photo
+    # attachments from farmOS even though the files were safely in Drive.
+    # Cost of removing the gate: one extra Drive scan per submission on
+    # imports where the observer didn't upload photos — cheap. Benefit:
+    # photo attachment is driven by the photos actually existing, not by
+    # a bookkeeping column that can regress without warning.
     submission_media: list = []
     any_media_listed = any((obs.get("media_files") or "").strip() for obs in observations)
-    if not dry_run and any_media_listed:
+    if not dry_run:
         try:
             media_resp = obs_client.get_media(submission_id)
             if media_resp.get("success"):
@@ -1997,6 +2007,17 @@ def import_observations(
             errors.append(f"Media fetch threw: {exc}")
             submission_media = []
     report["media_files_fetched"] = len(submission_media)
+    # Warn if the column-based gate would have gated photos we just found.
+    # This is an early-warning signal that the QR form or Apps Script
+    # write path has regressed — photos still attach, but fix upstream.
+    if not dry_run and not any_media_listed and len(submission_media) > 0:
+        errors.append(
+            f"WARN: sheet media_files column was empty but Drive had "
+            f"{len(submission_media)} photos for submission {submission_id}. "
+            f"Photos attached successfully via submission_id-prefix lookup. "
+            f"Upstream regression — investigate QR form or Apps Script "
+            f"mediaFilesList write path."
+        )
 
     botanical_lookup = build_botanical_lookup() if submission_media else {}
     # Strip the internal "__reverse__" key before measuring size

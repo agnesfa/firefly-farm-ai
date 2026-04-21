@@ -427,11 +427,15 @@ describe('import_observations photo pipeline', () => {
     expect(taxoCalls[0][1]).toBe('pt-uuid-pigeonpea');
   });
 
-  it('no media_files → get_media is never called', async () => {
+  it('no media_files in sheet + no photos in Drive → getMedia called but returns zero, no errors', async () => {
+    // Post-2026-04-21 behavior: getMedia is always called for non-dry-run
+    // imports (no longer gated on sheet media_files column being non-empty).
+    // When Drive is also empty, the result is zero photos, no errors.
     mockObsClient.listObservations.mockResolvedValue({
       success: true,
       observations: [makeObservation({ species: '', sectionNotes: 'No photo' })],
     });
+    mockObsClient.getMedia.mockResolvedValue({ success: true, files: [] });
 
     const result = parseResult(
       await importObservationsTool.handler({
@@ -441,9 +445,52 @@ describe('import_observations photo pipeline', () => {
       }),
     );
 
-    expect(mockObsClient.getMedia).not.toHaveBeenCalled();
+    expect(mockObsClient.getMedia).toHaveBeenCalledWith('sub-no-media');
     expect(result.photos_uploaded).toBe(0);
     expect(result.submission_media_fetched).toBe(0);
+    expect(result.errors).toBeNull();
+  });
+
+  it('regression 2026-04-21: empty media_files column + photos exist in Drive → photos STILL attached + upstream warning surfaced', async () => {
+    // Agnes/Kacper/Sarah field walks 2026-04-21 were specifically for photo
+    // quality. The sheet media_files column was empty (Apps Script or QR form
+    // regression), but photos were safely in Drive with submission_id prefix.
+    // The previous gate would have silently dropped them; the new behavior
+    // fetches them via Apps Script prefix lookup AND surfaces an upstream
+    // warning so the operator can fix the regression.
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [
+        makeObservation({
+          species: 'Pigeon Pea',
+          newCount: 1,
+          previousCount: 3,
+          mediaFiles: '',  // column empty — simulates the regression
+        }),
+      ],
+    });
+    mockObsClient.getMedia.mockResolvedValue({
+      success: true,
+      files: [mediaFile('d372a4cb_P2R5.0-8_plant_001.jpg')],
+    });
+    mockClient.getPlantAssets.mockResolvedValue([
+      makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R3.15-21' }),
+    ]);
+
+    const result = parseResult(
+      await importObservationsTool.handler({
+        submission_id: 'sub-regression-empty-column',
+        reviewer: 'Claude',
+        dry_run: false,
+      }),
+    );
+
+    expect(mockObsClient.getMedia).toHaveBeenCalledWith('sub-regression-empty-column');
+    expect(result.photos_uploaded).toBe(1);
+    expect(result.submission_media_fetched).toBe(1);
+    // Upstream warning is surfaced in errors so operator can fix QR form or Apps Script
+    expect(result.errors).not.toBeNull();
+    expect(result.errors.some((e: string) => /sheet media_files column was empty/i.test(e))).toBe(true);
   });
 
   it('upload_file failure does not block import', async () => {

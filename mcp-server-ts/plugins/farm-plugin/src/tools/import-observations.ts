@@ -229,11 +229,21 @@ export const importObservationsTool: Tool = {
     report.verification.plantnet_key_present =
       (process.env.PLANTNET_API_KEY ?? '').trim().length > 0;
 
+    // Always fetch media for non-dry-run imports. Apps Script handleGetMedia
+    // filters Drive files by the 8-char submission_id prefix and does not
+    // depend on the sheet's media_files column being populated. The earlier
+    // gate on `anyMediaListed` was fragile — an upstream regression that
+    // emptied the column (observed 2026-04-21) silently dropped ~13 photo
+    // attachments from farmOS even though the files were safely in Drive.
+    // Cost of removing the gate: one extra Drive scan per submission on
+    // imports where the observer didn't upload photos — cheap. Benefit:
+    // photo attachment is driven by the photos actually existing, not by
+    // a bookkeeping column that can regress without warning.
     let submissionMedia: any[] = [];
     const anyMediaListed = observations.some(
       (obs: any) => typeof obs.media_files === 'string' && obs.media_files.trim().length > 0,
     );
-    if (!params.dry_run && anyMediaListed) {
+    if (!params.dry_run) {
       try {
         const mediaResp: any = await obsClient.getMedia(params.submission_id);
         if (mediaResp && mediaResp.success) {
@@ -247,6 +257,16 @@ export const importObservationsTool: Tool = {
       }
     }
     report.media_files_fetched = submissionMedia.length;
+    // Warn if the column-based gate would have gated photos we just found.
+    // This is an early-warning signal that the QR form or Apps Script
+    // write path has regressed — photos still attach, but fix upstream.
+    if (!params.dry_run && !anyMediaListed && submissionMedia.length > 0) {
+      errors.push(
+        `WARN: sheet media_files column was empty but Drive had ${submissionMedia.length} photos for submission ${params.submission_id}. ` +
+        `Photos attached successfully via submission_id-prefix lookup. ` +
+        `Upstream regression — investigate QR form or Apps Script mediaFilesList write path.`,
+      );
+    }
     const speciesPhotoUpdates = new Set<string>();
 
     // Botanical lookup — resilient across deploy layouts. Prefer farmOS
