@@ -465,6 +465,73 @@ describe('FarmOSClient', () => {
     });
   });
 
+  // ── File upload ──────────────────────────────────────────
+  // Regression 2026-04-21: farmOS file upload responses can return
+  // either {data: {...}} (dict) or {data: [{...}]} (list) depending on
+  // field cardinality. TS only checked data.id on dict form, silently
+  // returned null on list form despite successful upload. Entire Apr-21
+  // photo-attachment session (13+ photos) lost because of this.
+
+  describe('file upload response shapes', () => {
+    let client: FarmOSClient;
+
+    beforeEach(async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
+      client = FarmOSClient.getInstance(config);
+      await client.connect();
+    });
+
+    it('returns id from dict-form response {data: {id}}', async () => {
+      fetchSpy.mockResolvedValueOnce(
+        mockResponse({ data: { id: 'file-uuid-dict', type: 'file--file' } }),
+      );
+      const id = await client.uploadFile(
+        'log/observation', 'log-1', 'image', 'photo.jpg',
+        new ArrayBuffer(4), 'image/jpeg',
+      );
+      expect(id).toBe('file-uuid-dict');
+    });
+
+    it('returns id from list-form response {data: [{id}]}', async () => {
+      fetchSpy.mockResolvedValueOnce(
+        mockResponse({ data: [{ id: 'file-uuid-list', type: 'file--file' }] }),
+      );
+      const id = await client.uploadFile(
+        'log/observation', 'log-1', 'image', 'photo.jpg',
+        new ArrayBuffer(4), 'image/jpeg',
+      );
+      expect(id).toBe('file-uuid-list');
+    });
+
+    it('returns null on empty list response {data: []}', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      const id = await client.uploadFile(
+        'log/observation', 'log-1', 'image', 'photo.jpg',
+        new ArrayBuffer(4), 'image/jpeg',
+      );
+      expect(id).toBeNull();
+    });
+
+    it('returns null on empty dict response {data: {}}', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: {} }));
+      const id = await client.uploadFile(
+        'log/observation', 'log-1', 'image', 'photo.jpg',
+        new ArrayBuffer(4), 'image/jpeg',
+      );
+      expect(id).toBeNull();
+    });
+
+    it('throws on HTTP error status', async () => {
+      fetchSpy.mockResolvedValueOnce(mockResponse({ errors: ['bad request'] }, 422));
+      await expect(
+        client.uploadFile(
+          'log/observation', 'log-1', 'image', 'bad.json',
+          new ArrayBuffer(4), 'application/json',
+        ),
+      ).rejects.toThrow('HTTP 422');
+    });
+  });
+
   // ── Cache ─────────────────────────────────────────────────
 
   describe('plant type cache', () => {

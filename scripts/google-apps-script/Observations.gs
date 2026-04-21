@@ -683,6 +683,10 @@ function handleGetMedia(params) {
     while (files.hasNext()) {
       var file = files.next();
       var name = file.getName();
+      // Skip raw JSON payload copies — those are bookkeeping, not media,
+      // and farmOS file upload rejects them with HTTP 422. Mirrors the
+      // filter in handleListMediaFolders. Bug discovered 2026-04-21.
+      if (/\.json$/i.test(name)) continue;
       // New-format: UUID-prefixed filename → filter by submission
       // Old-format: section-prefixed filename → return all (backward compat)
       var hasUuidPrefix = /^[0-9a-f]{8}_/.test(name);

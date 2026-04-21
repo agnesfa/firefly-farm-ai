@@ -850,7 +850,17 @@ export class FarmOSClient {
     });
     if (!resp.ok) throw new Error(`farmOS file upload error: HTTP ${resp.status}`);
     const result: any = await resp.json();
-    return result.data?.id ?? null;
+    // farmOS file uploads may return {data: {...}} (dict) or {data: [{...}]} (list)
+    // depending on version / field cardinality. Python farmos_client handles
+    // both; TS must match or we silently return null on successful uploads
+    // (discovered 2026-04-21: every photo upload in tonight's session hit
+    // upload_returned_null because farmOS returned list form for log.image
+    // and our code only checked data.id on a dict).
+    const data = result?.data;
+    if (Array.isArray(data)) {
+      return data[0]?.id ?? null;
+    }
+    return data?.id ?? null;
   }
 
   /**
