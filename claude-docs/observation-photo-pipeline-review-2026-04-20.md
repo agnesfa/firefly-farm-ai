@@ -11,7 +11,11 @@
 
 This document feeds the governance session. It is not itself an ADR; it
 is the input to a targeted ADR update: ADR 0008 amendment (new
-invariants I8/I9/I10) and a short ADR 0005 clarification.
+invariants I8/I9/I10/I11/I12) and a short ADR 0005 clarification.
+
+**2026-04-21 update:** I12 added after the P2R4.52-62/.62-72/.72-77
+empty-page bug traced to 24 future-dated inventory logs silently ignored
+by farmOS's `asset.inventory` recompute. See §6b I12.
 
 ---
 
@@ -220,9 +224,9 @@ Replace the "Open questions → per-plant photo capture UI" note with:
 > observation and one plant log, so all submission photos attach to
 > that one log unambiguously.
 
-### 6b. ADR 0008 — new invariants I8, I9, I10, I11
+### 6b. ADR 0008 — new invariants I8, I9, I10, I11, I12
 
-Appended to "The Seven Invariants" section; renumbered to Eleven.
+Appended to "The Seven Invariants" section; renumbered to Twelve.
 
 #### I8 — Asset notes hygiene
 
@@ -351,6 +355,44 @@ NOT be derived from a UI form radio button.
   (tune the rules) or a legacy mis-classified log (cleanup
   backlog).
 
+#### I12 — Inventory log timestamps must not be in the future
+
+Any log carrying a quantity with non-empty `inventory_adjustment`
+(`reset` / `increment` / `decrement`) must have `timestamp ≤ now`.
+
+- **Rationale.** farmOS's computed `asset.inventory` field is
+  derived from `reset` adjustments on logs with `timestamp ≤ now`.
+  Future-dated resets are silently dropped from the recompute —
+  the log and qty exist, relationships are intact, but
+  `asset.inventory` stays stale. The QR page renders "0 plants"
+  while farmOS holds a positive count. Silent-data-loss class:
+  no write error, no validation failure, surfaces only when a
+  human notices a missing section. Root-cause trace: the 24
+  mis-dated `2026-12-18` logs (year typo for `2025-12-18`, batch
+  import 7 March 2026) produced the empty P2R4.52-62 / .62-72 /
+  .72-77 pages reconciled 2026-04-21.
+- **Enforcement at write time:** `parse_date` (Python) and
+  `parseDate` (TS) raise a validation error if resolved timestamp
+  exceeds `now + 24h`. 24h grace for AEST↔UTC edge cases; tight
+  enough to block year-typo dates. `update_inventory` always uses
+  today, unaffected. `create_observation` / `create_plant` /
+  `import_observations` / `create_seed` fail fast on caller-
+  supplied future dates.
+- **Enforcement at audit time:** validator I12 check greps every
+  log with `quantity--standard` relationship whose
+  `inventory_adjustment` is non-empty and flags any with
+  `timestamp > now + 86400`. Report `{log_id, asset_ref,
+  timestamp, delta_days}`.
+- **Legacy cleanup:** backfill script re-dates existing future-
+  dated inventory logs (year-typo heuristic: subtract 1 year if
+  resulting date resolves to the past; else flag for human
+  review).
+- **Out-of-scope:** direct JSON:API writes bypass MCP; operators
+  of those paths are also responsible for the
+  `inventory_asset`/`units` quirk documented in
+  `reference_farmos_inventory_quirks.md`. Validator I12 check
+  catches violations from any source.
+
 #### I10 — QR render hygiene
 
 The site generator must render invariant-respecting output:
@@ -392,7 +434,7 @@ Once ADR 0008 amendment is ratified:
    form. I11 write-time enforcement. (Step-order note: ship the
    classifier BEFORE removing the UI so we have a fallback if the
    classifier misbehaves; UI removal is a trivial follow-up.)
-6. **Validator I8 + I9 + I10 + I11 checks** — add to
+6. **Validator I8 + I9 + I10 + I11 + I12 checks** — add to
    `scripts/validate_observations.py`. Run P2 audit to quantify
    backlog.
 7. **Backfill script** — detach I8-violating content from asset notes
@@ -400,9 +442,14 @@ Once ADR 0008 amendment is ratified:
    violating cross-log photos (create section log per affected
    submission, move photos there, delete file entities that can't be
    safely routed per ADR 0005 Option B), re-type I11-violating logs
-   via classifier.
+   via classifier, re-date I12-violating future-dated inventory logs
+   (year-typo heuristic, human review for ambiguous cases).
 8. **Phase 3c render** — section-level log block on the section QR
    page. I10 completion.
+9. **I12 write-time guard** — `parse_date` / `parseDate` reject
+   `ts > now + 24h`. Ships same commit as validator I12. Tests
+   cover: year-typo rejected, today accepted, today + 12h accepted
+   (AEST edge), today + 2d rejected.
 
 Steps 1 and 6 can ship same-day without disruption. Steps 2–5 are the
 pipeline fix. Step 7 is legacy cleanup. Step 8 is render.
@@ -447,7 +494,7 @@ corrections. No invariant change — I11 remains the contract.
 - No UX redesign beyond the add-new-plant angles saving change.
 - No Observations.gs changes beyond current ADR 0005 shipment.
 - No KB / seed bank / harvest pipeline changes.
-- No scope change to the seven existing invariants — I8/I9/I10 extend.
+- No scope change to the seven existing invariants — I8/I9/I10/I11/I12 extend.
 
 ---
 

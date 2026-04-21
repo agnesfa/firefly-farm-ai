@@ -1,7 +1,7 @@
 # 0006 — Firefly Agent Skill Framework (FASF)
 
-- **Status:** proposed
-- **Date:** 2026-04-18
+- **Status:** accepted — 2026-04-21
+- **Date:** 2026-04-18 (proposed) / 2026-04-21 (ratified)
 - **Authors:** Agnes, Claude
 - **Supersedes:** —
 - **Related:** 0001 (photo pipeline), 0003 (reconciliation audit), 0004
@@ -51,17 +51,84 @@ behavioural layer. Specifically:
    by loading active skills via `list_knowledge(category="agent_skill")`
    and applying the ones whose `trigger` matches the session state.
 3. **Claude Desktop users** (who have no repo) receive the same
-   expectation via a pinned "session protocol" instruction in their
-   Claude config that points them to the same KB category.
+   expectation via a **minimal one-line pinned instruction** in their
+   Claude Desktop config: _"At session start, call
+   `list_active_skills()` and apply the returned skills."_ All actual
+   behaviour ships via the MCP tool's response, not via per-user
+   config content. This collapses the per-user drift problem: the
+   pinned instruction never changes; skill updates land in the KB and
+   propagate to every client on their next session. The
+   `list_active_skills()` tool itself is introduced in Phase 2 (see
+   Implementation); until it ships, the stopgap is a slightly
+   longer pinned instruction, but the end-state is the one-liner.
 4. **Day-one skills** seeded into the KB: `session_open`,
    `ingest_knowledge`, `review_assignment`, `record_fieldwork`,
-   `per_row_review`. Specs in the companion analysis doc §6.4.
-5. **Enforcement** through CLAUDE.md + pinned Claude Desktop instruction
-   + skill postconditions that the agent asserts explicitly (observable in
-   session memory).
-6. **Lifecycle** mirrors the ADR process for substantive changes; minor
-   updates land via `update_knowledge`. Every skill has a 90-day review
-   cadence.
+   `per_row_review`. Specs in the companion analysis doc §6.4 and,
+   for `review_observations`, in `claude-docs/skills/review_observations.md`.
+   Skill specs are the authoritative source for each skill's trigger,
+   procedure, postconditions; one file per skill in
+   `claude-docs/skills/NAME.md`, mirrored to KB entries at ratification
+   time.
+5. **Enforcement** through CLAUDE.md (Claude Code) + the one-line
+   pinned instruction (Claude Desktop) + skill postconditions that
+   the agent asserts explicitly (observable in session memory).
+6. **Codebase is the source of truth for every skill, but the
+   repo is not the contribution interface.** All skill `.md`
+   source files live in `claude-docs/skills/` under git. KB entries
+   with `category=agent_skill` are a **deployed copy**, not the
+   master — maintained by a sync tool
+   (`scripts/sync_agent_skills.py` + TS mirror) that reads the repo
+   specs and writes/updates KB entries. A reconcile tool detects
+   drift (direct-to-KB edits become a surfaced discrepancy Agnes
+   decides to push or pull). This matches the existing pattern for
+   `knowledge/plant_types.csv`, `knowledge/farm_ontology.yaml`, and
+   `knowledge/farm_semantics.yaml` — repo-as-truth, deployment
+   adapters per target. Rationale: skills are code-adjacent (a
+   `record_fieldwork` postcondition often requires a change in
+   `import-observations.ts`; atomic commits keep them aligned);
+   target-architecture design requires auditable, reviewable skill
+   state (not hidden behind a KB query).
+
+   **Critical constraint: no farm-system user except Agnes is
+   technical.** Claire, James, Olivier, WWOOFers do not understand
+   git, commits, or PRs — and must not need to. The repo-as-truth
+   rule applies to Agnes's write path, not to the contribution path.
+   Non-technical users contribute exactly as they do today: they
+   tell their Claude, Claude writes a `skill_feedback:<skill_name>`
+   topic into team memory, Agnes's next `open_session` surfaces the
+   queue, Agnes discusses and edits in-session. The sync tool must
+   be light enough that Agnes's promotion loop is fast — single
+   command, in-session, no pipeline. See
+   [claude-docs/skills/README.md](../skills/README.md#how-users-contribute-no-git-knowledge-required)
+   for the flow diagram.
+7. **Lifecycle** mirrors the ADR process for substantive changes;
+   minor updates land as git commits (not inline KB edits) and
+   propagate via the sync tool. Every skill has a **30-day review
+   cadence**. Staleness is surfaced, not timed: `open_session` runs
+   `list_knowledge(category="agent_skill", last_reviewed_before=30d)`
+   and presents any overdue skills to the manager at the start of
+   the session. Early-stage farm operations evolve fast — 30 days
+   keeps the library honest; can be relaxed to 90 once the set
+   stabilises.
+8. **Naming convention.** Shared behavioural skills (System B,
+   seeded to KB): verb-first snake_case — `open_session`,
+   `record_fieldwork`, `ingest_knowledge`, `classify_observation`,
+   `archive_ghost_plant`. Verbs align with
+   `knowledge/farm_ontology.yaml` verb mappings. Tactical skills
+   (System A, client-side): kebab-case — `process-transcript`,
+   `row-inventory`. The convention split is a visual cue for which
+   system the skill belongs to.
+9. **Two-system reality.** System A (client-installed skills:
+   `.claude/skills/NAME/SKILL.md` for Claude Code; account-level
+   uploads for Claude Desktop) and System B (FASF, this ADR:
+   KB-backed, shared, loaded by the agent at session start) coexist
+   by design. System A = tactical task automation with bundled
+   scripts, installed per-user on each client. System B =
+   behavioural protocols the agent always follows. A System A skill
+   that creates a farmOS record invokes the System B
+   `record_fieldwork` contract. Both live in `claude-docs/skills/`
+   as source; deployment paths differ (symlink / UI upload / KB
+   sync).
 
 ## Rationale
 
@@ -125,9 +192,11 @@ behavioural layer. Specifically:
 - **Token cost at session start.** Loading active skills into the agent's
   context adds tokens per session. Phase 2 push model (MCP tool returns
   only relevant skills for the current context) mitigates.
-- **Skill library can grow stale** if the 90-day review cadence is not
-  enforced. Mitigation: a KB query for skills past due for review,
-  surfaced at session_open.
+- **Skill library can grow stale** if the 30-day review cadence is not
+  enforced. Mitigation: `session_open` skill runs
+  `list_knowledge(category="agent_skill", last_reviewed_before=30d)`
+  and presents overdue skills inline at the top of every session.
+  Staleness becomes a visible prompt, not an untriggered timer.
 - **Users must adopt the pinned Claude Desktop instruction.** For James
   and Claire, this requires one-off setup; not enforced by the framework
   itself. Mitigation: onboarding doc + Agnes audits at governance session.
@@ -143,23 +212,91 @@ behavioural layer. Specifically:
   framework does not require it. Skills living as KB entries with a
   category filter is sufficient for phase 1.
 
+## Performance budget
+
+FASF introduces behaviour — and every behaviour costs latency. The
+team is already reporting timeouts and slow tool calls; shipping a
+chatty skill framework on top of that degrades the system further,
+not improves it. The framework must operate inside a strict budget:
+
+| Metric | Target | Degraded | Alerted |
+|---|---:|---:|---:|
+| `open_session` p95 latency | ≤ 3s | ≤ 5s | > 5s |
+| Individual skill invocation p95 | ≤ 3s | ≤ 5s | > 5s |
+| `system_health` p95 | ≤ 2s | ≤ 5s | > 5s |
+| Session startup (first agent output) | ≤ 5s | ≤ 10s | > 10s |
+
+Any metric in the "Alerted" column trips `system_health()` to a
+degraded state and surfaces in the next `open_session` run. If the
+framework cannot meet the "Degraded" column consistently, implementation
+must pause until the bottleneck is fixed — shipping more skills on a
+slow substrate compounds the problem.
+
 ## Implementation
 
-Phase 1 (this or next session):
-1. Add a section to `CLAUDE.md` mandating session_open skill application.
-2. Create day-one skill entries in KB under `category = "agent_skill"`.
-3. Draft the pinned session-protocol instruction for Claude Desktop users
-   (see `claude-docs/james-claude-session-protocol.md`).
-4. Run integrity gate across last 30 days of James's sessions to catch any
-   remaining silent failures from Mar / Apr.
+### Phase 0 — Prerequisites (before any skill seeds)
 
-Phase 2 (post-governance ratification):
-1. Introduce `list_active_skills(context)` MCP tool for push-style skill
-   loading.
-2. Add `last_reviewed` query and surface skills past 90 days.
-3. Extend write tools with optional post-write verify wrappers.
+These must be in place before FASF is useful at scale.
 
-Phase 3 (with `farm_syntropic` module, Phase 4 overall):
+1. **Fix `system_health()` performance.** Currently ~51s per
+   [project_mcp_timeout_root_cause](../../.claude/projects/-Users-agnes-Repos-FireflyCorner/memory/project_mcp_timeout_root_cause.md).
+   Root cause: stale session loop + uncached taxonomy fetch. Target
+   <5s. Blocks FASF ratification.
+2. **Observability substrate.** Per-call telemetry (tool, user,
+   duration, status), accessible via a new `get_usage_metrics()` MCP
+   tool, surfaced via an expanded `system_health()` performance
+   section. Design doc:
+   [claude-docs/observability-and-telemetry-2026-04-21.md](../observability-and-telemetry-2026-04-21.md).
+3. **TTL caches for slow-moving data.** Skills list (TTL 15min),
+   plant types (15min), `farm_ontology.yaml` (15min — it's a repo
+   file, read once per session). Invalidated on any write that
+   affects the cached data.
+
+### Phase 1 — Framework shipped (server-side composite)
+
+**The pre-ratification plan had Phase 1 = client-side pull (agent
+calls `list_knowledge` + 5 other tools at session open) and Phase 2 =
+server-side push. Performance constraints invalidate that sequence:
+6 MCP roundtrips per session is unaffordable given current team-
+reported latency. Phase 1 and Phase 2 are merged.** FASF ships
+directly in the server-push model.
+
+1. Finalise day-one skill specs in `claude-docs/skills/NAME.md`
+   (one file per skill, per conventions in
+   [claude-docs/skills/README.md](../skills/README.md)).
+2. Build `open_session(user, verbosity)` as a single server-side
+   composite MCP tool. Server parallelises 5–6 sub-fetches with a
+   3s timeout each; any sub-fetch that times out returns
+   `"unavailable"` but the tool still succeeds. One roundtrip per
+   session start; graceful degradation built in.
+3. Build `scripts/sync_agent_skills.py` + TS mirror (lightweight,
+   runnable in-session) to push `claude-docs/skills/shared_behavioural/*.md`
+   to KB entries.
+4. Seed KB with day-one skills via the sync tool.
+5. Add a section to `CLAUDE.md` mandating that every Claude Code
+   session begins with `open_session` output loaded into context.
+6. Draft the one-line pinned session-protocol instruction for
+   Claude Desktop users: _"At session start, call `open_session()`
+   and apply the returned skills and context."_ James onboards on
+   this instruction as the first skill-framework test subject —
+   his first live session under FASF doubles as the ratification
+   smoke test.
+7. Extend write tools with post-write verify wrappers per
+   `record_fieldwork` skill (implements ADR 0007 Fix 4).
+
+### Phase 2 — Operational maturity
+
+1. Build the reconcile tool (repo ↔ KB drift detector).
+2. Wire `skill_feedback:<name>` team memory topic surfacing into
+   `open_session` output — non-technical users' feedback becomes
+   Agnes's skill-edit queue automatically.
+3. Usage-driven skill retirement: if `get_usage_metrics(days=30)`
+   shows a skill was never invoked, flag it for review.
+4. (Optional, deferred from Phase 1.) Backfill integrity gate across
+   the last 30 days of James's sessions.
+
+### Phase 3 — Ontology extension (with farm_syntropic module)
+
 1. Add `Task` / `Assignment` entity to the ontology.
 2. Migrate `review_assignment` skill off note-prefix scanning onto
    structured queries.

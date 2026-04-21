@@ -1,7 +1,7 @@
 # 0007 — Import Pipeline Reliability
 
-- **Status:** proposed
-- **Date:** 2026-04-18
+- **Status:** accepted — 2026-04-21
+- **Date:** 2026-04-18 (proposed) / 2026-04-21 (ratified)
 - **Authors:** Agnes, Claude
 - **Supersedes:** —
 - **Related:** 0004 (batch observation tools), 0005 (submission-scoped media),
@@ -55,9 +55,24 @@ Specific symptoms observed:
    flipped to `approved`, the only path is forward, which compounds any
    mid-flight failures.
 
+7. **Silent year-typo via batch-import — P2R4 empty-page bug (2026-04-21).**
+   A batch import on 2026-03-07 wrote 24 inventory logs with
+   `timestamp=2026-12-18` (year typo for `2025-12-18`). farmOS accepted
+   the writes — the logs exist with positive counts, relationships
+   intact — but the computed `asset.inventory` field silently drops
+   future-dated `reset` adjustments from its recompute. Result: three
+   section QR pages (P2R4.52-62, .62-72, .72-77) rendered "0 plants"
+   for weeks while farmOS held the correct counts, invisible until
+   Agnes noticed a missing section. No tool error, no validation
+   failure, no integrity flag — pure silent data loss. This symptom
+   was added to the ADR on 2026-04-21 after the reconciliation and
+   drives the Fix 4 / ADR 0008 I12 cross-referencing below.
+
 The cumulative effect is: Agnes cannot trust the import tool's reported
 status. She must audit farmOS directly after every batch. That is not
-sustainable with WWOOFers starting to submit 10–30 observations per day.
+sustainable with WWOOFers starting to submit 10–30 observations per day
+(now observed live: 2 WWOOFers plus Claire remote submitting on
+2026-04-21, 75+ pending observations in the queue).
 
 ## Decision
 
@@ -86,13 +101,66 @@ entirely. Also enables progress reporting.
 import flow must re-read the created / updated entity and confirm it
 exists with expected fields before returning success. Replaces "tool
 returned 200 → we're done" with "verified persisted". Implementation of
-the `record_fieldwork` skill's postcondition from ADR 0006.
+the `record_fieldwork` skill's postcondition from ADR 0006 — spec at
+[claude-docs/skills/shared_behavioural/record_fieldwork.md](../skills/shared_behavioural/record_fieldwork.md).
 
-**Fix 5 — Duplicate-write detection.** Before creating a new
-observation/activity log for a (section, species, date, mode) tuple,
-check if one already exists. If yes, either skip with a "dup-detected"
-verdict OR merge the new notes into the existing log. Eliminates the
-duplicate chop-and-drop pattern.
+**Fix 4 is the output-side complement to ADR 0008 I12.** The P2R4
+year-typo bug (Context #7 above) is blocked at input by the I12
+`parse_date` guard (refuse any inventory-adjusting log with
+`timestamp > now + 24h`); Fix 4 catches semantic drift of any other
+kind — count mismatch, missing relationships, recompute lag — by
+reading the created entity's `asset.inventory` and confirming it
+matches the count just written. Neither invariant is sufficient alone:
+I12 blocks the specific failure we observed, Fix 4 catches the general
+failure class. Ship together.
+
+**Fix 5 — Duplicate-write detection (two-tier).** A single dedup
+key cannot serve two purposes: a strict key that includes
+`submission_id` never over-merges but misses batch retries (the
+March 7 failure class); a loose key that omits `submission_id`
+catches retries but over-merges legitimate re-observations. So the
+check is two-tier with different actions per tier.
+
+Before any log write, compute:
+
+- `content_hash = hash(section, species, date, mode, action_type, count)`
+- `submission_id` from the InteractionStamp (`submission=<uuid>`)
+
+Then:
+
+1. **Tier 1 — hard skip (retry detection).** Look for an existing
+   log with the **same `submission_id` AND same `content_hash`**. If
+   found → return the existing log_id with verdict
+   `"already_imported"`. Do not write. Safe to auto-skip because
+   same submission + same content = definite retry.
+2. **Tier 2 — soft warn (possible duplicate).** Look for an
+   existing log with the **same `content_hash` but a DIFFERENT
+   `submission_id`**. If found → surface to the caller as
+   `{verdict: "possible_duplicate", match_log_id, match_submission_id,
+   options: [proceed|skip|merge]}`. The caller (skill or human) decides.
+   The decision is recorded in telemetry
+   (`skill_feedback:duplicate_handling`) so we observe how often each
+   path gets chosen and can tune the rule.
+3. **No match → proceed normally.**
+
+This handles:
+
+- Batch retries where same submissions re-run (Tier 1 catches each)
+- Legitimate re-observation by a different observer (Tier 2 warns,
+  operator approves)
+- Accidental duplicate from two sessions (Tier 2 warns, operator
+  skips)
+- A March-7-style rerun with fresh submission_ids (Tier 2 warns on
+  each — 24 warnings signal the scale of the accident)
+- The original duplicate chop-and-drop pattern (Tier 2 warns,
+  operator merges)
+
+Implementation note: the Tier 2 read extends the post-write verify
+(Fix 4) — same read-back mechanism, just with an extra
+`content_hash` lookup before the write. The user-decision step is
+exposed via a new `confirm_duplicate_decision(match_id, action)` MCP
+tool when called from an agent, or as a natural-language response
+the calling skill interprets.
 
 **Fix 6 — Batch-size limit at the tool.** `import_observations_batch`
 refuses batches larger than N (start with N=5) with a clear message
@@ -167,50 +235,104 @@ partial-success trap entirely while Fix 3 is being built.
 
 ## Implementation phases
 
+Status updated 2026-04-21.
+
 **Phase 1 (ship now):**
-- Fix 2: idempotency patch in `import-observations.ts` and
-  `import_observations.py`.
-- Fix 6: enforce `max_batch_size = 5` in `import_observations_batch`
-  with a clear error message.
-- Tests: unit tests for both fixes.
+- ✅ **Fix 2 — idempotency.** Shipped in both servers:
+  [import-observations.ts:181-186](../../mcp-server-ts/plugins/farm-plugin/src/tools/import-observations.ts:181),
+  [server.py:1924-1928](../../mcp-server/server.py:1924). Confirmed live.
+- ⏳ **Fix 6 — `max_batch_size` cap.** Tagged Phase 1 "ship now" in
+  v1 of this ADR; not yet shipped as of 2026-04-21 ratification walk.
+  Trivially shippable (20-min patch: size check + clear error
+  message). Either ship before ratification flips the ADR to accepted
+  OR escalate to Phase 2 with explicit acknowledgement that the
+  partial-success trap remains open until Fix 3 lands. Agnes to
+  decide at ratification.
 
 **Phase 2 (governance session):**
-- Fix 1: Apps Script server-side filter rewrite (requires
-  Observations.gs redeploy + regression test against a populated sheet).
-- Fix 4: post-write verify in import path. Implements the
-  `record_fieldwork` skill postcondition from ADR 0006.
-- Fix 5: duplicate detection using (section, species, date, mode,
-  submission_id) composite key.
+- **Fix 1 — Apps Script server-side filter rewrite.** Requires
+  Observations.gs redeploy + regression test against a populated
+  sheet. Increasingly load-bearing: 75+ pending observations in the
+  queue as of 2026-04-21; sheet-scan performance drives the "team
+  reports timeouts" symptom.
+- **Fix 4 — post-write verify in the import path.** Implements the
+  `record_fieldwork` skill postcondition from ADR 0006. Complements
+  ADR 0008 I12 (input-side guard). Ship together.
+- **Fix 5 — two-tier dedup.** Tier 1 (hard skip) via
+  `submission_id + content_hash`; Tier 2 (soft warn) via
+  `content_hash` alone, caller decides. Integrates with Fix 4 via
+  the same pre-write read-back.
 
 **Phase 3 (post-governance):**
-- Fix 3: async job queue. Design spike first — storage tier, polling
-  contract, job history, progress surface. Implementation is a proper
-  architecture decision deserving its own ADR.
+- **Fix 3 — async job queue.** Storage tier resolved (KB entries
+  with `category=import_job`, split header + per-submission to stay
+  under Google Sheets per-cell limit). Remaining design work:
+  worker lifecycle, polling contract, retention cleanup script.
+  Implementation is a proper architecture decision deserving its own
+  ADR (0009 or later).
 
 ## Queue pattern (Fix 3) — design notes
 
-Noted for the architecture review:
+Resolved 2026-04-21 with input from the sheet-limits volume check.
 
 - **Job submission:** `import_observations_batch(submission_ids, ...) →
   { job_id, status: "queued", estimated_completion_s }`
-- **Polling:** `get_job_status(job_id) → { status: "queued|running|done|failed",
+- **Polling:** `get_job_status(job_id) → { status: "queued|running|done|failed|partial_success|timed_out",
   progress: {processed, total}, results?: [...] }`
-- **Storage:** start with a farmOS log type `activity` with category
-  `import_job`, notes carry the JSON job record. Move to a dedicated
-  storage tier if volume exceeds ~100 jobs/day.
+- **Storage: KB entries with `category=import_job`.** Chosen over the
+  earlier v1 proposal of "farmOS activity log with
+  category=import_job" because:
+    1. KB is the "system state" tier in our model; farmOS is the
+       "farm state" tier. Import jobs are system state. Co-mingling
+       would pollute activity logs that should describe actual field
+       work.
+    2. KB already has sufficient headroom: current 20 entries, adding
+       ~2000 import_job entries/year leaves us at ~0.2% of the
+       Google-Sheets 10M-cell limit.
+    3. Agent tooling already knows how to read KB — no new
+       observability wiring.
+- **Storage shape — avoid per-cell limit.** Google Sheets cells cap
+  at 50K characters. A batch import of 30 submissions with long notes
+  could exceed this if serialised into a single cell. Split each job
+  into:
+    - **Job header** (1 KB entry): `{job_id, submitted_at, user,
+      submission_ids[], total, status, started_at, ended_at,
+      error_summary}`. Small, <5KB per cell.
+    - **Per-submission results** (N KB entries per job):
+      `{job_id, submission_id, status, farmos_writes[], error_text}`.
+      Linked back to the header via `job_id`. Each stays <5KB.
+   
+   A `get_job_status(job_id)` call assembles header + per-submission
+   rows. Keeps us safely under the cell-character limit regardless
+   of job size.
 - **Workers:** single-worker model initially (jobs processed
   sequentially by the MCP server). Later: worker pool if we hit
   throughput limits.
 - **Failure handling:** per-submission failures recorded in the job
-  result; the job as a whole reports `partial_success` if some landed
-  and others failed.
-- **Timeout:** jobs have a max runtime (e.g. 30 minutes). Exceeded →
-  job marked `timed_out` with the partial results preserved.
+  result (one per-submission KB entry per failure); the job header
+  reports `partial_success` if some landed and others failed.
+- **Timeout:** jobs have a max runtime of 30 minutes. Exceeded →
+  header marked `timed_out` with partial per-submission results
+  preserved.
+- **Retention:** import_job entries older than 30 days are archived
+  to a separate KB category or deleted by a cleanup script. These are
+  ephemeral queue records, not audit trail — the actual import
+  outcomes live on the farmOS logs they created.
 
 ## Links
 
-- ADR 0004: batch observation tools (the tools this ADR makes reliable)
-- ADR 0006: agent skill framework (the `record_fieldwork` skill lives
-  within this reliability work)
-- Session diagnostic: `claude-docs/cross-agent-consistency-2026-04-18.md`
-- Root-cause evidence gathered in 2026-04-18 session (see session summary)
+- [ADR 0004](0004-batch-observation-tools.md): batch observation tools
+  (the tools this ADR makes reliable)
+- [ADR 0006](0006-agent-skill-framework.md): agent skill framework —
+  the `record_fieldwork` skill lives within this reliability work
+- [ADR 0008 amendment I12](0008-observation-record-invariant.md#i12--inventory-log-timestamps-must-not-be-in-the-future):
+  input-side complement to Fix 4 (future-timestamp guard at `parse_date`)
+- [record_fieldwork skill spec](../skills/shared_behavioural/record_fieldwork.md):
+  implements the Fix 4 postcondition as a shared_behavioural skill
+- [observability-and-telemetry-2026-04-21.md](../observability-and-telemetry-2026-04-21.md):
+  telemetry plan that this ADR's Fix 5 decision-tracking depends on
+- Session diagnostic:
+  [cross-agent-consistency-2026-04-18.md](../cross-agent-consistency-2026-04-18.md)
+- Root-cause evidence gathered in 2026-04-18 session (see session
+  summary) and 2026-04-21 P2R4 empty-page reconciliation (see commit
+  `9e61f62`)

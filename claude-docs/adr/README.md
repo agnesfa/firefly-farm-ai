@@ -62,6 +62,11 @@ is obsolete, its number stays in the folder.
 | 0003 | Field-sheet reconciliation audit tool and storage | accepted — 2026-04-15 |
 | 0004 | Batch observation tools + Python-server photo pipeline parity | accepted — 2026-04-15 |
 | 0005 | Submission-scoped media: photos scoped by submission ID, not section folder | accepted — 2026-04-15 |
+| 0006 | Firefly Agent Skill Framework (FASF) | accepted — 2026-04-21 |
+| 0007 | Import Pipeline Reliability | accepted — 2026-04-21 |
+| 0008 | Observation Record Invariant + Validator (incl. 2026-04-20 amendment I8–I12) | accepted — 2026-04-21 |
+| 0009 | farmOS v4 cutover via runtime version flag | accepted — 2026-04-21 |
+| 0010 | Framework auth handler migration + framework version bump | accepted — 2026-04-21 (design); implementation pending Lesley package |
 
 New entries go at the bottom of the table. Supersedings keep the old
 row but mark it `superseded by ADR NNNN`.

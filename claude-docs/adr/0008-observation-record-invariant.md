@@ -1,7 +1,7 @@
 # 0008 — Observation Record Invariant + Validator
 
-- **Status:** proposed
-- **Date:** 2026-04-20
+- **Status:** accepted — 2026-04-21
+- **Date:** 2026-04-20 (proposed) / 2026-04-21 (ratified, includes I12 amendment)
 - **Authors:** Agnes, Claude
 - **Supersedes:** —
 - **Related:** 0001 (photo pipeline), 0004 (batch observation tools),
@@ -167,6 +167,20 @@ per ranking rules and patch the relationship to contain only that file.
 A log with null status or missing attribution has broken audit trail
 and cannot be reconciled with team memory's `farmos_changes` claims.
 
+**Pre-invariant era carve-out (decided 2026-04-21).** Approximately 903
+logs created before 2026-04-01 predate the I6 InteractionStamp
+convention. Backfilling them would require reconstructing attribution
+that was never captured at write time — the signal doesn't exist, so
+synthesising it would be fabrication, not reconciliation. Instead,
+logs with `timestamp < 2026-04-01` are accepted as "pre-invariant era"
+and **excluded from the validator's I6 check**. The exclusion is a
+scope boundary, not a silent pass: it's explicit, documented here, and
+surfaces in the validator report as a distinct count ("N pre-invariant
+era logs skipped"). Post-2026-04-01 logs remain under the full I6
+enforcement. The decision may be revisited if the missing attribution
+penalises us in a specific way (e.g. a future audit-trail requirement)
+— until then the cost of the backfill exceeds the value.
+
 ### I7 — Semantic propagation
 
 After a log is written, downstream derived state is updated:
@@ -289,9 +303,9 @@ advisory; for new writes it is enforced at write time.
 
 ---
 
-## Amendment — 2026-04-20: Invariants I8, I9, I10, I11
+## Amendment — 2026-04-20: Invariants I8, I9, I10, I11, I12
 
-- **Status:** proposed (same governance ratification as base ADR)
+- **Status:** accepted — 2026-04-21 (ratified alongside base ADR)
 - **Authors:** Agnes, Claude
 - **Pre-reading:** `claude-docs/observation-photo-pipeline-review-2026-04-20.md`
 - **Context:** the 2026-04-20 QR-page review (Coriander, Nasturtium,
@@ -302,12 +316,17 @@ advisory; for new writes it is enforced at write time.
   multi-observation submission because the importer had no
   within-submission routing rule; (c) dead UI radios for
   `obs_type` (I observed / I did / Action needed) that the
-  importer ignored, leaving log type effectively random. The
-  seven-invariant set is extended to eleven so the contract covers
-  the full observation record — asset, log, photos, and semantic
-  type/status — without gaps. Base invariants I1–I7 are
-  unchanged. Renumbering: the ADR becomes "The Eleven Invariants"
-  once ratified.
+  importer ignored, leaving log type effectively random. A fourth
+  defect class was added on 2026-04-21 after reconciling the
+  empty-page bug on P2R4.52-62/.62-72/.72-77: (d) inventory-
+  adjusting logs with future-dated timestamps are silently ignored
+  by farmOS's `asset.inventory` recompute, producing "0 plants"
+  renders even though the log exists with a positive count. The
+  seven-invariant set is extended to twelve so the contract covers
+  the full observation record — asset, log, photos, semantic
+  type/status, and temporal validity — without gaps. Base invariants
+  I1–I7 are unchanged. Renumbering: the ADR becomes "The Twelve
+  Invariants" once ratified.
 
 ### I8 — Asset notes hygiene
 
@@ -513,6 +532,64 @@ becomes: optional photo(s) + count + condition + free-text notes.
 That's what the submitter can judge. Semantic labeling is not
 their job.
 
+### I12 — Inventory log timestamps must not be in the future
+
+Every log carrying a quantity whose `inventory_adjustment` is non-
+empty (`reset`, `increment`, `decrement`) must have
+`timestamp ≤ now`. No write path may accept a caller-supplied date
+that resolves to a future timestamp.
+
+- **Rationale.** farmOS's computed `asset.inventory` field is
+  derived from qty records with `inventory_adjustment=reset` on
+  logs whose `timestamp ≤ now`. Future-dated reset logs are
+  silently dropped from the recompute — the log exists, the qty
+  exists, relationships are intact, but the computed inventory
+  stays at zero (or the previous value). The QR page then renders
+  "0 plants" while farmOS holds a positive count. This is a silent-
+  data-loss bug class: no write error, no validation failure, no
+  warning — the discrepancy only surfaces when a human notices a
+  missing section on the public site. This is exactly the failure
+  mode that produced the 24 mis-dated `2026-12-18` logs (year typo
+  for `2025-12-18`) found during the 2026-04-21 reconciliation of
+  the empty P2R4.52-62 / .62-72 / .72-77 section pages.
+- **Scope.** Applies to any log with a `quantity--standard`
+  relationship carrying a non-empty `inventory_adjustment`. In
+  practice today: every observation log created by
+  `create_observation`, `create_plant`, `update_inventory`,
+  `import_observations`, and seed-inventory logs created by
+  `create_seed`.
+- **Enforcement at write time.** `parse_date` (Python) and
+  `parseDate` (TS) raise a validation error if the resolved
+  timestamp exceeds `now + 24h`. The 24h grace window
+  accommodates AEST↔UTC edge cases without permitting year-typo
+  dates. Tools that always default to today (`update_inventory`)
+  are unaffected. Tools that accept a caller-supplied date
+  (`create_observation`, `create_plant`, `import_observations`,
+  `create_seed`) fail fast with a specific message before any qty
+  record is created.
+- **Enforcement at audit time.** Validator I12 check scans every
+  log whose `relationships.quantity.data[].attributes.inventory_adjustment`
+  is non-empty and flags any log with `timestamp > now + 86400`.
+  Report row: `{log_id, log_name, asset_ref, timestamp, delta_days}`
+  so the source submission is findable.
+- **Legacy cleanup.** The 24 mis-dated reconciliation logs found
+  on 2026-04-21 were corrected at discovery time. Backfill script
+  re-scans the full log history for any inventory-adjusting log
+  with `timestamp > now + 86400` and re-dates to the corresponding
+  past year (year-typo heuristic) or flags for human review when
+  the intent is ambiguous. If a genuine forward-planning use case
+  appears (schedule a future harvest, planned transplant), it
+  belongs on a dedicated `status=pending` activity log without an
+  `inventory_adjustment`, not on a future-dated reset.
+- **Non-MCP write paths.** I12 constrains MCP write tools only.
+  Direct JSON:API writes (manual reconciliation, ad-hoc scripts,
+  future Drupal modules) can still bypass the guard — and, as
+  noted in `~/.claude/projects/-Users-agnes-Repos-FireflyCorner/memory/reference_farmos_inventory_quirks.md`,
+  can additionally skip the `inventory_asset`/`units` relationships
+  that MCP tools always set. Operators running direct writes are
+  responsible for both constraints; the validator I12 check
+  catches violations from any source.
+
 ### Amendment — Implementation plan (extends base Phase 1–4)
 
 The base ADR's Phase 1 (validator) and Phase 3 (write-time
@@ -527,16 +604,23 @@ for full detail):
 5. **Deterministic log-type classifier + remove UI radios** —
    I11 write-time. Classifier ships before UI change so any
    regression has a rollback path.
-6. **Validator I8 + I9 + I10 + I11 checks** — audit-time.
+6. **Validator I8 + I9 + I10 + I11 + I12 checks** — audit-time.
 7. **Backfill script** — detach I8 content from asset notes,
    re-route I9 cross-log photos per ADR 0005 Option B, re-type
-   I11-violating legacy logs via classifier.
+   I11-violating legacy logs via classifier, re-date I12-
+   violating future-dated inventory logs (year-typo heuristic,
+   human review for ambiguous cases).
 8. **Phase 3c render** — section-level log block on QR section
    page. I10 completion.
 9. **(Post-ADR 0006 ratification)** Skill upgrade: swap
    deterministic classifier for agent-skill with corrections as
    few-shot examples. No invariant change — I11 contract is
    stable across implementations.
+10. **I12 write-time guard** — `parse_date` / `parseDate` reject
+    `now + 24h < ts` with a specific error. Tests: guard fires on
+    year-typo date, passes on today, passes on today + 12h (AEST
+    edge), fails on today + 2d. Ships same commit as the validator
+    I12 check.
 
 ### Amendment — Open-questions status
 
