@@ -78,3 +78,24 @@ If all 4 pass, the pipeline is verified stable. If any fails, we have a concrete
 - Ambiguous PlantNet overrides
 - New bug class discovery → halt + save state
 - Stale approvals older than N days (once Fix 7 lands, this surfaces automatically)
+
+## QR page enhancement backlog (2026-04-22)
+
+**Section-level "Field observations" block takes too much real estate.**
+The current render shows up to 5 recent section logs (line 700 in generate_site.py)
+with full text + up to 6 thumbnails per log. Busy sections end up scrolling
+past plants which is the actual primary content. Agnes's proposal:
+
+- **Short-term:** cap visible section logs to 2-3 (most recent), add a "+N more"
+  link that expands inline or opens a dialog.
+- **Better long-term:** link to a dedicated section-log listing page (e.g.
+  `{section_id}-observations.html`) with pagination + filter-by-observer/mode.
+  Mirrors the log-detail page pattern: one-click from section view, full context
+  on dedicated page.
+
+Ties into the broader UX story: QR pages are mobile-first and visitor-facing.
+Section logs are high-signal for farmhands+managers but low-signal for
+visitors (Hipcamp guests etc). A collapsible/linked treatment serves both
+audiences without mode-switching.
+
+File this when UI/UX work restarts post-v4 migration.
