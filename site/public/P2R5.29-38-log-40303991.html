@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title> · 2026-04-05 · P2R5.29-38</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 5 · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">29–38</h1>
+    </div>
+    <div class="obs-subtitle">Activity · 2026-04-05 · </div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-04-05</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Activity</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value"></span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Review — P2R5.29-38</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">40303991-985d-47d4-ae0b-b5ace7b004a5</span></div>
+      </div>
+    </div>
+
+    
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">JAMES — Maverick (5 Apr 2026) updates for P2R5.29-38:<br>1. Okra: updated 6→11 (significant increase, multiple with decent-sized fruits)<br>2. Papaya: Maverick saw 2, farmOS has 4 — likely missed 2, do NOT decrease<br>3. Basil: Maverick saw ~4, farmOS has 10 — undercount, do NOT decrease<br>4. Mulberry: Maverick saw 1 (with uncertainty), farmOS has 3 — undercount, do NOT decrease<br>Please verify the okra count increase especially.<br><br>[2026-04-18 clean-slate]<br>Review — P2R5.29-38 (Apr 5) — Maverick okra/papaya verification. Closed clean-slate 2026-04-18; defer to WWOOFer cohort field walk.</div></div>
+
+    
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
+  </div>
+
+  <div class="obs-nav">
+    <a href="P2R5.29-38.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
+</body>
+</html>

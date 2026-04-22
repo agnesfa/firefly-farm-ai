@@ -1709,6 +1709,12 @@ def main():
         # Each page is the click target from the HISTORY row on the section
         # view and surfaces full notes + InteractionStamp provenance. First
         # piece of the Farm Intelligence Navigator Claire asked for.
+        #
+        # Bug 2026-04-22: previously this only iterated over plant-level logs
+        # (section.plants[].logs[]), so section-level logs rendered in the
+        # "Field observations for this section" block had their "Details →"
+        # links 404. Now we also iterate section_logs[] which covers
+        # comment-mode + inventory-mode section-level entries.
         section_log_count = 0
         seen_log_uuids: set = set()
         for plant in section.get("plants", []):
@@ -1725,6 +1731,22 @@ def main():
                 with open(log_path, "w", encoding="utf-8") as f:
                     f.write(log_html)
                 section_log_count += 1
+        # Also generate detail pages for SECTION-LEVEL logs (from
+        # section.section_logs[]) so the "Details →" links in the
+        # Field observations for this section block resolve.
+        for log in section.get("section_logs", []) or []:
+            uuid = log.get("uuid")
+            if not uuid or uuid in seen_log_uuids:
+                continue
+            seen_log_uuids.add(uuid)
+            log_html = render_log_detail_page(
+                section_id, section, row_info, log, plant_db, args.base_url
+            )
+            log_filename = log_detail_page_name(section_id, log)
+            log_path = output_dir / log_filename
+            with open(log_path, "w", encoding="utf-8") as f:
+                f.write(log_html)
+            section_log_count += 1
         if section_log_count:
             print(f"  Generated: {section_log_count} log detail pages for {section_id}")
 

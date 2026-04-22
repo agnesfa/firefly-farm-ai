@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title> · 2026-03-16 · P2R3.0-2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 3 · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">0–2</h1>
+    </div>
+    <div class="obs-subtitle">Observation · 2026-03-16 · </div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-03-16</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value"></span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Section observation — P2R3.0-2 — 2026-03-16</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">5f5a6d69-6c86-4135-9d01-75ac6ea6f542</span></div>
+      </div>
+    </div>
+
+    
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">Reporter: Claire<br>Submitted: 2026-03-17T06:42:00<br>Mode: section_observation<br>Section notes: look like a bunch of sun hemp</div></div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Provenance</h3><div class="prov-card"><div class="prov-row"><span class="prov-icon">👤</span><span class="prov-label">Initiated by:</span><span class="prov-value">Claire</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Role:</span><span class="prov-value">farmhand</span></div><div class="prov-row"><span class="prov-icon">📡</span><span class="prov-label">Channel:</span><span class="prov-value">cleanup_script</span></div><div class="prov-row"><span class="prov-icon">⚙️</span><span class="prov-label">Executed by:</span><span class="prov-value">farmos_api</span></div><div class="prov-row"><span class="prov-icon">▶</span><span class="prov-label">Action:</span><span class="prov-value">created</span></div><div class="prov-row"><span class="prov-icon">🎯</span><span class="prov-label">Target:</span><span class="prov-value">section_observation</span></div><div class="prov-row"><span class="prov-icon">✓</span><span class="prov-label">Outcome:</span><span class="prov-value">success</span></div><div class="prov-row"><span class="prov-icon">🕒</span><span class="prov-label">Timestamp:</span><span class="prov-value">2026-04-20T03:03:43.151030+00:00</span></div></div></div>
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
+  </div>
+
+  <div class="obs-nav">
+    <a href="P2R3.0-2.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
+</body>
+</html>

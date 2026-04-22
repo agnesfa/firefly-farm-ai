@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-22T18:01:31.809682+10:00",
+  "generated_at": "2026-04-22T19:03:51.931516+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -18140,7 +18140,7 @@
               "species": "Potato"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/potato.jpg"
         },
         {
           "species": "Melaleuca (Snow in Summer)",
@@ -19403,7 +19403,7 @@
               ]
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/potato.jpg"
         }
       ],
       "section_logs": [
@@ -19419,20 +19419,6 @@
             "photos/logs/d5e048c0-0.jpg",
             "photos/logs/d5e048c0-1.jpg",
             "photos/logs/d5e048c0-2.jpg"
-          ]
-        },
-        {
-          "uuid": "620e2acb-da1b-40e3-8e77-3295a5caac60",
-          "type": "activity",
-          "date": "2026-04-20",
-          "name": "Observation — P2R5.38-44",
-          "notes": "Reporter: Kacper Jaszcz\nSubmitted: 2026-04-21T05:38:00\nMode: comment\nSection notes: 2 new potato plants discovered, hidden in between pumpkin leaves.\nCount:  →\n[ontology:InteractionStamp] initiator=Ka",
-          "notes_full": "Reporter: Kacper Jaszcz\nSubmitted: 2026-04-21T05:38:00\nMode: comment\nSection notes: 2 new potato plants discovered, hidden in between pumpkin leaves.\nCount:  →\n[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-22T01:39:12.219Z | related=P2R5.38-44 | submission=154bd20b-eacc-4170-9de4-3f1a9faa4579",
-          "interaction_stamp": "[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-22T01:39:12.219Z | related=P2R5.38-44 | submission=154bd20b-eacc-4170-9de4-3f1a9faa4579",
-          "photos": [
-            "photos/logs/620e2acb-0.jpg",
-            "photos/logs/620e2acb-1.jpg",
-            "photos/logs/620e2acb-2.jpg"
           ]
         },
         {

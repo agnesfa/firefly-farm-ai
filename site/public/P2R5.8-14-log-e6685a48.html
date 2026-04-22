@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title> · 2026-04-05 · P2R5.8-14</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 5 · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">8–14</h1>
+    </div>
+    <div class="obs-subtitle">Activity · 2026-04-05 · </div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-04-05</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Activity</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value"></span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Review — P2R5.8-14</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">e6685a48-ac59-405a-9993-ca9d73245d9e</span></div>
+      </div>
+    </div>
+
+    
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">JAMES — P2R5.8-14 FULL REGISTRATION WALK NEEDED (gap section with real plants).<br><br>Maverick&#x27;s transcript (5 Apr 2026) identified these species with NO farmOS records:<br>1. Pumpkin: ~10 plants (self-seeded from compost, well established)<br>2. Sweet Potato: ~10+ plants (runners, lots of coverage)<br>3. Basil - Perennial (Thai): ~4 plants<br>4. Radish: ~3 plants<br>5. Mulberry (White): 1 tree — MISSING TRANSPLANTING LOG<br>6. Unknown tree &quot;long narrow leaves&quot;: 1 — likely Banagrass (68 in nursery) — MISSING TRANSPLANTING LOG<br>7. Papaya: 1 tree — MISSING TRANSPLANTING LOG (9 seedlings in nursery)<br>8. Eucalypt: 1 tree — needs species ID (Tallowood? Generic?)<br><br>Three tree species (Mulberry, likely Banagrass, Papaya) need investigation — trees don&#x27;t self-seed to visible size in months. These are either unlogged nursery transplants or planting records that were never entered.<br><br>Please do a full count walk with species verification and report back.<br><br>[2026-04-18 clean-slate]<br>Review — P2R5.8-14 (Apr 5) — gap section full registration walk. Closed clean-slate 2026-04-18; defer to WWOOFer cohort.</div></div>
+
+    
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
+  </div>
+
+  <div class="obs-nav">
+    <a href="P2R5.8-14.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
+</body>
+</html>
