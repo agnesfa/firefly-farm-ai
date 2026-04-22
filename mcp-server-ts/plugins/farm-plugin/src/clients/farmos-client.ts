@@ -856,9 +856,22 @@ export class FarmOSClient {
     // (discovered 2026-04-21: every photo upload in tonight's session hit
     // upload_returned_null because farmOS returned list form for log.image
     // and our code only checked data.id on a dict).
+    //
+    // 2026-04-22: multi-valued list response takes the LAST entry, not the
+    // first. Background: when POSTing a file to a multi-valued relationship
+    // like taxonomy_term/plant_type/{id}/image, farmOS appends the new file
+    // to the existing list and returns [prior, ..., new]. Returning data[0]
+    // gave us the PRIOR file's id — then the downstream patchRelationship
+    // step overwrote the relationship with that prior id, silently orphaning
+    // the newly uploaded file and leaving the stale one as the reference
+    // photo. Audit on 2026-04-22 found 8 of 8 species-reference photos
+    // still pointing at pre-ADR-0005 stock/old-format photos despite
+    // species_reference_photos_updated=1 being reported as success for
+    // each one in the import pipeline.
     const data = result?.data;
     if (Array.isArray(data)) {
-      return data[0]?.id ?? null;
+      // Empty list → no upload occurred. Otherwise, newest is last.
+      return data.length > 0 ? (data[data.length - 1]?.id ?? null) : null;
     }
     return data?.id ?? null;
   }

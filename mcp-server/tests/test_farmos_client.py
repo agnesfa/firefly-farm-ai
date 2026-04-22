@@ -845,3 +845,93 @@ class TestPlantTypeCache:
         client.create_plant_type("Test", "A test plant")
 
         assert client._plant_type_full_cache is None
+
+
+# ── File upload regression tests (2026-04-22) ──────────────────
+# Background: farmOS file uploads return {"data": {...}} (dict) for single-
+# valued relationship fields and {"data": [{...}]} (list) for multi-valued
+# fields. When uploading to a multi-valued field, the response lists all
+# files in the field including existing ones, with the newly uploaded file
+# appended at the END. Taking data[0] silently returned the PRIOR file id,
+# which broke every species-reference photo promotion on 2026-04-21/22.
+
+
+class TestUploadFileResponseShapes:
+    """Regression tests for the data[0] vs data[-1] bug."""
+
+    @responses.activate
+    def test_upload_file_returns_id_from_dict_response(self, env_vars):
+        """Single-valued field → {data: {...}} dict → return data.id."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/log/observation/log-1/image",
+            json={"data": {"id": "new-file-uuid", "type": "file--file"}},
+        )
+        fid = client.upload_file("log/observation", "log-1", "image",
+                                 "photo.jpg", b"fake-bytes", "image/jpeg")
+        assert fid == "new-file-uuid"
+
+    @responses.activate
+    def test_upload_file_single_entry_list_returns_that_id(self, env_vars):
+        """Single-entry list {data: [{id}]} → return that id."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/log/observation/log-1/image",
+            json={"data": [{"id": "sole-file-uuid", "type": "file--file"}]},
+        )
+        fid = client.upload_file("log/observation", "log-1", "image",
+                                 "photo.jpg", b"fake-bytes", "image/jpeg")
+        assert fid == "sole-file-uuid"
+
+    @responses.activate
+    def test_upload_file_multi_entry_list_returns_LAST_entry(self, env_vars):
+        """Multi-valued field with existing files → [prior, ..., NEW].
+        Must return LAST (newly uploaded), not FIRST (stale prior).
+
+        This is the silent-lie bug discovered 2026-04-22: species-reference
+        photo promotion reported success but the plant_type.image relationship
+        was never updated because the returned id was the prior file's id,
+        which the downstream patchRelationship then overwrote with itself.
+        """
+        client = _connect(env_vars)
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/taxonomy_term/plant_type/pt-uuid/image",
+            json={"data": [
+                {"id": "prior-stale-file-uuid", "type": "file--file"},
+                {"id": "newly-uploaded-file-uuid", "type": "file--file"},
+            ]},
+        )
+        fid = client.upload_file("taxonomy_term/plant_type", "pt-uuid", "image",
+                                 "photo.jpg", b"fake-bytes", "image/jpeg")
+        assert fid == "newly-uploaded-file-uuid"
+        assert fid != "prior-stale-file-uuid"
+
+    @responses.activate
+    def test_upload_file_empty_list_returns_None(self, env_vars):
+        """Empty list → no file uploaded → None."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/log/observation/log-1/image",
+            json={"data": []},
+        )
+        fid = client.upload_file("log/observation", "log-1", "image",
+                                 "photo.jpg", b"fake-bytes", "image/jpeg")
+        assert fid is None
+
+    @responses.activate
+    def test_upload_file_empty_dict_returns_None(self, env_vars):
+        """Empty dict → no file uploaded → None."""
+        client = _connect(env_vars)
+        responses.add(
+            responses.POST,
+            f"{BASE_URL}/api/log/observation/log-1/image",
+            json={"data": {}},
+        )
+        fid = client.upload_file("log/observation", "log-1", "image",
+                                 "photo.jpg", b"fake-bytes", "image/jpeg")
+        assert fid is None
+

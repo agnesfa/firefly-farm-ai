@@ -1059,7 +1059,13 @@ class FarmOSClient:
                 )
         resp.raise_for_status()
         data = resp.json().get("data", {})
-        # farmOS file uploads may return {"data": [{...}]} (list) or {"data": {...}} (dict)
+        # farmOS file uploads may return {"data": [{...}]} (list) or {"data": {...}} (dict).
+        # For multi-valued relationship targets (e.g. taxonomy_term/plant_type/{id}/image),
+        # farmOS appends the new file to the existing list and returns [prior, ..., new].
+        # We want the NEWLY uploaded file, which is the last entry. Audit 2026-04-22
+        # found that returning data[0] silently broke all species-reference photo
+        # promotions (new file uploaded + attached, then downstream patchRelationship
+        # overwrote with the prior file's id, orphaning the new one).
         if isinstance(data, list):
-            return data[0].get("id") if data else None
+            return data[-1].get("id") if data else None
         return data.get("id")
