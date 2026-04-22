@@ -714,9 +714,15 @@ def render_section_log_block(section_logs, section_id, base_url=""):
         # Trim to first ~200 chars
         snippet = visible if len(visible) <= 240 else visible[:237] + "..."
         photos = log.get("photos", []) or []
+        # Photos in sections.json may be str paths (from export_farmos.py)
+        # OR dicts with {thumb, url}. Handle both.
+        def _photo_src(ph):
+            if isinstance(ph, str):
+                return ph
+            return ph.get("thumb") or ph.get("url", "")
         photo_thumbs = "".join(
             f'<img class="sec-log-thumb" loading="lazy" '
-            f'src="{esc(ph.get("thumb") or ph.get("url", ""))}" '
+            f'src="{esc(_photo_src(ph))}" '
             f'alt="Field photo" onclick="openLightbox(this)">'
             for ph in photos[:6]
         )

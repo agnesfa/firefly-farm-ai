@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Okra · 2026-04-20 · P2R5.22-29</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 5 · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">22–29</h1>
+    </div>
+    <div class="obs-subtitle">Observation · 2026-04-20 · Okra</div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-04-20</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Okra · Abelmoschus esculentus</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">medium</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Observation P2R5.22-29 — Okra — 2026-04-21</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">03a94a39-535e-469a-8638-6ddb02921580</span></div>
+      </div>
+    </div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Field photos (4)</h3><div class="log-photo-grid"><a class="log-photo-thumb" href="photos/logs/03a94a39-0-full.jpg" onclick="event.preventDefault();openLogLightbox(this);"><img src="photos/logs/03a94a39-0.jpg" alt="Field photo for Okra" loading="lazy" decoding="async"></a><a class="log-photo-thumb" href="photos/logs/03a94a39-1-full.jpg" onclick="event.preventDefault();openLogLightbox(this);"><img src="photos/logs/03a94a39-1.jpg" alt="Field photo for Okra" loading="lazy" decoding="async"></a><a class="log-photo-thumb" href="photos/logs/03a94a39-2-full.jpg" onclick="event.preventDefault();openLogLightbox(this);"><img src="photos/logs/03a94a39-2.jpg" alt="Field photo for Okra" loading="lazy" decoding="async"></a><a class="log-photo-thumb" href="photos/logs/03a94a39-3-full.jpg" onclick="event.preventDefault();openLogLightbox(this);"><img src="photos/logs/03a94a39-3.jpg" alt="Field photo for Okra" loading="lazy" decoding="async"></a></div></div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">Reporter: Kacper Jaszcz<br>Submitted: 2026-04-21T05:16:00<br>Mode: inventory<br>Count: 13 → 13</div></div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Provenance</h3><div class="prov-card"><div class="prov-row"><span class="prov-icon">👤</span><span class="prov-label">Initiated by:</span><span class="prov-value">Kacper Jaszcz</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Role:</span><span class="prov-value">farmhand</span></div><div class="prov-row"><span class="prov-icon">📡</span><span class="prov-label">Channel:</span><span class="prov-value">automated</span></div><div class="prov-row"><span class="prov-icon">⚙️</span><span class="prov-label">Executed by:</span><span class="prov-value">farmos_api</span></div><div class="prov-row"><span class="prov-icon">▶</span><span class="prov-label">Action:</span><span class="prov-value">created</span></div><div class="prov-row"><span class="prov-icon">🎯</span><span class="prov-label">Target:</span><span class="prov-value">observation</span></div><div class="prov-row"><span class="prov-icon">✓</span><span class="prov-label">Outcome:</span><span class="prov-value">success</span></div><div class="prov-row"><span class="prov-icon">🕒</span><span class="prov-label">Timestamp:</span><span class="prov-value">2026-04-22T00:37:05.838Z</span></div></div></div>
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
+  </div>
+
+  <div class="obs-nav">
+    <a href="P2R5.22-29.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
+</body>
+</html>
