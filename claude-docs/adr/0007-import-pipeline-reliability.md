@@ -267,8 +267,18 @@ Status updated 2026-04-21.
     `2334a179` Okra 13→15 was dropped because the earlier
     `23603752` inventory had written a log with the same name at
     count 13, and the naive `logExists(name)` check short-circuited
-    without comparing submission_ids. The minimal version covers
-    the narrow retry-vs-distinct disambiguation:
+    without comparing submission_ids. Also exposed on 2026-04-22:
+    a second silent-lie bug in `uploadFile` taking `data[0]` of a
+    multi-entry farmOS response (the prior file's id) instead of
+    `data[-1]` (the newly uploaded file's id), which caused every
+    species-reference photo promotion in the 2026-04-21/22 session
+    to claim success but actually overwrite the relationship with
+    the stale prior file. Fixed in commit 3ad2f27 + 6 new tests
+    (5 Python + 1 TS) that cover the multi-entry list case which
+    prior fixtures had masked. Both incidents are logged as
+    test-usefulness failures in `sdlc-with-ai-design-thinking-2026-04-22.md`.
+    The minimal Fix 5 version covers the narrow retry-vs-distinct
+    disambiguation:
     - Fetch existing log, scan notes for `submission=<current_id>`
     - Same id → skip idempotently (retry)
     - Different id → proceed with creation; action result carries
@@ -278,6 +288,25 @@ Status updated 2026-04-21.
     operator-confirm flow ship together post-v4. The minimal
     shipped version is upward-compatible — full Fix 5 can extend
     the same notes-search path without changing the signature.
+
+- **Fix 7 — observability for stale approvals (new, 2026-04-22).**
+  During tonight's autonomous import run the `approved` queue
+  surfaced 35 submissions dating back to 2026-03-09 that had been
+  approved (by earlier review passes) but never made it to
+  `imported` status. They accumulated silently for weeks; no dashboard,
+  alert, or startup check surfaced them. Root causes varied (earlier
+  pipeline bugs causing silent failures, parallel legacy bulk-import
+  pathways, approval without importer run) but the common failure is
+  observability: there is no signal that a submission has been
+  sitting in `approved` for more than N days. Add:
+  - A periodic check (daily cron or session-start preflight) that
+    queries `list_observations(status="approved")` and alerts if any
+    entry is older than N days (start with N=7).
+  - The `review-observations` skill should surface stale-approved
+    counts in its preflight output.
+  - Log every import run's aggregate stats (submissions processed,
+    failures, photos attached, reference-photo promotions) into a
+    KB entry with `category=import_run_log` so trends are queryable.
 
 **Phase 3 (post-governance):**
 - **Fix 3 — async job queue.** Storage tier resolved (KB entries
