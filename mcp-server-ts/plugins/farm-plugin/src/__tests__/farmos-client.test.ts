@@ -503,6 +503,31 @@ describe('FarmOSClient', () => {
       expect(id).toBe('file-uuid-list');
     });
 
+    it('regression 2026-04-22: multi-entry list returns LAST entry (newly-uploaded file)', async () => {
+      // When uploading a file to a multi-valued relationship field
+      // (e.g. taxonomy_term/plant_type/{id}/image), farmOS appends the
+      // new file to the existing list and returns [prior, ..., new].
+      // Returning data[0] (the prior file) silently broke every
+      // species-reference photo promotion on 2026-04-21/22 — the
+      // downstream patchRelationship used the prior file's id and
+      // overwrote the relationship with itself, orphaning the new file.
+      // Must return the LAST entry — the newly uploaded file.
+      fetchSpy.mockResolvedValueOnce(
+        mockResponse({
+          data: [
+            { id: 'prior-file-uuid-stale-reference', type: 'file--file' },
+            { id: 'newly-uploaded-file-uuid', type: 'file--file' },
+          ],
+        }),
+      );
+      const id = await client.uploadFile(
+        'taxonomy_term/plant_type', 'plant-type-uuid', 'image',
+        'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
+      );
+      expect(id).toBe('newly-uploaded-file-uuid');
+      expect(id).not.toBe('prior-file-uuid-stale-reference');
+    });
+
     it('returns null on empty list response {data: []}', async () => {
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
       const id = await client.uploadFile(
