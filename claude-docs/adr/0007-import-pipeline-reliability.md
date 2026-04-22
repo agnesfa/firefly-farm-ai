@@ -262,6 +262,22 @@ Status updated 2026-04-21.
   `submission_id + content_hash`; Tier 2 (soft warn) via
   `content_hash` alone, caller decides. Integrates with Fix 4 via
   the same pre-write read-back.
+  - 🟡 **Fix 5 minimal shipped 2026-04-22** (commit 528a23b) after a
+    mid-import incident exposed silent data loss: Kacper's
+    `2334a179` Okra 13→15 was dropped because the earlier
+    `23603752` inventory had written a log with the same name at
+    count 13, and the naive `logExists(name)` check short-circuited
+    without comparing submission_ids. The minimal version covers
+    the narrow retry-vs-distinct disambiguation:
+    - Fetch existing log, scan notes for `submission=<current_id>`
+    - Same id → skip idempotently (retry)
+    - Different id → proceed with creation; action result carries
+      `same_name_prior_log` so the operator sees the collision
+    - No content_hash yet; no Tier 2 operator-confirm flow yet
+  - **Full Fix 5 still in backlog:** the `content_hash` check and
+    operator-confirm flow ship together post-v4. The minimal
+    shipped version is upward-compatible — full Fix 5 can extend
+    the same notes-search path without changing the signature.
 
 **Phase 3 (post-governance):**
 - **Fix 3 — async job queue.** Storage tier resolved (KB entries
