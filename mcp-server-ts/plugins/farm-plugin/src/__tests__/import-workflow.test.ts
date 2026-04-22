@@ -36,6 +36,7 @@ const mockClient = {
   createPlantAsset: vi.fn().mockResolvedValue('new-plant-id'),
   updatePlantType: vi.fn().mockResolvedValue(true),
   archivePlant: vi.fn(),
+  getRaw: vi.fn().mockResolvedValue({ data: { attributes: { notes: { value: '' } } } }),
   uploadFile: vi.fn().mockResolvedValue('file-uuid'),
   connect: vi.fn(),
   isConnected: true,
@@ -449,6 +450,78 @@ describe('import_observations photo pipeline', () => {
     expect(result.photos_uploaded).toBe(0);
     expect(result.submission_media_fetched).toBe(0);
     expect(result.errors).toBeNull();
+  });
+
+  it('regression 2026-04-22: same-name log from DIFFERENT submission → creates new log (not silently skipped)', async () => {
+    // ADR 0007 Fix 5 minimal — two same-day observations for the same
+    // species from different submissions should coexist as distinct logs.
+    // Bug: naive logExists(name) matched the prior submission's log and
+    // silently dropped the second (2334a179 Okra 13->15 lost because
+    // 23603752 inventory had already written a log with the same name).
+    mockClient.logExists.mockResolvedValue('existing-log-id-from-prior-submission');
+    mockClient.getRaw.mockResolvedValue({
+      data: {
+        attributes: {
+          notes: { value: 'submission=DIFFERENT-SUBMISSION-UUID-HERE' },
+        },
+      },
+    });
+    mockClient.getPlantAssets.mockResolvedValue([
+      makePlantAsset({ name: '25 APR 2025 - Okra - P2R5.22-29' }),
+    ]);
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [
+        makeObservation({ species: 'Okra', newCount: 15, previousCount: 13 }),
+      ],
+    });
+
+    const result = parseResult(
+      await importObservationsTool.handler({
+        submission_id: 'sub-current-2334a179',
+        reviewer: 'Claude',
+        dry_run: false,
+      }),
+    );
+
+    expect(result.total_actions).toBe(1);
+    expect(result.actions[0].result).toBe('created');  // NOT 'skipped'
+    expect(result.actions[0].same_name_prior_log).toBe('existing-log-id-from-prior-submission');
+    expect(mockClient.createObservationLog).toHaveBeenCalled();
+  });
+
+  it('regression 2026-04-22: same-name log from SAME submission → skipped (retry idempotency)', async () => {
+    // Complement to the above: retrying the same submission (sheet row
+    // somehow not cleaned after prior success) should be idempotent.
+    mockClient.logExists.mockResolvedValue('existing-log-id-from-same-submission');
+    mockClient.getRaw.mockResolvedValue({
+      data: {
+        attributes: {
+          notes: { value: 'submission=sub-retry-2334a179' },
+        },
+      },
+    });
+    mockClient.getPlantAssets.mockResolvedValue([
+      makePlantAsset({ name: '25 APR 2025 - Okra - P2R5.22-29' }),
+    ]);
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [
+        makeObservation({ species: 'Okra', newCount: 15, previousCount: 13 }),
+      ],
+    });
+
+    const result = parseResult(
+      await importObservationsTool.handler({
+        submission_id: 'sub-retry-2334a179',
+        reviewer: 'Claude',
+        dry_run: false,
+      }),
+    );
+
+    expect(result.actions[0].result).toBe('skipped');
+    expect(result.actions[0].log_id).toBe('existing-log-id-from-same-submission');
+    expect(mockClient.createObservationLog).not.toHaveBeenCalled();
   });
 
   it('regression 2026-04-21: empty media_files column + photos exist in Drive → photos STILL attached + upstream warning surfaced', async () => {

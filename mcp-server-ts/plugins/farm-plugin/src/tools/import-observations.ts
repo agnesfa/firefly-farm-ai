@@ -384,9 +384,18 @@ export const importObservationsTool: Tool = {
     const speciesObs = observations.filter((o: any) => (o.species ?? '').trim());
     const hasPlantObs = speciesObs.length > 0;
     const isMultiPlant = speciesObs.length > 1;
-    const combinedSectionNotes = observations
-      .map((o: any) => (o.section_notes ?? '').trim())
-      .filter(Boolean)
+    // Inventory-mode submissions carry the same section_notes on every
+    // species row after the QR form's sheet expansion, so concatenating
+    // all rows produced N duplicate copies (bug discovered 2026-04-22
+    // mid-import — Cuban Jute note appeared 4× on the P2R5.22-29 section
+    // log). Dedupe unique non-empty section_notes strings before joining.
+    const combinedSectionNotes = Array.from(
+      new Set(
+        observations
+          .map((o: any) => (o.section_notes ?? '').trim())
+          .filter(Boolean),
+      ),
+    )
       .join('\n\n')
       .trim();
     const routePhotosToSection = Boolean(isMultiPlant && submissionMedia.length > 0);
@@ -592,8 +601,36 @@ export const importObservationsTool: Tool = {
                   const ts = parseDate(obsDate || undefined);
                   const dateStr = new Date((ts*1000)+10*60*60*1000).toISOString().slice(0,10);
                   const logName = `Observation ${formatted.section} — ${species} — ${dateStr}`;
-                  const existing = await client.logExists(logName, 'observation');
-                  if (existing) { action.result = 'skipped'; } else {
+                  // ADR 0007 Fix 5 (minimal) — submission-aware dedup.
+                  //
+                  // Bug discovered 2026-04-22: naive logExists(name) skipped
+                  // 2334a179 Okra 13->15 because 23603752 inventory already
+                  // wrote a log with the same name at count 13. Different
+                  // submission, different count — legitimate distinct
+                  // observation but silently dropped.
+                  //
+                  // Minimal fix: if a log with this name exists, fetch it
+                  // and compare submission_id in InteractionStamp notes.
+                  // - Same submission_id → retry of same submission → skip
+                  // - Different submission_id → legitimate distinct obs →
+                  //   create new log (farmOS allows same-name logs, keyed
+                  //   by UUID); action result carries `same_name_prior` so
+                  //   the operator is aware of the name collision.
+                  //
+                  // Full Fix 5 (content_hash + Tier 2 possible-duplicate
+                  // warning flow) deferred to post-v4 per ADR 0007.
+                  const existingId = await client.logExists(logName, 'observation');
+                  let isRetryOfSameSubmission = false;
+                  if (existingId) {
+                    try {
+                      const existingLog = await client.getRaw(`/api/log/observation/${existingId}`);
+                      const existingNotes = existingLog?.data?.attributes?.notes?.value ?? '';
+                      isRetryOfSameSubmission = existingNotes.includes(
+                        `submission=${params.submission_id}`,
+                      );
+                    } catch { /* couldn't verify → treat as distinct; err on the side of creating */ }
+                  }
+                  if (existingId && isRetryOfSameSubmission) { action.result = 'skipped'; action.log_id = existingId; } else {
                     const qtyId = await client.createQuantity(plant.id, countVal, 'reset');
                     const classified = classifyAndAnnotate(
                       combinedNotes, 'observation', obs.plant_notes ?? '',
@@ -606,6 +643,11 @@ export const importObservationsTool: Tool = {
                     action.classified_type = classified.type;
                     action.result = 'created';
                     if (obsLogId) action.log_id = obsLogId;
+                    if (existingId && !isRetryOfSameSubmission) {
+                      // Tier-2 signal per ADR 0007 Fix 5 (without the
+                      // full content_hash + operator confirm flow).
+                      action.same_name_prior_log = existingId;
+                    }
                     // I9: attach photos here only if single-plant submission.
                     if (shouldAttachPerLog()) {
                       const photoCount = await attachAndMaybePromote(

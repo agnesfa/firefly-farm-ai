@@ -1012,6 +1012,7 @@ def create_observation(
     notes: str = "",
     date: Optional[str] = None,
     status: str = "done",
+    submission_id: Optional[str] = None,
 ) -> str:
     """Create an observation log with inventory count for a plant asset.
 
@@ -1025,6 +1026,14 @@ def create_observation(
         status: Log status — "done" (completed observation) or "pending"
             (action needed / TODO). Default "done". Set to "pending" when
             the classifier (ADR 0008 I11) detects a TODO intent.
+        submission_id: Optional submission UUID. When provided, enables
+            ADR 0007 Fix 5 submission-aware dedup: if a log with the same
+            name already exists, check the existing log's notes for the
+            same `submission=<id>` marker. Same id = retry, skip. Different
+            id = legitimate distinct observation, proceed (farmOS allows
+            same-name logs keyed by UUID). Bug discovered 2026-04-22:
+            2334a179 Okra 13->15 silently dropped because 23603752 inventory
+            had already written a log with the same name at count 13.
 
     Returns:
         Created log details or error message.
@@ -1049,13 +1058,35 @@ def create_observation(
     # Parse date
     timestamp = parse_date(date) if date else parse_date(None)
 
-    # Build log name — include date so future inventory updates aren't blocked
+    # Build log name — include date so future inventory updates aren't blocked.
     species = formatted["species"]
     obs_date = datetime.fromtimestamp(timestamp, tz=AEST).strftime("%Y-%m-%d")
     log_name = f"Observation {section_id} — {species} — {obs_date}"
 
-    # Check if this exact log already exists (same species + section + date)
+    # ADR 0007 Fix 5 (minimal): if a log with this name exists, check
+    # whether the existing log's notes carry the same submission_id.
+    # Same submission → retry, skip idempotently. Different submission →
+    # distinct observation, proceed (farmOS allows same-name logs).
     existing = client.log_exists(log_name, "observation")
+    same_name_prior_log = None
+    if existing and submission_id:
+        try:
+            existing_log_resp = client.session.get(
+                f"{client.hostname}/api/log/observation/{existing}", timeout=15,
+            )
+            existing_log_resp.raise_for_status()
+            existing_notes = (
+                (existing_log_resp.json().get("data") or {}).get("attributes", {}).get("notes", {}) or {}
+            ).get("value", "")
+            if f"submission={submission_id}" not in existing_notes:
+                # Different submission with colliding name — tier-2 signal.
+                same_name_prior_log = existing
+                existing = None  # fall through to create
+        except Exception:
+            # If we can't verify, err on side of creating (risk of
+            # duplicate beats risk of silent drop).
+            same_name_prior_log = existing
+            existing = None
     if existing:
         return json.dumps({
             "status": "skipped",
@@ -1063,10 +1094,12 @@ def create_observation(
             "existing_log_id": existing,
         })
 
-    # Build interaction stamp
+    # Build interaction stamp — passes source_submission so future
+    # Fix-5 duplicate checks can match by submission_id in notes.
     stamp = build_mcp_stamp(
         action="created", target="observation",
         related_entities=[species, section_id],
+        source_submission=submission_id,
     )
     stamped_notes = append_stamp(notes, stamp)
 
@@ -1084,7 +1117,7 @@ def create_observation(
         status=status,
     )
 
-    return json.dumps({
+    result = {
         "status": "created",
         "log_id": log_id,
         "log_name": log_name,
@@ -1093,7 +1126,12 @@ def create_observation(
         "notes": notes,
         "log_status": status,
         "timestamp": format_timestamp(timestamp),
-    }, indent=2)
+    }
+    if same_name_prior_log:
+        # Tier-2 signal per ADR 0007 Fix 5 (minimal form, without the
+        # full content_hash + operator confirm flow).
+        result["same_name_prior_log"] = same_name_prior_log
+    return json.dumps(result, indent=2)
 
 
 @mcp.tool
@@ -2036,11 +2074,19 @@ def import_observations(
     _species_obs = [o for o in observations if (o.get("species") or "").strip()]
     _has_plant_obs = bool(_species_obs)
     _is_multi_plant = len(_species_obs) > 1
-    _combined_section_notes = "\n\n".join(
-        (o.get("section_notes") or "").strip()
-        for o in observations
-        if (o.get("section_notes") or "").strip()
-    ).strip()
+    # Inventory-mode submissions carry the same section_notes on every
+    # species row after the QR form's sheet expansion, so concatenating
+    # all rows produced N duplicate copies (bug discovered 2026-04-22
+    # mid-import — Cuban Jute note appeared 4× on the P2R5.22-29 section
+    # log). Dedupe unique non-empty section_notes strings before joining.
+    _seen_notes: set = set()
+    _dedup_notes: list = []
+    for _o in observations:
+        _n = (_o.get("section_notes") or "").strip()
+        if _n and _n not in _seen_notes:
+            _seen_notes.add(_n)
+            _dedup_notes.append(_n)
+    _combined_section_notes = "\n\n".join(_dedup_notes).strip()
     _route_photos_to_section = bool(_is_multi_plant and submission_media)
     # A dedicated section log is needed only when plant observations
     # ALSO exist (otherwise the section-only Case A already creates
@@ -2415,6 +2461,7 @@ def import_observations(
                             notes=_annotated_notes,
                             date=obs_date or None,
                             status=_classified_status,
+                            submission_id=submission_id,
                         ))
                         action["result"] = result_json.get("status", "unknown")
                         action["log_status"] = _classified_status

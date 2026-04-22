@@ -694,6 +694,58 @@ class TestPhotoPipeline:
             for e in result["errors"]
         )
 
+    def test_regression_2026_04_22_same_name_log_different_submission_creates_new(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """ADR 0007 Fix 5 minimal: when logExists finds a log with the same
+        name but DIFFERENT submission_id, create a new log (not silently
+        skip). Bug: 2334a179 Okra 13->15 was silently dropped because
+        23603752 inventory had already written a log with the same name
+        at count 13.
+        """
+        from unittest.mock import MagicMock
+        sub_id = "sub-2334a179-distinct"
+        obs = make_observation(
+            species="Okra", new_count=15, previous_count=13,
+            submission_id=sub_id, status="approved", media_files="",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True, "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_observe_client.get_media = MagicMock(return_value={"success": True, "files": []})
+        # Simulate a pre-existing log with the same name but from a
+        # DIFFERENT submission (the inventory that wrote Okra 13->13 first).
+        mock_farmos_client.log_exists = MagicMock(return_value="prior-log-id-from-23603752")
+        # server.py fetches the existing log via client.session.get — mock that.
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            "data": {"attributes": {
+                "notes": {"value": "submission=23603752-different-uuid"}
+            }}
+        }
+        mock_response.raise_for_status = MagicMock()
+        mock_farmos_client.session = MagicMock()
+        mock_farmos_client.session.get.return_value = mock_response
+        mock_farmos_client.hostname = "https://test.farmos.net"
+        plant = make_plant_asset(name="25 APR 2025 - Okra - P2R5.22-29")
+        mock_farmos_client.get_plant_assets.return_value = [plant]
+        _mock_tool_success(monkeypatch, "create_observation")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        # Log should have been CREATED, not skipped — fix verified.
+        # (The underlying create_observation tool is mocked to success,
+        # so we're checking that the importer calls through and doesn't
+        # short-circuit at the logExists check.)
+        assert result["total_actions"] >= 1
+        obs_action = next((a for a in result["actions"] if a.get("type") == "observation"), None)
+        assert obs_action is not None
+        assert obs_action.get("result") != "skipped", (
+            "Observation should create a new log when prior submission "
+            "differs; silent skip on collision is the bug."
+        )
+
     def test_upload_failure_does_not_block_import(
         self, monkeypatch, mock_farmos_client, mock_observe_client,
     ):
