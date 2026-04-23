@@ -1052,7 +1052,7 @@ function showStatus(type, message) {
   statusDiv.textContent = message;
   statusDiv.style.display = "block";
   if (type === "success") {
-    setTimeout(function () { statusDiv.style.display = "none"; }, 5000);
+    setTimeout(function () { statusDiv.style.display = "none"; }, 8000);
   }
 }
 

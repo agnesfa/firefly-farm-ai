@@ -153,6 +153,26 @@ function handleObservation(payload) {
     return jsonResponse({ success: false, error: "Missing required fields" });
   }
 
+  // Fix D 2026-04-23: shape gate — reject payloads that carry no actual
+  // observation content. This catches form drift (e.g. nursery inline form
+  // pre-fix-B emitting flat single-plant shape that this handler silently
+  // dropped into skeleton rows). See claude-docs/ux-review-deferred-2026-04-23.md.
+  var hasObservations = Array.isArray(payload.observations) && payload.observations.length > 0;
+  var hasSectionNotes = typeof payload.section_notes === "string" && payload.section_notes.trim().length > 0;
+  if (!hasObservations && !hasSectionNotes) {
+    Logger.log("REJECTED malformed payload — no observations[] and no section_notes. "
+      + "section_id=" + payload.section_id
+      + " observer=" + payload.observer
+      + " mode=" + (payload.mode || "unset")
+      + " submission_id=" + (payload.submission_id || "(none)")
+      + " keys=" + Object.keys(payload).join(","));
+    return jsonResponse({
+      success: false,
+      error: "Malformed submission — missing observations and section_notes. "
+           + "If you see this, the form on the page has a bug — please tell Agnes."
+    });
+  }
+
   // Check for duplicate submission
   if (payload.submission_id && isDuplicate(payload.submission_id)) {
     return jsonResponse({ success: true, message: "Already received", duplicate: true });

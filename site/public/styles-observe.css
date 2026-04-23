@@ -142,8 +142,26 @@
 .obs-submit-btn:active { background: #d35400; }
 .obs-submit-btn:disabled { background: #d1d5db; cursor: not-allowed; }
 
-/* Status messages */
-.obs-status { margin: 0 16px 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+/* Status messages — fixed-position toast so the confirmation is visible
+   regardless of form length. Long inventory forms used to scroll the status
+   message off-screen, causing duplicate submissions. See claude-docs/
+   ux-review-deferred-2026-04-23.md. */
+.obs-status {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: calc(100vw - 32px);
+  max-width: 398px;
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  text-align: center;
+}
 .obs-status-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
 .obs-status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 .obs-status-offline { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }

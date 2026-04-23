@@ -217,9 +217,18 @@ function showActionInterstitial(cardId, callback) {
   });
 }
 
+function generateInlineUUID() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0;
+    var v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 function doSubmit(cardId, name, obsText, actionText, newCount) {
   var card = document.getElementById(cardId);
   var species = card.dataset.species;
+  var previousCount = parseFloat(card.dataset.count) || 0;
   var btn = card.querySelector(".inline-obs-submit");
   btn.disabled = true;
   btn.textContent = "Saving...";
@@ -229,16 +238,31 @@ function doSubmit(cardId, name, obsText, actionText, newCount) {
   if (obsText) notes += "Observation: " + obsText;
   if (actionText) notes += (notes ? "\n" : "") + "Action: " + actionText;
 
+  // Canonical payload shape — matches observe.js contract (version 1).
+  // Fix B 2026-04-23: nursery inline form was emitting a flat single-plant
+  // shape that Apps Script silently dropped (see ux-review-deferred-2026-04-23.md).
+  var obs = {
+    species: species,
+    strata: "",
+    previous_count: previousCount,
+    condition: "alive",
+    notes: notes
+  };
+  if (newCount !== null) {
+    obs.new_count = newCount;
+  }
+
   var payload = {
+    version: "1",
     action: "submit",
+    submission_id: generateInlineUUID(),
     section_id: SECTION_ID,
     observer: name,
     timestamp: new Date().toISOString(),
-    mode: newCount !== null ? "quick" : "comment",
-    species: species,
-    count: newCount,
-    notes: notes,
-    condition: "alive"
+    mode: "quick",
+    observations: [obs],
+    section_notes: "",
+    media: []
   };
 
   fetch(OBSERVE_ENDPOINT, {

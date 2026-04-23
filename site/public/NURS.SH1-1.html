@@ -133,7 +133,7 @@
         <span class="strata-count" style="background:#2d5016">23</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" id="card-b6da99" style="border-left-color:#2d5016" data-species="Avocado" data-count="23">
+    <div class="plant-card nursery-card" id="card-936597" style="border-left-color:#2d5016" data-species="Avocado" data-count="23">
       <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Avocado</div>
@@ -154,16 +154,16 @@
       <div class="inline-obs">
         <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
         <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
-        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-b6da99')">&#x25B6; Update count</div>
-        <div class="inline-count-row" id="card-b6da99-count" style="display:none" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-936597')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-936597-count" style="display:none" onclick="event.stopPropagation()">
           <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
           <div class="count-input-row">
             <label>New total count:</label>
             <input type="number" class="inline-count-input" min="0" value="23" inputmode="numeric">
           </div>
         </div>
-        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-b6da99')">Save</button>
-        <div class="inline-obs-status" id="card-b6da99-status"></div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-936597')">Save</button>
+        <div class="inline-obs-status" id="card-936597-status"></div>
       </div>
     </div>
       </div>
@@ -179,7 +179,7 @@
         <span class="strata-count" style="background:#1e40af">0</span>
       </div>
       <div class="strata-plants">
-    <div class="plant-card nursery-card" id="card-b344b2" style="border-left-color:#1e40af" data-species="Lemon" data-count="0">
+    <div class="plant-card nursery-card" id="card-63daec" style="border-left-color:#1e40af" data-species="Lemon" data-count="0">
       <div class="plant-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="plant-info">
           <div class="plant-name">Lemon</div>
@@ -200,16 +200,16 @@
       <div class="inline-obs">
         <input type="text" class="inline-obs-field" data-type="observation" placeholder="What do you see?" onclick="event.stopPropagation()">
         <input type="text" class="inline-obs-field" data-type="action" placeholder="What did you do?" onclick="event.stopPropagation()">
-        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-b344b2')">&#x25B6; Update count</div>
-        <div class="inline-count-row" id="card-b344b2-count" style="display:none" onclick="event.stopPropagation()">
+        <div class="inline-count-toggle" onclick="event.stopPropagation(); toggleCountUpdate('card-63daec')">&#x25B6; Update count</div>
+        <div class="inline-count-row" id="card-63daec-count" style="display:none" onclick="event.stopPropagation()">
           <div class="count-warning">&#x26A0;&#xFE0F; Double-check your count before submitting. Take a moment to recount if you're not sure.</div>
           <div class="count-input-row">
             <label>New total count:</label>
             <input type="number" class="inline-count-input" min="0" value="0" inputmode="numeric">
           </div>
         </div>
-        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-b344b2')">Save</button>
-        <div class="inline-obs-status" id="card-b344b2-status"></div>
+        <button class="inline-obs-submit" onclick="event.stopPropagation(); submitInlineObs('card-63daec')">Save</button>
+        <div class="inline-obs-status" id="card-63daec-status"></div>
       </div>
     </div>
       </div>
@@ -316,9 +316,18 @@ function showActionInterstitial(cardId, callback) {
   });
 }
 
+function generateInlineUUID() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0;
+    var v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 function doSubmit(cardId, name, obsText, actionText, newCount) {
   var card = document.getElementById(cardId);
   var species = card.dataset.species;
+  var previousCount = parseFloat(card.dataset.count) || 0;
   var btn = card.querySelector(".inline-obs-submit");
   btn.disabled = true;
   btn.textContent = "Saving...";
@@ -328,16 +337,31 @@ function doSubmit(cardId, name, obsText, actionText, newCount) {
   if (obsText) notes += "Observation: " + obsText;
   if (actionText) notes += (notes ? "\n" : "") + "Action: " + actionText;
 
+  // Canonical payload shape — matches observe.js contract (version 1).
+  // Fix B 2026-04-23: nursery inline form was emitting a flat single-plant
+  // shape that Apps Script silently dropped (see ux-review-deferred-2026-04-23.md).
+  var obs = {
+    species: species,
+    strata: "",
+    previous_count: previousCount,
+    condition: "alive",
+    notes: notes
+  };
+  if (newCount !== null) {
+    obs.new_count = newCount;
+  }
+
   var payload = {
+    version: "1",
     action: "submit",
+    submission_id: generateInlineUUID(),
     section_id: SECTION_ID,
     observer: name,
     timestamp: new Date().toISOString(),
-    mode: newCount !== null ? "quick" : "comment",
-    species: species,
-    count: newCount,
-    notes: notes,
-    condition: "alive"
+    mode: "quick",
+    observations: [obs],
+    section_notes: "",
+    media: []
   };
 
   fetch(OBSERVE_ENDPOINT, {
