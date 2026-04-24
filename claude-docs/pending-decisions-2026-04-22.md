@@ -99,3 +99,45 @@ visitors (Hipcamp guests etc). A collapsible/linked treatment serves both
 audiences without mode-switching.
 
 File this when UI/UX work restarts post-v4 migration.
+
+---
+
+## Test plan execution — RESULTS (2026-04-23/24)
+
+**Outcome: PASS with 1 partial item (comment-only mode still pending).**
+
+### Walk + import
+Agnes walked P2R1.0-3 (inventory 7 plants + new_plant), P2R1.3-9, P2R1.9-13, P2R2.28-38 (×5), P2R3.26-38 (new_plant). **10 valid submissions, 1 invalid NURS.SH1-4 (empty junk — surfaced nursery form bug, deleted from sheet manually).** No `comment`-only submission yet — Agnes will do one Apr 24 AM to close the 4th mode.
+
+### Preflight checks
+- ✅ `plantnet_key_present: true`, zero `upload_errors` per-submission
+- ✅ No silent `species_reference_photos_updated: 1` — reference photos regenerated on disk for Broccoletti / Comfrey / Eggplant (auto tier-3 promotion works correctly now)
+- ✅ `total_actions` matches submission content; no silent drops
+- ✅ No bogus `same_name_prior_log` collisions
+
+### Post-import audit
+- ✅ Photos attached to correct logs (1-2 photos per log, verified via generated thumbnails in site/public/photos/logs/)
+- ✅ Counts updated in farmOS (P2R1.0-3 Lavender 5→4, Oregano 3→0, Comfrey 4→5, Mint Aus 1→0)
+- ✅ InteractionStamp `initiator=Agnes | role=farmhand` on every log (NOT Claude_user)
+- ✅ Notes de-duplicated (section_note on activity log only, not repeated on each plant obs)
+
+### Section reference photo audit
+- ✅ QR pages show Agnes's Apr 23 photos (not stock) for promoted species
+- 🏷 PlantNet rejected Chilli (Jalapeño) + Geranium photos; Agnes reviewed and confirmed they ARE genuine good photos → human-override promotion via `scripts/promote_chilli_geranium_photos_2026_04_24.py` (commit 4da62e5). Pattern for future overrides.
+
+### Bugs surfaced during the walk itself (not the pipeline — the UX layer)
+Three silent-failure form bugs found + fixed + deployed. Details in `claude-docs/ux-review-deferred-2026-04-23.md`:
+- **Fix A:** inventory success toast invisible (off-screen due to long form + absolute positioning). Fixed `position: fixed`, 8s timeout.
+- **Fix B:** nursery inline per-plant form emitting flat payload shape → Apps Script silently dropping into skeleton rows. Fixed generator to emit canonical shape.
+- **Fix D:** Apps Script now hard-rejects payloads with no `observations[]` AND no `section_notes`. Deployed live by Agnes 2026-04-24.
+- **Fix C (nursery add-plant)** deferred to post-v4 UX design session (pots/seeds/cuttings data model requires thought).
+
+### Commits (Apr 23/24)
+- `7b00056` UX hardening: toast + nursery payload + shape gate + UX review doc
+- `cfd8195` Site regen + toast fix baked into generator source + today's 10 imports
+- `4da62e5` Species reference photos human-override: Chilli + Geranium
+
+### Status
+- **Pipeline = formally verified stable.**
+- v4 migration unblocked for Apr 24 start. Hard deadline 2026-04-27 (Mike cutover).
+- One verification item still open: `comment`-only mode submission. Not blocking, Agnes does tomorrow.
