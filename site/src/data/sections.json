@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-04-22T19:03:51.931516+10:00",
+  "generated_at": "2026-04-24T18:03:21.709699+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -11,12 +11,12 @@
       "length": "3m",
       "has_trees": false,
       "first_planted": "2025-03-19",
-      "inventory_date": "2026-03-09",
+      "inventory_date": "2026-04-22",
       "plants": [
         {
           "species": "Lavender",
           "strata": "medium",
-          "count": 5,
+          "count": 4,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Lavender - P2R1.0-3",
@@ -26,16 +26,6 @@
               "type": "transplanting",
               "date": "2025-03-19",
               "name": "Planted P2R1.0-3 — Lavender",
-              "notes": "",
-              "notes_full": "",
-              "interaction_stamp": "",
-              "species": "Lavender"
-            },
-            {
-              "uuid": "2bdaecba-25db-482d-aa34-f8723bea21da",
-              "type": "observation",
-              "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Lavender",
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
@@ -52,6 +42,16 @@
               "species": "Lavender"
             },
             {
+              "uuid": "2bdaecba-25db-482d-aa34-f8723bea21da",
+              "type": "observation",
+              "date": "2025-10-08",
+              "name": "Inventory P2R1.0-3 — Lavender",
+              "notes": "",
+              "notes_full": "",
+              "interaction_stamp": "",
+              "species": "Lavender"
+            },
+            {
               "uuid": "36e26aab-6660-4fc9-854e-355ba5253660",
               "type": "transplanting",
               "date": "2025-10-08",
@@ -59,6 +59,16 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
+              "species": "Lavender"
+            },
+            {
+              "uuid": "b4b612ae-9c1c-477f-980f-d03b17b2af67",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Lavender — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nPlant notes: Can only spot 4\nCount: 5 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nPlant notes: Can only spot 4\nCount: 5 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:03.751Z | related=Lavender,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:03.751Z | related=Lavender,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
               "species": "Lavender"
             }
           ],
@@ -111,6 +121,16 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Rosemary"
+            },
+            {
+              "uuid": "b5c340b9-f49b-4442-80c1-d8275d58b71d",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Rosemary — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | tar",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:09.182Z | related=Rosemary,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:09.182Z | related=Rosemary,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "species": "Rosemary"
             }
           ],
           "photo_url": "photos/rosemary.jpg"
@@ -118,7 +138,7 @@
         {
           "species": "Comfrey",
           "strata": "low",
-          "count": 4,
+          "count": 5,
           "notes": "",
           "first_planted": "2025-03-19",
           "asset_name": "20 MAR 2025 - Comfrey - P2R1.0-3",
@@ -161,6 +181,16 @@
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
+              "species": "Comfrey"
+            },
+            {
+              "uuid": "43074873-3dd5-491f-afe4-c5b0dbf8b69c",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Comfrey — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 4 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | tar",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 4 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:14.335Z | related=Comfrey,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:14.335Z | related=Comfrey,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
               "species": "Comfrey"
             }
           ],
@@ -226,6 +256,16 @@
               "photos": [
                 "photos/logs/750f1a27-0.jpg"
               ]
+            },
+            {
+              "uuid": "276e13e0-6599-424d-a2d1-d26331b9f37c",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Thyme — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | tar",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:16.849Z | related=Thyme,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:16.849Z | related=Thyme,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "species": "Thyme"
             }
           ],
           "photo_url": "photos/thyme.jpg"
@@ -249,20 +289,20 @@
               "species": "Mint"
             },
             {
-              "uuid": "b1f97f57-8569-4c63-b010-b3c5c4f75c17",
+              "uuid": "804cd4b5-51de-498e-ba19-a29601e04eaf",
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory Oct 2025 P2R1.0-3 — Mint",
+              "name": "Inventory P2R1.0-3 — Mint",
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Mint"
             },
             {
-              "uuid": "804cd4b5-51de-498e-ba19-a29601e04eaf",
+              "uuid": "b1f97f57-8569-4c63-b010-b3c5c4f75c17",
               "type": "observation",
               "date": "2025-10-08",
-              "name": "Inventory P2R1.0-3 — Mint",
+              "name": "Inventory Oct 2025 P2R1.0-3 — Mint",
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
@@ -300,6 +340,16 @@
               "photos": [
                 "photos/logs/b9a51bad-0.jpg"
               ]
+            },
+            {
+              "uuid": "b6cee5a1-4447-4e41-b4ac-907d09e9200b",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Mint (Australian) — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 1 → 0\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | tar",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 1 → 0\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:22.415Z | related=Mint (Australian),P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:22.415Z | related=Mint (Australian),P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "species": "Mint"
             }
           ],
           "photo_url": "photos/mint.jpg"
@@ -324,6 +374,16 @@
               "photos": [
                 "photos/logs/e9e58a60-0.jpg"
               ]
+            },
+            {
+              "uuid": "911c7bc1-7cc3-441b-926b-bc9a362b04af",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Geranium — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 5 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | tar",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 5 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:19.379Z | related=Geranium,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:19.379Z | related=Geranium,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "species": "Geranium"
             }
           ],
           "photo_url": "photos/geranium.jpg"
@@ -331,7 +391,7 @@
         {
           "species": "Oregano",
           "strata": "medium",
-          "count": 3,
+          "count": 0,
           "notes": "Added via field observation",
           "first_planted": "",
           "asset_name": "2026-03-10 - Oregano - P2R1.0-3",
@@ -348,6 +408,16 @@
               "photos": [
                 "photos/logs/45bae733-0.jpg"
               ]
+            },
+            {
+              "uuid": "27f471f9-3cc9-495a-9f20-473db44cb038",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Oregano — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nPlant notes: Can’t find any\nCount: 3 → 0\n[ontology:InteractionStamp] initiator=Agnes | role=f",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nPlant notes: Can’t find any\nCount: 3 → 0\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:11.763Z | related=Oregano,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:11.763Z | related=Oregano,P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "species": "Oregano"
             }
           ],
           "photo_url": "photos/oregano.jpg"
@@ -355,7 +425,7 @@
         {
           "species": "Mint (Australian)",
           "strata": "low",
-          "count": 1,
+          "count": 0,
           "notes": "Found by Agnes, 9 Mar 2026. Claire confirmed variety is Australian Mint. Photo in Google Drive.",
           "first_planted": "2026-03-09",
           "asset_name": "9 MAR 2026 - Mint (Australian) - P2R1.0-3",
@@ -369,12 +439,59 @@
               "notes_full": "Found by Agnes, 9 Mar 2026. Claire confirmed variety is Australian Mint. Photo in Google Drive.",
               "interaction_stamp": "",
               "species": "Mint (Australian)"
+            },
+            {
+              "uuid": "b6cee5a1-4447-4e41-b4ac-907d09e9200b",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.0-3 — Mint (Australian) — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 1 → 0\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | tar",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nCount: 1 → 0\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:22.415Z | related=Mint (Australian),P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:22.415Z | related=Mint (Australian),P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+              "species": "Mint (Australian)"
             }
           ],
           "photo_url": "photos/mint-australian.jpg"
+        },
+        {
+          "species": "Butternut Pumpkin",
+          "strata": "low",
+          "count": 1,
+          "notes": "Probably self planted",
+          "first_planted": "2026-04-23",
+          "asset_name": "23 APR 2026 - Butternut Pumpkin - P2R1.0-3",
+          "logs": [
+            {
+              "uuid": "a6fd7a38-f2b0-4c46-90aa-7bd1669de7aa",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Inventory P2R1.0-3 — Butternut Pumpkin",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:23:00\nMode: new_plant\nPlant notes: Probably self planted\nCount: 0 → 1\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Agnes | role=",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:23:00\nMode: new_plant\nPlant notes: Probably self planted\nCount: 0 → 1\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:20:43.002Z | related=Butternut Pumpkin,P2R1.0-3 | submission=1f8111ef-5c56-445e-a5aa-d8f25e0d155c",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:20:43.002Z | related=Butternut Pumpkin,P2R1.0-3 | submission=1f8111ef-5c56-445e-a5aa-d8f25e0d155c",
+              "species": "Butternut Pumpkin",
+              "photos": [
+                "photos/logs/a6fd7a38-0.jpg"
+              ]
+            }
+          ],
+          "photo_url": "photos/butternut-pumpkin.jpg"
         }
       ],
-      "section_logs": []
+      "section_logs": [
+        {
+          "uuid": "16fc0102-52bd-436a-b712-6094eee5ca80",
+          "type": "activity",
+          "date": "2026-04-22",
+          "name": "Observation — P2R1.0-3",
+          "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nSection notes: Found licorice weed see photo. Need to check with Claire to confirm\n[ontology:InteractionStamp] initiator=Agnes | role=far",
+          "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T06:07:00\nMode: inventory\nSection notes: Found licorice weed see photo. Need to check with Claire to confirm\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:05.071Z | related=P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+          "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:05.071Z | related=P2R1.0-3 | submission=8f2fd267-6666-48a1-8242-6e408aa30a87",
+          "photos": [
+            "photos/logs/16fc0102-0.jpg"
+          ]
+        }
+      ]
     },
     "P2R1.3-9": {
       "id": "P2R1.3-9",
@@ -384,7 +501,7 @@
       "length": "6m",
       "has_trees": true,
       "first_planted": "2025-03-19",
-      "inventory_date": "2026-03-11",
+      "inventory_date": "2026-04-22",
       "plants": [
         {
           "species": "Guava",
@@ -745,6 +862,20 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Comfrey"
+            },
+            {
+              "uuid": "51a2b42d-553b-4a92-9a60-069c42729549",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.3-9 — Comfrey — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:10:00\nMode: quick\nPlant notes: Adding some good photos for the Comfrey\nCount: 7 → 7\n[ontology:InteractionStamp] ini",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:10:00\nMode: quick\nPlant notes: Adding some good photos for the Comfrey\nCount: 7 → 7\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:19:30.245Z | related=Comfrey,P2R1.3-9 | submission=4922c2d3-7920-412c-9790-e6d3ec1fc6a0",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:19:30.245Z | related=Comfrey,P2R1.3-9 | submission=4922c2d3-7920-412c-9790-e6d3ec1fc6a0",
+              "species": "Comfrey",
+              "photos": [
+                "photos/logs/51a2b42d-0.jpg",
+                "photos/logs/51a2b42d-1.jpg"
+              ]
             }
           ],
           "photo_url": "photos/comfrey.jpg"
@@ -1038,7 +1169,7 @@
       "length": "4m",
       "has_trees": false,
       "first_planted": "2025-03-19",
-      "inventory_date": "2026-03-09",
+      "inventory_date": "2026-04-22",
       "plants": [
         {
           "species": "Lavender",
@@ -1138,6 +1269,20 @@
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Rosemary"
+            },
+            {
+              "uuid": "914bd799-ccf8-491b-b96a-dc019958670f",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R1.9-13 — Rosemary — 2026-04-23",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T04:14:00\nMode: quick\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T04:14:00\nMode: quick\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:20:07.122Z | related=Rosemary,P2R1.9-13 | submission=e8b67648-c7d3-408f-be12-277f48618b44",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:20:07.122Z | related=Rosemary,P2R1.9-13 | submission=e8b67648-c7d3-408f-be12-277f48618b44",
+              "species": "Rosemary",
+              "photos": [
+                "photos/logs/914bd799-0.jpg",
+                "photos/logs/914bd799-1.jpg"
+              ]
             }
           ],
           "photo_url": "photos/rosemary.jpg"
@@ -1324,20 +1469,20 @@
               "species": "Coriander"
             },
             {
-              "uuid": "326337dd-470d-4d7a-a9c2-80d54134aca7",
+              "uuid": "f14326aa-1430-4eb3-997c-d2538e1d9229",
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory P2R1.9-13 — Coriander",
+              "name": "Inventory Oct 2025 P2R1.9-13 — Coriander",
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
               "species": "Coriander"
             },
             {
-              "uuid": "f14326aa-1430-4eb3-997c-d2538e1d9229",
+              "uuid": "326337dd-470d-4d7a-a9c2-80d54134aca7",
               "type": "observation",
               "date": "2025-11-09",
-              "name": "Inventory Oct 2025 P2R1.9-13 — Coriander",
+              "name": "Inventory P2R1.9-13 — Coriander",
               "notes": "",
               "notes_full": "",
               "interaction_stamp": "",
@@ -5021,7 +5166,7 @@
       "length": "12m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-03-17",
+      "inventory_date": "2026-04-22",
       "plants": [
         {
           "species": "Tallowood (Gum)",
@@ -5806,6 +5951,30 @@
             }
           ],
           "photo_url": "photos/achiote.jpg"
+        },
+        {
+          "species": "Broccoletti (Raab Rapini)",
+          "strata": "low",
+          "count": 12,
+          "notes": "8 good size 4 small size",
+          "first_planted": "2026-04-23",
+          "asset_name": "23 APR 2026 - Broccoletti (Raab Rapini) - P2R3.26-38",
+          "logs": [
+            {
+              "uuid": "ed83e883-2039-43b0-9010-f5ae85490412",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Inventory P2R3.26-38 — Broccoletti (Raab Rapini)",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T04:26:00\nMode: new_plant\nPlant notes: 8 good size 4 small size\nCount: 0 → 12\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Agnes | r",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T04:26:00\nMode: new_plant\nPlant notes: 8 good size 4 small size\nCount: 0 → 12\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:47.953Z | related=Broccoletti (Raab Rapini),P2R3.26-38 | submission=bc32a098-2b99-4991-adcd-7a5891d0c914",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:47.953Z | related=Broccoletti (Raab Rapini),P2R3.26-38 | submission=bc32a098-2b99-4991-adcd-7a5891d0c914",
+              "species": "Broccoletti (Raab Rapini)",
+              "photos": [
+                "photos/logs/ed83e883-0.jpg"
+              ]
+            }
+          ],
+          "photo_url": "photos/broccoletti-raab-rapini.jpg"
         }
       ],
       "section_logs": [],
@@ -15431,7 +15600,7 @@
       "length": "10m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-04-16",
+      "inventory_date": "2026-04-22",
       "plants": [
         {
           "species": "Forest Red Gum",
@@ -15871,6 +16040,19 @@
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nCount: 5 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:07.320Z | related=Chilli (Jalapeño),P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:07.320Z | related=Chilli (Jalapeño),P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "species": "Chilli (Jalapeño)"
+            },
+            {
+              "uuid": "013371a6-75e4-41f4-a3ac-f14d79fc342c",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R2.28-38 — Chilli (Jalapeño) — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:16:00\nMode: quick\nPlant notes: Add photo\nCount: 5 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand |",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:16:00\nMode: quick\nPlant notes: Add photo\nCount: 5 → 5\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:22:38.454Z | related=Chilli (Jalapeño),P2R2.28-38 | submission=6417e39b-c066-48d4-9d4f-13dcb470b205",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:22:38.454Z | related=Chilli (Jalapeño),P2R2.28-38 | submission=6417e39b-c066-48d4-9d4f-13dcb470b205",
+              "species": "Chilli (Jalapeño)",
+              "photos": [
+                "photos/logs/013371a6-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/chilli-jalape-o.jpg"
@@ -15973,6 +16155,19 @@
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:13.213Z | related=Eggplant,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:13.213Z | related=Eggplant,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "species": "Eggplant"
+            },
+            {
+              "uuid": "9fe9e365-43b3-41e3-a24f-2d1b2ab0b13f",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R2.28-38 — Eggplant — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:21:00\nMode: quick\nPlant notes: Photo\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | cha",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:21:00\nMode: quick\nPlant notes: Photo\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:52.649Z | related=Eggplant,P2R2.28-38 | submission=66bec3ff-0713-4438-bfb2-3ceb3f44419d",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:52.649Z | related=Eggplant,P2R2.28-38 | submission=66bec3ff-0713-4438-bfb2-3ceb3f44419d",
+              "species": "Eggplant",
+              "photos": [
+                "photos/logs/9fe9e365-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/eggplant.jpg"
@@ -16034,6 +16229,19 @@
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:18.763Z | related=Raspberry,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:18.763Z | related=Raspberry,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "species": "Raspberry"
+            },
+            {
+              "uuid": "511fc568-bd83-4936-8cb6-5af2566f7e7a",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R2.28-38 — Raspberry — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:19:00\nMode: quick\nPlant notes: Small and struggling\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T04:19:00\nMode: quick\nPlant notes: Small and struggling\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:22:22.674Z | related=Raspberry,P2R2.28-38 | submission=65aca383-57ee-48b2-a59e-5b04f488b825",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:22:22.674Z | related=Raspberry,P2R2.28-38 | submission=65aca383-57ee-48b2-a59e-5b04f488b825",
+              "species": "Raspberry",
+              "photos": [
+                "photos/logs/511fc568-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/raspberry.jpg"
@@ -16464,6 +16672,19 @@
               "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-17T04:37:00\nMode: inventory\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:35.449Z | related=Tansy,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-18T07:27:35.449Z | related=Tansy,P2R2.28-38 | submission=8f1ba29b-045a-4d01-8e1c-a0608610a6a2",
               "species": "Tansy"
+            },
+            {
+              "uuid": "3379b0a5-45fd-404a-92ab-2782b3b6f864",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Observation P2R2.28-38 — Tansy — 2026-04-23",
+              "notes": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T05:08:00\nMode: quick\nPlant notes: Adding photo\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhan",
+              "notes_full": "[FLAG classifier-ambiguous: no_action_verb]\nReporter: Agnes\nSubmitted: 2026-04-23T05:08:00\nMode: quick\nPlant notes: Adding photo\nCount: 2 → 2\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:23.016Z | related=Tansy,P2R2.28-38 | submission=596dee86-a38c-488c-9e9e-5b2aead9b668",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:21:23.016Z | related=Tansy,P2R2.28-38 | submission=596dee86-a38c-488c-9e9e-5b2aead9b668",
+              "species": "Tansy",
+              "photos": [
+                "photos/logs/3379b0a5-0.jpg"
+              ]
             }
           ],
           "photo_url": "photos/tansy.jpg"
@@ -16539,6 +16760,30 @@
             }
           ],
           "photo_url": "photos/blueberry.jpg"
+        },
+        {
+          "species": "Geranium",
+          "strata": "low",
+          "count": 2,
+          "notes": "2 geraniums propagating",
+          "first_planted": "2026-04-23",
+          "asset_name": "23 APR 2026 - Geranium - P2R2.28-38",
+          "logs": [
+            {
+              "uuid": "3daa9802-f985-4fb1-bea3-611b50eb8acb",
+              "type": "observation",
+              "date": "2026-04-22",
+              "name": "Inventory P2R2.28-38 — Geranium",
+              "notes": "Reporter: Agnes\nSubmitted: 2026-04-23T04:21:00\nMode: new_plant\nPlant notes: 2 geraniums propagating\nCount: 0 → 2\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Agnes | rol",
+              "notes_full": "Reporter: Agnes\nSubmitted: 2026-04-23T04:21:00\nMode: new_plant\nPlant notes: 2 geraniums propagating\nCount: 0 → 2\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:23:15.994Z | related=Geranium,P2R2.28-38 | submission=7c115be1-3a08-471f-b704-38457d766c88",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Agnes | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-24T05:23:15.994Z | related=Geranium,P2R2.28-38 | submission=7c115be1-3a08-471f-b704-38457d766c88",
+              "species": "Geranium",
+              "photos": [
+                "photos/logs/3daa9802-0.jpg"
+              ]
+            }
+          ],
+          "photo_url": "photos/geranium.jpg"
         }
       ],
       "section_logs": [
