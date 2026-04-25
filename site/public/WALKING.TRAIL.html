@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Walking Trail — Firefly Corner Farm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.intro-text {
+  padding: 16px; font-size: 14px; line-height: 1.6; color: #374151;
+  border-bottom: 1px solid #e5e5e0;
+}
+.trail-map-wrap {
+  padding: 16px; border-bottom: 1px solid #e5e5e0;
+}
+.trail-map-wrap iframe.alltrails {
+  display: block; width: 100%; border: 1px solid #e5e5e0; border-radius: 8px;
+}
+.trail-tips { padding: 16px; }
+.trail-tips h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px; font-weight: 600; color: #1a1a1a; margin: 0 0 10px 0;
+}
+.trail-tips ul {
+  margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.7; color: #374151;
+}
+.trail-tips li { margin-bottom: 6px; }
+.trail-note {
+  background: #ecfdf5; border-left: 3px solid #10b981;
+  padding: 10px 12px; border-radius: 0 6px 6px 0;
+  font-size: 13px; color: #065f46; margin: 14px 16px; line-height: 1.5;
+}
+.open-alltrails {
+  display: block; text-align: center; margin: 18px 16px 4px 16px;
+  padding: 14px 20px; background: #2d5016; color: #fff;
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: background 0.15s;
+}
+.open-alltrails:active { background: #1a3a0a; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #2d5016 0%, #4a7c29 60%, #6b9e3c 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner &middot; Visitor Trail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">Walking Trail</h1>
+      <span class="section-type-badge">&#128278; Trail Map</span>
+    </div>
+    <div class="obs-subtitle">A scenic loop around the property</div>
+  </div>
+
+  <div class="intro-text">
+    Welcome! Follow the route below for a self-guided walk around Firefly Corner. Tap the map to pan and zoom, or open it in AllTrails for turn-by-turn navigation on your phone.
+  </div>
+
+  <div class="trail-map-wrap">
+    <iframe class="alltrails" src="https://www.alltrails.com/widget/map/uploaded-route-91c1b45?u=m&sh=7frbc8" width="100%" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" title="AllTrails: Trail Guides and Maps for Hiking, Camping, and Running"></iframe>
+  </div>
+
+  <a href="https://www.alltrails.com/widget/map/uploaded-route-91c1b45?u=m&sh=7frbc8" target="_blank" rel="noopener" class="open-alltrails">
+    &#128205; Open full map in AllTrails
+  </a>
+
+  <div class="trail-note">
+    Phone signal can be patchy on the property — if you plan to use live navigation, download the map in AllTrails before you set out.
+  </div>
+
+  <div class="trail-tips">
+    <h2>Before you head out</h2>
+    <ul>
+      <li>Wear closed shoes — paths can be uneven and grassy.</li>
+      <li>Bring water, a hat, and sunscreen.</li>
+      <li>Please leave gates as you find them.</li>
+      <li>Stay on the marked route — working paddocks, syntropic rows, and the nursery are out-of-bounds unless you&rsquo;re invited.</li>
+      <li>Dogs welcome on lead; please pick up after them.</li>
+      <li>Snakes are occasional in warmer months — stay on clear ground and step carefully around logs.</li>
+    </ul>
+  </div>
+
+  <div class="footer" style="padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e5e0;">
+    Firefly Corner Farm &middot; Krambach, NSW<br>
+    <span style="font-size: 11px;">Route shared via AllTrails &middot; originally mapped on Gaia GPS</span>
+  </div>
+
+</div>
+</body>
+</html>
