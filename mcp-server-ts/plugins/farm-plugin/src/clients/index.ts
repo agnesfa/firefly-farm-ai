@@ -19,6 +19,7 @@
  */
 
 import { createAuthRefreshCallback } from '@fireflyagents/mcp-server-core';
+import { createHttpClient } from '@fireflyagents/mcp-shared-utils';
 import { FarmOSClient } from './farmos-client.js';
 import { ObservationClient } from './observe-client.js';
 import { MemoryClient } from './memory-client.js';
@@ -44,8 +45,11 @@ export { KnowledgeClient } from './knowledge-client.js';
  * usually caused by a credentials.json entry that lacks `metadata.farmUrl` or
  * `platformCredentials.{username,password}` (see ADR 0010 §Implementation).
  *
- * Constructs a new client per call (no singleton) and wires the framework's
- * reactive refresh callback so a mid-session 401 triggers transparent re-auth.
+ * Constructs a new framework HttpClient per call (no singleton). The
+ * HttpClient holds the bearer token in default headers and uses
+ * `onUnauthorized: createAuthRefreshCallback(extra)` so a mid-session 401
+ * triggers transparent re-auth via the axios interceptor. FarmOSClient is
+ * stateless w.r.t. auth — it just consumes the configured HttpClient.
  */
 export function getFarmOSClient(extra?: any): FarmOSClient {
   const accessToken = extra?.authInfo?.token;
@@ -67,11 +71,18 @@ export function getFarmOSClient(extra?: any): FarmOSClient {
     );
   }
 
-  return new FarmOSClient({
-    farmUrl,
-    accessToken,
-    refreshAuth: createAuthRefreshCallback(extra),
+  const baseURL = farmUrl.replace(/\/+$/, '');
+  const httpClient = createHttpClient({
+    baseURL,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/vnd.api+json',
+      Accept: 'application/vnd.api+json',
+    },
+    onUnauthorized: createAuthRefreshCallback(extra),
   });
+
+  return new FarmOSClient({ farmUrl, httpClient });
 }
 
 /**

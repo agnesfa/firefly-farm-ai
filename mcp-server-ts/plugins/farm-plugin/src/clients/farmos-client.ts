@@ -1,17 +1,18 @@
 /**
  * farmOS JSON:API HTTP client.
  *
- * Stateless w.r.t. auth: receives an OAuth2 access token from the framework
- * (via FarmOSPlatformAuthHandler at session creation) and an optional refresh
- * callback (via createAuthRefreshCallback) for in-flight 401 recovery.
+ * Auth-stateless: takes a pre-configured framework HttpClient (from
+ * @fireflyagents/mcp-shared-utils) which holds the OAuth2 access token in
+ * its default Authorization header and handles 401-driven reactive refresh
+ * transparently via the onUnauthorized callback. See ADR 0010 + the
+ * post-2026-04-27 follow-up commit dropping the hand-driven _fetchWithRetry.
  *
- * Token lifecycle is owned by @fireflyagents/mcp-server-core; this client
- * never issues OAuth grants directly. See ADR 0010.
- *
- * Implements pagination with dedup, CONTAINS filters, cached lookups,
+ * This client owns: pagination with dedup, CONTAINS filters, cached lookups,
  * and all CRUD operations needed by the MCP tools.
  */
 
+import type { HttpClient } from '@fireflyagents/mcp-shared-utils';
+import { HttpClientError } from '@fireflyagents/mcp-shared-utils';
 import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
 
 const logger = baseLogger.child({ context: 'farm-plugin:farmos-client' });
@@ -20,185 +21,82 @@ const PLANT_UNIT_UUID = '2371b79e-a87b-4152-b6e4-ea6a9ed37fd0';
 const GRAMS_UNIT_UUID = 'e7bad672-9c33-4138-9fc3-1b0548a33aca';
 const NURS_FRDG_UUID = '429fcdd3-8be6-436a-b439-49186f56b3c7';
 
-const FETCH_TIMEOUT_MS = 15_000;
-
-/** Shape returned by the framework's createAuthRefreshCallback on success. */
-interface RefreshAuthResult {
-  headers?: Record<string, string>;
-}
-
 interface FarmOSConfig {
+  /** farmOS base URL (e.g. https://margregen.farmos.net). Trailing slashes stripped. */
   farmUrl: string;
-  /** OAuth2 access token from extra.authInfo.token (set by FarmOSPlatformAuthHandler). */
-  accessToken: string;
   /**
-   * Framework refresh callback. On 401/403 the client invokes this once; if
-   * it returns headers, the request is retried with them.
-   * Production: pass `createAuthRefreshCallback(extra)` from
-   * `@fireflyagents/mcp-server-core`.
-   * Tests: pass a mock or omit (omitting disables retry; 401 throws immediately).
+   * Pre-configured framework HttpClient. Constructed by getFarmOSClient with
+   * the bearer token in default headers and onUnauthorized wired to the
+   * framework's reactive refresh callback. Tests pass a mock implementation.
    */
-  refreshAuth?: () => Promise<RefreshAuthResult | null | undefined>;
+  httpClient: HttpClient;
 }
 
 export class FarmOSClient {
-  private baseUrl: string;
-  private config: FarmOSConfig;
+  private httpClient: HttpClient;
   private plantTypeCache = new Map<string, string>(); // farmos_name → UUID
   private sectionCache = new Map<string, string>(); // section_id → UUID
   private plantTypeFullCache: any[] | null = null;
   private plantTypeFullCacheTime = 0;
   private readonly PLANT_TYPE_CACHE_TTL = 300; // 5 minutes
 
-  // Refresh stats for observability (in-flight reactive refresh via framework callback).
-  private stats = {
-    refreshCount: 0,
-    refreshSuccessCount: 0,
-    refreshFailCount: 0,
-    lastRefreshAt: null as string | null,
-  };
-
   constructor(config: FarmOSConfig) {
-    if (!config.accessToken) {
-      throw new Error(
-        'FarmOSClient: accessToken is required (provided by framework PlatformAuthHandler via extra.authInfo.token).',
-      );
+    if (!config.httpClient) {
+      throw new Error('FarmOSClient: httpClient is required (constructed by getFarmOSClient).');
     }
-    this.config = config;
-    this.baseUrl = config.farmUrl.replace(/\/+$/, '');
+    this.httpClient = config.httpClient;
   }
 
-  /**
-   * Whether this client has an access token. Always true for a constructed
-   * client (the constructor throws otherwise). Kept for back-compat with
-   * existing callers; consider removing once those migrate.
-   */
+  /** Always true for a constructed client; kept as a back-compat shim. */
   get isConnected(): boolean {
-    return !!this.config.accessToken;
-  }
-
-  getStats() {
-    return { ...this.stats };
-  }
-
-  private get headers(): Record<string, string> {
-    return {
-      Authorization: `Bearer ${this.config.accessToken}`,
-      'Content-Type': 'application/vnd.api+json',
-      Accept: 'application/vnd.api+json',
-    };
+    return true;
   }
 
   // ── Low-level HTTP ──────────────────────────────────────────
-
-  /**
-   * HTTP wrapper with one-shot reactive refresh on 401/403.
-   *
-   * On expired-auth response: invokes the framework's refresh callback (set
-   * by getFarmOSClient → createAuthRefreshCallback). If the callback returns
-   * new headers, retries once. If the callback returns null/throws or the
-   * retry also fails, throws a clear "session expired" error.
-   *
-   * If `config.refreshAuth` is not provided (e.g. unit tests without a
-   * framework session), a 401/403 propagates immediately as a thrown error.
-   */
-  private async _fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
-    const mergedInit = {
-      ...init,
-      headers: { ...this.headers, ...init?.headers },
-      signal: init?.signal ?? AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    };
-    const resp = await fetch(url, mergedInit);
-
-    if (resp.status !== 401 && resp.status !== 403) {
-      return resp;
-    }
-
-    const shortUrl = url.replace(this.baseUrl, '');
-
-    if (!this.config.refreshAuth) {
-      logger.warn('Auth expired and no refresh callback configured', { url: shortUrl, status: resp.status });
-      throw new Error(
-        `farmOS authentication expired (HTTP ${resp.status}) — restart your Claude session to re-authenticate.`,
-      );
-    }
-
-    this.stats.refreshCount++;
-    this.stats.lastRefreshAt = new Date().toISOString();
-    logger.warn('Auth expired, requesting framework refresh', { url: shortUrl, status: resp.status });
-
-    let refreshResult: RefreshAuthResult | null | undefined;
-    try {
-      refreshResult = await this.config.refreshAuth();
-    } catch (e) {
-      this.stats.refreshFailCount++;
-      const msg = e instanceof Error ? e.message : String(e);
-      logger.error('Auth refresh callback threw', { url: shortUrl, error: msg });
-      throw new Error(`farmOS auth refresh failed: ${msg}`);
-    }
-
-    if (!refreshResult?.headers) {
-      this.stats.refreshFailCount++;
-      logger.error('Auth refresh callback returned no headers', { url: shortUrl });
-      throw new Error('farmOS authentication expired — restart your Claude session to re-authenticate.');
-    }
-
-    // Pull the new token out of the refresh result so subsequent requests on
-    // this client also use it. The framework callback already updated
-    // extra.authInfo.token, but our own config.accessToken needs syncing too.
-    const auth = refreshResult.headers.Authorization;
-    if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
-      this.config.accessToken = auth.slice('Bearer '.length);
-    }
-
-    const retry = await fetch(url, {
-      ...init,
-      headers: { ...this.headers, ...init?.headers },
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    });
-
-    if (retry.status === 401 || retry.status === 403) {
-      this.stats.refreshFailCount++;
-      logger.error('Auth retry failed after refresh', { url: shortUrl, status: retry.status });
-      throw new Error(`farmOS authentication failed after refresh (HTTP ${retry.status}).`);
-    }
-
-    this.stats.refreshSuccessCount++;
-    logger.info('Auth refresh + retry succeeded', { url: shortUrl });
-    return retry;
-  }
+  //
+  // These wrap the framework's HttpClient calls in our error-message format
+  // so callers see consistent "farmOS API error: HTTP <status> for <path>"
+  // messages (existing tests grep for that shape). The framework throws
+  // HttpClientError on non-2xx; we re-throw with our message and let other
+  // errors propagate unchanged. 401-driven refresh is fully owned by the
+  // axios interceptor in the framework HttpClient (see axios-client.js:43-71).
 
   private async _get(path: string): Promise<any> {
-    const url = `${this.baseUrl}${path}`;
-    const resp = await this._fetchWithRetry(url);
-    if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status} for ${path}`);
-    return resp.json();
+    try {
+      const resp = await this.httpClient.get(path);
+      return resp.data;
+    } catch (e) {
+      if (e instanceof HttpClientError) {
+        throw new Error(`farmOS API error: HTTP ${e.status} for ${path}`);
+      }
+      throw e;
+    }
   }
 
   private async _post(path: string, payload: any): Promise<any> {
-    const url = `${this.baseUrl}${path}`;
-    const resp = await this._fetchWithRetry(url, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    if (!resp.ok) {
-      const text = await resp.text();
-      throw new Error(`farmOS POST error: HTTP ${resp.status} - ${text}`);
+    try {
+      const resp = await this.httpClient.post(path, payload);
+      return resp.data;
+    } catch (e) {
+      if (e instanceof HttpClientError) {
+        const body = typeof e.response === 'string' ? e.response : JSON.stringify(e.response ?? {});
+        throw new Error(`farmOS POST error: HTTP ${e.status} - ${body}`);
+      }
+      throw e;
     }
-    return resp.json();
   }
 
   private async _patch(path: string, payload: any): Promise<any> {
-    const url = `${this.baseUrl}${path}`;
-    const resp = await this._fetchWithRetry(url, {
-      method: 'PATCH',
-      body: JSON.stringify(payload),
-    });
-    if (!resp.ok) {
-      const text = await resp.text();
-      throw new Error(`farmOS PATCH error: HTTP ${resp.status} - ${text}`);
+    try {
+      const resp = await this.httpClient.patch(path, payload);
+      return resp.data;
+    } catch (e) {
+      if (e instanceof HttpClientError) {
+        const body = typeof e.response === 'string' ? e.response : JSON.stringify(e.response ?? {});
+        throw new Error(`farmOS PATCH error: HTTP ${e.status} - ${body}`);
+      }
+      throw e;
     }
-    return resp.json();
   }
 
   // ── Reliable query methods ──────────────────────────────────
@@ -230,11 +128,18 @@ export class FarmOSClient {
 
     let offset = 0;
     for (let page = 0; page < maxPages; page++) {
-      const url = `${this.baseUrl}/api/${apiPath}?${params}&page[offset]=${offset}`;
-      const resp = await this._fetchWithRetry(url);
-      if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status} fetching ${apiPath}`);
+      const path = `/api/${apiPath}?${params}&page[offset]=${offset}`;
+      let data: any;
+      try {
+        const resp = await this.httpClient.get(path);
+        data = resp.data;
+      } catch (e) {
+        if (e instanceof HttpClientError) {
+          throw new Error(`farmOS API error: HTTP ${e.status} fetching ${apiPath}`);
+        }
+        throw e;
+      }
 
-      const data: any = await resp.json();
       const items: any[] = data.data ?? [];
       if (items.length === 0) break;
 
@@ -516,11 +421,18 @@ export class FarmOSClient {
     let offset = 0;
 
     for (let page = 0; page < maxPages; page++) {
-      const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
-      const resp = await this._fetchWithRetry(url);
-      if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
+      const path = `${basePath}&page[offset]=${offset}`;
+      let data: any;
+      try {
+        const resp = await this.httpClient.get(path);
+        data = resp.data;
+      } catch (e) {
+        if (e instanceof HttpClientError) {
+          throw new Error(`farmOS API error: HTTP ${e.status}`);
+        }
+        throw e;
+      }
 
-      const data: any = await resp.json();
       const items = data.data ?? [];
       if (items.length === 0) break;
 
@@ -545,10 +457,17 @@ export class FarmOSClient {
     const seen = new Map<string, any>();
     let offset = 0;
     for (let page = 0; page < maxPages; page++) {
-      const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
-      const resp = await this._fetchWithRetry(url);
-      if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
-      const data: any = await resp.json();
+      const path = `${basePath}&page[offset]=${offset}`;
+      let data: any;
+      try {
+        const resp = await this.httpClient.get(path);
+        data = resp.data;
+      } catch (e) {
+        if (e instanceof HttpClientError) {
+          throw new Error(`farmOS API error: HTTP ${e.status}`);
+        }
+        throw e;
+      }
       const items = data.data ?? [];
       if (items.length === 0) break;
       for (const item of items) { if (item.id) seen.set(item.id, item); }
@@ -658,11 +577,18 @@ export class FarmOSClient {
     let offset = 0;
 
     for (let page = 0; page < maxPages; page++) {
-      const url = `${this.baseUrl}${basePath}&page[offset]=${offset}`;
-      const resp = await this._fetchWithRetry(url);
-      if (!resp.ok) throw new Error(`farmOS API error: HTTP ${resp.status}`);
+      const path = `${basePath}&page[offset]=${offset}`;
+      let data: any;
+      try {
+        const resp = await this.httpClient.get(path);
+        data = resp.data;
+      } catch (e) {
+        if (e instanceof HttpClientError) {
+          throw new Error(`farmOS API error: HTTP ${e.status}`);
+        }
+        throw e;
+      }
 
-      const data: any = await resp.json();
       const pageItems = data.data ?? [];
       if (pageItems.length === 0) break;
 
@@ -846,19 +772,24 @@ export class FarmOSClient {
     fieldName: string,
     filename: string,
     binaryData: ArrayBuffer,
-    mimeType = 'image/jpeg',
+    _mimeType = 'image/jpeg',
   ): Promise<string | null> {
-    const url = `${this.baseUrl}/api/${entityType}/${entityId}/${fieldName}`;
-    const resp = await this._fetchWithRetry(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `file; filename="${filename}"`,
-      },
-      body: binaryData,
-    });
-    if (!resp.ok) throw new Error(`farmOS file upload error: HTTP ${resp.status}`);
-    const result: any = await resp.json();
+    const path = `/api/${entityType}/${entityId}/${fieldName}`;
+    let result: any;
+    try {
+      const resp = await this.httpClient.post(path, binaryData, {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `file; filename="${filename}"`,
+        },
+      });
+      result = resp.data;
+    } catch (e) {
+      if (e instanceof HttpClientError) {
+        throw new Error(`farmOS file upload error: HTTP ${e.status}`);
+      }
+      throw e;
+    }
     // farmOS file uploads may return {data: {...}} (dict) or {data: [{...}]} (list)
     // depending on version / field cardinality. Python farmos_client handles
     // both; TS must match or we silently return null on successful uploads
@@ -891,16 +822,23 @@ export class FarmOSClient {
    * before uploading. Returns the parsed JSON response or throws.
    */
   async getRaw(path: string): Promise<any> {
-    const url = path.startsWith('http') ? path : `${this.baseUrl}${path}`;
-    const resp = await this._fetchWithRetry(url, { method: 'GET' });
-    if (!resp.ok) throw new Error(`farmOS GET ${path}: HTTP ${resp.status}`);
-    return resp.json();
+    // Absolute URLs (cross-host file fetches) bypass the framework HttpClient's
+    // baseURL; relative paths are prepended by axios.
+    try {
+      const resp = await this.httpClient.get(path);
+      return resp.data;
+    } catch (e) {
+      if (e instanceof HttpClientError) {
+        throw new Error(`farmOS GET ${path}: HTTP ${e.status}`);
+      }
+      throw e;
+    }
   }
 
   /**
    * PATCH a relationship on an entity — used by the photo pipeline
    * (ADR 0008 I5) to collapse plant_type.image to single-valued after
-   * promoting a new reference photo. Idempotent; graceful on 204.
+   * promoting a new reference photo. Idempotent; graceful on 204/2xx.
    */
   async patchRelationship(
     entityType: string,
@@ -908,13 +846,17 @@ export class FarmOSClient {
     fieldName: string,
     refs: Array<{ type: string; id: string }>,
   ): Promise<boolean> {
-    const url = `${this.baseUrl}/api/${entityType}/${entityId}/relationships/${fieldName}`;
-    const resp = await this._fetchWithRetry(url, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/vnd.api+json' },
-      body: JSON.stringify({ data: refs }),
-    });
-    return resp.ok;
+    const path = `/api/${entityType}/${entityId}/relationships/${fieldName}`;
+    try {
+      await this.httpClient.patch(path, { data: refs });
+      return true;
+    } catch (e) {
+      if (e instanceof HttpClientError) {
+        logger.warn('patchRelationship failed', { path, status: e.status });
+        return false;
+      }
+      throw e;
+    }
   }
 
   // ── Utilities ──────────────────────────────────────────────
