@@ -557,7 +557,7 @@ constraints:
 
   - rule: "Every active section SHOULD have an observation within 30 days"
     type: recommendation
-    applies_to: Section (status=active)
+    applies_to: Section (active)  # "active" = status field in v3, archived=false in v4 (ADR 0009)
 
   # Naming conventions
   - rule: "Plant name = {date_label} - {farmos_name} - {section_id}"

@@ -106,7 +106,7 @@ Each row alternates **tree sections** (full strata) and **open cultivation secti
 - **Logs:** Events (seeding, transplanting, harvesting, observations, activities). Reference assets.
 - **Taxonomy:** Vocabularies (`plant_type`, `unit`, `log_category`).
 - **Inventory:** Tracked via Quantity records on Logs, NOT fields on assets. `inventory_adjustment: "reset"` sets absolute count.
-- **JSON:API:** `/api/asset/{type}`, `/api/log/{type}`, `/api/taxonomy_term/{vocabulary}`. Filter: `?filter[status]=active`.
+- **JSON:API:** `/api/asset/{type}`, `/api/log/{type}`, `/api/taxonomy_term/{vocabulary}`. Filter for active assets: v3 → `?filter[status]=active`, v4 → `?filter[archived]=0` (the asset `status` base field was removed in farmOS v4 and replaced with an `archived` boolean — see ADR 0009 + `mcp-server-ts/plugins/farm-plugin/src/clients/api-version.ts`).
 
 ### Native Seed→Plant Workflow
 ```

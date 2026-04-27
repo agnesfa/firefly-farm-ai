@@ -54,7 +54,8 @@ farmOS uses JSON:API standard. Base URL: `https://margregen.farmos.net/api`
   "type": "asset--land",
   "attributes": {
     "name": "P1R1",
-    "status": "active",
+    "status": "active",         // v3 only — removed in v4
+    "archived": false,          // v4 only — replaces the status field
     "notes": { "value": "Description...", "format": "default" },
     "geometry": {
       "value": "LINESTRING(...)",
@@ -79,7 +80,8 @@ farmOS uses JSON:API standard. Base URL: `https://margregen.farmos.net/api`
   "type": "asset--plant",
   "attributes": {
     "name": "Tomatoes 2026",
-    "status": "active",
+    "status": "active",         // v3 only — removed in v4
+    "archived": false,          // v4 only — replaces the status field
     "notes": { "value": "...", "format": "default" }
   },
   "relationships": {
@@ -151,8 +153,11 @@ client.authorize(
 for asset in client.asset.iterate("land"):
     print(asset["attributes"]["name"])
 
-# Filter assets
-params = {"filter[status]": "active", "filter[land_type]": "bed"}
+# Filter assets — version-aware (use the api_version helpers)
+# v3: {"filter[status]": "active", "filter[land_type]": "bed"}
+# v4: {"filter[archived]": "0", "filter[land_type]": "bed"}
+from api_version import asset_status_filter
+params = {**asset_status_filter(client.api_version, "active"), "filter[land_type]": "bed"}
 for asset in client.asset.iterate("land", params=params):
     print(asset["attributes"]["name"])
 
@@ -182,8 +187,13 @@ client.term.send("plant_type", new_term)
 ## Filtering & Pagination
 
 ```python
-# Filter by status
-params = {"filter[status]": "active"}
+# Filter by asset status — version-aware
+# v3: params = {"filter[status]": "active"}
+# v4: params = {"filter[archived]": "0"}
+# Use the helper from api_version.py to stay version-agnostic in code:
+#   asset_status_filter(api_version, "active") → returns the right dict
+# See ADR 0009 + mcp-server/api_version.py.
+params = {"filter[status]": "active"}  # v3 example only
 
 # Filter by name (contains)
 params = {"filter[name][operator]": "CONTAINS", "filter[name][value]": "P1"}

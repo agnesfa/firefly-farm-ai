@@ -40,7 +40,7 @@ dimensions:
         label: "F1: Planted"
         criteria: ">500 active plant assets across >30 sections"
         gate_metrics: [active_plants]
-        ontology_refs: ["Plant (status=active)", "Section"]
+        ontology_refs: ["Plant (active)", "Section"]  # "active" = status field in v3, archived=false in v4 (ADR 0009)
 
       - name: surviving
         label: "F2: Surviving"
@@ -77,7 +77,7 @@ dimensions:
       active_plants:
         description: "Total active plant assets in farmOS"
         query: "get_farm_overview → plant count"
-        ontology_ref: "Plant (status=active)"
+        ontology_ref: "Plant (active)"  # see comment above re v3/v4
         interpretation:
           direction: higher_is_better
           thresholds:
