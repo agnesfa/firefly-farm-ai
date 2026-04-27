@@ -1,13 +1,16 @@
 /**
- * Layer 2: FarmOS client tests — OAuth2, pagination, entity creation.
- * Mirrors Python test_farmos_client.py (15+ tests). Mocks native fetch.
+ * FarmOSClient tests — pagination, entity creation, file upload, refresh-on-401.
+ *
+ * Auth is now framework-managed (ADR 0010): the client takes an accessToken
+ * directly and an optional refreshAuth callback for in-flight 401 recovery.
+ * OAuth2 password grant logic now lives in FarmOSPlatformAuthHandler and is
+ * tested separately in apps/farm-server/src/auth/.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { FarmOSClient } from '../clients/farmos-client.js';
 import { makeUuid } from './fixtures.js';
 
-// Helper to create a mock Response
 function mockResponse(data: any, status = 200): Response {
   return {
     ok: status >= 200 && status < 300,
@@ -19,22 +22,15 @@ function mockResponse(data: any, status = 200): Response {
   } as Response;
 }
 
-// Reset singleton between tests
-function resetSingletons() {
-  (FarmOSClient as any).instances = new Map();
-}
-
-const config = {
+const baseConfig = {
   farmUrl: 'https://test.farmos.net',
-  username: 'testuser',
-  password: 'testpass',
+  accessToken: 'test-token-initial',
 };
 
 describe('FarmOSClient', () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    resetSingletons();
     fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);
   });
@@ -43,148 +39,192 @@ describe('FarmOSClient', () => {
     vi.restoreAllMocks();
   });
 
-  // ── OAuth2 ────────────────────────────────────────────────
+  // ── Construction ──────────────────────────────────────────
 
-  describe('OAuth2', () => {
-    it('connects successfully with password grant', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'test-token-123' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-      expect(client.isConnected).toBe(true);
-      expect(fetchSpy).toHaveBeenCalledWith(
-        'https://test.farmos.net/oauth/token',
-        expect.objectContaining({ method: 'POST' }),
+  describe('construction', () => {
+    it('throws when accessToken is missing', () => {
+      expect(() => new FarmOSClient({ farmUrl: 'https://test.farmos.net', accessToken: '' })).toThrow(
+        /accessToken is required/,
       );
     });
 
-    it('throws on auth failure', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ error: 'invalid_grant' }, 401));
-      const client = FarmOSClient.getInstance(config);
-      await expect(client.connect()).rejects.toThrow('OAuth2 authentication failed');
+    it('strips trailing slashes from farmUrl', () => {
+      const client = new FarmOSClient({
+        farmUrl: 'https://test.farmos.net///',
+        accessToken: 'tok',
+      });
+      // Trigger a fetch and inspect the URL
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      return client.fetchByName('asset/plant', 'X').then(() => {
+        const callUrl = fetchSpy.mock.calls[0][0] as string;
+        expect(callUrl.startsWith('https://test.farmos.net/')).toBe(true);
+        expect(callUrl.startsWith('https://test.farmos.net///')).toBe(false);
+      });
+    });
+
+    it('isConnected returns true when accessToken is present', () => {
+      const client = new FarmOSClient(baseConfig);
+      expect(client.isConnected).toBe(true);
+    });
+
+    it('sends Bearer token in Authorization header', async () => {
+      const client = new FarmOSClient(baseConfig);
+      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      await client.fetchByName('asset/plant', 'X');
+
+      const init = fetchSpy.mock.calls[0][1];
+      expect(init.headers.Authorization).toBe('Bearer test-token-initial');
     });
   });
 
-  // ── Error handling ────────────────────────────────────────
+  // ── Refresh-on-401 (replaces old reconnect-on-401) ────────
 
-  describe('error handling', () => {
-    it('reconnects on 401 GET', async () => {
-      // First connect
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      // GET returns 401, then reconnect succeeds, retry succeeds
-      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401)); // first GET fails
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' })); // reconnect
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] })); // retry GET
-
-      const result = await client.fetchByName('asset/plant', 'Test');
-      expect(result).toEqual([]);
-    });
-
-    it('throws on 500 response', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      fetchSpy.mockResolvedValueOnce(mockResponse({}, 500));
-      await expect(client.fetchByName('asset/plant', 'Test')).rejects.toThrow('HTTP 500');
-    });
-
-    it('throws on 422 POST', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      fetchSpy.mockResolvedValueOnce(mockResponse({ errors: [{ detail: 'Unprocessable' }] }, 422));
-      await expect(
-        client.createPlantType('Bad Type', 'desc'),
-      ).rejects.toThrow('422');
-    });
-
-    it('reconnects on 401 in fetchAllPaginated', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      const uuid1 = makeUuid();
-      // First paginated fetch returns 401
+  describe('refresh-on-401', () => {
+    it('throws immediately on 401 when no refreshAuth callback configured', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
-      // Reconnect
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
-      // Retry succeeds with data
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [{ id: uuid1, attributes: { name: 'A' } }],
-      }));
-      // Second page empty
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+
+      await expect(client.fetchByName('asset/plant', 'Test')).rejects.toThrow(
+        /authentication expired.*restart your Claude session/,
+      );
+    });
+
+    it('calls refreshAuth on 401 and retries with new token', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce({
+        headers: { Authorization: 'Bearer new-token-after-refresh' },
+      });
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({}, 401)) // initial 401
+        .mockResolvedValueOnce(mockResponse({ data: [{ id: 'a', attributes: { name: 'X' } }] })); // retry succeeds
+
+      const result = await client.fetchByName('asset/plant', 'X');
+      expect(result).toEqual([{ id: 'a', attributes: { name: 'X' } }]);
+      expect(refreshAuth).toHaveBeenCalledOnce();
+
+      // Retry request used the new token
+      const retryInit = fetchSpy.mock.calls[1][1];
+      expect(retryInit.headers.Authorization).toBe('Bearer new-token-after-refresh');
+    });
+
+    it('updates internal accessToken so subsequent calls use the refreshed token', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce({
+        headers: { Authorization: 'Bearer new-token-after-refresh' },
+      });
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({}, 401))
+        .mockResolvedValueOnce(mockResponse({ data: [] })) // first call retry
+        .mockResolvedValueOnce(mockResponse({ data: [] })); // second call (no 401)
+
+      await client.fetchByName('asset/plant', 'X');
+      await client.fetchByName('asset/plant', 'Y');
+
+      // refreshAuth called only once — second call uses cached new token
+      expect(refreshAuth).toHaveBeenCalledOnce();
+      // Third fetch (second call) used the new token directly
+      expect(fetchSpy.mock.calls[2][1].headers.Authorization).toBe('Bearer new-token-after-refresh');
+    });
+
+    it('throws when refreshAuth returns null', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce(null);
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+
+      await expect(client.fetchByName('asset/plant', 'X')).rejects.toThrow(
+        /authentication expired.*restart your Claude session/,
+      );
+      expect(refreshAuth).toHaveBeenCalledOnce();
+    });
+
+    it('throws when refreshAuth callback itself throws', async () => {
+      const refreshAuth = vi.fn().mockRejectedValueOnce(new Error('framework refresh failed'));
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+
+      await expect(client.fetchByName('asset/plant', 'X')).rejects.toThrow(
+        /auth refresh failed.*framework refresh failed/,
+      );
+    });
+
+    it('throws when retry after refresh also returns 401', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce({
+        headers: { Authorization: 'Bearer fresh-but-still-rejected' },
+      });
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({}, 401))
+        .mockResolvedValueOnce(mockResponse({}, 401));
+
+      await expect(client.fetchByName('asset/plant', 'X')).rejects.toThrow(
+        /authentication failed after refresh.*HTTP 401/,
+      );
+    });
+
+    it('refresh-on-401 also fires inside fetchAllPaginated', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce({
+        headers: { Authorization: 'Bearer refreshed' },
+      });
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+      const uuid1 = makeUuid();
+
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({}, 401)) // first paginated GET 401
+        .mockResolvedValueOnce(mockResponse({ data: [{ id: uuid1, attributes: { name: 'A' } }] })) // retry succeeds
+        .mockResolvedValueOnce(mockResponse({ data: [] })); // empty next page
 
       const result = await client.fetchAllPaginated('asset/plant');
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe(uuid1);
     });
 
-    it('reconnects on 401 in paginated plant query', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
+    it('tracks refresh stats', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce({
+        headers: { Authorization: 'Bearer refreshed' },
+      });
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({}, 401))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
-      // getPlantAssets with species calls fetchPlantsContains
-      // First page returns 401
-      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
-      // Reconnect
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
-      // Retry succeeds
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [{ id: makeUuid(), attributes: { name: '09 APR 2026 - Test Plant - P2R3.0-5' } }],
-      }));
-      // Empty page
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
-
-      const result = await client.getPlantAssets(undefined, 'Test Plant');
-      expect(result).toHaveLength(1);
-    });
-
-    it('tracks connection stats', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      let stats = client.getStats();
-      expect(stats.connectCount).toBe(1);
-      expect(stats.retryCount).toBe(0);
-      expect(stats.lastConnectAt).toBeTruthy();
-
-      // Trigger a retry via 401 on GET
-      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
-      await client.fetchByName('asset/plant', 'Test');
-
-      stats = client.getStats();
-      expect(stats.connectCount).toBe(2); // initial + reconnect
-      expect(stats.retryCount).toBe(1);
-      expect(stats.retrySuccessCount).toBe(1);
-      expect(stats.retryFailCount).toBe(0);
-      expect(stats.lastRetryAt).toBeTruthy();
-    });
-
-    it('throws after retry also fails with 401', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token1' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      // GET 401, reconnect, retry also 401
-      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token2' }));
-      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
-
-      await expect(client.fetchByName('asset/plant', 'Test')).rejects.toThrow(
-        'authentication failed after retry',
-      );
+      await client.fetchByName('asset/plant', 'X');
 
       const stats = client.getStats();
-      expect(stats.retryFailCount).toBe(1);
+      expect(stats.refreshCount).toBe(1);
+      expect(stats.refreshSuccessCount).toBe(1);
+      expect(stats.refreshFailCount).toBe(0);
+      expect(stats.lastRefreshAt).toBeTruthy();
+    });
+
+    it('tracks failed refresh in refreshFailCount', async () => {
+      const refreshAuth = vi.fn().mockResolvedValueOnce(null);
+      const client = new FarmOSClient({ ...baseConfig, refreshAuth });
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 401));
+
+      await expect(client.fetchByName('asset/plant', 'X')).rejects.toThrow();
+
+      const stats = client.getStats();
+      expect(stats.refreshCount).toBe(1);
+      expect(stats.refreshSuccessCount).toBe(0);
+      expect(stats.refreshFailCount).toBe(1);
+    });
+  });
+
+  // ── Error handling on non-auth failures ───────────────────
+
+  describe('error handling', () => {
+    it('throws on 500 response', async () => {
+      const client = new FarmOSClient(baseConfig);
+      fetchSpy.mockResolvedValueOnce(mockResponse({}, 500));
+      await expect(client.fetchByName('asset/plant', 'Test')).rejects.toThrow('HTTP 500');
+    });
+
+    it('throws on 422 POST', async () => {
+      const client = new FarmOSClient(baseConfig);
+      fetchSpy.mockResolvedValueOnce(mockResponse({ errors: [{ detail: 'Unprocessable' }] }, 422));
+      await expect(client.createPlantType('Bad Type', 'desc')).rejects.toThrow('422');
     });
   });
 
@@ -192,75 +232,60 @@ describe('FarmOSClient', () => {
 
   describe('pagination', () => {
     it('fetches single page', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
+      const client = new FarmOSClient(baseConfig);
       const uuid1 = makeUuid();
       const uuid2 = makeUuid();
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [{ id: uuid1, attributes: { name: 'A' } }, { id: uuid2, attributes: { name: 'B' } }],
-      }));
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({
+          data: [{ id: uuid1, attributes: { name: 'A' } }, { id: uuid2, attributes: { name: 'B' } }],
+        }))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.fetchAllPaginated('asset/plant');
       expect(result).toHaveLength(2);
     });
 
     it('deduplicates across pages', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
+      const client = new FarmOSClient(baseConfig);
       const uuid1 = makeUuid();
       const uuid2 = makeUuid();
       const uuid3 = makeUuid();
 
-      // Page 1: uuid1, uuid2
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [{ id: uuid1, attributes: { name: 'A' } }, { id: uuid2, attributes: { name: 'B' } }],
-      }));
-      // Page 2: uuid2 (dup), uuid3
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [{ id: uuid2, attributes: { name: 'B' } }, { id: uuid3, attributes: { name: 'C' } }],
-      }));
-      // Page 3: empty
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({
+          data: [{ id: uuid1, attributes: { name: 'A' } }, { id: uuid2, attributes: { name: 'B' } }],
+        }))
+        .mockResolvedValueOnce(mockResponse({
+          data: [{ id: uuid2, attributes: { name: 'B' } }, { id: uuid3, attributes: { name: 'C' } }],
+        }))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.fetchAllPaginated('taxonomy_term/plant_type');
       expect(result).toHaveLength(3);
-      const ids = result.map((r: any) => r.id);
-      expect(new Set(ids).size).toBe(3); // no duplicates
+      expect(new Set(result.map((r: any) => r.id)).size).toBe(3);
     });
 
     it('constructs CONTAINS filter URL correctly', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
       await client.getPlantAssets('P2R3.15-21');
 
-      const callUrl = fetchSpy.mock.calls[1][0] as string;
+      const callUrl = fetchSpy.mock.calls[0][0] as string;
       expect(callUrl).toContain('filter[name][operator]=CONTAINS');
       expect(callUrl).toContain('P2R3.15-21');
       expect(callUrl).toContain('filter[status]=active');
     });
 
     it('uses exact species match to avoid partial matches (Strawberry bug)', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      // Page 1: Server CONTAINS returns both Strawberry and Guava (Strawberry)
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Strawberry - P2R3.15-21', status: 'active' } },
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Guava (Strawberry) - P2R3.15-21', status: 'active' } },
-        ],
-      }));
-      // Page 2: empty (offset pagination terminator)
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      const client = new FarmOSClient(baseConfig);
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({
+          data: [
+            { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Strawberry - P2R3.15-21', status: 'active' } },
+            { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Guava (Strawberry) - P2R3.15-21', status: 'active' } },
+          ],
+        }))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.getPlantAssets('P2R3.15-21', 'Strawberry');
       expect(result).toHaveLength(1);
@@ -269,77 +294,57 @@ describe('FarmOSClient', () => {
     });
 
     it('fetchPlantsContains uses offset pagination, not links.next', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      // Page 1 (offset=0): 2 items, links.next present
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant A' } },
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant B' } },
-        ],
-        links: { next: { href: 'https://test.farmos.net/api/asset/plant?page[offset]=50' } },
-      }));
-      // Page 2 (offset=50): 1 item, NO links.next (the bug trigger)
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant C' } },
-        ],
-        links: {},
-      }));
-      // Page 3 (offset=100): empty — true end
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      const client = new FarmOSClient(baseConfig);
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({
+          data: [
+            { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant A' } },
+            { id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant B' } },
+          ],
+          links: { next: { href: 'https://test.farmos.net/api/asset/plant?page[offset]=50' } },
+        }))
+        .mockResolvedValueOnce(mockResponse({
+          data: [{ id: makeUuid(), type: 'asset--plant', attributes: { name: 'Plant C' } }],
+          links: {},
+        }))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.getPlantAssets('P2R3');
       expect(result).toHaveLength(3);
     });
 
     it('fetchPlantsContains includes stable sort=name', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
       await client.getPlantAssets('P2R3');
 
-      const callUrl = fetchSpy.mock.calls[1][0] as string;
+      const callUrl = fetchSpy.mock.calls[0][0] as string;
       expect(callUrl).toContain('sort=name');
     });
 
     it('fetchPlantsContains respects maxPages safety cap', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      // Return 1 item per page indefinitely
+      const client = new FarmOSClient(baseConfig);
       for (let i = 0; i < 25; i++) {
         fetchSpy.mockResolvedValueOnce(mockResponse({
           data: [{ id: makeUuid(), type: 'asset--plant', attributes: { name: `Plant ${i}` } }],
         }));
       }
 
-      // Access the private method with a max_pages limit
-      const result = await (client as any).fetchPlantsContains('P2R3', 'active', 5);
-      // Should stop at 5 pages
-      const plantCalls = fetchSpy.mock.calls.filter((c: any[]) =>
-        (c[0] as string).includes('asset/plant'));
+      await (client as any).fetchPlantsContains('P2R3', 'active', 5);
+      const plantCalls = fetchSpy.mock.calls.filter((c: any[]) => (c[0] as string).includes('asset/plant'));
       expect(plantCalls.length).toBe(5);
     });
 
     it('exact match handles species with dashes (Basil - Sweet)', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
-      fetchSpy.mockResolvedValueOnce(mockResponse({
-        data: [
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet - P2R3.15-21', status: 'active' } },
-          { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21', status: 'active' } },
-        ],
-      }));
-      // Page 2: empty (offset pagination terminator)
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      const client = new FarmOSClient(baseConfig);
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({
+          data: [
+            { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet - P2R3.15-21', status: 'active' } },
+            { id: makeUuid(), type: 'asset--plant', attributes: { name: '25 APR 2025 - Basil - Sweet (Classic) - P2R3.15-21', status: 'active' } },
+          ],
+        }))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result = await client.getPlantAssets('P2R3.15-21', 'Basil - Sweet');
       expect(result).toHaveLength(1);
@@ -347,7 +352,7 @@ describe('FarmOSClient', () => {
     });
   });
 
-  // ── Quantity merging ──────────────────────────────────────
+  // ── Quantity merging (pure function) ──────────────────────
 
   describe('quantity merging', () => {
     it('merges included quantities into items', () => {
@@ -372,20 +377,13 @@ describe('FarmOSClient', () => {
   // ── Entity creation payloads ──────────────────────────────
 
   describe('entity creation', () => {
-    let client: FarmOSClient;
-
-    beforeEach(async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      client = FarmOSClient.getInstance(config);
-      await client.connect();
-    });
-
     it('creates quantity with correct payload', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: { id: 'new-qty-id' } }));
       const result = await client.createQuantity('plant-id-1', 5, 'reset');
 
       expect(result).toBe('new-qty-id');
-      const body = JSON.parse(fetchSpy.mock.calls[1][1].body);
+      const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
       expect(body.data.type).toBe('quantity--standard');
       expect(body.data.attributes.value.decimal).toBe('5');
       expect(body.data.attributes.measure).toBe('count');
@@ -394,10 +392,11 @@ describe('FarmOSClient', () => {
     });
 
     it('creates observation log with movement', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: { id: 'obs-log-id' } }));
       await client.createObservationLog('plant-1', 'section-uuid', 'qty-1', 1714003200, 'Test Obs', 'notes');
 
-      const body = JSON.parse(fetchSpy.mock.calls[1][1].body);
+      const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
       expect(body.data.type).toBe('log--observation');
       expect(body.data.attributes.is_movement).toBe(true);
       expect(body.data.attributes.status).toBe('done');
@@ -407,10 +406,11 @@ describe('FarmOSClient', () => {
     });
 
     it('creates plant asset', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: { id: 'new-plant-id' } }));
       await client.createPlantAsset('Test Plant', 'type-uuid-1', 'test notes');
 
-      const body = JSON.parse(fetchSpy.mock.calls[1][1].body);
+      const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
       expect(body.data.type).toBe('asset--plant');
       expect(body.data.attributes.name).toBe('Test Plant');
       expect(body.data.attributes.status).toBe('active');
@@ -418,10 +418,11 @@ describe('FarmOSClient', () => {
     });
 
     it('creates plant type taxonomy term', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: { id: 'new-type-id' } }));
       await client.createPlantType('Pigeon Pea', 'A pioneer legume', 120, 30);
 
-      const body = JSON.parse(fetchSpy.mock.calls[1][1].body);
+      const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
       expect(body.data.type).toBe('taxonomy_term--plant_type');
       expect(body.data.attributes.name).toBe('Pigeon Pea');
       expect(body.data.attributes.maturity_days).toBe(120);
@@ -432,34 +433,31 @@ describe('FarmOSClient', () => {
   // ── Archive plant ─────────────────────────────────────────
 
   describe('archive plant', () => {
-    let client: FarmOSClient;
-
-    beforeEach(async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      client = FarmOSClient.getInstance(config);
-      await client.connect();
-    });
-
     it('archives by name (lookup then patch)', async () => {
+      const client = new FarmOSClient(baseConfig);
       const uuid = makeUuid();
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [{ id: uuid }] })); // fetch_by_name
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: { id: uuid, attributes: { status: 'archived' } } })); // patch
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({ data: [{ id: uuid }] }))
+        .mockResolvedValueOnce(mockResponse({ data: { id: uuid, attributes: { status: 'archived' } } }));
 
       const result = await client.archivePlant('25 APR 2025 - Pigeon Pea - P2R2.0-3');
       expect(result.id).toBe(uuid);
     });
 
     it('archives by UUID (skip lookup)', async () => {
+      const client = new FarmOSClient(baseConfig);
       const uuid = '12345678-1234-1234-1234-123456789012';
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: { id: uuid, attributes: { status: 'archived' } } }));
+      fetchSpy.mockResolvedValueOnce(
+        mockResponse({ data: { id: uuid, attributes: { status: 'archived' } } }),
+      );
 
       const result = await client.archivePlant(uuid);
       expect(result.id).toBe(uuid);
-      // Only 2 calls: connect + patch (no lookup)
-      expect(fetchSpy).toHaveBeenCalledTimes(2);
+      expect(fetchSpy).toHaveBeenCalledTimes(1); // patch only, no lookup
     });
 
     it('throws when not found by name', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
       await expect(client.archivePlant('Nonexistent Plant')).rejects.toThrow('not found');
     });
@@ -467,51 +465,34 @@ describe('FarmOSClient', () => {
 
   // ── File upload ──────────────────────────────────────────
   // Regression 2026-04-21: farmOS file upload responses can return
-  // either {data: {...}} (dict) or {data: [{...}]} (list) depending on
-  // field cardinality. TS only checked data.id on dict form, silently
-  // returned null on list form despite successful upload. Entire Apr-21
-  // photo-attachment session (13+ photos) lost because of this.
+  // {data: {...}} (dict) or {data: [{...}]} (list) depending on cardinality.
+  // 2026-04-22: multi-entry list returns LAST entry (newly-uploaded file).
 
   describe('file upload response shapes', () => {
-    let client: FarmOSClient;
-
-    beforeEach(async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      client = FarmOSClient.getInstance(config);
-      await client.connect();
-    });
-
     it('returns id from dict-form response {data: {id}}', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(
         mockResponse({ data: { id: 'file-uuid-dict', type: 'file--file' } }),
       );
       const id = await client.uploadFile(
-        'log/observation', 'log-1', 'image', 'photo.jpg',
-        new ArrayBuffer(4), 'image/jpeg',
+        'log/observation', 'log-1', 'image', 'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
       );
       expect(id).toBe('file-uuid-dict');
     });
 
     it('returns id from list-form response {data: [{id}]}', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(
         mockResponse({ data: [{ id: 'file-uuid-list', type: 'file--file' }] }),
       );
       const id = await client.uploadFile(
-        'log/observation', 'log-1', 'image', 'photo.jpg',
-        new ArrayBuffer(4), 'image/jpeg',
+        'log/observation', 'log-1', 'image', 'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
       );
       expect(id).toBe('file-uuid-list');
     });
 
     it('regression 2026-04-22: multi-entry list returns LAST entry (newly-uploaded file)', async () => {
-      // When uploading a file to a multi-valued relationship field
-      // (e.g. taxonomy_term/plant_type/{id}/image), farmOS appends the
-      // new file to the existing list and returns [prior, ..., new].
-      // Returning data[0] (the prior file) silently broke every
-      // species-reference photo promotion on 2026-04-21/22 — the
-      // downstream patchRelationship used the prior file's id and
-      // overwrote the relationship with itself, orphaning the new file.
-      // Must return the LAST entry — the newly uploaded file.
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(
         mockResponse({
           data: [
@@ -521,38 +502,35 @@ describe('FarmOSClient', () => {
         }),
       );
       const id = await client.uploadFile(
-        'taxonomy_term/plant_type', 'plant-type-uuid', 'image',
-        'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
+        'taxonomy_term/plant_type', 'plant-type-uuid', 'image', 'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
       );
       expect(id).toBe('newly-uploaded-file-uuid');
       expect(id).not.toBe('prior-file-uuid-stale-reference');
     });
 
     it('returns null on empty list response {data: []}', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
       const id = await client.uploadFile(
-        'log/observation', 'log-1', 'image', 'photo.jpg',
-        new ArrayBuffer(4), 'image/jpeg',
+        'log/observation', 'log-1', 'image', 'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
       );
       expect(id).toBeNull();
     });
 
     it('returns null on empty dict response {data: {}}', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ data: {} }));
       const id = await client.uploadFile(
-        'log/observation', 'log-1', 'image', 'photo.jpg',
-        new ArrayBuffer(4), 'image/jpeg',
+        'log/observation', 'log-1', 'image', 'photo.jpg', new ArrayBuffer(4), 'image/jpeg',
       );
       expect(id).toBeNull();
     });
 
     it('throws on HTTP error status', async () => {
+      const client = new FarmOSClient(baseConfig);
       fetchSpy.mockResolvedValueOnce(mockResponse({ errors: ['bad request'] }, 422));
       await expect(
-        client.uploadFile(
-          'log/observation', 'log-1', 'image', 'bad.json',
-          new ArrayBuffer(4), 'application/json',
-        ),
+        client.uploadFile('log/observation', 'log-1', 'image', 'bad.json', new ArrayBuffer(4), 'application/json'),
       ).rejects.toThrow('HTTP 422');
     });
   });
@@ -561,20 +539,17 @@ describe('FarmOSClient', () => {
 
   describe('plant type cache', () => {
     it('caches results and avoids second fetch', async () => {
-      fetchSpy.mockResolvedValueOnce(mockResponse({ access_token: 'token' }));
-      const client = FarmOSClient.getInstance(config);
-      await client.connect();
-
+      const client = new FarmOSClient(baseConfig);
       const data = [{ id: makeUuid(), attributes: { name: 'Pigeon Pea' } }];
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data }));
-      fetchSpy.mockResolvedValueOnce(mockResponse({ data: [] }));
+      fetchSpy
+        .mockResolvedValueOnce(mockResponse({ data }))
+        .mockResolvedValueOnce(mockResponse({ data: [] }));
 
       const result1 = await client.getAllPlantTypesCached();
       const callCountAfterFirst = fetchSpy.mock.calls.length;
 
       const result2 = await client.getAllPlantTypesCached();
       expect(result1).toEqual(result2);
-      // No additional fetch calls for second call
       expect(fetchSpy.mock.calls.length).toBe(callCountAfterFirst);
     });
   });

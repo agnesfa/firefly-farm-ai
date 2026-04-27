@@ -1,15 +1,24 @@
 /**
  * Client factory functions.
  *
- * farmOS credentials come from server-level env vars (FARMOS_URL, FARMOS_USERNAME,
- * FARMOS_PASSWORD) because all users share the same farmOS account and the FA Framework
- * only injects auth context (extra.authInfo) when a platform OAuth handler is configured.
- * Without a platform handler, extra.authInfo is undefined — so env vars are the reliable path.
+ * farmOS auth is now framework-managed (ADR 0010): the FA framework's
+ * FarmOSPlatformAuthHandler runs the OAuth2 password grant at session
+ * creation, stores the token in the unified session store, and surfaces
+ * it to tool handlers as `extra.authInfo.token`. This factory consumes
+ * that token plus the farmUrl from `extra.authInfo.clientMetadata.farmUrl`,
+ * and wires up `createAuthRefreshCallback(extra)` for in-flight 401 recovery.
  *
- * User identity (userName) comes from credentials.json metadata via extra.authInfo.
- * Apps Script endpoints come from server-level env vars.
+ * Each call constructs a fresh FarmOSClient (no singleton) — cheap, and
+ * avoids any stale-token risk between sessions/users.
+ *
+ * User identity (userName) comes from credentials.json metadata via
+ * `extra.authInfo.metadata.userName` or `extra.authInfo.clientMetadata.userName`.
+ *
+ * Apps Script endpoints (Observe/Memory/PlantTypes/Knowledge) still come
+ * from server-level env vars — they're shared infrastructure, not per-tenant.
  */
 
+import { createAuthRefreshCallback } from '@fireflyagents/mcp-server-core';
 import { FarmOSClient } from './farmos-client.js';
 import { ObservationClient } from './observe-client.js';
 import { MemoryClient } from './memory-client.js';
@@ -23,24 +32,38 @@ export { PlantTypesClient } from './plant-types-client.js';
 export { KnowledgeClient } from './knowledge-client.js';
 
 /**
- * Get a FarmOS client from server-level env vars.
+ * Get a FarmOS client from the framework auth context (extra.authInfo).
  *
- * farmOS credentials are shared across all users (single farmOS account),
- * so they live as env vars rather than per-user auth context.
- * Uses singleton pattern — one client per farmUrl.
+ * Throws with a clear message if extra is missing the access token or farmUrl —
+ * usually caused by a credentials.json entry that lacks `metadata.farmUrl` or
+ * `platformCredentials.{username,password}` (see ADR 0010 §Implementation).
+ *
+ * Constructs a new client per call (no singleton) and wires the framework's
+ * reactive refresh callback so a mid-session 401 triggers transparent re-auth.
  */
-export function getFarmOSClient(_extra?: any): FarmOSClient {
-  const farmUrl = process.env.FARMOS_URL;
-  const username = process.env.FARMOS_USERNAME;
-  const password = process.env.FARMOS_PASSWORD;
+export function getFarmOSClient(extra?: any): FarmOSClient {
+  const accessToken = extra?.authInfo?.token;
+  const farmUrl = extra?.authInfo?.clientMetadata?.farmUrl;
 
-  if (!farmUrl || !username || !password) {
+  if (!accessToken) {
     throw new Error(
-      'FarmOS credentials not found. Set FARMOS_URL, FARMOS_USERNAME, and FARMOS_PASSWORD env vars.',
+      'farmOS access token missing from extra.authInfo.token. ' +
+        'The framework PlatformAuthHandler did not run — check the credentials.json ' +
+        'entry for this tenant has a populated platformCredentials block.',
+    );
+  }
+  if (!farmUrl) {
+    throw new Error(
+      'farmOS farmUrl missing from extra.authInfo.clientMetadata.farmUrl. ' +
+        'Add metadata.farmUrl to the credentials.json entry for this tenant.',
     );
   }
 
-  return FarmOSClient.getInstance({ farmUrl, username, password });
+  return new FarmOSClient({
+    farmUrl,
+    accessToken,
+    refreshAuth: createAuthRefreshCallback(extra),
+  });
 }
 
 /**

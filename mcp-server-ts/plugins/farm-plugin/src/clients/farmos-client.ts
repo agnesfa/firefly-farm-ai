@@ -1,9 +1,15 @@
 /**
- * farmOS JSON:API HTTP client with OAuth2 password grant authentication.
+ * farmOS JSON:API HTTP client.
  *
- * Ported from Python farmos_client.py. Uses native fetch (no axios).
+ * Stateless w.r.t. auth: receives an OAuth2 access token from the framework
+ * (via FarmOSPlatformAuthHandler at session creation) and an optional refresh
+ * callback (via createAuthRefreshCallback) for in-flight 401 recovery.
+ *
+ * Token lifecycle is owned by @fireflyagents/mcp-server-core; this client
+ * never issues OAuth grants directly. See ADR 0010.
+ *
  * Implements pagination with dedup, CONTAINS filters, cached lookups,
- * and all CRUD operations needed by the 27 MCP tools.
+ * and all CRUD operations needed by the MCP tools.
  */
 
 import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
@@ -14,88 +20,61 @@ const PLANT_UNIT_UUID = '2371b79e-a87b-4152-b6e4-ea6a9ed37fd0';
 const GRAMS_UNIT_UUID = 'e7bad672-9c33-4138-9fc3-1b0548a33aca';
 const NURS_FRDG_UUID = '429fcdd3-8be6-436a-b439-49186f56b3c7';
 
-// ── Timeout constants ──────────────────────────────────────
-const FETCH_TIMEOUT_MS = 15_000;  // 15s per individual HTTP request
-const CONNECT_TIMEOUT_MS = 10_000; // 10s for OAuth2 token fetch
+const FETCH_TIMEOUT_MS = 15_000;
+
+/** Shape returned by the framework's createAuthRefreshCallback on success. */
+interface RefreshAuthResult {
+  headers?: Record<string, string>;
+}
 
 interface FarmOSConfig {
   farmUrl: string;
-  username: string;
-  password: string;
+  /** OAuth2 access token from extra.authInfo.token (set by FarmOSPlatformAuthHandler). */
+  accessToken: string;
+  /**
+   * Framework refresh callback. On 401/403 the client invokes this once; if
+   * it returns headers, the request is retried with them.
+   * Production: pass `createAuthRefreshCallback(extra)` from
+   * `@fireflyagents/mcp-server-core`.
+   * Tests: pass a mock or omit (omitting disables retry; 401 throws immediately).
+   */
+  refreshAuth?: () => Promise<RefreshAuthResult | null | undefined>;
 }
 
 export class FarmOSClient {
   private baseUrl: string;
-  private token: string | null = null;
   private config: FarmOSConfig;
   private plantTypeCache = new Map<string, string>(); // farmos_name → UUID
   private sectionCache = new Map<string, string>(); // section_id → UUID
   private plantTypeFullCache: any[] | null = null;
   private plantTypeFullCacheTime = 0;
   private readonly PLANT_TYPE_CACHE_TTL = 300; // 5 minutes
-  private connected = false;
 
-  // ── Connection stats for observability ─────────────────────
+  // Refresh stats for observability (in-flight reactive refresh via framework callback).
   private stats = {
-    connectCount: 0,
-    retryCount: 0,
-    retrySuccessCount: 0,
-    retryFailCount: 0,
-    lastConnectAt: null as string | null,
-    lastRetryAt: null as string | null,
+    refreshCount: 0,
+    refreshSuccessCount: 0,
+    refreshFailCount: 0,
+    lastRefreshAt: null as string | null,
   };
 
-  // Singleton per farmUrl
-  private static instances = new Map<string, FarmOSClient>();
-
-  private constructor(config: FarmOSConfig) {
+  constructor(config: FarmOSConfig) {
+    if (!config.accessToken) {
+      throw new Error(
+        'FarmOSClient: accessToken is required (provided by framework PlatformAuthHandler via extra.authInfo.token).',
+      );
+    }
     this.config = config;
     this.baseUrl = config.farmUrl.replace(/\/+$/, '');
   }
 
-  static getInstance(config: FarmOSConfig): FarmOSClient {
-    const key = config.farmUrl;
-    let instance = FarmOSClient.instances.get(key);
-    if (!instance) {
-      instance = new FarmOSClient(config);
-      FarmOSClient.instances.set(key, instance);
-    }
-    return instance;
-  }
-
+  /**
+   * Whether this client has an access token. Always true for a constructed
+   * client (the constructor throws otherwise). Kept for back-compat with
+   * existing callers; consider removing once those migrate.
+   */
   get isConnected(): boolean {
-    return this.connected;
-  }
-
-  async connect(): Promise<boolean> {
-    const tokenUrl = `${this.baseUrl}/oauth/token`;
-    const body = new URLSearchParams({
-      grant_type: 'password',
-      username: this.config.username,
-      password: this.config.password,
-      client_id: 'farm',
-      scope: 'farm_manager',
-    });
-
-    const resp = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
-      signal: AbortSignal.timeout(CONNECT_TIMEOUT_MS),
-    });
-
-    if (!resp.ok) {
-      logger.error('farmOS connect failed', { status: resp.status, url: this.baseUrl });
-      throw new Error(`farmOS OAuth2 authentication failed: HTTP ${resp.status}`);
-    }
-
-    const data: any = await resp.json();
-    this.token = data.access_token;
-    this.connected = true;
-    this.stats.connectCount++;
-    this.stats.lastConnectAt = new Date().toISOString();
-    logger.info('Connected to farmOS', { url: this.baseUrl, connectCount: this.stats.connectCount });
-    return true;
+    return !!this.config.accessToken;
   }
 
   getStats() {
@@ -104,7 +83,7 @@ export class FarmOSClient {
 
   private get headers(): Record<string, string> {
     return {
-      Authorization: `Bearer ${this.token}`,
+      Authorization: `Bearer ${this.config.accessToken}`,
       'Content-Type': 'application/vnd.api+json',
       Accept: 'application/vnd.api+json',
     };
@@ -112,18 +91,18 @@ export class FarmOSClient {
 
   // ── Low-level HTTP ──────────────────────────────────────────
 
-  async ensureConnected(): Promise<void> {
-    if (!this.connected) {
-      await this.connect();
-    }
-  }
-
   /**
-   * Unified fetch wrapper: retry once on 401/403 with a fresh token.
-   * All HTTP methods route through here for consistent auth handling.
+   * HTTP wrapper with one-shot reactive refresh on 401/403.
+   *
+   * On expired-auth response: invokes the framework's refresh callback (set
+   * by getFarmOSClient → createAuthRefreshCallback). If the callback returns
+   * new headers, retries once. If the callback returns null/throws or the
+   * retry also fails, throws a clear "session expired" error.
+   *
+   * If `config.refreshAuth` is not provided (e.g. unit tests without a
+   * framework session), a 401/403 propagates immediately as a thrown error.
    */
   private async _fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
-    await this.ensureConnected();
     const mergedInit = {
       ...init,
       headers: { ...this.headers, ...init?.headers },
@@ -131,32 +110,62 @@ export class FarmOSClient {
     };
     const resp = await fetch(url, mergedInit);
 
-    if (resp.status === 401 || resp.status === 403) {
-      this.connected = false;
-      this.stats.retryCount++;
-      this.stats.lastRetryAt = new Date().toISOString();
-      const shortUrl = url.replace(this.baseUrl, '');
-      logger.warn('Auth expired, reconnecting', { url: shortUrl, status: resp.status });
-
-      await this.connect();
-      const retry = await fetch(url, {
-        ...init,
-        headers: { ...this.headers, ...init?.headers },
-        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      });
-
-      if (retry.status === 401 || retry.status === 403) {
-        this.stats.retryFailCount++;
-        logger.error('Auth retry failed', { url: shortUrl, status: retry.status });
-        throw new Error(`farmOS authentication failed after retry (HTTP ${retry.status})`);
-      }
-
-      this.stats.retrySuccessCount++;
-      logger.info('Auth retry succeeded', { url: shortUrl });
-      return retry;
+    if (resp.status !== 401 && resp.status !== 403) {
+      return resp;
     }
 
-    return resp;
+    const shortUrl = url.replace(this.baseUrl, '');
+
+    if (!this.config.refreshAuth) {
+      logger.warn('Auth expired and no refresh callback configured', { url: shortUrl, status: resp.status });
+      throw new Error(
+        `farmOS authentication expired (HTTP ${resp.status}) — restart your Claude session to re-authenticate.`,
+      );
+    }
+
+    this.stats.refreshCount++;
+    this.stats.lastRefreshAt = new Date().toISOString();
+    logger.warn('Auth expired, requesting framework refresh', { url: shortUrl, status: resp.status });
+
+    let refreshResult: RefreshAuthResult | null | undefined;
+    try {
+      refreshResult = await this.config.refreshAuth();
+    } catch (e) {
+      this.stats.refreshFailCount++;
+      const msg = e instanceof Error ? e.message : String(e);
+      logger.error('Auth refresh callback threw', { url: shortUrl, error: msg });
+      throw new Error(`farmOS auth refresh failed: ${msg}`);
+    }
+
+    if (!refreshResult?.headers) {
+      this.stats.refreshFailCount++;
+      logger.error('Auth refresh callback returned no headers', { url: shortUrl });
+      throw new Error('farmOS authentication expired — restart your Claude session to re-authenticate.');
+    }
+
+    // Pull the new token out of the refresh result so subsequent requests on
+    // this client also use it. The framework callback already updated
+    // extra.authInfo.token, but our own config.accessToken needs syncing too.
+    const auth = refreshResult.headers.Authorization;
+    if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
+      this.config.accessToken = auth.slice('Bearer '.length);
+    }
+
+    const retry = await fetch(url, {
+      ...init,
+      headers: { ...this.headers, ...init?.headers },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
+
+    if (retry.status === 401 || retry.status === 403) {
+      this.stats.refreshFailCount++;
+      logger.error('Auth retry failed after refresh', { url: shortUrl, status: retry.status });
+      throw new Error(`farmOS authentication failed after refresh (HTTP ${retry.status}).`);
+    }
+
+    this.stats.refreshSuccessCount++;
+    logger.info('Auth refresh + retry succeeded', { url: shortUrl });
+    return retry;
   }
 
   private async _get(path: string): Promise<any> {
