@@ -43,7 +43,7 @@ export const systemHealthTool: Tool = {
 
     const farmDimension = async () => {
       const [allPlants, allTypes, sections] = await Promise.all([
-        client.fetchAllPaginated('asset/plant', { status: 'active' }),
+        client.fetchAllPaginated('asset/plant', client.assetStatusFilter('active')),
         client.getAllPlantTypesCached(),
         client.getSectionAssets(),
       ]);
@@ -217,7 +217,7 @@ export const systemHealthTool: Tool = {
     // Fetch allPlants + allTypes for dataDimension (Farm already fetched them but we need the raw data)
     // Re-fetch is cheap because getAllPlantTypesCached is cached.
     const [allPlantsForData, allTypesForData] = await Promise.all([
-      client.fetchAllPaginated('asset/plant', { status: 'active' }),
+      client.fetchAllPaginated('asset/plant', client.assetStatusFilter('active')),
       client.getAllPlantTypesCached(),
     ]);
 

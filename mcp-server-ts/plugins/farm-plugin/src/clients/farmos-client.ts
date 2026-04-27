@@ -14,6 +14,14 @@
 import type { HttpClient } from '@fireflyagents/mcp-shared-utils';
 import { HttpClientError } from '@fireflyagents/mcp-shared-utils';
 import { logger as baseLogger } from '@fireflyagents/mcp-shared-utils';
+import {
+  type ApiVersion,
+  type AssetStatus,
+  assetStatusFilter,
+  assetStatusFilterParam,
+  assetArchivePayload,
+  readAssetStatus,
+} from './api-version.js';
 
 const logger = baseLogger.child({ context: 'farm-plugin:farmos-client' });
 
@@ -30,10 +38,18 @@ interface FarmOSConfig {
    * framework's reactive refresh callback. Tests pass a mock implementation.
    */
   httpClient: HttpClient;
+  /**
+   * farmOS JSON:API version flag. Default `'3'` (legacy). Set `'4'` after
+   * Mike upgrades margregen. Drives asset status filter / archive PATCH /
+   * display reader behaviour via the helpers in `api-version.ts`. See ADR 0009.
+   */
+  apiVersion?: ApiVersion;
 }
 
 export class FarmOSClient {
   private httpClient: HttpClient;
+  /** Public so tools can use it with the standalone helpers when needed. */
+  readonly apiVersion: ApiVersion;
   private plantTypeCache = new Map<string, string>(); // farmos_name → UUID
   private sectionCache = new Map<string, string>(); // section_id → UUID
   private plantTypeFullCache: any[] | null = null;
@@ -45,11 +61,21 @@ export class FarmOSClient {
       throw new Error('FarmOSClient: httpClient is required (constructed by getFarmOSClient).');
     }
     this.httpClient = config.httpClient;
+    this.apiVersion = config.apiVersion ?? '3';
   }
 
   /** Always true for a constructed client; kept as a back-compat shim. */
   get isConnected(): boolean {
     return true;
+  }
+
+  /**
+   * Convenience: produce the right asset-status filter dict for THIS client's
+   * version. Use at tool call sites that pass a filters dict to
+   * `fetchAllPaginated` / `fetchFiltered`.
+   */
+  assetStatusFilter(status: AssetStatus): Record<string, string> {
+    return assetStatusFilter(this.apiVersion, status);
   }
 
   // ── Low-level HTTP ──────────────────────────────────────────
@@ -322,8 +348,10 @@ export class FarmOSClient {
     plantTypeUuid: string,
     notes = '',
   ): Promise<string | null> {
+    // No `status` field on creation: redundant in v3 (active is the default)
+    // and the field doesn't exist in v4. ADR 0009.
     const data: any = {
-      attributes: { name, status: 'active' },
+      attributes: { name },
       relationships: {
         plant_type: { data: [{ type: 'taxonomy_term--plant_type', id: plantTypeUuid }] },
       },
@@ -343,8 +371,9 @@ export class FarmOSClient {
   }
 
   async createSeedAsset(name: string, plantTypeUuid: string, notes = ''): Promise<string | null> {
+    // No `status` field on creation (see createPlantAsset comment). ADR 0009.
     const data: any = {
-      attributes: { name, status: 'active' },
+      attributes: { name },
       relationships: {
         plant_type: { data: [{ type: 'taxonomy_term--plant_type', id: plantTypeUuid }] },
       },
@@ -413,9 +442,10 @@ export class FarmOSClient {
 
   // ── Query helpers for tools ─────────────────────────────────
 
-  private async fetchPlantsContains(nameContains: string, status = 'active', maxPages = 20): Promise<any[]> {
+  private async fetchPlantsContains(nameContains: string, status: AssetStatus = 'active', maxPages = 20): Promise<any[]> {
     const encoded = encodeURIComponent(nameContains);
-    const basePath = `/api/asset/plant?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&sort=name&page[limit]=50`;
+    const statusParam = assetStatusFilterParam(this.apiVersion, status);
+    const basePath = `/api/asset/plant?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&${statusParam}&sort=name&page[limit]=50`;
 
     const seen = new Map<string, any>();
     let offset = 0;
@@ -445,15 +475,16 @@ export class FarmOSClient {
     return Array.from(seen.values());
   }
 
-  async getSeedAssets(sectionId?: string, species?: string, status = 'active'): Promise<any[]> {
+  async getSeedAssets(sectionId?: string, species?: string, status: AssetStatus = 'active'): Promise<any[]> {
     if (species) return this.fetchSeedsContains(species, status);
     if (sectionId) return this.fetchSeedsContains(sectionId, status);
-    return this.fetchAllPaginated('asset/seed', { status });
+    return this.fetchAllPaginated('asset/seed', this.assetStatusFilter(status));
   }
 
-  private async fetchSeedsContains(nameContains: string, status = 'active', maxPages = 20): Promise<any[]> {
+  private async fetchSeedsContains(nameContains: string, status: AssetStatus = 'active', maxPages = 20): Promise<any[]> {
     const encoded = encodeURIComponent(nameContains);
-    const basePath = `/api/asset/seed?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&filter[status]=${status}&sort=name&page[limit]=50`;
+    const statusParam = assetStatusFilterParam(this.apiVersion, status);
+    const basePath = `/api/asset/seed?filter[name][operator]=CONTAINS&filter[name][value]=${encoded}&${statusParam}&sort=name&page[limit]=50`;
     const seen = new Map<string, any>();
     let offset = 0;
     for (let page = 0; page < maxPages; page++) {
@@ -476,7 +507,7 @@ export class FarmOSClient {
     return Array.from(seen.values());
   }
 
-  async getPlantAssets(sectionId?: string, species?: string, status = 'active'): Promise<any[]> {
+  async getPlantAssets(sectionId?: string, species?: string, status: AssetStatus = 'active'): Promise<any[]> {
     if (species && sectionId) {
       const plants = await this.fetchPlantsContains(sectionId, status);
       // Exact species match using parsed asset name to avoid partial matches
@@ -490,7 +521,7 @@ export class FarmOSClient {
     }
     if (species) return this.fetchPlantsContains(species, status);
     if (sectionId) return this.fetchPlantsContains(sectionId, status);
-    return this.fetchAllPaginated('asset/plant', { status });
+    return this.fetchAllPaginated('asset/plant', this.assetStatusFilter(status));
   }
 
   async getSectionAssets(rowFilter?: string): Promise<any[]> {
@@ -516,7 +547,7 @@ export class FarmOSClient {
     const landAssets = await this.fetchAllPaginated('asset/land');
     for (const asset of landAssets) {
       const name = asset.attributes?.name ?? '';
-      const entry = { name, uuid: asset.id, asset_type: 'land', status: asset.attributes?.status ?? 'active' };
+      const entry = { name, uuid: asset.id, asset_type: 'land', status: readAssetStatus(asset) };
       if (paddockPattern.test(name)) grouped.paddock.push(entry);
       else if (nurseryPattern.test(name)) grouped.nursery.push(entry);
       else if (compostPattern.test(name)) grouped.compost.push(entry);
@@ -526,7 +557,7 @@ export class FarmOSClient {
     const structureAssets = await this.fetchAllPaginated('asset/structure');
     for (const asset of structureAssets) {
       const name = asset.attributes?.name ?? '';
-      const entry = { name, uuid: asset.id, asset_type: 'structure', status: asset.attributes?.status ?? 'active' };
+      const entry = { name, uuid: asset.id, asset_type: 'structure', status: readAssetStatus(asset) };
       if (nurseryPattern.test(name)) grouped.nursery.push(entry);
       else if (compostPattern.test(name)) grouped.compost.push(entry);
       else grouped.other.push(entry);
@@ -757,7 +788,7 @@ export class FarmOSClient {
       data: {
         type: 'asset--plant',
         id: plantUuid,
-        attributes: { status: 'archived' },
+        attributes: assetArchivePayload(this.apiVersion),
       },
     };
     const result = await this._patch(`/api/asset/plant/${plantUuid}`, payload);

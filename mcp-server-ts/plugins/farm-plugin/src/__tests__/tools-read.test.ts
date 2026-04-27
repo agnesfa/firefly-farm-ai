@@ -14,6 +14,7 @@ const mockClient = {
   getSectionAssets: vi.fn(),
   getAllLocations: vi.fn(),
   fetchAllPaginated: vi.fn(),
+  fetchFiltered: vi.fn(),
   getPlantTypeDetails: vi.fn(),
   getAllPlantTypesCached: vi.fn(),
   getSectionUuid: vi.fn(),
@@ -21,6 +22,9 @@ const mockClient = {
   getPlantTypeUuid: vi.fn(),
   connect: vi.fn(),
   isConnected: true,
+  apiVersion: '3' as const,
+  // Default to v3 dict shape; tests can override per call.
+  assetStatusFilter: vi.fn((status: 'active' | 'archived') => ({ status })),
 };
 
 vi.mock('../clients/index.js', () => ({

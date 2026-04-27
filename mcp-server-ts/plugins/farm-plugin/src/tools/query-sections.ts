@@ -36,7 +36,7 @@ export const querySectionsTool: Tool = {
     }
 
     // Fetch ALL plant assets once for count index
-    const allPlants = await client.fetchAllPaginated('asset/plant', { status: 'active' });
+    const allPlants = await client.fetchAllPaginated('asset/plant', client.assetStatusFilter('active'));
     const plantCounts: Record<string, number> = {};
     for (const p of allPlants) {
       const pname = p.attributes?.name ?? '';

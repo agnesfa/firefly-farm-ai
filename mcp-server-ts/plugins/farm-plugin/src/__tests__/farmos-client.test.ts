@@ -270,7 +270,7 @@ describe('FarmOSClient', () => {
       expect(body.data.relationships.quantity.data[0].id).toBe('qty-1');
     });
 
-    it('creates plant asset', async () => {
+    it('creates plant asset (no status field — ADR 0009)', async () => {
       const client = new FarmOSClient(baseConfig(mockHttp));
       mockHttp.post.mockResolvedValueOnce(ok({ data: { id: 'new-plant-id' } }));
       await client.createPlantAsset('Test Plant', 'type-uuid-1', 'test notes');
@@ -278,8 +278,11 @@ describe('FarmOSClient', () => {
       const [, body] = mockHttp.post.mock.calls[0];
       expect(body.data.type).toBe('asset--plant');
       expect(body.data.attributes.name).toBe('Test Plant');
-      expect(body.data.attributes.status).toBe('active');
       expect(body.data.relationships.plant_type.data[0].id).toBe('type-uuid-1');
+      // status field is intentionally omitted — redundant in v3 (active is
+      // the default), removed in v4. Single-version code per ADR 0009.
+      expect(body.data.attributes).not.toHaveProperty('status');
+      expect(body.data.attributes).not.toHaveProperty('archived');
     });
 
     it('creates plant type taxonomy term', async () => {
@@ -446,6 +449,65 @@ describe('FarmOSClient', () => {
       mockHttp.patch.mockRejectedValueOnce(err(404));
       const ok_ = await client.patchRelationship('asset/plant', 'plant-1', 'image', []);
       expect(ok_).toBe(false);
+    });
+  });
+
+  // ── v4 mode (FARMOS_API_VERSION='4') ──────────────────────
+  // Exercises the v3/v4 dual-path sites flipped via `apiVersion: '4'` on
+  // FarmOSConfig. Default-version (v3) coverage lives in the describe blocks
+  // above. ADR 0009.
+
+  describe('v4 mode', () => {
+    const v4Config = (httpClient: HttpClient) => ({
+      farmUrl: 'https://test.farmos.net',
+      httpClient,
+      apiVersion: '4' as const,
+    });
+
+    it('exposes apiVersion=4', () => {
+      const client = new FarmOSClient(v4Config(mockHttp));
+      expect(client.apiVersion).toBe('4');
+    });
+
+    it('CONTAINS plant query uses filter[archived]=0 (not filter[status]=active)', async () => {
+      const client = new FarmOSClient(v4Config(mockHttp));
+      mockHttp.get.mockResolvedValueOnce(ok({ data: [] }));
+      await client.getPlantAssets('P2R3.15-21');
+
+      const callPath = mockHttp.get.mock.calls[0][0] as string;
+      expect(callPath).toContain('filter[archived]=0');
+      expect(callPath).not.toContain('filter[status]=');
+    });
+
+    it('paginated plant fetch uses filter[archived]=0 in dict form', async () => {
+      const client = new FarmOSClient(v4Config(mockHttp));
+      mockHttp.get
+        .mockResolvedValueOnce(ok({ data: [] })); // empty page
+      await client.getPlantAssets(); // no filters → falls into fetchAllPaginated path
+
+      const callPath = mockHttp.get.mock.calls[0][0] as string;
+      expect(callPath).toContain('filter[archived]=0');
+      expect(callPath).not.toContain('filter[status]=');
+    });
+
+    it('archive PATCH sends {archived: true} (not {status: archived})', async () => {
+      const client = new FarmOSClient(v4Config(mockHttp));
+      const uuid = '12345678-1234-1234-1234-123456789012';
+      mockHttp.patch.mockResolvedValueOnce(
+        ok({ data: { id: uuid, attributes: { archived: true } } }),
+      );
+
+      await client.archivePlant(uuid);
+
+      const [, body] = mockHttp.patch.mock.calls[0];
+      expect(body.data.attributes).toEqual({ archived: true });
+      expect(body.data.attributes).not.toHaveProperty('status');
+    });
+
+    it('client.assetStatusFilter("active") returns v4 dict shape', () => {
+      const client = new FarmOSClient(v4Config(mockHttp));
+      expect(client.assetStatusFilter('active')).toEqual({ archived: '0' });
+      expect(client.assetStatusFilter('archived')).toEqual({ archived: '1' });
     });
   });
 });

@@ -21,6 +21,7 @@
 import { createAuthRefreshCallback } from '@fireflyagents/mcp-server-core';
 import { createHttpClient } from '@fireflyagents/mcp-shared-utils';
 import { FarmOSClient } from './farmos-client.js';
+import { parseApiVersion } from './api-version.js';
 import { ObservationClient } from './observe-client.js';
 import { MemoryClient } from './memory-client.js';
 import { PlantTypesClient } from './plant-types-client.js';
@@ -82,7 +83,11 @@ export function getFarmOSClient(extra?: any): FarmOSClient {
     onUnauthorized: createAuthRefreshCallback(extra),
   });
 
-  return new FarmOSClient({ farmUrl, httpClient });
+  // FARMOS_API_VERSION is a server-level flag (see ADR 0009): default '3'
+  // (margregen pre-cutover); flipped to '4' on Railway after Mike upgrades.
+  const apiVersion = parseApiVersion(process.env.FARMOS_API_VERSION);
+
+  return new FarmOSClient({ farmUrl, httpClient, apiVersion });
 }
 
 /**

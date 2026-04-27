@@ -15,7 +15,7 @@ export const getFarmOverviewTool: Tool = {
     // getAllLocations() handles both asset/land and asset/structure with proper pagination.
     const [allLocations, plantPage, plantTypes] = await Promise.all([
       client.getAllLocations(),
-      client.fetchFiltered('asset/plant', { status: 'active' }, 'name', 1),
+      client.fetchFiltered('asset/plant', client.assetStatusFilter('active'), 'name', 1),
       client.getAllPlantTypesCached(),
     ]);
 

@@ -4,6 +4,7 @@
 
 import { formatTimestamp } from './dates.js';
 import { parseAssetName } from './names.js';
+import { readAssetStatus } from '../clients/api-version.js';
 
 /** Extract notes from farmOS notes field (can be string or {value: string}). */
 function extractNotes(notesRaw: unknown): string {
@@ -57,7 +58,7 @@ export function formatPlantAsset(asset: Record<string, any>): Record<string, any
     species: parsed.species,
     section: parsed.section,
     planted_date: parsed.plantedDate,
-    status: attrs.status ?? '',
+    status: readAssetStatus(asset),
     notes,
     plant_type_ids: plantTypeIds,
   };
@@ -193,7 +194,7 @@ export function formatSectionFromAssets(
   return {
     id: attrs.name ?? '',
     uuid: sectionAsset.id ?? '',
-    status: attrs.status ?? '',
+    status: readAssetStatus(sectionAsset),
     plant_count: plants.length,
     plants,
   };
