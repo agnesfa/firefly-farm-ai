@@ -140,6 +140,39 @@ describe('client factory', () => {
     });
   });
 
+  describe('getFarmName', () => {
+    it('returns farmName from authInfo.metadata (FA Framework pattern)', async () => {
+      const { getFarmName } = await import('../clients/index.js');
+      const extra = { authInfo: { metadata: { farmName: 'Firefly Corner Farm' } } };
+      expect(getFarmName(extra)).toBe('Firefly Corner Farm');
+    });
+
+    it('falls back to authInfo.clientMetadata (older framework / direct test contexts)', async () => {
+      const { getFarmName } = await import('../clients/index.js');
+      const extra = { authInfo: { clientMetadata: { farmName: 'Brookside Farm' } } };
+      expect(getFarmName(extra)).toBe('Brookside Farm');
+    });
+
+    it('returns Unknown Farm when nothing is available', async () => {
+      const { getFarmName } = await import('../clients/index.js');
+      expect(getFarmName(undefined)).toBe('Unknown Farm');
+      expect(getFarmName({})).toBe('Unknown Farm');
+      expect(getFarmName({ authInfo: {} })).toBe('Unknown Farm');
+      expect(getFarmName({ authInfo: { metadata: {} } })).toBe('Unknown Farm');
+    });
+
+    it('prefers authInfo.metadata over authInfo.clientMetadata', async () => {
+      const { getFarmName } = await import('../clients/index.js');
+      const extra = {
+        authInfo: {
+          metadata: { farmName: 'FromMetadata' },
+          clientMetadata: { farmName: 'FromClientMetadata' },
+        },
+      };
+      expect(getFarmName(extra)).toBe('FromMetadata');
+    });
+  });
+
   describe('Apps Script clients from env vars', () => {
     it('getObserveClient returns null when env not set', async () => {
       delete process.env.OBSERVE_ENDPOINT;

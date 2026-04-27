@@ -96,6 +96,24 @@ export function getUserName(extra?: any): string {
     ?? 'Unknown';
 }
 
+/**
+ * Get the human-readable farm name from auth context metadata
+ * (credentials.json `metadata.farmName`). Use this for any tool output
+ * that mentions "your farm" — forward-compatible with the multi-farm
+ * future where each tenant has its own farmOS instance and display name.
+ *
+ * Note: `farmName` is a label for humans; the source-of-truth identifier
+ * is `metadata.farmUrl` which determines which farmOS instance auth +
+ * API calls target.
+ *
+ * Falls back to clientMetadata path (older framework) then 'Unknown Farm'.
+ */
+export function getFarmName(extra?: any): string {
+  return extra?.authInfo?.metadata?.farmName
+    ?? extra?.authInfo?.clientMetadata?.farmName
+    ?? 'Unknown Farm';
+}
+
 /** Get an observation client from env vars. Returns null if not configured. */
 export function getObserveClient(): ObservationClient | null {
   const endpoint = process.env.OBSERVE_ENDPOINT;

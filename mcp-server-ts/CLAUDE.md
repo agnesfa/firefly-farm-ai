@@ -319,6 +319,73 @@ handler: async (params, extra) => {
 }
 ```
 
+### Farm Plugin — Concrete credentials.json schema
+
+The above is the framework example shape. The farm plugin uses
+`FileApiKeyStore` from `@fireflyagents/mcp-server-core`, which expects an
+**array** of credentials (not a tenants object) and SHA256-hashed API keys.
+Each tenant entry that talks to a farmOS instance must have:
+
+```json
+{
+  "version": "1.0",
+  "environment": "production",
+  "credentials": [
+    {
+      "apiKeyHash": "<sha256 hex of the API key>",
+      "status": "active",
+      "createdAt": "2026-04-27T00:00:00.000Z",
+      "metadata": {
+        "userName": "Agnes",                       // who this API key belongs to
+        "farmName": "Firefly Corner Farm",         // human-readable farm label
+        "farmUrl": "https://margregen.farmos.net", // farmOS instance URL (source of truth for which farm)
+        "role": "owner"                            // optional, free-form
+      },
+      "platformCredentials": {
+        "username": "<farmOS API user>",
+        "password": "<farmOS password>",
+        "clientId": "farm",          // OAuth client registered on the farmOS instance
+        "scope": "farm_manager"      // OAuth scope (farm_manager, farm_worker, farm_viewer)
+      }
+    }
+  ]
+}
+```
+
+**Field semantics:**
+
+| Field | Identifies | Notes |
+|---|---|---|
+| `metadata.farmUrl` | **The farm** (which farmOS instance) | Source of truth for routing API calls |
+| `metadata.farmName` | The farm (human-readable) | For display in tool output |
+| `metadata.userName` | The user holding this API key | Per-user, per-tenant |
+| `platformCredentials.clientId` | OAuth client *on that farmOS* | Default `farm`; can be a custom client per integration |
+| `platformCredentials.scope` | OAuth permission level | farmOS-defined: `farm_manager`/`farm_worker`/`farm_viewer` |
+
+`clientId` and `scope` are **OAuth-protocol concepts**, not farm
+identifiers. Multi-farm setup means **multiple tenant entries with
+different `metadata.farmUrl` and `metadata.farmName`** — but `clientId` /
+`scope` typically stay the same unless you've registered a custom OAuth
+client on each farmOS instance.
+
+**Helpers** (`plugins/farm-plugin/src/clients/index.ts`):
+
+```typescript
+import { getFarmOSClient, getUserName, getFarmName } from '../clients/index.js';
+
+handler: async (params, extra) => {
+  const client = getFarmOSClient(extra);     // routes to extra.authInfo.metadata.farmUrl
+  const user = getUserName(extra);            // → "Agnes"
+  const farm = getFarmName(extra);            // → "Firefly Corner Farm"
+  // ...
+}
+```
+
+The framework's `injectAuthContext` (request-helpers.js) renames the
+authContext's `clientMetadata` to `metadata` when populating `req.auth`,
+so the helpers read `extra.authInfo.metadata.*` (with a `clientMetadata`
+fallback for direct test contexts).
+
 ## Environment Variables
 
 | Variable | Default | Description |
