@@ -622,7 +622,10 @@ class TestEntityCreation:
         data = body["data"]
         assert data["type"] == "asset--plant"
         assert data["attributes"]["name"] == "25 APR 2025 - Pigeon Pea - P2R2.0-3"
-        assert data["attributes"]["status"] == "active"
+        # status field is intentionally omitted — redundant in v3 (active is
+        # the default), removed in v4. Single-version code per ADR 0009.
+        assert "status" not in data["attributes"]
+        assert "archived" not in data["attributes"]
         assert data["relationships"]["plant_type"]["data"] == [
             {"type": "taxonomy_term--plant_type", "id": "pt-uuid-456"}
         ]
@@ -934,4 +937,87 @@ class TestUploadFileResponseShapes:
         fid = client.upload_file("log/observation", "log-1", "image",
                                  "photo.jpg", b"fake-bytes", "image/jpeg")
         assert fid is None
+
+
+# ── v4 mode (FARMOS_API_VERSION='4') ─────────────────────────
+# Exercises the v3/v4 dual-path sites flipped via env var. Default-version
+# (v3) coverage lives in the classes above. Mirrors TS v4-mode block. ADR 0009.
+
+
+@pytest.fixture
+def env_vars_v4(monkeypatch):
+    """env_vars + FARMOS_API_VERSION=4."""
+    monkeypatch.setenv("FARMOS_URL", BASE_URL)
+    monkeypatch.setenv("FARMOS_USERNAME", "testuser")
+    monkeypatch.setenv("FARMOS_PASSWORD", "testpass")
+    monkeypatch.setenv("FARMOS_API_VERSION", "4")
+
+
+def _connect_v4(env_vars_v4) -> FarmOSClient:
+    _add_token_mock()
+    client = FarmOSClient()
+    client.connect()
+    return client
+
+
+class TestV4Mode:
+
+    @responses.activate
+    def test_api_version_is_4(self, env_vars_v4):
+        client = _connect_v4(env_vars_v4)
+        assert client.api_version == "4"
+
+    @responses.activate
+    def test_contains_plant_query_uses_filter_archived(self, env_vars_v4):
+        """v4: filter[archived]=0 (not filter[status]=active) on CONTAINS query."""
+        from urllib.parse import unquote
+        client = _connect_v4(env_vars_v4)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={"data": []},
+        )
+        client.get_plant_assets(section_id="P2R3.15-21")
+        call_url = unquote(responses.calls[-1].request.url)
+        assert "filter[archived]=0" in call_url
+        assert "filter[status]=" not in call_url
+
+    @responses.activate
+    def test_paginated_plant_fetch_uses_filter_archived(self, env_vars_v4):
+        """v4: dict-form filter is {archived: '0'} not {status: 'active'}."""
+        from urllib.parse import unquote
+        client = _connect_v4(env_vars_v4)
+        responses.add(
+            responses.GET,
+            f"{BASE_URL}/api/asset/plant",
+            json={"data": []},
+        )
+        client.get_plant_assets()  # no filters → fetch_all_paginated path
+        call_url = unquote(responses.calls[-1].request.url)
+        assert "filter[archived]=0" in call_url
+        assert "filter[status]=" not in call_url
+
+    @responses.activate
+    def test_archive_plant_sends_archived_true(self, env_vars_v4):
+        """v4: PATCH body is {archived: True} not {status: 'archived'}."""
+        client = _connect_v4(env_vars_v4)
+        plant_uuid = "12345678-1234-1234-1234-123456789012"
+        responses.add(
+            responses.PATCH,
+            f"{BASE_URL}/api/asset/plant/{plant_uuid}",
+            json={"data": {"id": plant_uuid, "attributes": {"archived": True}}},
+        )
+
+        client.archive_plant(plant_uuid)
+
+        import json
+        body = json.loads(responses.calls[-1].request.body)
+        assert body["data"]["attributes"] == {"archived": True}
+        assert "status" not in body["data"]["attributes"]
+
+    @responses.activate
+    def test_asset_status_filter_method_returns_v4_dict(self, env_vars_v4):
+        client = _connect_v4(env_vars_v4)
+        assert client.asset_status_filter("active") == {"archived": "0"}
+        assert client.asset_status_filter("archived") == {"archived": "1"}
 

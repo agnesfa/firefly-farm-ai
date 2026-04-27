@@ -27,6 +27,7 @@ from typing import Optional
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastmcp import FastMCP
+from api_version import read_asset_status
 from interaction_stamp import build_mcp_stamp, append_stamp, build_stamp
 
 from farmos_client import FarmOSClient
@@ -158,7 +159,7 @@ def farm_overview() -> str:
     sections = client.get_section_assets()
 
     # Count plants
-    plants = client.fetch_filtered("asset/plant", filters={"status": "active"}, max_results=50)
+    plants = client.fetch_filtered("asset/plant", filters=client.asset_status_filter("active"), max_results=50)
 
     # Count plant types
     plant_types = client.fetch_filtered("taxonomy_term/plant_type", max_results=50)
@@ -337,7 +338,7 @@ def query_sections(row: Optional[str] = None) -> str:
         ]
 
     # Fetch ALL plant assets once (not per-section!)
-    all_plants = client.fetch_all_paginated("asset/plant", filters={"status": "active"})
+    all_plants = client.fetch_all_paginated("asset/plant", filters=client.asset_status_filter("active"))
 
     # Build section→plant count index from plant asset names
     plant_counts = {}
@@ -496,7 +497,7 @@ def _format_seed_asset(seed: dict) -> dict:
         "species": species_name,
         "section": "Seed Bank",
         "inventory_count": count,
-        "status": attrs.get("status", "active"),
+        "status": read_asset_status(seed),
         "asset_type": "seed",
         "notes": (attrs.get("notes", {}) or {}).get("value", ""),
     }
@@ -4157,7 +4158,7 @@ def system_health() -> str:
 
     def _farm_dimension():
         with ThreadPoolExecutor(max_workers=3) as ex:
-            plants_fut = ex.submit(client.fetch_all_paginated, "asset/plant", filters={"status": "active"})
+            plants_fut = ex.submit(client.fetch_all_paginated, "asset/plant", filters=client.asset_status_filter("active"))
             types_fut = ex.submit(client.get_all_plant_types_cached)
             sections_fut = ex.submit(client.get_section_assets)
             all_plants = plants_fut.result()

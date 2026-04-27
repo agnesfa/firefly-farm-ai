@@ -9,6 +9,8 @@ Extracts and centralizes reusable functions from existing scripts:
 
 from datetime import datetime, timezone, timedelta
 
+from api_version import read_asset_status
+
 
 AEST = timezone(timedelta(hours=10))
 PLANT_UNIT_UUID = "2371b79e-a87b-4152-b6e4-ea6a9ed37fd0"
@@ -226,7 +228,7 @@ def format_plant_asset(asset: dict) -> dict:
         "species": species,
         "section": section,
         "planted_date": planted_date,
-        "status": attrs.get("status", ""),
+        "status": read_asset_status(asset),
         "notes": notes,
         "plant_type_ids": plant_type_ids,
     }
@@ -361,7 +363,7 @@ def format_section_from_assets(section_asset: dict, plant_assets: list) -> dict:
     return {
         "id": section_id,
         "uuid": section_asset.get("id", ""),
-        "status": attrs.get("status", ""),
+        "status": read_asset_status(section_asset),
         "plant_count": len(plants),
         "plants": plants,
     }

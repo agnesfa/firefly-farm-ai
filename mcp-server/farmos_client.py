@@ -18,6 +18,16 @@ from typing import Optional
 import requests
 from dotenv import load_dotenv
 
+from api_version import (
+    ApiVersion,
+    AssetStatus,
+    asset_archive_payload,
+    asset_status_filter,
+    asset_status_filter_param,
+    parse_api_version,
+    read_asset_status,
+)
+
 
 PLANT_UNIT_UUID = "2371b79e-a87b-4152-b6e4-ea6a9ed37fd0"
 GRAMS_UNIT_UUID = "e7bad672-9c33-4138-9fc3-1b0548a33aca"
@@ -41,6 +51,16 @@ class FarmOSClient:
         self._plant_type_full_cache_time = 0  # Cache timestamp
         self._PLANT_TYPE_CACHE_TTL = 300  # 5 minutes
         self._connected = False
+        # farmOS JSON:API version flag (ADR 0009). Default '3'; set
+        # FARMOS_API_VERSION='4' post-cutover. Drives helpers in api_version.py.
+        # Read at init so the value is stable for the client's lifetime; raises
+        # on unknown values to surface misconfig at startup.
+        self.api_version: ApiVersion = parse_api_version(os.getenv("FARMOS_API_VERSION"))
+
+    def asset_status_filter(self, status: AssetStatus) -> dict[str, str]:
+        """Convenience: produce the right asset-status filter dict for THIS
+        client's api_version. Use at call sites that pass a filters dict."""
+        return asset_status_filter(self.api_version, status)
 
     def connect(self) -> bool:
         """Load config from .env and authenticate with farmOS via OAuth2."""
@@ -419,8 +439,10 @@ class FarmOSClient:
         Returns:
             UUID of the created seed asset, or None on failure.
         """
+        # No `status` field on creation: redundant in v3 (active is the default)
+        # and the field doesn't exist in v4. ADR 0009.
         data = {
-            "attributes": {"name": name, "status": "active"},
+            "attributes": {"name": name},
             "relationships": {
                 "plant_type": {
                     "data": [{"type": "taxonomy_term--plant_type",
@@ -533,10 +555,10 @@ class FarmOSClient:
     def create_plant_asset(self, name: str, plant_type_uuid: str,
                             notes: str = "") -> Optional[str]:
         """Create a Plant asset in farmOS."""
+        # No `status` field on creation (see create_seed_asset comment). ADR 0009.
         data = {
             "attributes": {
                 "name": name,
-                "status": "active",
             },
             "relationships": {
                 "plant_type": {
@@ -564,10 +586,11 @@ class FarmOSClient:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
 
         encoded = urllib.parse.quote(name_contains)
+        status_param = asset_status_filter_param(self.api_version, status)
         base_path = (f"/api/asset/plant"
                      f"?filter[name][operator]=CONTAINS"
                      f"&filter[name][value]={encoded}"
-                     f"&filter[status]={status}"
+                     f"&{status_param}"
                      f"&sort=name"
                      f"&page[limit]=50")
 
@@ -620,7 +643,7 @@ class FarmOSClient:
             return self._fetch_plants_contains(section_id, status)
 
         return self.fetch_all_paginated(
-            "asset/plant", filters={"status": status}
+            "asset/plant", filters=self.asset_status_filter(status)
         )
 
     def get_seed_assets(self, section_id: Optional[str] = None,
@@ -635,7 +658,7 @@ class FarmOSClient:
             return self._fetch_seeds_contains(species, status)
         if section_id:
             return self._fetch_seeds_contains(section_id, status)
-        return self.fetch_all_paginated("asset/seed", filters={"status": status})
+        return self.fetch_all_paginated("asset/seed", filters=self.asset_status_filter(status))
 
     def _fetch_seeds_contains(self, name_contains: str, status: str = "active",
                               max_pages: int = 20) -> list:
@@ -644,10 +667,11 @@ class FarmOSClient:
             raise ConnectionError("Not connected to farmOS. Check credentials.")
 
         encoded = urllib.parse.quote(name_contains)
+        status_param = asset_status_filter_param(self.api_version, status)
         base_path = (f"/api/asset/seed"
                      f"?filter[name][operator]=CONTAINS"
                      f"&filter[name][value]={encoded}"
-                     f"&filter[status]={status}"
+                     f"&{status_param}"
                      f"&sort=name"
                      f"&page[limit]=50")
 
@@ -715,7 +739,7 @@ class FarmOSClient:
                 "name": name,
                 "uuid": asset.get("id"),
                 "asset_type": "land",
-                "status": asset.get("attributes", {}).get("status", "active"),
+                "status": read_asset_status(asset),
             }
             if paddock_pattern.match(name):
                 grouped["paddock"].append(entry)
@@ -734,7 +758,7 @@ class FarmOSClient:
                 "name": name,
                 "uuid": asset.get("id"),
                 "asset_type": "structure",
-                "status": asset.get("attributes", {}).get("status", "active"),
+                "status": read_asset_status(asset),
             }
             if nursery_pattern.match(name):
                 grouped["nursery"].append(entry)
@@ -1003,9 +1027,7 @@ class FarmOSClient:
             "data": {
                 "type": "asset--plant",
                 "id": plant_uuid,
-                "attributes": {
-                    "status": "archived",
-                },
+                "attributes": asset_archive_payload(self.api_version),
             }
         }
         result = self._patch(f"/api/asset/plant/{plant_uuid}", payload)
