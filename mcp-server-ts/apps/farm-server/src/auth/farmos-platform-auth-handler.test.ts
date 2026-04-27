@@ -75,6 +75,59 @@ describe('FarmOSPlatformAuthHandler', () => {
 
       expect(fetchSpy.mock.calls[0][0]).toBe('https://test.farmos.net/oauth/token');
     });
+
+    it('uses credentials.clientId and credentials.scope when provided', async () => {
+      const fetchSpy = mockTokenResponse({ access_token: 'tok' });
+      const ctx: ExtendedAuthContext = {
+        ...validContext,
+        platformCredentials: {
+          credentials: {
+            username: 'alice',
+            password: 'hunter2',
+            clientId: 'custom-client',
+            scope: 'custom_scope',
+          },
+        },
+      };
+
+      await handler.authenticate(ctx);
+
+      const body = new URLSearchParams(fetchSpy.mock.calls[0][1]?.body as string);
+      expect(body.get('client_id')).toBe('custom-client');
+      expect(body.get('scope')).toBe('custom_scope');
+    });
+
+    it('falls back to defaults when only clientId is set', async () => {
+      const fetchSpy = mockTokenResponse({ access_token: 'tok' });
+      const ctx: ExtendedAuthContext = {
+        ...validContext,
+        platformCredentials: {
+          credentials: { username: 'alice', password: 'hunter2', clientId: 'custom-client' },
+        },
+      };
+
+      await handler.authenticate(ctx);
+
+      const body = new URLSearchParams(fetchSpy.mock.calls[0][1]?.body as string);
+      expect(body.get('client_id')).toBe('custom-client');
+      expect(body.get('scope')).toBe('farm_manager');
+    });
+
+    it('falls back to defaults when only scope is set', async () => {
+      const fetchSpy = mockTokenResponse({ access_token: 'tok' });
+      const ctx: ExtendedAuthContext = {
+        ...validContext,
+        platformCredentials: {
+          credentials: { username: 'alice', password: 'hunter2', scope: 'custom_scope' },
+        },
+      };
+
+      await handler.authenticate(ctx);
+
+      const body = new URLSearchParams(fetchSpy.mock.calls[0][1]?.body as string);
+      expect(body.get('client_id')).toBe('farm');
+      expect(body.get('scope')).toBe('custom_scope');
+    });
   });
 
   describe('authenticate — input validation', () => {

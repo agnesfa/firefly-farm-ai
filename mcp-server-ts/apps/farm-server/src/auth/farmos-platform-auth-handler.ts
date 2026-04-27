@@ -29,7 +29,7 @@ export class FarmOSPlatformAuthHandler implements PlatformAuthHandler {
   async authenticate(authContext: ExtendedAuthContext): Promise<string> {
     const farmUrl = authContext.clientMetadata?.farmUrl as string | undefined;
     const credentials = authContext.platformCredentials?.credentials as
-      | { username?: string; password?: string }
+      | { username?: string; password?: string; clientId?: string; scope?: string }
       | undefined;
 
     if (!farmUrl) {
@@ -45,14 +45,20 @@ export class FarmOSPlatformAuthHandler implements PlatformAuthHandler {
       );
     }
 
+    // OAuth client_id and scope come from credentials when set (lets per-tenant
+    // farmOS instances configure their own OAuth client), with sensible
+    // defaults that match a stock farmOS install.
+    const clientId = credentials.clientId ?? 'farm';
+    const scope = credentials.scope ?? 'farm_manager';
+
     const baseUrl = farmUrl.replace(/\/+$/, '');
     const tokenUrl = `${baseUrl}/oauth/token`;
     const body = new URLSearchParams({
       grant_type: 'password',
       username: credentials.username,
       password: credentials.password,
-      client_id: 'farm',
-      scope: 'farm_manager',
+      client_id: clientId,
+      scope,
     });
 
     const resp = await fetch(tokenUrl, {
