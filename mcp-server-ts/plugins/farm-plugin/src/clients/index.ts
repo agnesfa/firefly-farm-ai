@@ -34,6 +34,12 @@ export { KnowledgeClient } from './knowledge-client.js';
 /**
  * Get a FarmOS client from the framework auth context (extra.authInfo).
  *
+ * The framework's `injectAuthContext` (request-helpers.js) renames
+ * `authContext.clientMetadata` to `req.auth.metadata` when populating
+ * the request — so `extra.authInfo.metadata` (NOT clientMetadata) is
+ * the correct path for tool handlers. The fallback to clientMetadata
+ * covers older framework versions and direct test contexts.
+ *
  * Throws with a clear message if extra is missing the access token or farmUrl —
  * usually caused by a credentials.json entry that lacks `metadata.farmUrl` or
  * `platformCredentials.{username,password}` (see ADR 0010 §Implementation).
@@ -43,7 +49,9 @@ export { KnowledgeClient } from './knowledge-client.js';
  */
 export function getFarmOSClient(extra?: any): FarmOSClient {
   const accessToken = extra?.authInfo?.token;
-  const farmUrl = extra?.authInfo?.clientMetadata?.farmUrl;
+  const farmUrl =
+    extra?.authInfo?.metadata?.farmUrl
+    ?? extra?.authInfo?.clientMetadata?.farmUrl;
 
   if (!accessToken) {
     throw new Error(
@@ -54,7 +62,7 @@ export function getFarmOSClient(extra?: any): FarmOSClient {
   }
   if (!farmUrl) {
     throw new Error(
-      'farmOS farmUrl missing from extra.authInfo.clientMetadata.farmUrl. ' +
+      'farmOS farmUrl missing from extra.authInfo.metadata.farmUrl. ' +
         'Add metadata.farmUrl to the credentials.json entry for this tenant.',
     );
   }

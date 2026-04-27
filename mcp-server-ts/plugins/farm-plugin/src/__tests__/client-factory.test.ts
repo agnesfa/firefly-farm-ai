@@ -19,7 +19,10 @@ const originalEnv = { ...process.env };
 const validExtra = {
   authInfo: {
     token: 'test-token-from-handler',
-    clientMetadata: { farmUrl: 'https://test.farmos.net' },
+    // Framework's injectAuthContext renames clientMetadata → metadata when
+    // populating req.auth (request-helpers.js:48). So tools see metadata, not
+    // clientMetadata. See getFarmOSClient comment.
+    metadata: { farmUrl: 'https://test.farmos.net' },
   },
   sessionId: 'sess-1',
 };
@@ -58,16 +61,24 @@ describe('client factory', () => {
       expect(() => getFarmOSClient(extra)).toThrow(/access token missing/);
     });
 
-    it('throws clear error when farmUrl is missing', async () => {
+    it('throws clear error when farmUrl is missing from metadata', async () => {
       const { getFarmOSClient } = await import('../clients/index.js');
-      const extra = { authInfo: { token: 'tok', clientMetadata: {} } };
+      const extra = { authInfo: { token: 'tok', metadata: {} } };
       expect(() => getFarmOSClient(extra)).toThrow(/farmUrl missing/);
     });
 
-    it('throws clear error when clientMetadata is missing entirely', async () => {
+    it('throws clear error when metadata is missing entirely', async () => {
       const { getFarmOSClient } = await import('../clients/index.js');
       const extra = { authInfo: { token: 'tok' } };
       expect(() => getFarmOSClient(extra)).toThrow(/farmUrl missing/);
+    });
+
+    it('falls back to clientMetadata.farmUrl if metadata.farmUrl is absent (older framework / tests)', async () => {
+      const { getFarmOSClient } = await import('../clients/index.js');
+      const extra = {
+        authInfo: { token: 'tok', clientMetadata: { farmUrl: 'https://legacy.farmos.net' } },
+      };
+      expect(() => getFarmOSClient(extra)).not.toThrow();
     });
 
     it('does NOT use FARMOS_URL/USERNAME/PASSWORD env vars (no fallback)', async () => {
