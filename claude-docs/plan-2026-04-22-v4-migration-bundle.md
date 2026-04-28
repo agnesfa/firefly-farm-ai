@@ -5,6 +5,24 @@
 **Authors:** Agnes, Claude
 **Related:** ADR 0009 (v4 cutover), ADR 0010 (framework + auth migration), Mike's email 2026-04-04
 
+---
+
+## STATUS — 2026-04-27: ALL CODE SHIPPED
+
+All three bundle items landed and deployed in a single session on 2026-04-27 (out of the planned 6-day window). Production Railway is running the v4-aware code with `FARMOS_API_VERSION=3` (byte-identical to pre-cutover behaviour, smoke-verified). When Mike's margregen v4 upgrade lands, flip the env var to `'4'` — two-line operation.
+
+| Item | Commit(s) | State |
+|---|---|---|
+| Framework bump (PATCH support, 2nd refresh) | `5373d47` + later in-session refresh | Deployed |
+| PlatformAuthHandler migration (ADR 0010) | `dc8bc7e` `02a88f2` `52bbcaa` `4f17f08` `fae3e55` | Deployed; smoke verified |
+| v4 cutover code (ADR 0009) | `7587ccc` (TS) + `8e4059f` (Python) + `fdee24f` (docs) | Deployed; pre-flight passed on `=3` |
+
+**Tests:** TS 317/317 + Python 352/352 = 669 across both servers.
+**Cutover when Mike replies:** `echo "4" \| railway variable set FARMOS_API_VERSION --stdin` (auto-redeploy ~3min) → smoke → done. Rollback by flipping back to `"3"`.
+**Cleanup PR scheduled ~2026-05-04** (one stable week post-cutover): drop dual-path code, retire flag.
+
+---
+
 ## TL;DR
 
 Three changes bundled into one window:

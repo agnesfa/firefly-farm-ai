@@ -1,6 +1,6 @@
 # 0009 — farmOS v4 cutover via runtime version flag
 
-- **Status:** accepted — 2026-04-21
+- **Status:** accepted — 2026-04-21 · **CODE SHIPPED 2026-04-27** (commits `7587ccc` TS + `8e4059f` Python + `fdee24f` docs); production running on `FARMOS_API_VERSION=3`, awaiting Mike's margregen upgrade for the `'4'` flip.
 - **Date:** 2026-04-21 (proposed and ratified same day, forcing-function deadline 2026-04-27)
 - **Authors:** Agnes, Claude
 - **Related:** ADR 0010 (Framework auth handler migration), `claude-docs/plan-2026-04-22-v4-migration-bundle.md`

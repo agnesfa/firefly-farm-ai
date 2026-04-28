@@ -1,6 +1,6 @@
 # 0010 — Framework auth handler migration + framework version bump
 
-- **Status:** accepted — 2026-04-21 (design ratified; implementation blocked on Lesley's package delivery, expected 2026-04-21)
+- **Status:** accepted — 2026-04-21 · **DONE 2026-04-27** (commits `dc8bc7e` `02a88f2` `52bbcaa` `4f17f08` `fae3e55`); production smoke verified. Lesley shipped PATCH support same day, enabling the `_fetchWithRetry` cleanup.
 - **Date:** 2026-04-21 (proposed and design-ratified same day; implementation starts once Lesley's tarballs land)
 - **Authors:** Agnes, Claude (with Lesley input on framework)
 - **Related:** ADR 0009 (farmOS v4 cutover), `project_farmos_auth_migration` memory note, `project_mcp_timeout_root_cause` memory note, `claude-docs/plan-2026-04-22-v4-migration-bundle.md`
