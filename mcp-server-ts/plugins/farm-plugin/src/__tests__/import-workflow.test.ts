@@ -161,6 +161,79 @@ describe('import_observations workflow', () => {
     expect(result.actions[0].new_count).toBe(3);
   });
 
+  it('Case C no-op: prev=new + alive + no plant_notes → skipped (no log written)', async () => {
+    // Form-side bug scenario: the section-observe form (pre-fix) emitted
+    // every prefilled inventory row even when the observer only added a
+    // section note. The importer must defend against this by treating
+    // "previous_count==new_count + condition=alive + no plant_notes" as a
+    // no-op and writing nothing — even though buildImportNotes always
+    // returns a non-empty header string.
+    const plant = makePlantAsset({ name: '7 NOV 2025 - Corn (Manning Pride) - P1R5.0-10', inventoryCount: 12 });
+    mockClient.getPlantAssets.mockResolvedValue([plant]);
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [
+        // Observer-supplied section note (the real intent of the submission).
+        makeObservation({ species: '', sectionNotes: '150g winter mix seeded' }),
+        // Ghost rows the buggy form emitted alongside it.
+        makeObservation({ species: 'Corn (Manning Pride)', previousCount: 12, newCount: 12, condition: 'alive' }),
+        makeObservation({ species: 'Corn (Manning Pride)', previousCount: 30, newCount: 30, condition: 'alive' }),
+      ],
+    });
+
+    const result = parseResult(await importObservationsTool.handler({
+      submission_id: 'sub-001', reviewer: 'Claude', dry_run: false,
+    }));
+    // Only the section-note activity should be created.
+    expect(result.total_actions).toBe(1);
+    expect(result.actions[0].type).toBe('activity');
+    // No quantity / observation log writes for the ghost rows.
+    expect(mockClient.createQuantity).not.toHaveBeenCalled();
+    expect(mockClient.createObservationLog).not.toHaveBeenCalled();
+  });
+
+  it('Case C condition-only edit: prev=new but condition=damaged → still creates observation', async () => {
+    // Edge case of the no-op defence: an observer who only flipped the
+    // condition (e.g. "damaged" without a count change) is still making a
+    // real edit and must produce a log.
+    const plant = makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R3.15-21', inventoryCount: 5 });
+    mockClient.getPlantAssets.mockResolvedValue([plant]);
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [makeObservation({
+        species: 'Pigeon Pea', previousCount: 5, newCount: 5, condition: 'damaged',
+      })],
+    });
+
+    const result = parseResult(await importObservationsTool.handler({
+      submission_id: 'sub-001', reviewer: 'Claude', dry_run: false,
+    }));
+    expect(result.total_actions).toBe(1);
+    expect(result.actions[0].type).toBe('observation');
+    expect(mockClient.createObservationLog).toHaveBeenCalled();
+  });
+
+  it('Case C plant-notes-only edit: prev=new + alive + notes present → still creates observation', async () => {
+    // Edge case: the observer left the count alone but typed something in
+    // the plant-notes field — a real edit, must log.
+    const plant = makePlantAsset({ name: '25 APR 2025 - Pigeon Pea - P2R3.15-21', inventoryCount: 5 });
+    mockClient.getPlantAssets.mockResolvedValue([plant]);
+    mockObsClient.listObservations.mockResolvedValue({
+      success: true,
+      observations: [makeObservation({
+        species: 'Pigeon Pea', previousCount: 5, newCount: 5, condition: 'alive',
+        plantNotes: 'flowering nicely',
+      })],
+    });
+
+    const result = parseResult(await importObservationsTool.handler({
+      submission_id: 'sub-001', reviewer: 'Claude', dry_run: false,
+    }));
+    expect(result.total_actions).toBe(1);
+    expect(result.actions[0].type).toBe('observation');
+    expect(mockClient.createObservationLog).toHaveBeenCalled();
+  });
+
   // ── Status validation ────────────────────────────────────
 
   it('rejects pending status', async () => {

@@ -579,6 +579,19 @@ export const importObservationsTool: Tool = {
 
       // Case C: Inventory update
       if (newCount != null || obs.plant_notes || obs.condition) {
+        const countVal = newCount != null ? parseInt(newCount) : null;
+        const prevVal = previousCount != null ? parseInt(previousCount) : null;
+        const countChanged = countVal != null && countVal !== prevVal;
+        // Defence-in-depth against form-side bugs that emit untouched
+        // prefilled rows as inventory observations. buildImportNotes always
+        // returns a non-empty string (Reporter/Submitted/Mode/InteractionStamp
+        // headers), so it cannot be used as an "edit happened" signal.
+        // Treat the row as a real inventory edit only if the observer
+        // actually changed the count, condition, or plant_notes.
+        const observerProvidedNotes = (obs.plant_notes ?? '').trim() !== '';
+        const observerProvidedCondition = !!obs.condition && obs.condition !== 'alive';
+        const isUserEdit = countChanged || observerProvidedNotes || observerProvidedCondition;
+        if (!isUserEdit) continue;
         const plants = await client.getPlantAssets(obsSection, species);
         if (plants.length === 0) { errors.push(`Plant '${species}' not found in section ${obsSection}`); continue; }
         const plant = plants[0];
@@ -586,11 +599,8 @@ export const importObservationsTool: Tool = {
         // I3 / Phase 3c: strip section_notes from per-plant log when
         // they route to the section log instead.
         const combinedNotes = buildImportNotes(obs, '', !needsSectionLog);
-        const countVal = newCount != null ? parseInt(newCount) : null;
-        const prevVal = previousCount != null ? parseInt(previousCount) : null;
-        const countChanged = countVal != null && countVal !== prevVal;
 
-        if (countChanged || combinedNotes) {
+        {
           const action: any = { type: 'observation', plant_name: plantName, species, section: obsSection, previous_count: prevVal, new_count: countVal, notes: combinedNotes };
           if (!params.dry_run) {
             try {
