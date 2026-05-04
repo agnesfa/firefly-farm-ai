@@ -180,6 +180,135 @@ class TestCaseRouting:
         assert action["result"] == "created"
         assert action["log_id"] == log_id
 
+    def test_import_case_c_noop_skipped(self, monkeypatch, mock_farmos_client, mock_observe_client):
+        """Form-side bug scenario: previous_count == new_count + condition=alive
+        + no plant_notes → row is a ghost emit, importer must skip with no
+        farmOS writes. The accompanying section comment still flows through.
+        """
+        sub_id = "sub-noop"
+        section_obs = make_observation(
+            species="",
+            section_notes="150g winter mix seeded",
+            submission_id=sub_id,
+            status="approved",
+        )
+        ghost_a = make_observation(
+            species="Corn (Manning Pride)",
+            previous_count=12,
+            new_count=12,
+            condition="alive",
+            plant_notes="",
+            submission_id=sub_id,
+            status="approved",
+        )
+        ghost_b = make_observation(
+            species="Bean - Dwarf",
+            previous_count=30,
+            new_count=30,
+            condition="alive",
+            plant_notes="",
+            submission_id=sub_id,
+            status="approved",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [section_obs, ghost_a, ghost_b],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+
+        # Plant lookup would only happen if the gate let the row through.
+        mock_farmos_client.get_plant_assets.return_value = [
+            make_plant_asset(name="ghost", inventory_count=12),
+        ]
+        # Track create_observation calls — must remain at zero for ghosts.
+        create_observation_calls = []
+
+        def fake_create_observation(**kwargs):
+            create_observation_calls.append(kwargs)
+            return json.dumps({"status": "created", "log_id": make_uuid()})
+
+        monkeypatch.setattr(server, "create_observation", fake_create_observation)
+        _mock_tool_success(monkeypatch, "create_activity")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        # Only the section comment activity runs.
+        assert result["total_actions"] == 1
+        assert result["actions"][0]["type"] == "activity"
+        # No observation-log writes for the ghost rows.
+        assert create_observation_calls == []
+
+    def test_import_case_c_condition_only_edit_still_creates(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Edge of the no-op defence: prev=new but condition=damaged is still
+        a real observer edit — must produce an observation log."""
+        sub_id = "sub-cond"
+        obs = make_observation(
+            species="Pigeon Pea",
+            previous_count=5,
+            new_count=5,
+            condition="damaged",
+            submission_id=sub_id,
+            status="approved",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_farmos_client.get_plant_assets.return_value = [
+            make_plant_asset(
+                name="25 APR 2025 - Pigeon Pea - P2R3.15-21",
+                inventory_count=5,
+            ),
+        ]
+        log_id = _mock_tool_success(monkeypatch, "create_observation")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        assert result["total_actions"] == 1
+        action = result["actions"][0]
+        assert action["type"] == "observation"
+        assert action["result"] == "created"
+        assert action["log_id"] == log_id
+
+    def test_import_case_c_plant_notes_only_edit_still_creates(
+        self, monkeypatch, mock_farmos_client, mock_observe_client,
+    ):
+        """Edge of the no-op defence: prev=new + alive but plant_notes is set
+        → still a real observer edit, must log."""
+        sub_id = "sub-notes"
+        obs = make_observation(
+            species="Pigeon Pea",
+            previous_count=5,
+            new_count=5,
+            condition="alive",
+            plant_notes="flowering nicely",
+            submission_id=sub_id,
+            status="approved",
+        )
+        mock_observe_client.list_observations.return_value = {
+            "success": True,
+            "observations": [obs],
+        }
+        _patch_basics(monkeypatch, mock_farmos_client, mock_observe_client)
+        mock_farmos_client.get_plant_assets.return_value = [
+            make_plant_asset(
+                name="25 APR 2025 - Pigeon Pea - P2R3.15-21",
+                inventory_count=5,
+            ),
+        ]
+        log_id = _mock_tool_success(monkeypatch, "create_observation")
+
+        result = json.loads(import_observations(submission_id=sub_id))
+
+        assert result["total_actions"] == 1
+        action = result["actions"][0]
+        assert action["type"] == "observation"
+        assert action["result"] == "created"
+        assert action["log_id"] == log_id
+
 
 # ── Status validation ─────────────────────────────────────────
 

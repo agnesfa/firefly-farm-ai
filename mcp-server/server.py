@@ -2430,6 +2430,23 @@ def import_observations(
             prev_val = int(previous_count) if previous_count is not None else None
             count_changed = count_val is not None and count_val != prev_val
 
+            # Defence-in-depth against form-side bugs that emit untouched
+            # prefilled rows as inventory observations. _build_import_notes
+            # always returns a non-empty string (Reporter / Submitted / Mode /
+            # InteractionStamp headers), so it cannot be used as an
+            # "edit happened" signal. Treat the row as a real edit only if
+            # the observer actually changed the count, condition, or
+            # plant_notes.
+            observer_provided_notes = bool((plant_notes or "").strip())
+            observer_provided_condition = bool(condition) and condition != "alive"
+            is_user_edit = (
+                count_changed
+                or observer_provided_notes
+                or observer_provided_condition
+            )
+            if not is_user_edit:
+                continue
+
             if count_changed or combined_notes:
                 # 1. Observation log (inventory count + observation text)
                 obs_notes = _build_import_notes(
