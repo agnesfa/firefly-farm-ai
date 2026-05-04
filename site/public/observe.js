@@ -621,14 +621,22 @@ function submitSectionReport() {
   var sectionNotes = document.getElementById("section-notes");
   var observations = [];
 
-  // Collect inventory changes
+  // Collect inventory changes. The "Now" input is prefilled with the current
+  // count (data-current) so observers focused on photos don't accidentally
+  // zero things. Compare against data-current — not against "" — so untouched
+  // prefilled rows aren't reported as edits and the submission stays a pure
+  // comment when nothing was actually changed.
   var rows = document.querySelectorAll(".inv-plant-row");
   rows.forEach(function (row) {
     var countInput = row.querySelector(".inv-count-input");
     var noteInput = row.querySelector(".inv-note-input");
     var conditionSelect = row.querySelector(".inv-condition");
 
-    var hasCount = countInput && countInput.value !== "";
+    var currentRaw = row.dataset.current;
+    var currentCount = currentRaw === "" || currentRaw == null ? null : parseFloat(currentRaw);
+    var inputCount = countInput && countInput.value !== "" ? parseFloat(countInput.value) : null;
+
+    var hasCount = inputCount !== null && inputCount !== currentCount;
     var hasNote = noteInput && noteInput.value.trim() !== "";
     var hasCondition = conditionSelect && conditionSelect.value !== "alive";
 
@@ -636,11 +644,11 @@ function submitSectionReport() {
       var obs = {
         species: row.dataset.species,
         strata: row.dataset.strata,
-        previous_count: parseFloat(row.dataset.current) || 0,
+        previous_count: currentCount != null ? currentCount : 0,
         condition: conditionSelect ? conditionSelect.value : "alive",
         notes: noteInput ? noteInput.value.trim() : "",
       };
-      if (hasCount) obs.new_count = parseFloat(countInput.value);
+      if (hasCount) obs.new_count = inputCount;
       observations.push(obs);
     }
   });
