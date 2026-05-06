@@ -129,6 +129,15 @@
       @media (max-width: 600px) {
         .gal-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
       }
+
+
+/* Break out of GHL's constrained container so the dark banners span full viewport width */
+.site-header,
+footer {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
 </style>
 <header class="site-header">
   <div class="logo-mark"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/ffc-logo.png" alt="Firefly Corner Farm logo"></div>

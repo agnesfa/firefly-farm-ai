@@ -322,6 +322,15 @@
     .tasks-grid { grid-template-columns: 1fr; }
     .site-header { padding: 16px 20px; }
   }
+
+
+/* Break out of GHL's constrained container so the dark banners span full viewport width */
+.site-header,
+footer {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
 </style>
 
 
