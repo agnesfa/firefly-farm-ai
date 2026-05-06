@@ -1,0 +1,606 @@
+<style>
+  :root {
+    --soil: #2c1f0e;
+    --bark: #5c3d1e;
+    --clay: #a0724a;
+    --straw: #d4b483;
+    --leaf: #4a6741;
+    --sage: #7a9e6f;
+    --moss: #b5c9a0;
+    --sky: #d6e8d4;
+    --cream: #f5f0e8;
+    --white: #fdfcf8;
+    --accent: #c17f3b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--white);
+    color: var(--soil);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--soil);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .site-header .logo-mark {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .site-header .logo-mark img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .site-header .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--straw);
+  }
+  .site-header .brand span {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    font-style: italic;
+    font-family: 'Lora', serif;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--soil);
+    padding: 64px 32px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(74,103,65,0.25) 0%, transparent 65%);
+  }
+  .hero-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 7vw, 68px);
+    line-height: 1.1;
+    color: var(--cream);
+    max-width: 640px;
+    margin-bottom: 24px;
+  }
+  .hero h1 em {
+    color: var(--straw);
+    font-style: italic;
+  }
+  .hero-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--clay);
+    letter-spacing: 0.05em;
+    max-width: 400px;
+  }
+  .hero-rule {
+    width: 48px; height: 2px;
+    background: var(--accent);
+    margin: 32px 0 0;
+  }
+
+  /* ── INTRO BAR ── */
+  .intro-bar {
+    background: var(--leaf);
+    padding: 20px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--moss);
+    letter-spacing: 0.04em;
+  }
+  .intro-bar strong { color: var(--cream); }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 64px 0;
+    border-bottom: 1px solid rgba(44,31,14,0.1);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 34px);
+    line-height: 1.2;
+    color: var(--bark);
+    margin-bottom: 28px;
+  }
+
+  h2 em { color: var(--leaf); font-style: italic; }
+
+  p {
+    margin-bottom: 20px;
+    color: #3a2a18;
+  }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── PHOTO PLACEHOLDER ── */
+  .photo {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 36px 0;
+    position: relative;
+  }
+  .photo-inner {
+    background: var(--cream);
+    border: 2px dashed var(--straw);
+    border-radius: 4px;
+    aspect-ratio: 16/9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--clay);
+  }
+  .photo-inner .photo-icon {
+    font-size: 32px;
+    opacity: 0.5;
+  }
+  .photo-inner .photo-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    max-width: 260px;
+    line-height: 1.5;
+    opacity: 0.7;
+  }
+  .photo-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--clay);
+    margin-top: -24px;
+    margin-bottom: 36px;
+    font-style: italic;
+    padding-left: 4px;
+  }
+
+  /* ── PHOTO PAIR ── */
+  .photo-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 36px 0;
+  }
+  .photo-pair .photo { margin: 0; }
+  .photo-pair .photo-inner { aspect-ratio: 4/3; }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    margin: 48px 0;
+    padding: 32px 32px 32px 40px;
+    border-left: 4px solid var(--accent);
+    background: var(--cream);
+    border-radius: 0 4px 4px 0;
+  }
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 2.5vw, 22px);
+    line-height: 1.5;
+    color: var(--bark);
+    font-style: italic;
+    margin: 0;
+  }
+
+  /* ── KEY CONCEPT BOX ── */
+  .concept-box {
+    background: var(--leaf);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin: 36px 0;
+    color: var(--cream);
+  }
+  .concept-box .concept-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--moss);
+    margin-bottom: 10px;
+  }
+  .concept-box p {
+    color: var(--cream);
+    margin: 0;
+    font-size: 15px;
+  }
+
+  /* ── STRATA DIAGRAM ── */
+  .strata {
+    margin: 40px 0;
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 28px 24px;
+    border: 1px solid var(--straw);
+  }
+  .strata-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 20px;
+  }
+  .strata-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(44,31,14,0.08);
+  }
+  .strata-row:last-child { border-bottom: none; }
+  .strata-bar {
+    flex-shrink: 0;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--leaf);
+    opacity: 0.7;
+  }
+  .strata-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bark);
+    min-width: 100px;
+  }
+  .strata-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--clay);
+  }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 40px 0;
+  }
+  .stat-item {
+    text-align: center;
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 24px 16px;
+    border-top: 3px solid var(--accent);
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    color: var(--bark);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--clay);
+    line-height: 1.4;
+  }
+
+  /* ── CHALLENGE LIST ── */
+  .challenge-list {
+    list-style: none;
+    margin: 28px 0;
+  }
+  .challenge-list li {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(44,31,14,0.08);
+    font-size: 15px;
+  }
+  .challenge-list li:last-child { border-bottom: none; }
+  .challenge-list .ch-icon {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    background: var(--straw);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    margin-top: 2px;
+  }
+  .challenge-list .ch-text strong {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bark);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .challenge-list .ch-text span {
+    color: #5a3e22;
+    font-size: 14px;
+  }
+
+  /* ── CLOSING VISION ── */
+  .vision {
+    background: var(--soil);
+    padding: 72px 32px;
+    text-align: center;
+    margin-top: 0;
+  }
+  .vision h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 46px);
+    color: var(--cream);
+    margin-bottom: 24px;
+  }
+  .vision h2 em { color: var(--straw); }
+  .vision p {
+    color: var(--straw);
+    max-width: 560px;
+    margin: 0 auto 20px;
+    font-size: 16px;
+  }
+  .vision-rule {
+    width: 48px; height: 2px;
+    background: var(--accent);
+    margin: 40px auto 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bark);
+    padding: 24px 32px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--clay);
+    letter-spacing: 0.08em;
+  }
+  footer a { color: var(--straw); text-decoration: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .hero { padding: 48px 24px 60px; }
+    .content { padding: 0 20px; }
+    .section { padding: 48px 0; }
+    .photo-pair { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr; }
+    .pull-quote { padding: 24px 20px 24px 28px; }
+    .concept-box { padding: 24px 20px; }
+    .site-header { padding: 16px 20px; }
+  }
+</style>
+
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo-mark"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/ffc-logo.png" alt="Firefly Corner Farm logo"></div>
+  <div class="brand">
+    Firefly Corner Farm
+    <span>Volunteer Briefing Series · Part One</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Understanding the approach</div>
+  <h1>Why <em>Syntropic</em><br>Agriculture</h1>
+  <p class="hero-sub">The land, the philosophy, and what we're building at Firefly Corner</p>
+  <div class="hero-rule"></div>
+</section>
+
+<!-- INTRO BAR -->
+<div class="intro-bar">
+  <strong>Before you pick up a tool</strong> — take 10 minutes to read this. Everything you'll do here makes more sense once you understand the why.
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+  <!-- SECTION 1: THE LAND -->
+  <section class="section">
+    <div class="section-tag">Section 01</div>
+    <h2>The Land We're On</h2>
+
+    <p>The mid-north coast of New South Wales is historically dairy country. That industry petered out by the 1970s — for many reasons, but a fundamental one is that <strong>this area, like much of coastal Australia, has poor quality soil.</strong> The topsoil is thin. The bedrock and clay beneath it are devoid of the minerals life needs. And as a result, there are very few microbes in the soil.</p>
+
+    <div class="photo">
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part1-paddock-landscape-at-ffc.jpg" alt="Paddock landscape at FFC" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;"></div>
+    </div>
+
+    <div class="concept-box">
+      <div class="concept-label">Key concept</div>
+      <p>Microbes are the engine of soil fertility. Without them, plants struggle regardless of rainfall or sunlight. Everything we do at Firefly Corner is ultimately aimed at rebuilding the microbial life in this ground.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 2: PERMACULTURE -->
+  <section class="section">
+    <div class="section-tag">Section 02</div>
+    <h2>We're a <em>Permaculture</em> Farm</h2>
+
+    <p>Firefly Corner is a permaculture farm. The principles most important to us: <strong>use what's around you</strong> — be self-sufficient, limit what you need from outside. <strong>Start small, start learning</strong> — all conditions are specific to their location, so learn what works here. And <strong>do more of what works</strong> — concentrate your effort there so the return grows over time.</p>
+
+    <p>The particular kind of permaculture we practise here is <strong>syntropic agriculture</strong> — developed in Brazil as a method to repair deforested, depleted land.</p>
+
+    <div style="border-radius:4px;overflow:hidden;margin:32px 0;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part1-cultivated-row-with-companion-plants.jpg" alt="Cultivated row with companion plants" style="width:100%;display:block;border-radius:4px;"></div>
+  </section>
+
+  <!-- SECTION 3: PHOTOSYNTHESIS -->
+  <section class="section">
+    <div class="section-tag">Section 03</div>
+    <h2>Plants Are <em>Solar Panels</em></h2>
+
+    <p>From a dispassionate scientific standpoint — plants are nature's solar panels. Everything green contains chloroplasts, which perform photosynthesis: taking carbon from the atmosphere and transforming it into sugar. That sugar travels down through the plant into its roots and into the soil.</p>
+
+    <div class="pull-quote">
+      <p>"A plant is there to feed the life that is underground in the soil. That is its biological purpose."</p>
+    </div>
+
+    <p>Syntropic agriculture combines plants of many different heights together — <strong>stratification</strong> — so every level of the air is working.</p>
+
+    <div class="strata">
+      <div class="strata-title">Plant Strata — Layers at Firefly Corner</div>
+      <div class="strata-row">
+        <div class="strata-bar" style="width:72px; opacity:1; background:#2c5f2e;"></div>
+        <div class="strata-name">Emergent</div>
+        <div class="strata-desc">Big gum trees — Forest Red Gum, Tallowood. 20m+</div>
+      </div>
+      <div class="strata-row">
+        <div class="strata-bar" style="width:56px; background:#4a6741;"></div>
+        <div class="strata-name">High canopy</div>
+        <div class="strata-desc">Macadamia, Ice Cream Bean, Pigeon Pea. 8–20m</div>
+      </div>
+      <div class="strata-row">
+        <div class="strata-bar" style="width:42px; background:#7a9e6f;"></div>
+        <div class="strata-name">Mid canopy</div>
+        <div class="strata-desc">Lemon, Chilli, Jaboticaba. Head-height to ~8m</div>
+      </div>
+      <div class="strata-row">
+        <div class="strata-bar" style="width:26px; background:#b5c9a0;"></div>
+        <div class="strata-name">Ground layer</div>
+        <div class="strata-desc">Comfrey, Lavender, Basil, Clover. 0–2m</div>
+      </div>
+    </div>
+
+    <p>When you combine all these strata together, you create a mechanism that <strong>absolutely maximises photosynthesis</strong>. A grass paddock is a very poor photosynthesiser — one layer of leaves at your feet. A forest is perhaps 3× better. Syntropic agriculture, done well, achieves <strong>5 to 7 times</strong> the photosynthetic output of a paddock.</p>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-number">1×</div>
+        <div class="stat-label">Grass paddock baseline</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">3×</div>
+        <div class="stat-label">Natural forest</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">5–7×</div>
+        <div class="stat-label">Syntropic system</div>
+      </div>
+    </div>
+
+    <p>The second method is keeping plants <em>young</em>. Young plants photosynthesise at their peak. Through regular pruning and succession planting, we keep as many plants as possible in their "teenage years" — constantly pumping energy back into the ground.</p>
+
+    <div class="photo">
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part1-plant-strata-in-action.jpg" alt="Plant strata in action" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: HOW WE'RE DOING IT -->
+  <section class="section">
+    <div class="section-tag">Section 04</div>
+    <h2>How We Apply This <em>at FFC</em></h2>
+
+    <p>Firefly Corner is 65 acres — but we're working about 5 of them. We're <strong>concentrating the resources of a 65-acre farm into 5 acres of paddock</strong>, and within those paddocks, into one-metre-wide syntropic rows. Every drop of water, every seedling, every hour of care is aimed at those rows — building soil that becomes more fertile year on year.</p>
+
+    <div class="photo">
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part1-aerial-view-of-rows-in-paddock-2.jpg" alt="Aerial view of rows in Paddock 2" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;"></div>
+    </div>
+
+    <div class="concept-box">
+      <div class="concept-label">The FFC approach in numbers</div>
+      <p>65 acres of land → 5 acres of cultivated paddock → concentrated into 1-metre syntropic rows. Every resource we have is aimed at those rows.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 5: CHALLENGES -->
+  <section class="section">
+    <div class="section-tag">Section 05</div>
+    <h2>What We're <em>Up Against</em></h2>
+
+    <ul class="challenge-list">
+      <li>
+        <div class="ch-icon">⛈️</div>
+        <div class="ch-text">
+          <strong>Extreme weather</strong>
+          <span>Like much of Australia, we face increasingly unpredictable extremes — intense rain events followed by harsh dry heat. This is only going to get more pronounced.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ch-icon">🟤</div>
+        <div class="ch-text">
+          <strong>Magnesium-tight soil</strong>
+          <span>About 10cm of topsoil, then thick clay underneath. When wet, this clay expands like a puffer fish — becoming so tight that water can't infiltrate. Rain runs off rather than soaking in. If you're here during a wet period, your boots will tell you everything you need to know.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ch-icon">🦠</div>
+        <div class="ch-text">
+          <strong>Depleted microbial life</strong>
+          <span>Decades of dairy farming and the underlying geology have left the soil with very little microbial diversity. Rebuilding this takes time and the right conditions.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ch-icon">🌿</div>
+        <div class="ch-text">
+          <strong>Protecting young plants</strong>
+          <span>As we grow our diversity of plants from seedlings and adolescent plants, they need protection from extremes — flood, heat, wind. Using other plants to shelter them is one of our primary tools.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="photo">
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part1-wet-season-at-ffc-saturated-paddock.jpg" alt="Wet season at FFC - saturated paddock" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- CLOSING VISION -->
+<section class="vision">
+  <div class="content">
+    <div class="section-tag" style="color: var(--sage); margin-bottom: 16px;">The dream</div>
+    <h2>A <em>Food Forest</em><br>for the Long Run</h2>
+
+    <p>If we are successful — and we believe we will be — we'll create a food forest in these 5 acres. One with trees, companion plants, and plenty of things we want to eat: zucchini, pumpkin, tomatoes, onions, garlic. But above all, a food forest is a place where you're constantly feeding the soil — giving rather than taking, year after year.</p>
+
+    <p>Anyone who comes here in twenty years will not find poor magnesium-tight clay, but a bountiful, verdant, fertile forest. One that feeds people, brings back insects, birds and reptiles, and is a beautiful place to be.</p>
+
+
+
+    <div class="vision-rule"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  Firefly Corner Farm · Krambach, NSW · <a href="https://fireflycorner.com.au">fireflycorner.com.au</a> · Volunteer Briefing Series
+</footer>
+

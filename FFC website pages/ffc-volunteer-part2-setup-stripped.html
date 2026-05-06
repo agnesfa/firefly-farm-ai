@@ -1,0 +1,522 @@
+<style>
+  :root {
+    --soil: #2c1f0e;
+    --bark: #5c3d1e;
+    --clay: #a0724a;
+    --straw: #d4b483;
+    --leaf: #4a6741;
+    --sage: #7a9e6f;
+    --moss: #b5c9a0;
+    --cream: #f5f0e8;
+    --white: #fdfcf8;
+    --accent: #c17f3b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--white);
+    color: var(--soil);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .site-header {
+    background: var(--soil);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .site-header .logo-mark {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .site-header .logo-mark img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .site-header .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--straw);
+  }
+  .site-header .brand span {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    font-style: italic;
+    font-family: 'Lora', serif;
+  }
+
+  .hero {
+    background: var(--soil);
+    padding: 64px 32px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(74,103,65,0.25) 0%, transparent 65%);
+  }
+  .hero-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 7vw, 68px);
+    line-height: 1.1;
+    color: var(--cream);
+    max-width: 640px;
+    margin-bottom: 24px;
+  }
+  .hero h1 em { color: var(--straw); font-style: italic; }
+  .hero-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--clay);
+    letter-spacing: 0.05em;
+    max-width: 400px;
+  }
+  .hero-rule {
+    width: 48px; height: 2px;
+    background: var(--accent);
+    margin: 32px 0 0;
+  }
+
+  .intro-bar {
+    background: var(--leaf);
+    padding: 20px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--moss);
+    letter-spacing: 0.04em;
+  }
+  .intro-bar strong { color: var(--cream); }
+
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid rgba(44,31,14,0.1);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 34px);
+    line-height: 1.2;
+    color: var(--bark);
+    margin-bottom: 28px;
+  }
+  h2 em { color: var(--leaf); font-style: italic; }
+
+  p {
+    margin-bottom: 20px;
+    color: #3a2a18;
+  }
+  p:last-child { margin-bottom: 0; }
+
+  .photo {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 32px 0;
+  }
+  .photo-inner {
+    background: var(--cream);
+    border: 2px dashed var(--straw);
+    border-radius: 4px;
+    aspect-ratio: 16/9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--clay);
+  }
+  .photo-inner .photo-icon { font-size: 32px; opacity: 0.5; }
+  .photo-inner .photo-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    max-width: 260px;
+    line-height: 1.5;
+    opacity: 0.7;
+  }
+
+  .concept-box {
+    background: var(--leaf);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin: 32px 0;
+    color: var(--cream);
+  }
+  .concept-box .concept-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--moss);
+    margin-bottom: 10px;
+  }
+  .concept-box p { color: var(--cream); margin: 0; font-size: 15px; }
+
+  .thirds {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 32px 0;
+  }
+  .third-item {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 20px 16px;
+    border-top: 3px solid var(--accent);
+    text-align: center;
+  }
+  .third-item .third-icon { font-size: 28px; margin-bottom: 10px; }
+  .third-item .third-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--bark);
+    margin-bottom: 6px;
+  }
+  .third-item .third-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--clay);
+    line-height: 1.4;
+  }
+
+  .item-list {
+    list-style: none;
+    margin: 24px 0;
+  }
+  .item-list li {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(44,31,14,0.08);
+    font-size: 15px;
+    align-items: flex-start;
+  }
+  .item-list li:last-child { border-bottom: none; }
+  .item-list .il-icon {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    background: var(--straw);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 3px;
+  }
+  .item-list .il-text strong {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bark);
+    margin-bottom: 3px;
+    letter-spacing: 0.02em;
+  }
+  .item-list .il-text span { color: #5a3e22; font-size: 14px; }
+
+  .day-flow {
+    margin: 32px 0;
+    position: relative;
+    padding-left: 28px;
+    border-left: 3px solid var(--straw);
+  }
+  .day-step {
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .day-step::before {
+    content: '';
+    position: absolute;
+    left: -34px;
+    top: 6px;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .day-step .ds-time {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 4px;
+  }
+  .day-step .ds-desc {
+    font-size: 15px;
+    color: #3a2a18;
+    line-height: 1.6;
+  }
+
+  .tasks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 28px 0;
+  }
+  .task-item {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--bark);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+  .task-item .task-icon { flex-shrink: 0; font-size: 16px; }
+
+  footer {
+    background: var(--bark);
+    padding: 24px 32px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--clay);
+    letter-spacing: 0.08em;
+  }
+  footer a { color: var(--straw); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 48px 24px 60px; }
+    .content { padding: 0 20px; }
+    .section { padding: 40px 0; }
+    .thirds { grid-template-columns: 1fr; }
+    .tasks-grid { grid-template-columns: 1fr; }
+    .site-header { padding: 16px 20px; }
+  }
+</style>
+
+
+<header class="site-header">
+  <div class="logo-mark"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/ffc-logo.png" alt="Firefly Corner Farm logo"></div>
+  <div class="brand">
+    Firefly Corner Farm
+    <span>Volunteer Briefing Series · Part Two</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">Getting oriented</div>
+  <h1>The Setup<br>at <em>Firefly Corner</em></h1>
+  <p class="hero-sub">The land, the buildings, the tools, and how a day unfolds</p>
+  <div class="hero-rule"></div>
+</section>
+
+<div class="intro-bar">
+  <strong>Part Two of your briefing</strong> — once you know why we farm this way, it helps to know what we're working with.
+</div>
+
+<main class="content">
+
+  <section class="section">
+    <div class="section-tag">Section 01</div>
+    <h2>The Land — <em>Three Thirds</em></h2>
+
+    <p>Firefly Corner is 65 acres, split roughly into three equal parts.</p>
+
+    <div class="thirds">
+      <div class="third-item">
+        <div class="third-icon">🌾</div>
+        <div class="third-name">The Paddocks</div>
+        <div class="third-desc">Flat land around the buildings. This is where we work — the cultivated rows, the nursery, the dams.</div>
+      </div>
+      <div class="third-item">
+        <div class="third-icon">🌳</div>
+        <div class="third-name">The Forest Hill</div>
+        <div class="third-desc">A steep, heavily forested hill rising behind the farm. You'll see it every day — and sometimes walk it.</div>
+      </div>
+      <div class="third-item">
+        <div class="third-icon">🏔️</div>
+        <div class="third-name">The Back Paddock</div>
+        <div class="third-desc">The far side of the hill. Rarely visited, but worth a walk up for the view.</div>
+      </div>
+    </div>
+
+    <div style="border-radius:4px;overflow:hidden;margin:32px 0;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-wide-view-of-ffc-paddocks-and-forest-hill.jpg" alt="Wide view of FFC paddocks and forest hill" style="width:100%;display:block;border-radius:4px;"></div>
+  <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-wwoofer-stable-with-volunteers.jpg" alt="WWOOFer stable with volunteers" style="width:100%;display:block;border-radius:4px;"></div>
+</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-tag">Section 02</div>
+    <h2>Where <em>We Live</em></h2>
+
+    <p>There are two sets of buildings on the property, separated by a short walk.</p>
+
+    <p>The <strong>main house</strong> is where James and Agnes live. Attached to it are the toolshed, the plant nursery and greenhouse, and several working sheds. There's also a separate studio for visiting guests.</p>
+
+    <p>The <strong>WWOOFer camp</strong> is a renovated and repurposed stable — fitted out with a shower, dry toilet, and bunk accommodation. Alongside it sits the WWOOFer caravan, which is considerably more comfortable in cooler months: it has running water, both 12-volt solar power (from panels on the caravan roof and stable roof) and a 240-volt mains feed from the main house. The camp has its own dedicated Starlink internet connection.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;">
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-wwoofer-caravan-at-night.jpg" alt="WWOOFer caravan at night" style="width:100%;display:block;border-radius:4px;"></div>
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-wwoofer-stable-with-volunteers-2.jpg" alt="WWOOFer stable with volunteers" style="width:100%;display:block;border-radius:4px;"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-tag">Section 03</div>
+    <h2>Tools, Sheds <em>&amp; Nursery</em></h2>
+
+    <ul class="item-list">
+      <li>
+        <div class="il-icon">🔧</div>
+        <div class="il-text">
+          <strong>MJ Shed</strong>
+          <span>The main working shed — hand tools, equipment, and smaller gear all live here.</span>
+        </div>
+      </li>
+      <li>
+        <div class="il-icon">🚜</div>
+        <div class="il-text">
+          <strong>Main Toolshed</strong>
+          <span>Houses the larger vehicles — tractor and quad bike.</span>
+        </div>
+      </li>
+      <li>
+        <div class="il-icon">🌱</div>
+        <div class="il-text">
+          <strong>Plant Nursery / Greenhouse</strong>
+          <span>Where seeds are sown, cuttings taken, and seedlings raised before going into the rows. You'll spend a lot of time here.</span>
+        </div>
+      </li>
+    </ul>
+    </ul>
+
+    <div style="border-radius:4px;overflow:hidden;margin:32px 0;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-nursery-and-mj-shed-exterior.jpg" alt="Nursery and MJ shed exterior" style="width:100%;display:block;border-radius:4px;"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;">
+  <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-nursery-shelves-packed-with-seedlings.jpg" alt="Nursery shelves packed with seedlings" style="width:100%;display:block;border-radius:4px;"></div>
+  <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-close-up-of-nursery-seedlings.jpg" alt="Close-up of nursery seedlings" style="width:100%;display:block;border-radius:4px;"></div>
+</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-tag">Section 04</div>
+    <h2>Water — <em>Dam, Tanks &amp; Pumps</em></h2>
+
+    <p>Water management is central to everything we do. There is one main dam on the farm, sitting between the main house and the WWOOFer camp. From there, a network of tanks and irrigation lines distributes water across the paddock areas. You'll become familiar with the pump system quickly — it's a regular part of the daily routine, especially in dry periods when hand-watering with hoses supplements the laid irrigation lines.</p>
+
+    <div class="photo">
+      <div style="border-radius:4px;overflow:hidden;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-the-dam-with-lily-pads-and-pump.jpg" alt="The dam with lily pads and pump" style="width:100%;display:block;border-radius:4px;"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-tag">Section 05</div>
+    <h2>The <em>Machinery</em></h2>
+
+    <ul class="item-list">
+      <li>
+        <div class="il-icon">🚜</div>
+        <div class="il-text">
+          <strong>Kubota Tractor</strong>
+          <span>Fitted with a mulcher on the back and a 4-in-1 bucket on the front for loading, unloading, and moving materials around the farm.</span>
+        </div>
+      </li>
+      <li>
+        <div class="il-icon">🏍️</div>
+        <div class="il-text">
+          <strong>Quad Bike + Trailer</strong>
+          <span>Used throughout the paddocks for moving cut grass, mulch, and plants. Quick and practical across the terrain.</span>
+        </div>
+      </li>
+      <li>
+        <div class="il-icon">🌿</div>
+        <div class="il-text">
+          <strong>John Deere Ride-On Mower</strong>
+          <span>Our main mower for cutting the paddock grass that becomes mulch for the rows.</span>
+        </div>
+      </li>
+      <li>
+        <div class="il-icon">✂️</div>
+        <div class="il-text">
+          <strong>Push Lawnmower</strong>
+          <span>A smaller push mower used for tighter or more detailed cutting work.</span>
+        </div>
+      </li>
+      <li>
+        <div class="il-icon">⚡</div>
+        <div class="il-text">
+          <strong>Electric Whipper Snipper &amp; Chainsaw</strong>
+          <span>The whipper snipper is used regularly for managing the rows and trimming edges. The chainsaw handles heavier work — clearing along the creek and into the forest margins.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <div class="section-tag">Section 06</div>
+    <h2>The <em>Daily Rhythm</em></h2>
+
+    <p>We're not early risers at FFC. The day starts gently — a few coffees, a check of the nursery plants, watering and planning the day ahead. Then we work through the morning, take a proper break for lunch, and continue in the afternoon for as long as the light holds.</p>
+
+    <p><strong>Meals:</strong> Breakfast and lunch are your own responsibility. The WWOOFer camp has full cooking facilities and fridge space, so you can shop and prepare your own food comfortably. We're happy to point you to the most convenient places to shop nearby. Your essential food expenses will be reimbursed. Every evening we eat together as a group — James cooks a meal for everyone to share. It's a good way to unwind, connect, and close out the day.</p>
+
+    <div style="border-radius:4px;overflow:hidden;margin:32px 0;"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/part2-cultivated-row-near-the-sheds.jpg" alt="Cultivated row near the sheds" style="width:100%;display:block;border-radius:4px;"></div>
+
+    <p>The work itself varies by season and what the rows need, but the core tasks you'll rotate through are:</p>
+
+    <div class="tasks-grid">
+      <div class="task-item"><div class="task-icon">🌿</div>Tending the rows — weeding, staking, managing plant health</div>
+      <div class="task-item"><div class="task-icon">✂️</div>Chopping &amp; mulching — cutting plants down onto the row to protect soil and build compost</div>
+      <div class="task-item"><div class="task-icon">🌱</div>Planting — putting new seedlings into the rows from the nursery</div>
+      <div class="task-item"><div class="task-icon">🚜</div>Mowing paddocks — collecting grass to use as mulch on the rows</div>
+      <div class="task-item"><div class="task-icon">💧</div>Irrigation — hand-watering with hoses and laying irrigation lines</div>
+      <div class="task-item"><div class="task-icon">🪴</div>Nursery work — sowing seed, taking cuttings, separating seedlings</div>
+      <div class="task-item"><div class="task-icon">♻️</div>Making compost — gathering dry grass, wet creek plants, cow manure, forest soil and leaves</div>
+      <div class="task-item"><div class="task-icon">🔍</div>Observation — checking plants for disease, tracking what's thriving and what isn't</div>
+      <div class="task-item"><div class="task-icon">🔨</div>Fixing things — tools, machinery, electrics and moving parts all need attention on a working farm. It's a constant reality.</div>
+      <div class="task-item"><div class="task-icon">🏗️</div>Making things — we learn together, find better ways and new ideas. We appreciate help building, digging, relocating and generally being handy.</div>
+    </div>
+
+    <div class="concept-box">
+      <div class="concept-label">The underlying principle</div>
+      <p>Every task — whether you're mowing, planting, or making compost — is feeding the soil. That's the thread that connects all of it.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Firefly Corner Farm · Krambach, NSW · <a href="https://fireflycorner.com.au">fireflycorner.com.au</a> · Volunteer Briefing Series
+</footer>
+
