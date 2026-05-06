@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Walnut (Placentia) · 2026-04-29 · P2R5.66-77</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #7a4a1a 0%, #b86e2a 60%, #d4872e 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 2 · Row 5 · Log Detail</div>
+    <div class="section-title-row">
+      <h1 class="section-range">66–77</h1>
+    </div>
+    <div class="obs-subtitle">Observation · 2026-04-29 · Walnut (Placentia)</div>
+  </div>
+
+  <div class="log-detail-wrap">
+    <div class="log-detail-section">
+      <h3 class="log-detail-h3">Record</h3>
+      <div class="prov-card">
+        <div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">2026-04-29</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">Observation</span></div><div class="prov-row"><span class="prov-icon">🌿</span><span class="prov-label">Species:</span><span class="prov-value">Walnut (Placentia) · Juglans regia &#x27;Placentia&#x27;</span></div><div class="prov-row"><span class="prov-icon">🌱</span><span class="prov-label">Strata:</span><span class="prov-value">high</span></div><div class="prov-row"><span class="prov-icon">📜</span><span class="prov-label">Log name:</span><span class="prov-value mono">Observation P2R5.66-77 — Walnut (Placentia) — 2026-04-30</span></div><div class="prov-row"><span class="prov-icon">#</span><span class="prov-label">UUID:</span><span class="prov-value mono">9574a87a-84d7-41c7-95e9-e6bc72558a85</span></div>
+      </div>
+    </div>
+
+    
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Notes</h3><div class="log-notes-body">v4 cutover write-path smoke verification. Walnut still dormant. Asset created retroactively yesterday (2026-04-29) for Claire&#x27;s March 2026 planting; this log confirms create_observation works correctly under FARMOS_API_VERSION=4.</div></div>
+
+    <div class="log-detail-section"><h3 class="log-detail-h3">Provenance</h3><div class="prov-card"><div class="prov-row"><span class="prov-icon">👤</span><span class="prov-label">Initiated by:</span><span class="prov-value">Claude_user</span></div><div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Role:</span><span class="prov-value">manager</span></div><div class="prov-row"><span class="prov-icon">📡</span><span class="prov-label">Channel:</span><span class="prov-value">claude_session</span></div><div class="prov-row"><span class="prov-icon">⚙️</span><span class="prov-label">Executed by:</span><span class="prov-value">farmos_api</span></div><div class="prov-row"><span class="prov-icon">▶</span><span class="prov-label">Action:</span><span class="prov-value">created</span></div><div class="prov-row"><span class="prov-icon">🎯</span><span class="prov-label">Target:</span><span class="prov-value">observation</span></div><div class="prov-row"><span class="prov-icon">✓</span><span class="prov-label">Outcome:</span><span class="prov-value">success</span></div><div class="prov-row"><span class="prov-icon">🕒</span><span class="prov-label">Timestamp:</span><span class="prov-value">2026-04-29T22:15:20.633Z</span></div></div></div>
+  </div>
+
+  <div id="log-lightbox" class="log-lightbox" onclick="closeLogLightbox()">
+    <img src="" alt="">
+  </div>
+
+  <div class="obs-nav">
+    <a href="P2R5.66-77.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-sub">Firefly Corner Farm · Log Detail</div>
+  </div>
+
+</div>
+<script>
+  function openLogLightbox(anchor) {
+    var box = document.getElementById("log-lightbox");
+    if (!box) return;
+    box.querySelector("img").src = anchor.href;
+    box.classList.add("open");
+  }
+  function closeLogLightbox() {
+    var box = document.getElementById("log-lightbox");
+    if (box) box.classList.remove("open");
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLogLightbox();
+  });
+</script>
+</body>
+</html>
