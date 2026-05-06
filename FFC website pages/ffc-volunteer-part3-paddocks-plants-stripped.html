@@ -1,5 +1,5 @@
 <style>
-  :root {
+:root {
     --soil: #2c1f0e;
     --bark: #5c3d1e;
     --clay: #a0724a;
@@ -101,9 +101,7 @@
     .row-types { grid-template-columns: 1fr; }
     .site-header { padding: 16px 20px; }
   }
-</style>
-<style>
-      .gal-group { margin: 32px 0; }
+.gal-group { margin: 32px 0; }
       .gal-group-header { padding: 12px 20px; border-radius: 4px 4px 0 0; margin-bottom: 2px; }
       .gal-group-label { font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; }
       .gal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -117,9 +115,21 @@
       @media (max-width: 600px) {
         .gal-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
       }
-    </style>
-
-
+.gal-group { margin: 32px 0; }
+      .gal-group-header { padding: 12px 20px; border-radius: 4px 4px 0 0; margin-bottom: 2px; }
+      .gal-group-label { font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; }
+      .gal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .gal-card { border-radius: 4px; overflow: hidden; box-shadow: 0 1px 4px rgba(44,31,14,0.1); }
+      .gal-img-wrap { aspect-ratio: 1; overflow: hidden; }
+      .gal-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+      .gal-img-wrap img:hover { transform: scale(1.04); }
+      .gal-label { padding: 10px 12px; }
+      .gal-cat { display: block; font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 3px; }
+      .gal-name { font-family: 'Lora', serif; font-size: 14px; color: #3a2a18; font-style: italic; }
+      @media (max-width: 600px) {
+        .gal-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      }
+</style>
 <header class="site-header">
   <div class="logo-mark"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/ffc-logo.png" alt="Firefly Corner Farm logo"></div>
   <div class="brand">
@@ -237,22 +247,7 @@
     <h2>Know Your <em>Plants</em></h2>
     <p>These are some of the plants you'll encounter at Firefly Corner.</p>
 
-    <style>
-      .gal-group { margin: 32px 0; }
-      .gal-group-header { padding: 12px 20px; border-radius: 4px 4px 0 0; margin-bottom: 2px; }
-      .gal-group-label { font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; }
-      .gal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-      .gal-card { border-radius: 4px; overflow: hidden; box-shadow: 0 1px 4px rgba(44,31,14,0.1); }
-      .gal-img-wrap { aspect-ratio: 1; overflow: hidden; }
-      .gal-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
-      .gal-img-wrap img:hover { transform: scale(1.04); }
-      .gal-label { padding: 10px 12px; }
-      .gal-cat { display: block; font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 3px; }
-      .gal-name { font-family: 'Lora', serif; font-size: 14px; color: #3a2a18; font-style: italic; }
-      @media (max-width: 600px) {
-        .gal-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      }
-    </style>
+    
 
     
   <div class="gal-group">
