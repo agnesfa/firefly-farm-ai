@@ -181,10 +181,20 @@ class SectionsExporter:
     # ── Data fetching ──────────────────────────────────────────
 
     def fetch_section_plants(self, section_id: str) -> list:
-        """Fetch active plant assets for a section using CONTAINS filter."""
+        """Fetch active plant assets for a section using CONTAINS filter.
+
+        farmOS v4 replaced the `status` base field with an `archived` boolean
+        (ADR 0009). The MCP server uses clients/api-version.ts to pick the
+        right filter; this offline script reads FARMOS_API_VERSION directly.
+        """
+        api_version = os.environ.get("FARMOS_API_VERSION", "4").strip() or "4"
+        active_filter = (
+            "filter[status]=active" if api_version == "3"
+            else "filter[archived]=0"
+        )
         plants = self._fetch_contains(
             "asset/plant", section_id,
-            extra_filters="filter[status]=active"
+            extra_filters=active_filter,
         )
         # Post-filter to ensure exact section match (avoid substring collisions
         # like "P2R2.0-3" matching "P2R2.0-30")
