@@ -414,16 +414,30 @@ footer {
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
 }
+
+
+/* Header click-through to series index */
+.site-header .header-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.site-header .header-link:hover { opacity: 0.85; }
 </style>
 
 
 <!-- HEADER -->
 <header class="site-header">
-  <div class="logo-mark"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/ffc-logo.png" alt="Firefly Corner Farm logo"></div>
-  <div class="brand">
+  <a href="/volunteers/" class="header-link">
+    <div class="logo-mark"><img src="https://agnesfa.github.io/firefly-farm-ai/volunteer-images/ffc-logo.png" alt="Firefly Corner Farm logo"></div>
+    <div class="brand">
     Firefly Corner Farm
     <span>Volunteer Briefing Series · Part One</span>
   </div>
+  </a>
 </header>
 
 <!-- HERO -->
