@@ -57,6 +57,33 @@ Subtropical with Mediterranean influences. Clay soil being regenerated. Frost ri
 
 ---
 
+## Firefly Intelligence — canon consumption protocol
+
+This project consumes the Firefly Intelligence canon, owned by
+[`fa-intelligence-foundry`](https://github.com/firefly-agents/fa-intelligence-foundry)
+(private repo). Local clone on Agnes's machine:
+`/Users/agnes/Repos/fireflyagents/fa-intelligence-foundry/`.
+
+**At session start**, read:
+- The local clone's [`INDEX.md`](/Users/agnes/Repos/fireflyagents/fa-intelligence-foundry/INDEX.md) — canon map, deliverables tracker, source register, standards snapshot.
+
+**Before any work touching the intelligence layer** (ontology / knowledge graph / semantic layer / context graph / trust layer / LLM-as-noisy-sensor patterns / SHACL / OWL / SKOS):
+- Read the relevant `/Users/agnes/Repos/fireflyagents/fa-intelligence-foundry/canon/house-positions/*.md`.
+- Positions marked **normative** bind this project. Positions marked **advisory** inform.
+
+**Note on this project's intelligence layer:** FireflyCorner already runs an intelligence layer in production — `knowledge/farm_ontology.yaml` (Layer 1) and `knowledge/farm_semantics.yaml` (Layer 3). As Foundry canon develops, expect convergent updates: the farm ontology validated against the Foundry's fusion-model layer definitions; `farm_semantics.yaml` reviewed against the SHACL-as-type-system and LLM-as-noisy-sensor positions.
+
+**For intelligence-layer artefacts produced here:**
+- Place drafts in `for-review/<topic>/` in this repo.
+- Open a Foundry session referencing the artefact for the reviewer-of-record memo.
+- Memos land in `/Users/agnes/Repos/fireflyagents/fa-intelligence-foundry/reviews/firefly-corner/<topic>-<date>.md`.
+
+**Foundry is an enabler, not a bottleneck.** Its job is to provide load-bearing positions sibling sessions act on autonomously. If a position you need isn't locked yet, capture the question in your local working docs and continue; escalate when you need a position formally locked.
+
+— *Source of truth for this block: [`fa-intelligence-foundry/INDEX.md` §5](https://github.com/firefly-agents/fa-intelligence-foundry/blob/main/INDEX.md). Established 2026-05-24.*
+
+---
+
 ## 3. SYNTROPIC AGRICULTURE — Domain Knowledge
 
 ### Core Concept
