@@ -573,6 +573,105 @@ export class FarmOSClient {
     return grouped;
   }
 
+  /**
+   * Enumerate every land + structure asset and classify by location level.
+   *
+   * Unlike `getSectionAssets` (which silently drops anything not matching the
+   * section-name regex) and `getAllLocations` (which buckets non-section/non-
+   * NURS/non-COMP into "other"), this method exposes ALL land assets — paddock
+   * shells (P1, P2), row shells (P1R2, P2R5), sections, nursery, compost — plus
+   * all structure assets, with each classified by level.
+   *
+   * Use this when you need to confirm a row-level or paddock-level asset
+   * exists in farmOS (the section regex hides them).
+   *
+   * Levels:
+   *   - paddock:   matches /^P\d$/        (P1, P2, ...)
+   *   - row:       matches /^P\dR\d$/     (P1R2, P2R5, ...)
+   *   - section:   matches /^P\dR\d\.\d+-\d+$/  (P1R2.0-14, ...)
+   *   - nursery:   name starts with NURS.
+   *   - compost:   name starts with COMP.
+   *   - structure: asset type is asset--structure (regardless of name)
+   *   - other:     anything else on asset/land (dams, infrastructure, ...)
+   */
+  async getLocations(options: {
+    includeArchived?: boolean;
+  } = {}): Promise<Array<{
+    name: string;
+    uuid: string;
+    level: 'paddock' | 'row' | 'section' | 'nursery' | 'compost' | 'structure' | 'other';
+    asset_type: 'land' | 'structure';
+    land_type?: string;
+    archived: boolean;
+    parent_uuids: string[];
+  }>> {
+    const paddockPattern = /^P\d$/;
+    const rowPattern = /^P\dR\d$/;
+    const sectionPattern = /^P\dR\d\.\d+-\d+$/;
+    const nurseryPattern = /^NURS\./;
+    const compostPattern = /^COMP\./;
+
+    // No status/archived filter at the API level — we want the full picture.
+    // The includeArchived option filters AFTER classification, so callers can
+    // ask "give me all P1R2 even if it's archived" without us hiding things.
+    const landAssets = await this.fetchAllPaginated('asset/land');
+    const structureAssets = await this.fetchAllPaginated('asset/structure');
+
+    const classify = (
+      name: string,
+      assetType: 'land' | 'structure',
+    ): 'paddock' | 'row' | 'section' | 'nursery' | 'compost' | 'structure' | 'other' => {
+      if (assetType === 'structure') return 'structure';
+      if (paddockPattern.test(name)) return 'paddock';
+      if (rowPattern.test(name)) return 'row';
+      if (sectionPattern.test(name)) return 'section';
+      if (nurseryPattern.test(name)) return 'nursery';
+      if (compostPattern.test(name)) return 'compost';
+      return 'other';
+    };
+
+    const out: Array<any> = [];
+    for (const asset of landAssets) {
+      const name = asset.attributes?.name ?? '';
+      const status = readAssetStatus(asset);
+      const archived = status === 'archived';
+      if (archived && !options.includeArchived) continue;
+      const parentRel = asset.relationships?.parent?.data ?? [];
+      out.push({
+        name,
+        uuid: asset.id,
+        level: classify(name, 'land'),
+        asset_type: 'land',
+        land_type: asset.attributes?.land_type,
+        archived,
+        parent_uuids: Array.isArray(parentRel)
+          ? parentRel.map((p: any) => p.id).filter(Boolean)
+          : [],
+      });
+    }
+    for (const asset of structureAssets) {
+      const name = asset.attributes?.name ?? '';
+      const status = readAssetStatus(asset);
+      const archived = status === 'archived';
+      if (archived && !options.includeArchived) continue;
+      const parentRel = asset.relationships?.parent?.data ?? [];
+      out.push({
+        name,
+        uuid: asset.id,
+        level: classify(name, 'structure'),
+        asset_type: 'structure',
+        land_type: asset.attributes?.structure_type,
+        archived,
+        parent_uuids: Array.isArray(parentRel)
+          ? parentRel.map((p: any) => p.id).filter(Boolean)
+          : [],
+      });
+    }
+
+    out.sort((a, b) => a.name.localeCompare(b.name));
+    return out;
+  }
+
   static mergeIncludedQuantities(data: any, items: any[]): void {
     const included: any[] = data.included ?? [];
     if (!included.length) return;
@@ -636,6 +735,59 @@ export class FarmOSClient {
     return Array.from(seen.values());
   }
 
+  /**
+   * Fetch logs whose `location` relationship points to the given location UUID.
+   *
+   * This is the structurally correct way to "find every log attached to P1R2" —
+   * matches the farmOS data model (logs reference location assets via the
+   * `location` relationship), unlike `fetchLogsContains` which only matches if
+   * the location's name string appears in the log's NAME field.
+   *
+   * Used by `getLogs` when the caller passes `sectionId` and we successfully
+   * resolved it to a UUID — otherwise we fall back to name-substring search and
+   * surface the fallback so the caller knows what happened.
+   */
+  async fetchLogsByLocationId(
+    logType: string,
+    locationUuid: string,
+    includeQuantity = true,
+    maxPages = 20,
+  ): Promise<any[]> {
+    let basePath = `/api/log/${logType}?filter[location.id]=${encodeURIComponent(locationUuid)}&page[limit]=50&sort=-timestamp,name`;
+    if (includeQuantity) basePath += '&include=quantity';
+
+    const seen = new Map<string, any>();
+    let offset = 0;
+
+    for (let page = 0; page < maxPages; page++) {
+      const path = `${basePath}&page[offset]=${offset}`;
+      let data: any;
+      try {
+        const resp = await this.httpClient.get(path);
+        data = resp.data;
+      } catch (e) {
+        if (e instanceof HttpClientError) {
+          throw new Error(`farmOS API error: HTTP ${e.status}`);
+        }
+        throw e;
+      }
+
+      const pageItems = data.data ?? [];
+      if (pageItems.length === 0) break;
+
+      if (includeQuantity) {
+        FarmOSClient.mergeIncludedQuantities(data, pageItems);
+      }
+
+      for (const item of pageItems) {
+        if (item.id) seen.set(item.id, item);
+      }
+      offset += 50;
+    }
+
+    return Array.from(seen.values());
+  }
+
   async getLogs(
     logType?: string,
     sectionId?: string,
@@ -647,12 +799,44 @@ export class FarmOSClient {
       ? [logType]
       : ['observation', 'activity', 'transplanting', 'harvest', 'seeding'];
 
-    const nameFilter = sectionId ?? species;
+    // sectionId now means "logs attached to this location" — resolve to UUID
+    // and use filter[location.id] for the correct attachment-based query.
+    // If resolution fails (no asset with that name), fall back to the legacy
+    // name-substring search so the tool still returns something useful and
+    // signals the fallback via `_filter_method` on the result list.
+    let locationUuid: string | null = null;
+    let filterMethod: 'location-id' | 'name-substring' | 'name-substring (fallback)' | 'none' = 'none';
+    if (sectionId) {
+      try {
+        locationUuid = await this.getSectionUuid(sectionId);
+      } catch {
+        locationUuid = null;
+      }
+      filterMethod = locationUuid ? 'location-id' : 'name-substring (fallback)';
+    } else if (species) {
+      filterMethod = 'name-substring';
+    }
+
     const allLogs: any[] = [];
 
     for (const lt of logTypes) {
       try {
-        if (nameFilter) {
+        if (sectionId && locationUuid) {
+          // Correct attachment-based filter
+          const logs = await this.fetchLogsByLocationId(lt, locationUuid, true);
+          // Optionally narrow further by species name substring
+          if (species) {
+            allLogs.push(
+              ...logs.filter((l) =>
+                (l.attributes?.name ?? '').toLowerCase().includes(species.toLowerCase()),
+              ),
+            );
+          } else {
+            allLogs.push(...logs);
+          }
+        } else if (sectionId || species) {
+          // Fallback: name-substring (sectionId didn't resolve, OR species-only query)
+          const nameFilter = sectionId ?? species!;
           const logs = await this.fetchLogsContains(lt, nameFilter, true);
           allLogs.push(...logs);
         } else {
@@ -665,7 +849,9 @@ export class FarmOSClient {
     }
 
     let filtered = allLogs;
-    if (sectionId && species) {
+    if (sectionId && species && !locationUuid) {
+      // Only needed in fallback mode — when we used filter[location.id] we
+      // already narrowed by species above.
       filtered = filtered.filter((l) =>
         (l.attributes?.name ?? '').toLowerCase().includes(species.toLowerCase()),
       );
@@ -682,7 +868,15 @@ export class FarmOSClient {
       return tsB.localeCompare(tsA);
     });
 
-    return filtered.slice(0, maxResults);
+    const result = filtered.slice(0, maxResults) as any[];
+    // Attach filter method as a non-enumerable property so callers (the tool)
+    // can surface it without polluting log JSON. Use Object.defineProperty
+    // to keep formatLog() unaffected.
+    Object.defineProperty(result, '_filterMethod', {
+      value: filterMethod,
+      enumerable: false,
+    });
+    return result;
   }
 
   async updateLogStatus(logId: string, logType: string, newStatus: string): Promise<boolean> {

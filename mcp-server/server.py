@@ -436,17 +436,23 @@ def query_logs(
 
     Args:
         log_type: Filter by log type: observation, activity, transplanting, harvest, seeding. Optional.
-        section_id: Filter by section ID in log name. Optional.
+        section_id: Filter by location attachment — pass a section/row/paddock ID
+            (e.g. "P1R2.0-14", "P1R2", "P1") OR a location UUID. When the name
+            resolves to a known asset, matches logs whose `location` relationship
+            points to it (the structurally correct filter). When the name does
+            not resolve, falls back to name-substring search on the log's NAME
+            field, and the response sets filter_method="name-substring (fallback)"
+            so the caller knows the result may be incomplete.
         species: Filter by species name in log name. Optional.
         status: Filter by log status: "done" or "pending". Use "pending" to find TODO tasks. Optional.
         max_results: Maximum number of results (default 20, max 50).
 
     Returns:
-        List of matching logs with name, type, timestamp, and notes.
+        List of matching logs plus filter_method indicating how section_id was applied.
     """
     client = get_client()
     max_results = min(max_results, 50)
-    logs = client.get_logs(
+    logs, filter_method = client.get_logs_with_method(
         log_type=log_type,
         section_id=section_id,
         species=species,
@@ -456,6 +462,7 @@ def query_logs(
     formatted = [format_log(l) for l in logs]
     return json.dumps({
         "count": len(formatted),
+        "filter_method": filter_method,
         "filters": {
             "log_type": log_type,
             "section_id": section_id,
@@ -463,6 +470,72 @@ def query_logs(
             "status": status,
         },
         "logs": formatted,
+    }, indent=2)
+
+
+@mcp.tool
+def query_locations(
+    name: Optional[str] = None,
+    name_prefix: Optional[str] = None,
+    level: str = "all",
+    include_archived: bool = False,
+) -> str:
+    """Enumerate ALL land + structure assets, classified by level.
+
+    Exists because query_sections only matches section-shaped names
+    (P1R2.0-14) and silently hides row-level (P1R2) and paddock-level (P1)
+    assets. Use this when query_sections returns nothing for what you think
+    should be a row or paddock — the data may be there, just outside the
+    section regex.
+
+    Levels:
+      - paddock:   matches ^P\\d$        (P1, P2)
+      - row:       matches ^P\\dR\\d$    (P1R2, P2R5)
+      - section:   matches ^P\\dR\\d\\.\\d+-\\d+$  (P1R2.0-14)
+      - nursery:   name starts with NURS.
+      - compost:   name starts with COMP.
+      - structure: asset/structure (any name)
+      - other:     anything else on asset/land (dams, infrastructure)
+
+    Args:
+        name: Exact name match (e.g. "P1R2"). Optional.
+        name_prefix: Prefix match (e.g. "P1R" returns all P1 rows). Optional.
+        level: One of paddock | row | section | nursery | compost | structure |
+            other | all (default "all").
+        include_archived: Include archived assets (default False).
+
+    Returns:
+        List of locations with name, uuid, level, asset_type, archived,
+        parent_uuids, plus a per-level count summary across the full set.
+    """
+    client = get_client()
+    all_locations = client.get_locations(include_archived=include_archived)
+
+    filtered = all_locations
+    if level != "all":
+        filtered = [l for l in filtered if l["level"] == level]
+    if name:
+        filtered = [l for l in filtered if l["name"] == name]
+    if name_prefix:
+        filtered = [l for l in filtered if l["name"].startswith(name_prefix)]
+
+    # Per-level count over the full set (so callers see "level=row had 5,
+    # your name filter narrowed it to 1")
+    by_level = {}
+    for loc in all_locations:
+        by_level[loc["level"]] = by_level.get(loc["level"], 0) + 1
+
+    return json.dumps({
+        "count": len(filtered),
+        "total": len(all_locations),
+        "filters": {
+            "name": name,
+            "name_prefix": name_prefix,
+            "level": level,
+            "include_archived": include_archived,
+        },
+        "by_level": by_level,
+        "locations": filtered,
     }, indent=2)
 
 

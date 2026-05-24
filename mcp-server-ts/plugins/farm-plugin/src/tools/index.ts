@@ -1,9 +1,10 @@
 // Barrel export — all 36 farm tools
 import { helloTool } from './hello.js';
 
-// READ TOOLS (7)
+// READ TOOLS (8)
 import { queryPlantsTool } from './query-plants.js';
 import { querySectionsTool } from './query-sections.js';
+import { queryLocationsTool } from './query-locations.js';
 import { getPlantDetailTool } from './get-plant-detail.js';
 import { queryLogsTool } from './query-logs.js';
 import { getInventoryTool } from './get-inventory.js';
@@ -57,9 +58,10 @@ import { regeneratePagesTool } from './regenerate-pages.js';
 
 export const farmTools = [
   helloTool,
-  // Read (7)
+  // Read (8)
   queryPlantsTool,
   querySectionsTool,
+  queryLocationsTool,
   getPlantDetailTool,
   queryLogsTool,
   getInventoryTool,
@@ -105,7 +107,7 @@ export const farmTools = [
 ];
 
 export { helloTool };
-export { queryPlantsTool, querySectionsTool, getPlantDetailTool, queryLogsTool };
+export { queryPlantsTool, querySectionsTool, queryLocationsTool, getPlantDetailTool, queryLogsTool };
 export { getInventoryTool, searchPlantTypesTool, getAllPlantTypesTool };
 export { createObservationTool, createActivityTool, completeTaskTool, updateInventoryTool, createPlantTool, archivePlantTool };
 export { listObservationsTool, updateObservationStatusTool, updateObservationStatusBatchTool, importObservationsTool, importObservationsBatchTool };

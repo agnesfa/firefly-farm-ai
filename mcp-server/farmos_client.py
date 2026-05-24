@@ -776,6 +776,101 @@ class FarmOSClient:
 
         return grouped
 
+    def get_locations(self, include_archived: bool = False) -> list:
+        """Enumerate every land + structure asset and classify by level.
+
+        Unlike get_section_assets (which silently drops anything not matching
+        the section-name regex) and get_all_locations (which buckets non-
+        section/non-NURS/non-COMP into 'other'), this method exposes ALL land
+        assets — paddock shells (P1, P2), row shells (P1R2, P2R5), sections,
+        nursery, compost — plus all structure assets, with each classified
+        by level.
+
+        Use this when you need to confirm a row-level or paddock-level asset
+        exists in farmOS (the section regex hides them).
+
+        Levels:
+          - paddock:   matches ^P\\d$        (P1, P2, ...)
+          - row:       matches ^P\\dR\\d$    (P1R2, P2R5, ...)
+          - section:   matches ^P\\dR\\d\\.\\d+-\\d+$  (P1R2.0-14, ...)
+          - nursery:   name starts with NURS.
+          - compost:   name starts with COMP.
+          - structure: asset/structure (regardless of name)
+          - other:     anything else on asset/land (dams, infrastructure, ...)
+
+        Args:
+            include_archived: When True, returns archived assets too.
+                Defaults False (active only).
+
+        Returns:
+            List of dicts:
+                {name, uuid, level, asset_type, land_type, archived,
+                 parent_uuids}
+            sorted by name.
+        """
+        paddock_pattern = re.compile(r"^P\d$")
+        row_pattern = re.compile(r"^P\dR\d$")
+        section_pattern = re.compile(r"^P\dR\d\.\d+-\d+$")
+        nursery_pattern = re.compile(r"^NURS\.")
+        compost_pattern = re.compile(r"^COMP\.")
+
+        def classify(name: str, asset_type: str) -> str:
+            if asset_type == "structure":
+                return "structure"
+            if paddock_pattern.match(name):
+                return "paddock"
+            if row_pattern.match(name):
+                return "row"
+            if section_pattern.match(name):
+                return "section"
+            if nursery_pattern.match(name):
+                return "nursery"
+            if compost_pattern.match(name):
+                return "compost"
+            return "other"
+
+        # No status filter at the API level — we want the full picture, then
+        # drop archived in Python so callers can opt in via include_archived.
+        land_assets = self.fetch_all_paginated("asset/land")
+        structure_assets = self.fetch_all_paginated("asset/structure")
+
+        out = []
+        for asset in land_assets:
+            name = asset.get("attributes", {}).get("name", "")
+            status = read_asset_status(asset)
+            archived = status == "archived"
+            if archived and not include_archived:
+                continue
+            parent_rel = asset.get("relationships", {}).get("parent", {}).get("data", []) or []
+            out.append({
+                "name": name,
+                "uuid": asset.get("id"),
+                "level": classify(name, "land"),
+                "asset_type": "land",
+                "land_type": asset.get("attributes", {}).get("land_type"),
+                "archived": archived,
+                "parent_uuids": [p.get("id") for p in parent_rel if p.get("id")],
+            })
+        for asset in structure_assets:
+            name = asset.get("attributes", {}).get("name", "")
+            status = read_asset_status(asset)
+            archived = status == "archived"
+            if archived and not include_archived:
+                continue
+            parent_rel = asset.get("relationships", {}).get("parent", {}).get("data", []) or []
+            out.append({
+                "name": name,
+                "uuid": asset.get("id"),
+                "level": classify(name, "structure"),
+                "asset_type": "structure",
+                "land_type": asset.get("attributes", {}).get("structure_type"),
+                "archived": archived,
+                "parent_uuids": [p.get("id") for p in parent_rel if p.get("id")],
+            })
+
+        out.sort(key=lambda x: x["name"])
+        return out
+
     @staticmethod
     def _merge_included_quantities(data: dict, items: list) -> list:
         """Merge included quantity entities into their parent log objects.
@@ -856,29 +951,120 @@ class FarmOSClient:
 
         return list(seen.values())
 
+    def fetch_logs_by_location_id(self, log_type: str, location_uuid: str,
+                                    include_quantity: bool = True,
+                                    max_pages: int = 20) -> list:
+        """Fetch logs whose `location` relationship points to the given UUID.
+
+        This is the structurally correct way to find every log attached to a
+        location (P1R2, P1R2.0-14, NURS.GR, ...). Matches the farmOS data
+        model — logs reference location assets via the `location`
+        relationship — unlike _fetch_logs_contains which only matches when
+        the location's name appears as a substring in the log's NAME field.
+        """
+        if not self._connected:
+            raise ConnectionError("Not connected to farmOS. Check credentials.")
+
+        encoded = urllib.parse.quote(location_uuid)
+        base_path = (f"/api/log/{log_type}"
+                     f"?filter[location.id]={encoded}"
+                     f"&page[limit]=50"
+                     f"&sort=-timestamp,name")
+        if include_quantity:
+            base_path += "&include=quantity"
+
+        seen = {}
+        offset = 0
+        for _ in range(max_pages):
+            url = f"{self.hostname}{base_path}&page[offset]={offset}"
+            resp = self._retry_on_auth_error("GET", url, timeout=30)
+            if resp.status_code != 200:
+                raise RuntimeError(f"farmOS API error: HTTP {resp.status_code}")
+
+            data = resp.json()
+            page_items = data.get("data", [])
+            if not page_items:
+                break
+
+            if include_quantity:
+                self._merge_included_quantities(data, page_items)
+
+            for item in page_items:
+                item_id = item.get("id", "")
+                if item_id:
+                    seen[item_id] = item
+
+            offset += 50
+
+        return list(seen.values())
+
     def get_logs(self, log_type: Optional[str] = None,
                   section_id: Optional[str] = None,
                   species: Optional[str] = None,
                   status: Optional[str] = None,
                   max_results: int = 50) -> list:
-        """Get logs with optional filtering.
+        """Get logs with optional filtering. Convenience wrapper that drops
+        the filter_method — callers that need it (e.g. the query_logs tool)
+        should use get_logs_with_method instead."""
+        logs, _method = self.get_logs_with_method(
+            log_type=log_type,
+            section_id=section_id,
+            species=species,
+            status=status,
+            max_results=max_results,
+        )
+        return logs
 
-        Uses farmOS CONTAINS filter on name when section_id or species
-        is provided. This avoids the pagination cap (~250 entries) that
-        makes fetch_all_paginated unreliable for 400+ logs.
+    def get_logs_with_method(self, log_type: Optional[str] = None,
+                              section_id: Optional[str] = None,
+                              species: Optional[str] = None,
+                              status: Optional[str] = None,
+                              max_results: int = 50) -> tuple:
+        """Get logs with optional filtering. Returns (logs, filter_method).
+
+        When section_id resolves to a known asset (land or structure), uses
+        the attachment filter (filter[location.id]=<UUID>) — the structurally
+        correct query. Otherwise falls back to name-substring matching on the
+        log's NAME field for backward compatibility, and signals the fallback
+        via the returned filter_method.
+
+        Returns:
+            Tuple of (logs, filter_method) where filter_method is one of:
+                'location-id' | 'name-substring' |
+                'name-substring (fallback)' | 'none'
         """
         log_types = [log_type] if log_type else [
             "observation", "activity", "transplanting", "harvest", "seeding"
         ]
 
-        # Determine the name filter to use at the API level
-        # Prefer section_id (more specific) if both are provided
-        name_filter = section_id or species
+        # Resolve section_id to a location UUID if possible.
+        location_uuid = None
+        filter_method = "none"
+        if section_id:
+            try:
+                location_uuid = self.get_section_uuid(section_id)
+            except Exception:
+                location_uuid = None
+            filter_method = "location-id" if location_uuid else "name-substring (fallback)"
+        elif species:
+            filter_method = "name-substring"
 
         all_logs = []
         for lt in log_types:
             try:
-                if name_filter:
+                if section_id and location_uuid:
+                    logs = self.fetch_logs_by_location_id(
+                        lt, location_uuid, include_quantity=True
+                    )
+                    # Narrow further by species if requested
+                    if species:
+                        logs = [
+                            l for l in logs
+                            if species.lower() in l.get("attributes", {}).get("name", "").lower()
+                        ]
+                elif section_id or species:
+                    # Fallback: name-substring (section_id didn't resolve OR species-only)
+                    name_filter = section_id or species
                     logs = self._fetch_logs_contains(lt, name_filter, include_quantity=True)
                 else:
                     logs = self.fetch_filtered(
@@ -891,10 +1077,10 @@ class FarmOSClient:
             except Exception:
                 continue
 
-        # Apply additional Python-side filters
+        # In fallback (name-substring) mode with both section + species,
+        # narrow on species too. In location-id mode we already narrowed above.
         filtered = all_logs
-        if section_id and species:
-            # API already filtered by section_id, now also filter by species
+        if section_id and species and not location_uuid:
             filtered = [
                 l for l in filtered
                 if species.lower() in l.get("attributes", {}).get("name", "").lower()
@@ -913,7 +1099,7 @@ class FarmOSClient:
             reverse=True
         )
 
-        return filtered[:max_results]
+        return filtered[:max_results], filter_method
 
     def update_log_status(self, log_id: str, log_type: str,
                            new_status: str) -> bool:
