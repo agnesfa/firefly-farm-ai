@@ -228,6 +228,7 @@ firefly-farm-ai/
 ├── mcp-server/                ← Python MCP server (29 tools, STDIO)
 ├── mcp-server-ts/             ← TypeScript MCP server (31 tools, Railway HTTP)
 ├── claude-docs/               ← Design documents, session history, team context files
+├── for-review/                ← Drafts handed to fa-intelligence-foundry for normative review (see §2)
 ├── docs/farmos/               ← farmOS API reference
 └── .github/workflows/         ← GitHub Pages auto-deploy
 ```
