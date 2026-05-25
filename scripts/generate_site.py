@@ -125,13 +125,138 @@ def is_green_manure(species, plant_db):
     return "green_manure" in plant.get("functions", [])
 
 
-def render_green_manure_box(green_manure_plants):
-    """Render a lightweight green manure info section."""
-    if not green_manure_plants:
-        return ""
+_GM_KEYWORDS = (
+    "winter mix",
+    "winter market garden",
+    "summer mix",
+    "green manure",
+    "cover crop",
+    "chop and drop",
+    "chop-and-drop",
+    "chopped",
+    "slashed",
+    "sown",
+    "seeded",
+    "sowing",
+    "mulched",
+    "senescent",
+)
 
+
+def _green_manure_activity_from_logs(
+    section_logs: list, plant_db: dict, limit: int = 5
+) -> list:
+    """Filter section_logs to those matching green-manure activity patterns.
+
+    Two ways a log qualifies:
+    1. Its notes contain a known green-manure verb/phrase (sown, chop-and-drop,
+       mulched, winter mix, etc).
+    2. Its notes mention any species tagged `green_manure` in plant_types.csv.
+
+    Returns the most recent matches, capped at `limit`. Read-only — no
+    interpretation of state, just surfacing the underlying field evidence so
+    the human can read what's happening at a glance.
+    """
+    if not section_logs:
+        return []
+
+    gm_species = sorted(
+        (name for name, info in plant_db.items() if "green_manure" in info.get("functions", [])),
+        key=len,
+        reverse=True,
+    )
+
+    matches = []
+    for log in section_logs:
+        notes_full = (log.get("notes_full") or log.get("notes") or "").lower()
+        if not notes_full:
+            continue
+        matched_by = None
+        for kw in _GM_KEYWORDS:
+            if kw in notes_full:
+                matched_by = kw
+                break
+        if not matched_by:
+            for sp in gm_species:
+                if sp.lower() in notes_full:
+                    matched_by = sp
+                    break
+        if matched_by:
+            matches.append((log, matched_by))
+
+    matches.sort(key=lambda x: x[0].get("date", ""), reverse=True)
+    return matches[:limit]
+
+
+def render_green_manure_box(
+    green_manure_plants,
+    section_logs: list | None = None,
+    plant_db: dict | None = None,
+    section_id: str = "",
+    base_url: str = "",
+):
+    """Render the green manure info block.
+
+    Combines:
+    - Static species set (from green_manure plant assets + the hand-curated
+      `green_manure` array in sections.json).
+    - Dated activity stream derived live from section_logs — surfaces recent
+      sowings, chop-and-drops, and species mentions so the page reflects what
+      the field has actually done. Closes the gap where the static array
+      drifted from reality.
+    """
     species_names = sorted(set(p["species"] for p in green_manure_plants))
     species_list = ", ".join(esc(name) for name in species_names)
+
+    activity = _green_manure_activity_from_logs(section_logs or [], plant_db or {})
+    activity_html = ""
+    if activity:
+        rows = []
+        for log, matched_by in activity:
+            date = log.get("date", "") or ""
+            notes_full = log.get("notes_full") or log.get("notes") or ""
+            visible = "\n".join(
+                ln for ln in notes_full.splitlines()
+                if "[ontology:InteractionStamp]" not in ln
+                and not ln.strip().lower().startswith("submission=")
+            ).strip()
+            reporter_m = re.search(r"^Reporter:\s*(.+)$", visible, re.M | re.I)
+            reporter = reporter_m.group(1).strip() if reporter_m else ""
+            visible = re.sub(r"^Reporter:.*$\n?", "", visible, count=1, flags=re.M | re.I).strip()
+            section_m = re.search(r"^Section notes:\s*(.+)$", visible, re.M | re.I)
+            snippet = (section_m.group(1).strip() if section_m else visible)[:200]
+            uuid = log.get("uuid", "")
+            href = (
+                base_url + log_detail_page_name(section_id, log)
+                if uuid and section_id else ""
+            )
+            link_attr = f' href="{esc(href)}"' if href else ""
+            reporter_html = (
+                f' <span class="gm-reporter">· {esc(reporter)}</span>' if reporter else ""
+            )
+            rows.append(
+                f'<a class="gm-act-row"{link_attr}>'
+                f'<span class="gm-act-date">{esc(date)}</span>'
+                f'{reporter_html}'
+                f'<div class="gm-act-snippet">{esc(snippet)}</div>'
+                f'</a>'
+            )
+        activity_html = (
+            '<div class="gm-activity">'
+            '<div class="gm-activity-title">Recent green-manure activity</div>'
+            + "".join(rows)
+            + '</div>'
+        )
+
+    if not species_names and not activity_html:
+        return ""
+
+    species_block = (
+        f'<div class="gm-species">{species_list}</div>'
+        f'<div class="gm-desc">Temporary cover crops planted for soil building and nitrogen fixation. Slashed and mulched every 2–3 months.</div>'
+        if species_names
+        else '<div class="gm-desc">No active cover crop species recorded — see recent field activity below.</div>'
+    )
 
     return f"""
     <div class="green-manure-box">
@@ -140,8 +265,8 @@ def render_green_manure_box(green_manure_plants):
         <span class="gm-title">Green Manure Cover Crop</span>
       </div>
       <div class="gm-body">
-        <div class="gm-species">{species_list}</div>
-        <div class="gm-desc">Temporary cover crops planted for soil building and nitrogen fixation. Slashed and mulched every 2–3 months.</div>
+        {species_block}
+        {activity_html}
       </div>
     </div>"""
 
@@ -240,6 +365,113 @@ def parse_interaction_stamp(stamp_line: str) -> dict:
             k, v = part.split("=", 1)
             out[k.strip()] = v.strip()
     return out
+
+
+_SUBMISSION_RE = re.compile(
+    r"submission[\s:=]+([0-9a-f]{8}(?:-[0-9a-f]{4}){0,4}(?:-[0-9a-f]{12})?)",
+    re.IGNORECASE,
+)
+
+
+def _extract_submission_refs(text: str) -> set[str]:
+    """Return the set of submission 8-char prefixes mentioned in free text.
+
+    Matches both `submission=XXXXXXXX` (InteractionStamp form) and
+    `submission XXXXXXXX` (natural-language form used by TODO logs).
+    Normalizes to the first 8 hex chars so a TODO citing a short prefix
+    matches the InteractionStamp's full UUID on the related log.
+    """
+    if not text:
+        return set()
+    return {m.group(1).lower()[:8] for m in _SUBMISSION_RE.finditer(text)}
+
+
+def _all_section_logs(section: dict) -> list:
+    """Flatten section.plants[].logs[] + section.section_logs[] into one list."""
+    out = []
+    for p in section.get("plants", []) or []:
+        for l in p.get("logs", []) or []:
+            out.append(l)
+    for sl in section.get("section_logs", []) or []:
+        out.append(sl)
+    return out
+
+
+def _render_related_evidence(
+    section_id: str, section: dict, log: dict, base_url: str = ""
+) -> str:
+    """If this log references a submission shared by another log in the same
+    section, surface that other log as related evidence (photos + click-through).
+
+    Closes the provenance gap where a TODO/follow-up log cites the original
+    observation by ID but the page generator never followed the reference.
+    """
+    my_notes = log.get("notes_full", "") or log.get("notes", "")
+    my_uuid = log.get("uuid", "")
+    my_subs = _extract_submission_refs(my_notes)
+    if not my_subs:
+        return ""
+
+    related = []
+    for other in _all_section_logs(section):
+        ouuid = other.get("uuid", "")
+        if not ouuid or ouuid == my_uuid:
+            continue
+        other_notes = other.get("notes_full", "") or other.get("notes", "")
+        other_subs = _extract_submission_refs(other_notes)
+        if my_subs & other_subs:
+            related.append(other)
+
+    if not related:
+        return ""
+
+    entries = []
+    for r in related[:5]:
+        r_uuid = r.get("uuid", "")
+        r_type = r.get("type", "").replace("_", " ").title()
+        r_date = r.get("date", "")
+        r_species = r.get("species", "")
+        r_photos = r.get("photos", []) or []
+        href = base_url + log_detail_page_name(section_id, r)
+        thumbs = ""
+        if r_photos:
+            def _photo_src(ph):
+                if isinstance(ph, str):
+                    return ph
+                return ph.get("thumb") or ph.get("url", "")
+            thumbs = "".join(
+                f'<img class="rel-thumb" loading="lazy" '
+                f'src="{esc(base_url + _photo_src(ph))}" '
+                f'alt="Photo on related log">'
+                for ph in r_photos[:4]
+            )
+        label = " · ".join(p for p in [r_date, r_type, r_species] if p)
+        entries.append(
+            f'<a class="rel-entry" href="{esc(href)}">'
+            f'<div class="rel-meta">{esc(label) or "Related log"}</div>'
+            f'{f"<div class=\"rel-thumbs\">{thumbs}</div>" if thumbs else ""}'
+            f'<div class="rel-arrow">View related log →</div>'
+            f'</a>'
+        )
+
+    return (
+        '<div class="log-detail-section">'
+        '<h3 class="log-detail-h3">📎 Related evidence</h3>'
+        '<div class="rel-help">This log cites a field submission also captured on the log below.</div>'
+        + "".join(entries)
+        + '<style>'
+        '.rel-help{font-size:13px;color:#666;margin-bottom:8px;}'
+        '.rel-entry{display:block;padding:10px 12px;margin-bottom:8px;background:#fbfaf5;'
+        'border:1px solid #e5e1d7;border-left:3px solid #6b9e3c;border-radius:6px;'
+        'text-decoration:none;color:#222;}'
+        '.rel-meta{font-weight:600;font-size:14px;}'
+        '.rel-thumbs{display:flex;gap:6px;margin:6px 0;flex-wrap:wrap;}'
+        '.rel-thumb{width:64px;height:64px;object-fit:cover;border-radius:4px;'
+        'border:1px solid #ddd;}'
+        '.rel-arrow{font-size:12px;color:#2d5016;margin-top:4px;}'
+        '</style>'
+        '</div>'
+    )
 
 
 def render_log_detail_page(
@@ -357,6 +589,15 @@ def render_log_detail_page(
             '</div>'
         )
 
+    # Related evidence — when this log references a submission_id that other
+    # logs in the section also share, surface their photos and link through.
+    # Catches the pattern where Claude creates a TODO/follow-up activity log
+    # that points at the original observation by ID — without this block the
+    # TODO page renders without the photo evidence it explicitly cites.
+    related_block = _render_related_evidence(
+        section_id, section, log, base_url
+    )
+
     meta_rows = (
         f'<div class="prov-row"><span class="prov-icon">📅</span><span class="prov-label">Date:</span><span class="prov-value">{esc(date)}</span></div>'
         f'<div class="prov-row"><span class="prov-icon">🏷</span><span class="prov-label">Type:</span><span class="prov-value">{esc(log_type)}</span></div>'
@@ -398,6 +639,8 @@ def render_log_detail_page(
     </div>
 
     {photos_block}
+
+    {related_block}
 
     {notes_block}
 
@@ -809,7 +1052,13 @@ def render_section_page(section_id, section, row_info, sections_data, plant_db, 
     section_type = "🌳 Tree Section" if has_trees else "☀️ Open Cultivation"
     
     strata_html = "\n".join(render_strata_group(sk, ps, plant_db, section_id, base_url) for sk, ps in grouped.items())
-    green_manure_html = render_green_manure_box(green_manure_plants)
+    green_manure_html = render_green_manure_box(
+        green_manure_plants,
+        section_logs=section.get("section_logs", []) or [],
+        plant_db=plant_db,
+        section_id=section_id,
+        base_url=base_url,
+    )
     row_bar_html = render_row_bar(row_info, sections_data, section_id, base_url)
     tabs_html = render_section_tabs(row_info, sections_data, section_id, base_url)
     # I10 / Phase 3c — section-level log block (submission-level
@@ -1002,6 +1251,14 @@ body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f0f0ec
 .gm-title { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 600; color: #3d6a20; }
 .gm-species { font-size: 13px; color: #2d5016; font-weight: 500; line-height: 1.5; }
 .gm-desc { font-size: 11px; color: #6b8f5a; margin-top: 6px; line-height: 1.5; }
+.gm-activity { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #c3d8b0; }
+.gm-activity-title { font-size: 11px; font-weight: 600; color: #3d6a20; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; }
+.gm-act-row { display: block; padding: 6px 0; border-bottom: 1px solid #e4ecd6; text-decoration: none; color: inherit; }
+.gm-act-row:last-child { border-bottom: none; }
+.gm-act-row[href]:hover { background: #e6efd6; }
+.gm-act-date { font-size: 12px; font-weight: 600; color: #2d5016; }
+.gm-reporter { font-size: 11px; color: #6b8f5a; }
+.gm-act-snippet { font-size: 12px; color: #2d4216; line-height: 1.4; margin-top: 2px; }
 
 /* Footer */
 .footer { padding: 16px 16px 24px; text-align: center; font-size: 11px; color: #bbb; }
