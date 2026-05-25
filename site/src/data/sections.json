@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-05-25T14:21:26.538422+10:00",
+  "generated_at": "2026-05-25T15:36:00.891423+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -2705,7 +2705,7 @@
       "length": "7m",
       "has_trees": true,
       "first_planted": "2025-04-24",
-      "inventory_date": "2026-05-17",
+      "inventory_date": "2026-05-24",
       "plants": [
         {
           "species": "Guava (Strawberry)",
@@ -3911,7 +3911,7 @@
         {
           "species": "Geranium",
           "strata": "low",
-          "count": 4,
+          "count": 9,
           "notes": "cuttings",
           "first_planted": "2025-04-25",
           "asset_name": "25 APR 2025 - Geranium - P2R3.2-9",
@@ -3974,6 +3974,26 @@
               "notes": "Reporter: Hollis\nSubmitted: 2026-05-18T04:35:00\nMode: inventory\nCount: 4 → 5\n[ontology:InteractionStamp] initiator=Hollis | role=farmhand | channel=automated | executor=farmos_api | action=created | t",
               "notes_full": "Reporter: Hollis\nSubmitted: 2026-05-18T04:35:00\nMode: inventory\nCount: 4 → 5\n[ontology:InteractionStamp] initiator=Hollis | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-05-24T08:20:30.502Z | related=Geranium,P2R3.2-9 | submission=e1f725f5-1e2d-4381-a336-8cdd0e482ce1",
               "interaction_stamp": "[ontology:InteractionStamp] initiator=Hollis | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-05-24T08:20:30.502Z | related=Geranium,P2R3.2-9 | submission=e1f725f5-1e2d-4381-a336-8cdd0e482ce1",
+              "species": "Geranium"
+            },
+            {
+              "uuid": "7a176508-e1fd-4cc9-ad5f-f60b6abf8334",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Observation P2R3.2-9 — Geranium — 2026-05-25",
+              "notes": "Inventory update: Asset merge 2026-05-25: subsumed duplicate asset 8aab834a-4f7a-46d5-a281-73e16d42fd95 (\"24 APR 2026 - Geranium - P2R3.2-9\", count=5 from Agnes's 2026-04-24 nursery → paddock transpla",
+              "notes_full": "Inventory update: Asset merge 2026-05-25: subsumed duplicate asset 8aab834a-4f7a-46d5-a281-73e16d42fd95 (\"24 APR 2026 - Geranium - P2R3.2-9\", count=5 from Agnes's 2026-04-24 nursery → paddock transplant). Inventory now reflects combined population: 4 original cuttings + 5 nursery transplants = 9.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=updated | target=observation | outcome=success | ts=2026-05-25T05:12:54.890Z | related=25 APR 2025 - Geranium - P2R3.2-9\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-05-25T05:12:56.380Z | related=Geranium,P2R3.2-9",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=updated | target=observation | outcome=success | ts=2026-05-25T05:12:54.890Z | related=25 APR 2025 - Geranium - P2R3.2-9",
+              "species": "Geranium"
+            },
+            {
+              "uuid": "35e37d40-49eb-4d1c-a179-1cd3331875db",
+              "type": "activity",
+              "date": "2026-05-25",
+              "name": "Archived — Geranium — P2R3.2-9",
+              "notes": "Asset merge 2026-05-25: duplicate of e4eab78a-408c-44aa-b55e-fc8267084ad9 (\"25 APR 2025 - Geranium - P2R3.2-9\"). Count (5 nursery transplants) folded into the surviving asset's inventory (4 → 9). Orig",
+              "notes_full": "Asset merge 2026-05-25: duplicate of e4eab78a-408c-44aa-b55e-fc8267084ad9 (\"25 APR 2025 - Geranium - P2R3.2-9\"). Count (5 nursery transplants) folded into the surviving asset's inventory (4 → 9). Original submission was 2026-04-24 nursery → paddock transplant by Agnes; classified as mode=new_plant which incorrectly created a new asset. See merge activity log on P2R3.2-9 (2026-05-25) for full context.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=archived | target=plant | outcome=success | ts=2026-05-25T05:12:58.976Z | related=24 APR 2026 - Geranium - P2R3.2-9",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=archived | target=plant | outcome=success | ts=2026-05-25T05:12:58.976Z | related=24 APR 2026 - Geranium - P2R3.2-9",
               "species": "Geranium"
             }
           ],
@@ -4121,77 +4141,6 @@
             }
           ],
           "photo_url": "photos/sweet-potato.jpg"
-        },
-        {
-          "species": "Geranium",
-          "strata": "low",
-          "count": 5,
-          "notes": "Well developed geranium added in the middle of the section.  The plant was in the Nursery for a long time before being transplanted. No compost used.",
-          "first_planted": "2026-04-24",
-          "asset_name": "24 APR 2026 - Geranium - P2R3.2-9",
-          "logs": [
-            {
-              "uuid": "0edd99a6-7bce-407c-a214-f2c563ba558b",
-              "type": "observation",
-              "date": "2025-11-12",
-              "name": "Inventory Oct 2025 P2R3.2-9 — Geranium",
-              "notes": "",
-              "notes_full": "",
-              "interaction_stamp": "",
-              "species": "Geranium"
-            },
-            {
-              "uuid": "467e6ffe-1fd6-4a0f-8ba3-125f29ede92a",
-              "type": "observation",
-              "date": "2025-11-12",
-              "name": "Inventory P2R3.2-9 — Geranium",
-              "notes": "",
-              "notes_full": "",
-              "interaction_stamp": "",
-              "species": "Geranium"
-            },
-            {
-              "uuid": "8620ef15-f55b-4b16-a5b5-0620ac970137",
-              "type": "observation",
-              "date": "2026-03-16",
-              "name": "Observation P2R3.2-9 — Geranium — 2026-03-17",
-              "notes": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nPlant notes: spreading excessively, should be pruned correctly\nCount: 3 → 4",
-              "notes_full": "Reporter: Claire\nSubmitted: 2026-03-17T06:54:00\nMode: inventory\nPlant notes: spreading excessively, should be pruned correctly\nCount: 3 → 4",
-              "interaction_stamp": "",
-              "species": "Geranium"
-            },
-            {
-              "uuid": "311101c6-620b-4856-b353-f34b26d536de",
-              "type": "observation",
-              "date": "2026-04-23",
-              "name": "Observation P2R3.2-9 — Geranium — 2026-04-24",
-              "notes": "Reporter: Kacper Jaszcz\nSubmitted: 2026-04-24T05:11:00\nMode: inventory\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | acti",
-              "notes_full": "Reporter: Kacper Jaszcz\nSubmitted: 2026-04-24T05:11:00\nMode: inventory\nCount: 4 → 4\n[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-29T07:45:19.862Z | related=Geranium,P2R3.2-9 | submission=80925e35-13f8-496b-a082-b519711682fc",
-              "interaction_stamp": "[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-29T07:45:19.862Z | related=Geranium,P2R3.2-9 | submission=80925e35-13f8-496b-a082-b519711682fc",
-              "species": "Geranium"
-            },
-            {
-              "uuid": "7898622a-682e-4e41-841a-f229624abc67",
-              "type": "observation",
-              "date": "2026-04-23",
-              "name": "Inventory P2R3.2-9 — Geranium",
-              "notes": "Reporter: Kacper Jaszcz\nSubmitted: 2026-04-24T05:31:00\nMode: new_plant\nPlant notes: Well developed geranium added in the middle of the section.  The plant was in the Nursery for a long time before bei",
-              "notes_full": "Reporter: Kacper Jaszcz\nSubmitted: 2026-04-24T05:31:00\nMode: new_plant\nPlant notes: Well developed geranium added in the middle of the section.  The plant was in the Nursery for a long time before being transplanted. No compost used.\nCount: 0 → 1\nNew plant added via field observation\n[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-29T07:37:00.369Z | related=Geranium,P2R3.2-9 | submission=77afee17-bc79-4de1-ae1a-547ae5e93845",
-              "interaction_stamp": "[ontology:InteractionStamp] initiator=Kacper Jaszcz | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-04-29T07:37:00.369Z | related=Geranium,P2R3.2-9 | submission=77afee17-bc79-4de1-ae1a-547ae5e93845",
-              "species": "Geranium"
-            },
-            {
-              "uuid": "b2d898f5-2a9c-4403-9914-3db98e68b024",
-              "type": "observation",
-              "date": "2026-05-17",
-              "name": "Observation P2R3.2-9 — Geranium — 2026-05-18",
-              "notes": "Reporter: Hollis\nSubmitted: 2026-05-18T04:35:00\nMode: inventory\nCount: 4 → 5\n[ontology:InteractionStamp] initiator=Hollis | role=farmhand | channel=automated | executor=farmos_api | action=created | t",
-              "notes_full": "Reporter: Hollis\nSubmitted: 2026-05-18T04:35:00\nMode: inventory\nCount: 4 → 5\n[ontology:InteractionStamp] initiator=Hollis | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-05-24T08:20:30.502Z | related=Geranium,P2R3.2-9 | submission=e1f725f5-1e2d-4381-a336-8cdd0e482ce1",
-              "interaction_stamp": "[ontology:InteractionStamp] initiator=Hollis | role=farmhand | channel=automated | executor=farmos_api | action=created | target=observation | outcome=success | ts=2026-05-24T08:20:30.502Z | related=Geranium,P2R3.2-9 | submission=e1f725f5-1e2d-4381-a336-8cdd0e482ce1",
-              "species": "Geranium"
-            }
-          ],
-          "photo_url": "photos/geranium.jpg"
         },
         {
           "species": "Rosemary",
@@ -23641,7 +23590,7 @@
               "species": "Walnut (Placentia)"
             }
           ],
-          "photo_url": ""
+          "photo_url": "photos/walnut-placentia.jpg"
         }
       ],
       "section_logs": [
