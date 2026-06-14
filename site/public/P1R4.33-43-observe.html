@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>P1R4.33-43 — Field Observation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-observe.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="section-header" style="background:linear-gradient(145deg, #b86e2a 0%, #d4872e 60%, #e6a040 100%)">
+    <a href="index.html" class="home-btn" title="Farm Guide"><img src="logo-sm.png" alt="Home"></a>
+    <div class="breadcrumb">Firefly Corner · Paddock 1 · Row 4 · Field Observation</div>
+    <div class="section-title-row">
+      <h1 class="section-range">33–43</h1>
+      <span class="section-type-badge">☀️ Open Cultivation</span>
+    </div>
+    <div class="obs-subtitle">Section P1R4.33-43</div>
+  </div>
+
+  <!-- Offline queue banner -->
+  <div id="queue-banner" class="queue-banner" style="display:none">
+    <span class="queue-count"></span>
+    <button onclick="syncPendingQueue()" class="queue-sync-btn">Sync Now</button>
+  </div>
+
+  <!-- Observer info (sticky) -->
+  <div class="obs-form-section obs-observer-bar">
+    <div class="obs-field-row">
+      <div class="obs-field-group" style="flex:2">
+        <label class="obs-label" for="observer-name">Your name</label>
+        <input type="text" id="observer-name" class="obs-input" placeholder="e.g. Claire, James" autocomplete="name">
+      </div>
+      <div class="obs-field-group" style="flex:1">
+        <label class="obs-label" for="obs-datetime">Date</label>
+        <input type="datetime-local" id="obs-datetime" class="obs-input">
+      </div>
+    </div>
+  </div>
+
+  <!-- TWO-TAB MODE TOGGLE -->
+  <div class="mode-toggle-v2">
+    <button class="mode-tab active" data-mode="single">🌱 Single Plant</button>
+    <button class="mode-tab" data-mode="section">📋 Full Section</button>
+  </div>
+
+  <!-- ═══ SINGLE PLANT MODE ═══ -->
+  <div id="mode-single" class="obs-mode-panel">
+    <div class="obs-form-section">
+
+      <!-- Camera Hero -->
+      <div class="camera-hero">
+        <input type="file" accept="image/*" capture="environment" id="camera-hero-input" hidden>
+        <button type="button" id="camera-hero-btn" class="camera-hero-btn">
+          <span class="camera-hero-icon">📷</span>
+          <span class="camera-hero-text">Snap a photo to identify</span>
+        </button>
+        <div id="camera-hero-preview" class="camera-hero-preview" style="display:none"></div>
+      </div>
+
+      <!-- Multi-photo strip for PlantNet ID -->
+      <div id="id-photo-strip" class="id-photo-strip" style="display:none"></div>
+      <button type="button" id="plantnet-add-more" class="plantnet-add-more" style="display:none">
+        <input type="file" accept="image/*" capture="environment" id="plantnet-more-input" hidden>
+        📷 Add another angle
+      </button>
+
+      <!-- PlantNet results -->
+      <div id="plantnet-results" class="plantnet-results" style="display:none"></div>
+
+      <!-- Visual plant picker -->
+      <div id="plant-picker-section" class="plant-picker-section">
+        <div class="picker-label">or select a plant</div>
+        <div class="plant-picker-grid">
+          
+        <div class="plant-pick-card" data-species="Mint">
+          <div class="pick-photo"><img src="photos/mint.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Mint</div>
+          <div class="pick-count" style="color:#8bb85a">4</div>
+        </div>
+        <div class="plant-pick-card" data-species="Capsicum">
+          <div class="pick-photo"><img src="photos/capsicum.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Capsicum</div>
+          <div class="pick-count" style="color:#6b9e3c">5</div>
+        </div>
+        <div class="plant-pick-card" data-species="Chilli (Bird Eye)">
+          <div class="pick-photo"><img src="photos/chilli-bird-eye.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Chilli (Bird Eye)</div>
+          <div class="pick-count" style="color:#6b9e3c">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Chilli (Cayenne)">
+          <div class="pick-photo"><img src="photos/chilli-cayenne.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Chilli (Cayenne)</div>
+          <div class="pick-count" style="color:#6b9e3c">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Lemon Balm">
+          <div class="pick-photo"><img src="photos/lemon-balm.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Lemon Balm</div>
+          <div class="pick-count" style="color:#8bb85a">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Sweet Potato">
+          <div class="pick-photo"><img src="photos/sweet-potato.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Sweet Potato</div>
+          <div class="pick-count" style="color:#8bb85a">2</div>
+        </div>
+        <div class="plant-pick-card" data-species="Carrot">
+          <div class="pick-photo"><img src="photos/carrot.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Carrot</div>
+          <div class="pick-count" style="color:#8bb85a">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Beetroot">
+          <div class="pick-photo"><img src="photos/beetroot.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Beetroot</div>
+          <div class="pick-count" style="color:#8bb85a">2</div>
+        </div>
+        <div class="plant-pick-card" data-species="Spinach">
+          <div class="pick-photo"><img src="photos/spinach.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Spinach</div>
+          <div class="pick-count" style="color:#8bb85a">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Kale (Nero di Toscana)">
+          <div class="pick-photo"><img src="photos/kale-nero-di-toscana.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Kale (Nero di Toscana)</div>
+          <div class="pick-count" style="color:#8bb85a">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Silverbeet">
+          <div class="pick-photo"><img src="photos/silverbeet.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Silverbeet</div>
+          <div class="pick-count" style="color:#8bb85a">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Chives">
+          <div class="pick-photo"><img src="photos/chives.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Chives</div>
+          <div class="pick-count" style="color:#8bb85a">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Spring Onion">
+          <div class="pick-photo"><img src="photos/spring-onion.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Spring Onion</div>
+          <div class="pick-count" style="color:#8bb85a">3</div>
+        </div>
+        <div class="plant-pick-card" data-species="Lavender">
+          <div class="pick-photo"><img src="photos/lavender.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Lavender</div>
+          <div class="pick-count" style="color:#6b9e3c">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Banagrass">
+          <div class="pick-photo"><img src="photos/banagrass.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Banagrass</div>
+          <div class="pick-count" style="color:#4a7c29">2</div>
+        </div>
+        <div class="plant-pick-card" data-species="Lemon">
+          <div class="pick-photo"><img src="photos/lemon.jpg" alt="" onerror="this.style.display='none'"></div>
+          <div class="pick-name">Lemon</div>
+          <div class="pick-count" style="color:#6b9e3c">1</div>
+        </div>
+        <div class="plant-pick-card" data-species="Unknown">
+          <div class="pick-photo"><span class="pick-unknown-icon">?</span></div>
+          <div class="pick-name">Unknown</div>
+          <div class="pick-count"></div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Single plant observation form (hidden until plant selected) -->
+      <div id="single-obs-form" class="single-obs-form" style="display:none">
+        <div class="selected-plant-bar">
+          <span id="selected-plant-name" class="selected-plant-name"></span>
+          <span id="selected-plant-count" class="selected-plant-count"></span>
+        </div>
+
+        <!-- ADR 0008 I11: log type + status are derived from notes
+             content by the importer's classifier, not by a UI radio.
+             Previous "I observed / I did / Action needed" radios were
+             dead UI — ignored by the pipeline — and absent from Full-
+             Section mode. Dropped 2026-04-20. -->
+
+        <div class="obs-field-row">
+          <div class="obs-field-group obs-field-small">
+            <label class="obs-label" for="single-count">New count</label>
+            <input type="number" id="single-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+          </div>
+          <div class="obs-field-group obs-field-small">
+            <label class="obs-label" for="single-condition">Condition</label>
+            <select id="single-condition" class="obs-select">
+              <option value="alive">Alive</option>
+              <option value="damaged">Damaged</option>
+              <option value="dead">Dead</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="obs-field-group">
+          <label class="obs-label" for="single-notes">Notes</label>
+          <textarea id="single-notes" class="obs-textarea" rows="2" placeholder="What did you see? (condition, growth, pests...)"></textarea>
+        </div>
+
+        <!-- Additional photos -->
+        <div class="obs-media-area">
+          <label class="obs-media-btn">
+            <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="plant" hidden>
+            <span>📷 Add more photos</span>
+          </label>
+          <div class="obs-photo-previews"></div>
+        </div>
+
+        <button id="single-submit" class="obs-submit-btn">Save Observation</button>
+      </div>
+
+      <button class="add-plant-trigger" onclick="showAddPlantPanel()">+ Add New Plant to Section</button>
+    </div>
+  </div>
+
+  <!-- ═══ FULL SECTION MODE ═══ -->
+  <div id="mode-section" class="obs-mode-panel" style="display:none">
+    <div class="obs-form-section">
+
+      <!-- Section notes at TOP (standalone) -->
+      <div class="obs-field-group">
+        <label class="obs-label" for="section-notes">Section notes</label>
+        <textarea id="section-notes" class="obs-textarea" rows="3" placeholder="Overall section health, weed pressure, weather conditions, general observations..."></textarea>
+      </div>
+
+      <!-- Photo capture -->
+      <div class="obs-media-area">
+        <label class="obs-media-btn">
+          <input type="file" accept="image/*" capture="environment" class="obs-photo-input" data-target="section" hidden>
+          <span>📷 Add section photos</span>
+        </label>
+        <div class="obs-photo-previews"></div>
+      </div>
+
+      <!-- Collapsible plant inventory -->
+      <div id="inventory-toggle" class="inventory-toggle">
+        <span class="inv-toggle-arrow">▸</span>
+        <span>Plant inventory (16 species)</span>
+      </div>
+      <div id="inventory-panel" style="display:none">
+        
+        <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:#edf4e4;border-left:3px solid #4a7c29">
+            <span>🌿</span>
+            <span class="inv-strata-name" style="color:#4a7c29">High Canopy</span>
+            <span class="inv-strata-count">1</span>
+          </div>
+          
+            <div class="inv-plant-row" data-species="Banagrass" data-strata="high" data-current="2">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Banagrass</div>
+                <div class="inv-plant-botanical">Cenchrus purpureus</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">2</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="2" aria-label="New count for Banagrass">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Banagrass">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Banagrass">
+            </div>
+        </div>
+        <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:#f0f6e7;border-left:3px solid #6b9e3c">
+            <span>🫑</span>
+            <span class="inv-strata-name" style="color:#6b9e3c">Medium Layer</span>
+            <span class="inv-strata-count">5</span>
+          </div>
+          
+            <div class="inv-plant-row" data-species="Capsicum" data-strata="medium" data-current="5">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Capsicum</div>
+                <div class="inv-plant-botanical">Capsicum annuum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">5</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="5" aria-label="New count for Capsicum">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Capsicum">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Capsicum">
+            </div>
+            <div class="inv-plant-row" data-species="Chilli (Bird Eye)" data-strata="medium" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Chilli (Bird Eye)</div>
+                <div class="inv-plant-botanical">Capsicum annuum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="1" aria-label="New count for Chilli (Bird Eye)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Chilli (Bird Eye)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Chilli (Bird Eye)">
+            </div>
+            <div class="inv-plant-row" data-species="Chilli (Cayenne)" data-strata="medium" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Chilli (Cayenne)</div>
+                <div class="inv-plant-botanical">Capsicum annuum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Chilli (Cayenne)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Chilli (Cayenne)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Chilli (Cayenne)">
+            </div>
+            <div class="inv-plant-row" data-species="Lavender" data-strata="medium" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Lavender</div>
+                <div class="inv-plant-botanical">Lavandula</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="1" aria-label="New count for Lavender">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Lavender">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Lavender">
+            </div>
+            <div class="inv-plant-row" data-species="Lemon" data-strata="medium" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Lemon</div>
+                <div class="inv-plant-botanical">Citrus limon</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="1" aria-label="New count for Lemon">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Lemon">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Lemon">
+            </div>
+        </div>
+        <div class="inv-strata-group">
+          <div class="inv-strata-header" style="background:#f4f8ec;border-left:3px solid #8bb85a">
+            <span>🌱</span>
+            <span class="inv-strata-name" style="color:#8bb85a">Ground Layer</span>
+            <span class="inv-strata-count">10</span>
+          </div>
+          
+            <div class="inv-plant-row" data-species="Mint" data-strata="low" data-current="4">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Mint</div>
+                <div class="inv-plant-botanical">Mentha spicata</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">4</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="4" aria-label="New count for Mint">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Mint">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Mint">
+            </div>
+            <div class="inv-plant-row" data-species="Lemon Balm" data-strata="low" data-current="1">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Lemon Balm</div>
+                <div class="inv-plant-botanical">Melissa officinalis</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">1</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="1" aria-label="New count for Lemon Balm">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Lemon Balm">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Lemon Balm">
+            </div>
+            <div class="inv-plant-row" data-species="Sweet Potato" data-strata="low" data-current="2">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Sweet Potato</div>
+                <div class="inv-plant-botanical">Ipomoea batatas</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">2</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="2" aria-label="New count for Sweet Potato">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Sweet Potato">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Sweet Potato">
+            </div>
+            <div class="inv-plant-row" data-species="Carrot" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Carrot</div>
+                <div class="inv-plant-botanical">Daucus carota</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Carrot">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Carrot">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Carrot">
+            </div>
+            <div class="inv-plant-row" data-species="Beetroot" data-strata="low" data-current="2">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Beetroot</div>
+                <div class="inv-plant-botanical">Beta vulgaris</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">2</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="2" aria-label="New count for Beetroot">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Beetroot">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Beetroot">
+            </div>
+            <div class="inv-plant-row" data-species="Spinach" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Spinach</div>
+                <div class="inv-plant-botanical">Beta vulgaris</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Spinach">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Spinach">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Spinach">
+            </div>
+            <div class="inv-plant-row" data-species="Kale (Nero di Toscana)" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Kale (Nero di Toscana)</div>
+                <div class="inv-plant-botanical">Brassica oleracea var. acephala</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Kale (Nero di Toscana)">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Kale (Nero di Toscana)">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Kale (Nero di Toscana)">
+            </div>
+            <div class="inv-plant-row" data-species="Silverbeet" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Silverbeet</div>
+                <div class="inv-plant-botanical">Beta vulgaris var. cicla</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Silverbeet">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Silverbeet">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Silverbeet">
+            </div>
+            <div class="inv-plant-row" data-species="Chives" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Chives</div>
+                <div class="inv-plant-botanical">Allium schoenoprasum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Chives">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Chives">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Chives">
+            </div>
+            <div class="inv-plant-row" data-species="Spring Onion" data-strata="low" data-current="3">
+              <div class="inv-plant-info">
+                <div class="inv-plant-name">Spring Onion</div>
+                <div class="inv-plant-botanical">Allium fistulosum</div>
+              </div>
+              <div class="inv-fields">
+                <div class="inv-was">
+                  <label>Was</label>
+                  <span class="inv-prev-count">3</span>
+                </div>
+                <div class="inv-now">
+                  <label>Now</label>
+                  <input type="number" inputmode="numeric" min="0" step="1"
+                         class="inv-count-input" placeholder="—" value="3" aria-label="New count for Spring Onion">
+                </div>
+                <select class="inv-condition" aria-label="Condition of Spring Onion">
+                  <option value="alive">OK</option>
+                  <option value="damaged">⚠️</option>
+                  <option value="dead">✝</option>
+                </select>
+              </div>
+              <input type="text" class="inv-note-input" placeholder="Notes..." aria-label="Notes for Spring Onion">
+            </div>
+        </div>
+      </div>
+
+      <button id="section-submit" class="obs-submit-btn">Save Section Report</button>
+      <button class="add-plant-trigger" onclick="showAddPlantPanel()">+ Add New Plant to Section</button>
+    </div>
+  </div>
+
+  <!-- ADD NEW PLANT (hidden until triggered) -->
+  <div id="add-plant-panel" class="obs-form-section" style="display:none">
+    <div class="add-plant-header">
+      <span class="obs-label">Add New Plant to Section</span>
+      <button id="add-plant-close" class="add-plant-close-btn">✕</button>
+    </div>
+    <div class="obs-field-group">
+      <input type="text" id="plant-search" class="obs-input" placeholder="Search plant types..." autocomplete="off">
+      <div id="plant-search-results" class="plant-search-results"></div>
+    </div>
+    <div id="new-plant-fields" style="display:none">
+      <div class="obs-field-row">
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label">Species</label>
+          <div id="new-plant-species" class="new-plant-display"></div>
+        </div>
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label">Strata</label>
+          <div id="new-plant-strata" class="new-plant-display"></div>
+        </div>
+      </div>
+      <div class="obs-field-row">
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="new-plant-count">Count</label>
+          <input type="number" id="new-plant-count" class="obs-input obs-input-number" inputmode="numeric" min="0" placeholder="—">
+        </div>
+        <div class="obs-field-group obs-field-small">
+          <label class="obs-label" for="new-plant-condition">Condition</label>
+          <select id="new-plant-condition" class="obs-select">
+            <option value="alive">Alive</option>
+            <option value="damaged">Damaged</option>
+          </select>
+        </div>
+      </div>
+      <div class="obs-field-group">
+        <label class="obs-label" for="new-plant-notes">Notes</label>
+        <input type="text" id="new-plant-notes" class="obs-input" placeholder="When planted, description, etc.">
+      </div>
+      <button id="new-plant-submit" class="obs-submit-btn">Save New Plant Observation</button>
+    </div>
+  </div>
+
+  <!-- Status messages -->
+  <div id="obs-status" class="obs-status" style="display:none"></div>
+
+  <!-- Navigation -->
+  <div class="obs-nav">
+    <a href="P1R4.33-43.html" class="obs-back-link">← Back to section view</a>
+  </div>
+
+  <div class="footer">
+    <div>Last inventory: 2026-06-11</div>
+    <div class="footer-sub">Firefly Corner Farm · Field Observation System</div>
+  </div>
+
+</div>
+
+<script>
+const SECTION_DATA = {
+  id: "P1R4.33-43",
+  range: "33–43",
+  paddock: 1,
+  row: 4,
+  plants: [{"species": "Mint", "strata": "low", "count": 4}, {"species": "Capsicum", "strata": "medium", "count": 5}, {"species": "Chilli (Bird Eye)", "strata": "medium", "count": 1}, {"species": "Chilli (Cayenne)", "strata": "medium", "count": 3}, {"species": "Lemon Balm", "strata": "low", "count": 1}, {"species": "Sweet Potato", "strata": "low", "count": 2}, {"species": "Carrot", "strata": "low", "count": 3}, {"species": "Beetroot", "strata": "low", "count": 2}, {"species": "Spinach", "strata": "low", "count": 3}, {"species": "Kale (Nero di Toscana)", "strata": "low", "count": 3}, {"species": "Silverbeet", "strata": "low", "count": 3}, {"species": "Chives", "strata": "low", "count": 3}, {"species": "Spring Onion", "strata": "low", "count": 3}, {"species": "Lavender", "strata": "medium", "count": 1}, {"species": "Banagrass", "strata": "high", "count": 2}, {"species": "Lemon", "strata": "medium", "count": 1}]
+};
+const PLANT_TYPES_DATA = [{"species": "Acerola", "strata": "medium", "botanical": "Malpighia emarginata"}, {"species": "Achiote", "strata": "medium", "botanical": "Bixa orellana"}, {"species": "Aloe Vera", "strata": "low", "botanical": "Aloe barbadensis"}, {"species": "Amaranth", "strata": "low", "botanical": "Amaranthus spp."}, {"species": "Amaranth (Calaloo)", "strata": "low", "botanical": "Amaranthus spp."}, {"species": "Amla", "strata": "high", "botanical": "Phyllanthus emblica"}, {"species": "Apple", "strata": "medium", "botanical": "Malus domestica"}, {"species": "Apricot", "strata": "high", "botanical": "Prunus armeniaca"}, {"species": "Arrowroot", "strata": "medium", "botanical": "Canna edulis"}, {"species": "Australian Climbing Bluebell", "strata": "low", "botanical": "Billardiera fusiformis"}, {"species": "Avocado", "strata": "high", "botanical": "Persea americana"}, {"species": "Avocado (Hass)", "strata": "high", "botanical": "Persea americana"}, {"species": "Banagrass", "strata": "high", "botanical": "Cenchrus purpureus"}, {"species": "Banana", "strata": "high", "botanical": "Musa acuminata"}, {"species": "Barley", "strata": "low", "botanical": "Hordeum vulgare"}, {"species": "Barley (Pearl)", "strata": "low", "botanical": "Hordeum vulgare"}, {"species": "Basil - Perennial", "strata": "medium", "botanical": "Ocimum basilicum"}, {"species": "Basil - Perennial (Greek)", "strata": "low", "botanical": "Ocimum minimum"}, {"species": "Basil - Perennial (Thai)", "strata": "medium", "botanical": "Ocimum basilicum"}, {"species": "Basil - Sweet (Classic)", "strata": "low", "botanical": "Ocimum basilicum"}, {"species": "Basil - Sweet (Gourmet Mix)", "strata": "low", "botanical": "Ocimum basilicum"}, {"species": "Bean - Climbing", "strata": "medium", "botanical": "Phaseolus vulgaris"}, {"species": "Bean - Climbing (Blue Lake)", "strata": "medium", "botanical": "Phaseolus vulgaris"}, {"species": "Bean - Climbing (Purple King)", "strata": "medium", "botanical": "Phaseolus vulgaris"}, {"species": "Bean - Dwarf", "strata": "low", "botanical": "Phaseolus vulgaris"}, {"species": "Bean - Dwarf (Borlotti)", "strata": "low", "botanical": "Phaseolus vulgaris"}, {"species": "Bee & Butterfly Mix", "strata": "low", "botanical": "Mixed species"}, {"species": "Beetroot", "strata": "low", "botanical": "Beta vulgaris"}, {"species": "Beetroot (Crimson Globe)", "strata": "low", "botanical": "Beta vulgaris"}, {"species": "Beetroot (Moulin Rouge)", "strata": "low", "botanical": "Beta vulgaris"}, {"species": "Black Coral Pea", "strata": "low", "botanical": "Kennedia nigricans"}, {"species": "Black She-oak", "strata": "high", "botanical": "Allocasuarina littoralis"}, {"species": "Blackberry", "strata": "low", "botanical": "Rubus fruticosus"}, {"species": "Blueberry", "strata": "low", "botanical": "Vaccinium corymbosum"}, {"species": "Borage", "strata": "low", "botanical": "Borago officinalis"}, {"species": "Borage (Blue Flower)", "strata": "low", "botanical": "Borago officinalis"}, {"species": "Borage (White Flower)", "strata": "low", "botanical": "Borago officinalis"}, {"species": "Broad Bean", "strata": "medium", "botanical": "Vicia faba"}, {"species": "Broad Bean (Long Pod)", "strata": "medium", "botanical": "Vicia faba"}, {"species": "Broccoletti (Raab Rapini)", "strata": "low", "botanical": "Brassica oleracea var. italica"}, {"species": "Broccoli", "strata": "low", "botanical": "Brassica oleracea var. italica"}, {"species": "Broccoli (Summer Green)", "strata": "low", "botanical": "Brassica oleracea var. italica"}, {"species": "Brussels Sprout", "strata": "low", "botanical": "Brassica oleracea var. gemmifera"}, {"species": "Buckwheat", "strata": "low", "botanical": "Fagopyrum esculentum"}, {"species": "Bunnya Pine", "strata": "emergent", "botanical": "Araucaria bidwilii"}, {"species": "Butternut Pumpkin", "strata": "low", "botanical": "Cucurbita maxima"}, {"species": "Cabbage", "strata": "low", "botanical": "Brassica oleracea"}, {"species": "Cabbage (Golden Acre)", "strata": "low", "botanical": "Brassica oleracea var. capitata"}, {"species": "Cabbage (Red)", "strata": "low", "botanical": "Brassica oleracea var. capitata"}, {"species": "Cabbage (Savoy Vertu)", "strata": "low", "botanical": "Brassica oleracea var. capitata"}, {"species": "Calendula", "strata": "low", "botanical": "Calendula officinalis"}, {"species": "Cape Gooseberry", "strata": "medium", "botanical": "Physalis peruviana"}, {"species": "Capsicum", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Capsicum (Red)", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Carob", "strata": "emergent", "botanical": "Ceratonia siliqua"}, {"species": "Carrot", "strata": "low", "botanical": "Daucus carota"}, {"species": "Castor Bean", "strata": "medium", "botanical": "Ricinus communis"}, {"species": "Cattail", "strata": "medium", "botanical": "Typha spp."}, {"species": "Cauliflower", "strata": "low", "botanical": "Brassica oleracea var. botrytis"}, {"species": "Celery", "strata": "low", "botanical": "Apium graveolens"}, {"species": "Celery (Golden Self Blanching)", "strata": "low", "botanical": "Apium graveolens"}, {"species": "Celery (Tendercrisp)", "strata": "low", "botanical": "Apium graveolens"}, {"species": "Chamomile", "strata": "low", "botanical": "Chamaemelum nobile"}, {"species": "Chilli", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Chilli (Big Jim)", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Chilli (Bird Eye)", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Chilli (Cayenne)", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Chilli (Devil's Brew)", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Chilli (Jalape\u00f1o)", "strata": "medium", "botanical": "Capsicum annuum"}, {"species": "Chives", "strata": "low", "botanical": "Allium schoenoprasum"}, {"species": "Chives - Garlic", "strata": "low", "botanical": "Allium tuberosum"}, {"species": "Choko", "strata": "medium", "botanical": "Sechium edule"}, {"species": "Citrus (Yuzu)", "strata": "medium", "botanical": "Citrus junos"}, {"species": "Clover", "strata": "low", "botanical": "Trifolium repens"}, {"species": "Clover (Crimson)", "strata": "low", "botanical": "Trifolium pratense"}, {"species": "Clover (Red Persian)", "strata": "low", "botanical": "Trifolium pratense"}, {"species": "Clover (White Haifa)", "strata": "low", "botanical": "Trifolium repens"}, {"species": "Coffee", "strata": "medium", "botanical": "Coffea arabica"}, {"species": "Coffee (Arabica)", "strata": "medium", "botanical": "Coffea arabica"}, {"species": "Comfrey", "strata": "low", "botanical": "Symphytum officinale"}, {"species": "Coriander", "strata": "low", "botanical": "Coriandrum sativum"}, {"species": "Corn", "strata": "emergent", "botanical": "Zea mays"}, {"species": "Corn (Manning Pride)", "strata": "emergent", "botanical": "Zea mays"}, {"species": "Corn (Sweet)", "strata": "emergent", "botanical": "Zea mays"}, {"species": "Cottage Garden Mix", "strata": "low", "botanical": "Mixed species"}, {"species": "Cowpea", "strata": "low", "botanical": "Vigna unguiculata"}, {"species": "Cowpea (Red)", "strata": "low", "botanical": "Vigna unguiculata"}, {"species": "Cucumber", "strata": "medium", "botanical": "Cucumis sativus"}, {"species": "Cucumber (Burpless)", "strata": "medium", "botanical": "Cucumis sativus"}, {"species": "Cucumber (Lebanese)", "strata": "medium", "botanical": "Cucumis sativus"}, {"species": "Cucumber (Space Master)", "strata": "medium", "botanical": "Cucumis sativus"}, {"species": "Curry Leaf", "strata": "medium", "botanical": "Murraya koenigii"}, {"species": "Davidson Plum", "strata": "high", "botanical": "Davidsonia jerseyana"}, {"species": "Dianella", "strata": "low", "botanical": "Dianella spp."}, {"species": "Dill", "strata": "low", "botanical": "Anethum graveolens"}, {"species": "Eggplant", "strata": "medium", "botanical": "Solanum melongena"}, {"species": "Eggplant (Long Purple)", "strata": "medium", "botanical": "Solanum melongena"}, {"species": "Eucalypt-Gum (Generic)", "strata": "emergent", "botanical": "Eucalyptus"}, {"species": "Everlastings", "strata": "low", "botanical": "Rhodanthe chlorocephala"}, {"species": "Fennel", "strata": "low", "botanical": "Foeniculum vulgare"}, {"species": "Fig", "strata": "high", "botanical": "Ficus carica"}, {"species": "Finger Lime", "strata": "medium", "botanical": "Citrus australasica"}, {"species": "Forest Red Gum", "strata": "emergent", "botanical": "Eucalyptus tereticornis"}, {"species": "Forget-Me-Not", "strata": "low", "botanical": "Myosotis sylvatica"}, {"species": "Garlic", "strata": "low", "botanical": "Allium sativum"}, {"species": "Garlic Chives", "strata": "low", "botanical": "Allium tuberosum"}, {"species": "Geranium", "strata": "low", "botanical": "Pelargonium graveolens"}, {"species": "Ginger", "strata": "low", "botanical": "Zingiber officinale"}, {"species": "Ginger - Galangal", "strata": "low", "botanical": "Alpinia galanga"}, {"species": "Grape Vine", "strata": "medium", "botanical": "Vitis vinifera"}, {"species": "Grape Vine (Chambourcin)", "strata": "medium", "botanical": "Vitis vinifera hybrid"}, {"species": "Grapefruit", "strata": "high", "botanical": "Citrus \u00d7 paradisi"}, {"species": "Green Manure Mix", "strata": "low", "botanical": "Mixed species"}, {"species": "Guava", "strata": "medium", "botanical": "Psidium"}, {"species": "Guava (Hawaiian)", "strata": "medium", "botanical": "Psidium guajava"}, {"species": "Guava (Purple)", "strata": "medium", "botanical": "Psidium rufum"}, {"species": "Guava (Strawberry)", "strata": "medium", "botanical": "Psidium cattleianum"}, {"species": "Guava (Thai White)", "strata": "medium", "botanical": "Psidium guajava"}, {"species": "Gum (Peppermint)", "strata": "emergent", "botanical": "Eucalyptus radiata"}, {"species": "Hyssop", "strata": "low", "botanical": "Hyssopus officinalis"}, {"species": "Ice Cream Bean", "strata": "high", "botanical": "Inga edulis"}, {"species": "Jaboticaba", "strata": "medium", "botanical": "Plinia cauliflora"}, {"species": "Jacaranda", "strata": "medium", "botanical": "Jacaranda mimosifolia"}, {"species": "Jackfruit", "strata": "high", "botanical": "Artocarpus heterophyllus"}, {"species": "Kale (Nero di Toscana)", "strata": "low", "botanical": "Brassica oleracea var. acephala"}, {"species": "Kangaroo Paw", "strata": "low", "botanical": "Anigozanthos flavidus"}, {"species": "Kennedia Nigricans", "strata": "low", "botanical": "Kennedia nigricans"}, {"species": "Kumquat", "strata": "medium", "botanical": "Citrus japonica"}, {"species": "Lavender", "strata": "medium", "botanical": "Lavandula"}, {"species": "Lavender - French", "strata": "medium", "botanical": "Lavandula dentata"}, {"species": "Lavender - True", "strata": "medium", "botanical": "Lavandula angustifolia"}, {"species": "Leek", "strata": "low", "botanical": "Allium ampeloprasum"}, {"species": "Leek (Carentan 2)", "strata": "low", "botanical": "Allium ampeloprasum"}, {"species": "Lemon", "strata": "medium", "botanical": "Citrus limon"}, {"species": "Lemon Balm", "strata": "low", "botanical": "Melissa officinalis"}, {"species": "Lemon Myrtle", "strata": "high", "botanical": "Backhousia citriodora"}, {"species": "Lemon-scented Tea Tree", "strata": "medium", "botanical": "Leptospermum petersonii"}, {"species": "Lemongrass", "strata": "low", "botanical": "Cymbopogon citratus"}, {"species": "Lettuce", "strata": "medium", "botanical": "Lactuca sativa"}, {"species": "Lettuce (Cos)", "strata": "medium", "botanical": "Lactuca sativa"}, {"species": "Lettuce (Mix)", "strata": "medium", "botanical": "Lactuca sativa"}, {"species": "Lilly Pilly", "strata": "high", "botanical": "Syzygium spp."}, {"species": "Linseed", "strata": "low", "botanical": "Linum usitatissimum"}, {"species": "Linseed (Brown)", "strata": "low", "botanical": "Linum usitatissimum"}, {"species": "Liquidambar", "strata": "emergent", "botanical": "Liquidambar styraciflua"}, {"species": "Longan", "strata": "high", "botanical": "Dimocarpus longan"}, {"species": "Luffa", "strata": "low", "botanical": "Luffa aegyptiaca"}, {"species": "Lupin", "strata": "low", "botanical": "Lupinus hartwegii"}, {"species": "Macadamia", "strata": "high", "botanical": "Macadamia integrifolia"}, {"species": "Malabar Chestnut", "strata": "high", "botanical": "Pachira aquatica"}, {"species": "Mango", "strata": "high", "botanical": "Mangifera indica"}, {"species": "Marigold", "strata": "low", "botanical": "Tagetes patula"}, {"species": "Marigold (African)", "strata": "low", "botanical": "Tagetes patula"}, {"species": "Marigold (French - Dwarf)", "strata": "low", "botanical": "Tagetes patula"}, {"species": "Marigold (French)", "strata": "low", "botanical": "Tagetes patula"}, {"species": "Melaleuca (Ball Honey Myrtle)", "strata": "medium", "botanical": "Melaleuca nodosa"}, {"species": "Melaleuca (Generic)", "strata": "high", "botanical": "Melaleuca spp."}, {"species": "Melaleuca (Snow in Summer)", "strata": "high", "botanical": "Melaleuca linariifolia"}, {"species": "Melaleuca-White Feather Honey Myrtle (Decora)", "strata": "high", "botanical": "Melaleuca decora"}, {"species": "Melon", "strata": "low", "botanical": "Cucumis melo"}, {"species": "Millet", "strata": "medium", "botanical": "Panicum miliaceum"}, {"species": "Millet (White French)", "strata": "medium", "botanical": "Panicum miliaceum"}, {"species": "Mint", "strata": "low", "botanical": "Mentha spicata"}, {"species": "Mint (Australian)", "strata": "low", "botanical": "Mentha australis"}, {"species": "Mulberry", "strata": "high", "botanical": "Morus"}, {"species": "Mulberry (Beenleigh Black)", "strata": "high", "botanical": "Morus nigra"}, {"species": "Mulberry (White)", "strata": "high", "botanical": "Morus alba"}, {"species": "Mung Bean", "strata": "low", "botanical": "Vigna radiata"}, {"species": "Mustard (White Yellow)", "strata": "low", "botanical": "Sinapis alba"}, {"species": "Nasturtium", "strata": "low", "botanical": "Tropaeolum majus"}, {"species": "Native Sarsaparilla", "strata": "low", "botanical": "Hardenbergia violacea"}, {"species": "Nettle", "strata": "low", "botanical": "Urtica dioica"}, {"species": "Oat", "strata": "medium", "botanical": "Avena sativa"}, {"species": "Okra", "strata": "medium", "botanical": "Abelmoschus esculentus"}, {"species": "Olive", "strata": "high", "botanical": "Olea europaea"}, {"species": "Olive (Kalamata)", "strata": "high", "botanical": "Olea europaea"}, {"species": "Onion", "strata": "low", "botanical": "Allium cepa"}, {"species": "Onion (Gladalan Brown)", "strata": "low", "botanical": "Allium cepa"}, {"species": "Onion (Red)", "strata": "low", "botanical": "Allium cepa"}, {"species": "Orach", "strata": "low", "botanical": "Atriplex hortensis"}, {"species": "Orange", "strata": "high", "botanical": "Citrus sinensis"}, {"species": "Oregano", "strata": "medium", "botanical": "Origanum vulgare"}, {"species": "Pak Choi", "strata": "medium", "botanical": "Brassica rapa var. chinensis"}, {"species": "Papaya", "strata": "high", "botanical": "Carica papaya"}, {"species": "Parsley (Italian)", "strata": "low", "botanical": "Petroselinum crispum"}, {"species": "Parsley (Moss Curled)", "strata": "low", "botanical": "Petroselinum crispum"}, {"species": "Parsnip (Hollow Grown)", "strata": "low", "botanical": "Pastinaca sativa"}, {"species": "Passionfruit", "strata": "high", "botanical": "Passiflora edulis"}, {"species": "Passionfruit (Panama Gold)", "strata": "high", "botanical": "Passiflora edulis"}, {"species": "Pea", "strata": "low", "botanical": "Pisum sativum"}, {"species": "Pea-Snow", "strata": "low", "botanical": "Pisum sativum"}, {"species": "Pea-Snow (Yakumo)", "strata": "low", "botanical": "Pisum sativum var. saccharatum"}, {"species": "Pea-Sugar Snap", "strata": "low", "botanical": "Pisum sativum"}, {"species": "Peach", "strata": "high", "botanical": "Prunus persica"}, {"species": "Peanut", "strata": "low", "botanical": "Arachis hypogaea"}, {"species": "Pear", "strata": "high", "botanical": "Pyrus communis"}, {"species": "Pear (Flordahome)", "strata": "high", "botanical": "Pyrus communis x Pyrus pyrifolia"}, {"species": "Pear (Nashi)", "strata": "high", "botanical": "Pyrus pyrifolia"}, {"species": "Pear (Williams)", "strata": "high", "botanical": "Pyrus communis"}, {"species": "Pepino plant", "strata": "medium", "botanical": "Solanum muricatum"}, {"species": "Phacelia", "strata": "low", "botanical": "Phacelia tanacetifolia"}, {"species": "Pigeon Pea", "strata": "high", "botanical": "Cajanus cajan"}, {"species": "Plum", "strata": "medium", "botanical": "Prunus domestica"}, {"species": "Plum - Pluot (Black Adder)", "strata": "medium", "botanical": "Prunus salicina x Prunus armeniaca"}, {"species": "Prickly Pear", "strata": "medium", "botanical": "Opuntia ficus-indica"}, {"species": "Prickly-leaved Paperbark", "strata": "high", "botanical": "Melaleuca styphelioides"}, {"species": "Pumpkin", "strata": "low", "botanical": "Cucurbita maxima"}, {"species": "Pumpkin (Golden Nugget)", "strata": "low", "botanical": "Cucurbita maxima"}, {"species": "Pumpkin (Queensland Blue)", "strata": "low", "botanical": "Cucurbita maxima"}, {"species": "Pyrethrum", "strata": "low", "botanical": "Tanacetum cinerariifolium"}, {"species": "Quince", "strata": "high", "botanical": "Cydonia oblonga"}, {"species": "Radish", "strata": "low", "botanical": "Raphanus sativus"}, {"species": "Radish (Tillage)", "strata": "low", "botanical": "Raphanus sativus"}, {"species": "Radish (red - Sparkler)", "strata": "low", "botanical": "Raphanus sativus"}, {"species": "Radish (red - scarlett globe)", "strata": "low", "botanical": "Raphanus sativus"}, {"species": "Raspberry", "strata": "low", "botanical": "Rubus idaeus"}, {"species": "Rocket", "strata": "low", "botanical": "Eruca vesicaria"}, {"species": "Rose Apple", "strata": "high", "botanical": "Syzygium jambos"}, {"species": "Rosemary", "strata": "medium", "botanical": "Salvia rosmarinus"}, {"species": "Rough Barked Apple", "strata": "emergent", "botanical": "Angophora floribunda"}, {"species": "Sage", "strata": "medium", "botanical": "Salvia officinalis"}, {"species": "Sage (Pineapple)", "strata": "medium", "botanical": "Salvia elegans"}, {"species": "Shallot", "strata": "low", "botanical": "Allium fistulosum"}, {"species": "Silver Dollar Gum", "strata": "emergent", "botanical": "Eucalyptus cinerea"}, {"species": "Silver Wattle (Dealbata)", "strata": "emergent", "botanical": "Acacia dealbata"}, {"species": "Silverbeet", "strata": "low", "botanical": "Beta vulgaris var. cicla"}, {"species": "Sorghum", "strata": "medium", "botanical": "Sorghum bicolor"}, {"species": "Spinach", "strata": "low", "botanical": "Beta vulgaris"}, {"species": "Spinach (Beet-Perpetual)", "strata": "low", "botanical": "Beta vulgaris var. cicla"}, {"species": "Spinach (English Mediana)", "strata": "low", "botanical": "Beta vulgaris"}, {"species": "Spinach (Matador)", "strata": "low", "botanical": "Beta vulgaris"}, {"species": "Spinach-Perennial (Okinawa Spinach)", "strata": "low", "botanical": "Gynura crepioides"}, {"species": "Spinach-Perpetual", "strata": "low", "botanical": "Beta vulgaris var. cicla"}, {"species": "Spring Onion", "strata": "low", "botanical": "Allium fistulosum"}, {"species": "Spring Onion (Lisbon)", "strata": "low", "botanical": "Allium fistulosum"}, {"species": "Squash (Yellow Scallop)", "strata": "low", "botanical": "Cucurbita pepo"}, {"species": "Strawberry", "strata": "low", "botanical": "Fragaria \u00d7 ananassa"}, {"species": "Sturt Desert Pea", "strata": "low", "botanical": "Swainsona formosa"}, {"species": "Sugar Cane", "strata": "high", "botanical": "Saccharum officinarum"}, {"species": "Sunflower", "strata": "medium", "botanical": "Helianthus annuus"}, {"species": "Sunflower (Sun King)", "strata": "medium", "botanical": "Helianthus annuus"}, {"species": "Sunn Hemp", "strata": "medium", "botanical": "Crotalaria juncea"}, {"species": "Surinam Cherry", "strata": "medium", "botanical": "Eugenia uniflora"}, {"species": "Sweet Potato", "strata": "low", "botanical": "Ipomoea batatas"}, {"species": "Tagasaste - Tree Lucerne", "strata": "emergent", "botanical": "Chamaecytisus palmensis"}, {"species": "Tallowood (Gum)", "strata": "emergent", "botanical": "Eucalyptus microcorys"}, {"species": "Tansy", "strata": "low", "botanical": "Tanacetum vulgare"}, {"species": "Tarragon (Mexican)", "strata": "low", "botanical": "Artemisia dracunculus"}, {"species": "Tarragon (Russian)", "strata": "low", "botanical": "Artemisia dracunculus"}, {"species": "Tea Tree Oil (Melaleuca) (Alternifolia)", "strata": "medium", "botanical": "Melaleuca alternifolia"}, {"species": "Thyme", "strata": "low", "botanical": "Thymus vulgaris"}, {"species": "Tomato", "strata": "low", "botanical": "Solanum lycopersicum"}, {"species": "Tomato (Moneymaker)", "strata": "low", "botanical": "Solanum lycopersicum"}, {"species": "Tomato (Mortgage Lifter)", "strata": "low", "botanical": "Solanum lycopersicum"}, {"species": "Tomato (Oxheart)", "strata": "low", "botanical": "Solanum lycopersicum"}, {"species": "Tomato (Rouge de Marmande)", "strata": "low", "botanical": "Solanum lycopersicum"}, {"species": "Tree Fern", "strata": "medium", "botanical": "Cyathea spp."}, {"species": "Tree Lucerne - Tagasaste", "strata": "emergent", "botanical": "Chamaecytisus palmensis"}, {"species": "Turmeric", "strata": "low", "botanical": "Curcuma longa"}, {"species": "Turnip (Purple top)", "strata": "low", "botanical": "Brassica rapa"}, {"species": "Vacoa (Pandanus)", "strata": "high", "botanical": "Pandanus spp."}, {"species": "Vetch", "strata": "low", "botanical": "Vicia sativa"}, {"species": "Walnut (Placentia)", "strata": "high", "botanical": "Juglans regia 'Placentia'"}, {"species": "Watercress", "strata": "low", "botanical": "Nasturtium officinale"}, {"species": "Watermelon (Sugar baby)", "strata": "low", "botanical": "Citrullus lanatus"}, {"species": "Wattle", "strata": "high", "botanical": "Acacia spp."}, {"species": "Wattle (Acacia)", "strata": "high", "botanical": "Acacia spp."}, {"species": "Wattle - Cootamundra (Baileyana)", "strata": "high", "botanical": "Acacia baileyana"}, {"species": "Winter Market Garden Mix", "strata": "low", "botanical": "Mixed species"}, {"species": "Yarrow", "strata": "low", "botanical": "Achillea millefolium"}, {"species": "Yarrow (White)", "strata": "low", "botanical": "Achillea millefolium"}, {"species": "Zucchini", "strata": "low", "botanical": "Cucurbita pepo"}, {"species": "Zucchini (Blackjack)", "strata": "low", "botanical": "Cucurbita pepo"}, {"species": "Zucchini (Green Skin)", "strata": "low", "botanical": "Cucurbita pepo"}, {"species": "Zucchini (Lebanese)", "strata": "low", "botanical": "Cucurbita pepo"}];
+const OBSERVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxwWorskdbg8ZFpkYAzpo4ILGUNRhTi7HtQbxtYI38ws9vKSIlASAZHvpGIPrbHVBVY/exec";
+const PLANTNET_API_KEY = "2b10sQ8SBabeeoUNGZCccL7r9e";
+</script>
+<script src="observe.js"></script>
+</body>
+</html>

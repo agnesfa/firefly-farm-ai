@@ -1,7 +1,7 @@
 {
   "generated": true,
   "generated_from": "farmOS",
-  "generated_at": "2026-05-25T15:36:00.891423+10:00",
+  "generated_at": "2026-06-14T19:41:28.174538+10:00",
   "sections": {
     "P2R1.0-3": {
       "id": "P2R1.0-3",
@@ -29781,6 +29781,2674 @@
         }
       ],
       "section_logs": []
+    },
+    "P1R2.0-12": {
+      "id": "P1R2.0-12",
+      "paddock": 1,
+      "row": 2,
+      "range": "0–12",
+      "length": "12m",
+      "has_trees": false,
+      "first_planted": "2026-05-19",
+      "inventory_date": "2026-05-27",
+      "plants": [
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (her Section 1 → farmOS subsection 0-12). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Lemon Balm - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "3b559656-416b-46ab-b187-46145cd47864",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.0-12 — Lemon Balm",
+              "notes": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (her Section 1 → farmOS subsection 0-12). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | ",
+              "notes_full": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (her Section 1 → farmOS subsection 0-12). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:18.291Z | related=Lemon Balm,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:18.291Z | related=Lemon Balm,P1R2.0-12",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 1,
+          "notes": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (Section 1 → 0-12). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Sweet Potato - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "5f9a9b96-25f3-4ee9-b5c5-e619460d2eba",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.0-12 — Sweet Potato",
+              "notes": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (Section 1 → 0-12). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session",
+              "notes_full": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (Section 1 → 0-12). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:21.425Z | related=Sweet Potato,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:21.425Z | related=Sweet Potato,P1R2.0-12",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 2,
+          "notes": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (Section 1 → 0-12). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "f812df56-a299-41f9-99a7-2562927cb3c7",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.0-12 — Mint",
+              "notes": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (Section 1 → 0-12). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session",
+              "notes_full": "Winter transplant from nursery. Per Hollis's per-section P1R2 notes (Section 1 → 0-12). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:24.092Z | related=Mint,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:24.092Z | related=Mint,P1R2.0-12",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 9,
+          "notes": "Winter transplant from nursery. Hollis recorded 34 capsicum full-row P1R2; distributed evenly across 4 subsections (9/9/8/8). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Capsicum - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "9a638763-1324-45ab-a05e-9585fd5d90eb",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.0-12 — Capsicum",
+              "notes": "Winter transplant from nursery. Hollis recorded 34 capsicum full-row P1R2; distributed evenly across 4 subsections (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user |",
+              "notes_full": "Winter transplant from nursery. Hollis recorded 34 capsicum full-row P1R2; distributed evenly across 4 subsections (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:26.880Z | related=Capsicum,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:26.880Z | related=Capsicum,P1R2.0-12",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Winter transplant from nursery. Hollis recorded 8 bird's-eye chilli full-row P1R2; distributed evenly across 4 subsections (2 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "0f35018a-489e-48c3-9e2a-60279c3dfb9f",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.0-12 — Chilli (Bird Eye)",
+              "notes": "Winter transplant from nursery. Hollis recorded 8 bird's-eye chilli full-row P1R2; distributed evenly across 4 subsections (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude",
+              "notes_full": "Winter transplant from nursery. Hollis recorded 8 bird's-eye chilli full-row P1R2; distributed evenly across 4 subsections (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:29.496Z | related=Chilli (Bird Eye),P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:29.496Z | related=Chilli (Bird Eye),P1R2.0-12",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "Winter transplant from nursery. Hollis recorded 16 cayenne full-row P1R2; distributed evenly across 4 subsections (4 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "b2a2a734-18a8-489c-803a-9bad874f9e6d",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.0-12 — Chilli (Cayenne)",
+              "notes": "Winter transplant from nursery. Hollis recorded 16 cayenne full-row P1R2; distributed evenly across 4 subsections (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | r",
+              "notes_full": "Winter transplant from nursery. Hollis recorded 16 cayenne full-row P1R2; distributed evenly across 4 subsections (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:32.208Z | related=Chilli (Cayenne),P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:32.208Z | related=Chilli (Cayenne),P1R2.0-12",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Garlic",
+          "strata": "low",
+          "count": 1,
+          "notes": "Hollis recorded 1 garlic full-row P1R2 (28 May); placed in subsection 0-12. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Garlic - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "5cab40b1-67c5-4a92-b752-5f31add502e0",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.0-12 — Garlic",
+              "notes": "Hollis recorded 1 garlic full-row P1R2 (28 May); placed in subsection 0-12. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=",
+              "notes_full": "Hollis recorded 1 garlic full-row P1R2 (28 May); placed in subsection 0-12. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:34.976Z | related=Garlic,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:34.976Z | related=Garlic,P1R2.0-12",
+              "species": "Garlic"
+            }
+          ],
+          "photo_url": "photos/garlic.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 5,
+          "notes": "Winter transplant from nursery. Hollis recorded 34 \"chives/spring onion\" full-row P1R2; split 17 Chives / 17 Spring Onion per Agnes, Chives distributed evenly across 4 subsections (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Chives - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "1c1edcce-1e30-423a-a94b-dd9684328cc1",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.0-12 — Chives",
+              "notes": "Winter transplant from nursery. Hollis recorded 34 \"chives/spring onion\" full-row P1R2; split 17 Chives / 17 Spring Onion per Agnes, Chives distributed evenly across 4 subsections (5/4/4/4). Backfille",
+              "notes_full": "Winter transplant from nursery. Hollis recorded 34 \"chives/spring onion\" full-row P1R2; split 17 Chives / 17 Spring Onion per Agnes, Chives distributed evenly across 4 subsections (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:37.690Z | related=Chives,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:37.690Z | related=Chives,P1R2.0-12",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 5,
+          "notes": "Winter transplant from nursery. Hollis recorded 34 \"chives/spring onion\" full-row P1R2; split 17/17 per Agnes, Spring Onion distributed evenly across 4 subsections (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spring Onion - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "0fbb277b-5d7d-44d9-8d7a-204fadef681d",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.0-12 — Spring Onion",
+              "notes": "Winter transplant from nursery. Hollis recorded 34 \"chives/spring onion\" full-row P1R2; split 17/17 per Agnes, Spring Onion distributed evenly across 4 subsections (5/4/4/4). Backfilled 2026-06-14.\n[o",
+              "notes_full": "Winter transplant from nursery. Hollis recorded 34 \"chives/spring onion\" full-row P1R2; split 17/17 per Agnes, Spring Onion distributed evenly across 4 subsections (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:40.403Z | related=Spring Onion,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:40.403Z | related=Spring Onion,P1R2.0-12",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis recorded 10 carrots full-row P1R2 (28 May); distributed evenly across 4 subsections (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Carrot - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "44de39ac-4486-4e8a-9d3a-ac7512eae8fb",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.0-12 — Carrot",
+              "notes": "Hollis recorded 10 carrots full-row P1R2 (28 May); distributed evenly across 4 subsections (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=",
+              "notes_full": "Hollis recorded 10 carrots full-row P1R2 (28 May); distributed evenly across 4 subsections (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:43.053Z | related=Carrot,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:43.053Z | related=Carrot,P1R2.0-12",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis recorded 10 kale full-row P1R2 (28 May); distributed evenly across 4 subsections (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Kale (Nero di Toscana) - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "bfbf6666-4857-4b63-abda-46e04495c2b4",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.0-12 — Kale (Nero di Toscana)",
+              "notes": "Hollis recorded 10 kale full-row P1R2 (28 May); distributed evenly across 4 subsections (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=cla",
+              "notes_full": "Hollis recorded 10 kale full-row P1R2 (28 May); distributed evenly across 4 subsections (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:45.725Z | related=Kale (Nero di Toscana),P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:45.725Z | related=Kale (Nero di Toscana),P1R2.0-12",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis recorded 12 spinach full-row P1R2 (28 May); distributed evenly across 4 subsections (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spinach - P1R2.0-12",
+          "logs": [
+            {
+              "uuid": "6cd4bd91-4bfa-4d37-9fdd-f483221dd34f",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.0-12 — Spinach",
+              "notes": "Hollis recorded 12 spinach full-row P1R2 (28 May); distributed evenly across 4 subsections (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=c",
+              "notes_full": "Hollis recorded 12 spinach full-row P1R2 (28 May); distributed evenly across 4 subsections (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:48.390Z | related=Spinach,P1R2.0-12",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:01:48.390Z | related=Spinach,P1R2.0-12",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R2.12-21": {
+      "id": "P1R2.12-21",
+      "paddock": 1,
+      "row": 2,
+      "range": "12–21",
+      "length": "9m",
+      "has_trees": false,
+      "first_planted": "2026-05-19",
+      "inventory_date": "2026-05-27",
+      "plants": [
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 6,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Lemon Balm - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "9b3833e8-1e44-405b-88d6-285c4f7322e1",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.12-21 — Lemon Balm",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:03.854Z | related=Lemon Balm,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:03.854Z | related=Lemon Balm,P1R2.12-21",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Sweet Potato - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "4c4a376a-4fc1-464d-a2b7-5176a078d6fc",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.12-21 — Sweet Potato",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:06.577Z | related=Sweet Potato,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:06.577Z | related=Sweet Potato,P1R2.12-21",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 2,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "bce0e455-67bf-488b-bcb6-e46302f6134e",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.12-21 — Mint",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Section 2 → 12-21). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:09.282Z | related=Mint,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:09.282Z | related=Mint,P1R2.12-21",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 9,
+          "notes": "Winter transplant from nursery. Hollis full-row P1R2 34 capsicum, even-split across 4 subsections (9/9/8/8). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Capsicum - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "9ca0422a-eff2-48fb-9695-2dc9260c7201",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.12-21 — Capsicum",
+              "notes": "Winter transplant from nursery. Hollis full-row P1R2 34 capsicum, even-split across 4 subsections (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | c",
+              "notes_full": "Winter transplant from nursery. Hollis full-row P1R2 34 capsicum, even-split across 4 subsections (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:11.973Z | related=Capsicum,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:11.973Z | related=Capsicum,P1R2.12-21",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Winter transplant from nursery. Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "092eb8ba-361f-412f-961c-9ce4bc48a886",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.12-21 — Chilli (Bird Eye)",
+              "notes": "Winter transplant from nursery. Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channe",
+              "notes_full": "Winter transplant from nursery. Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:14.800Z | related=Chilli (Bird Eye),P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:14.800Z | related=Chilli (Bird Eye),P1R2.12-21",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "Winter transplant from nursery. Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "f743168e-8790-48a9-9d8a-3851d1ee6612",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.12-21 — Chilli (Cayenne)",
+              "notes": "Winter transplant from nursery. Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_",
+              "notes_full": "Winter transplant from nursery. Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:17.416Z | related=Chilli (Cayenne),P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:17.416Z | related=Chilli (Cayenne),P1R2.12-21",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row P1R2 \"chives/spring onion\" 34, split 17/17 per Agnes; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Chives - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "8eeb3483-a35a-4336-95fa-c31fde839f34",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.12-21 — Chives",
+              "notes": "Hollis full-row P1R2 \"chives/spring onion\" 34, split 17/17 per Agnes; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | ch",
+              "notes_full": "Hollis full-row P1R2 \"chives/spring onion\" 34, split 17/17 per Agnes; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:19.998Z | related=Chives,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:19.998Z | related=Chives,P1R2.12-21",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row P1R2 \"chives/spring onion\" 34, split 17/17 per Agnes; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spring Onion - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "cf4c42d0-563d-4640-99e9-0138d923b58c",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.12-21 — Spring Onion",
+              "notes": "Hollis full-row P1R2 \"chives/spring onion\" 34, split 17/17 per Agnes; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manage",
+              "notes_full": "Hollis full-row P1R2 \"chives/spring onion\" 34, split 17/17 per Agnes; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:22.663Z | related=Spring Onion,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:22.663Z | related=Spring Onion,P1R2.12-21",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Carrot - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "e73fa9e2-1f3d-4e1d-95a9-5c9c99b317e3",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.12-21 — Carrot",
+              "notes": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api |",
+              "notes_full": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:25.297Z | related=Carrot,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:25.297Z | related=Carrot,P1R2.12-21",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Kale (Nero di Toscana) - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "0338c37c-4a16-478f-a7c0-9b3b6aa9a263",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.12-21 — Kale (Nero di Toscana)",
+              "notes": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ac",
+              "notes_full": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:27.909Z | related=Kale (Nero di Toscana),P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:27.909Z | related=Kale (Nero di Toscana),P1R2.12-21",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spinach - P1R2.12-21",
+          "logs": [
+            {
+              "uuid": "4ee94d6e-7176-4d51-b17a-cac6ff7f56a0",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.12-21 — Spinach",
+              "notes": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ",
+              "notes_full": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:30.534Z | related=Spinach,P1R2.12-21",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:30.534Z | related=Spinach,P1R2.12-21",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R2.21-31": {
+      "id": "P1R2.21-31",
+      "paddock": 1,
+      "row": 2,
+      "range": "21–31",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "2026-05-19",
+      "inventory_date": "2026-05-27",
+      "plants": [
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 3,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Lemon Balm - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "e487e205-eb34-430e-abd1-5b5b42dfecc1",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.21-31 — Lemon Balm",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:44.598Z | related=Lemon Balm,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:44.598Z | related=Lemon Balm,P1R2.21-31",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 3,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Sweet Potato - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "42834288-8f64-42d4-95e1-bd302a4d6b5d",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.21-31 — Sweet Potato",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:47.284Z | related=Sweet Potato,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:47.284Z | related=Sweet Potato,P1R2.21-31",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 2,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "0605c190-bf16-4196-94ba-35d945acf7e1",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.21-31 — Mint",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Section 3 → 21-31). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:49.986Z | related=Mint,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:49.986Z | related=Mint,P1R2.21-31",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 8,
+          "notes": "Hollis full-row P1R2 34 capsicum, even-split across 4 (9/9/8/8). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Capsicum - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "0628f89b-0625-49b0-ad18-1439eb8a68bd",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.21-31 — Capsicum",
+              "notes": "Hollis full-row P1R2 34 capsicum, even-split across 4 (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api ",
+              "notes_full": "Hollis full-row P1R2 34 capsicum, even-split across 4 (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:52.837Z | related=Capsicum,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:52.837Z | related=Capsicum,P1R2.21-31",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "ded581c3-cbcc-4012-9597-928c02c59c3f",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.21-31 — Chilli (Bird Eye)",
+              "notes": "Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farm",
+              "notes_full": "Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:55.503Z | related=Chilli (Bird Eye),P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:55.503Z | related=Chilli (Bird Eye),P1R2.21-31",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "8db211db-c8b4-47b0-ad2d-04d2ed35a1a1",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.21-31 — Chilli (Cayenne)",
+              "notes": "Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ",
+              "notes_full": "Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:58.168Z | related=Chilli (Cayenne),P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:02:58.168Z | related=Chilli (Cayenne),P1R2.21-31",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Chives - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "1c474cbf-49d1-468b-bdd0-bf4edef96a69",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.21-31 — Chives",
+              "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_se",
+              "notes_full": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:00.786Z | related=Chives,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:00.786Z | related=Chives,P1R2.21-31",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spring Onion - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "8b5c469d-2e9d-4652-a966-08c31d9fe901",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.21-31 — Spring Onion",
+              "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=cla",
+              "notes_full": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:03.692Z | related=Spring Onion,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:03.692Z | related=Spring Onion,P1R2.21-31",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 2,
+          "notes": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Carrot - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "7041e3f2-8c0d-4b23-a792-f46a32dbbd56",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.21-31 — Carrot",
+              "notes": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api |",
+              "notes_full": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:06.397Z | related=Carrot,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:06.397Z | related=Carrot,P1R2.21-31",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 2,
+          "notes": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Kale (Nero di Toscana) - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "2f651fa6-43d5-4f25-a67c-b161afbec7e1",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.21-31 — Kale (Nero di Toscana)",
+              "notes": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ac",
+              "notes_full": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:08.996Z | related=Kale (Nero di Toscana),P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:08.996Z | related=Kale (Nero di Toscana),P1R2.21-31",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spinach - P1R2.21-31",
+          "logs": [
+            {
+              "uuid": "679a7cd6-d738-4e26-9c04-93638b57ec79",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.21-31 — Spinach",
+              "notes": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ",
+              "notes_full": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:11.708Z | related=Spinach,P1R2.21-31",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:11.708Z | related=Spinach,P1R2.21-31",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R2.31-42": {
+      "id": "P1R2.31-42",
+      "paddock": 1,
+      "row": 2,
+      "range": "31–42",
+      "length": "11m",
+      "has_trees": false,
+      "first_planted": "2026-05-19",
+      "inventory_date": "2026-05-27",
+      "plants": [
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 5,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 merged → 31-42: 3+2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Lemon Balm - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "26f84171-8b93-4dd0-9449-e739e13df201",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.31-42 — Lemon Balm",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 merged → 31-42: 3+2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_ses",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 merged → 31-42: 3+2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:37.833Z | related=Lemon Balm,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:37.833Z | related=Lemon Balm,P1R2.31-42",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 5,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 → 31-42: 2+3; Section 5 was \"2 or 3 — 2 pots grew together, planted as cluster\"). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-19",
+          "asset_name": "19 MAY 2026 - Sweet Potato - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "64b72eaa-3590-478e-ad04-9544dc7aab35",
+              "type": "observation",
+              "date": "2026-05-18",
+              "name": "Inventory P1R2.31-42 — Sweet Potato",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 → 31-42: 2+3; Section 5 was \"2 or 3 — 2 pots grew together, planted as cluster\"). Backfilled 2026-06-14.\n[ontology:InteractionStam",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 → 31-42: 2+3; Section 5 was \"2 or 3 — 2 pots grew together, planted as cluster\"). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:40.487Z | related=Sweet Potato,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:40.487Z | related=Sweet Potato,P1R2.31-42",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 3,
+          "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 → 31-42: 2+1). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "b622d6ea-35e4-4029-8dbd-65581a00d473",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.31-42 — Mint",
+              "notes": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 → 31-42: 2+1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | ",
+              "notes_full": "Winter transplant from nursery. Hollis per-section P1R2 (Sections 4+5 → 31-42: 2+1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:43.065Z | related=Mint,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:43.065Z | related=Mint,P1R2.31-42",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 8,
+          "notes": "Hollis full-row P1R2 34 capsicum, even-split across 4 (9/9/8/8). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Capsicum - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "b0766cf4-6994-4f69-b381-f44a8d78ccee",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R2.31-42 — Capsicum",
+              "notes": "Hollis full-row P1R2 34 capsicum, even-split across 4 (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api ",
+              "notes_full": "Hollis full-row P1R2 34 capsicum, even-split across 4 (9/9/8/8). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:45.724Z | related=Capsicum,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:45.724Z | related=Capsicum,P1R2.31-42",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "fdb0b33b-e7dd-470d-aca4-f5df3aaf0949",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.31-42 — Chilli (Bird Eye)",
+              "notes": "Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farm",
+              "notes_full": "Hollis full-row P1R2 8 bird's-eye chilli, even-split across 4 (2 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:48.316Z | related=Chilli (Bird Eye),P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:48.316Z | related=Chilli (Bird Eye),P1R2.31-42",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "30e9c2da-afae-46ef-b4de-19b83da5914e",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R2.31-42 — Chilli (Cayenne)",
+              "notes": "Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ",
+              "notes_full": "Hollis full-row P1R2 16 cayenne, even-split across 4 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:50.932Z | related=Chilli (Cayenne),P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:50.932Z | related=Chilli (Cayenne),P1R2.31-42",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Chives - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "5a7ab41b-0e68-4013-979b-d69a3c572beb",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.31-42 — Chives",
+              "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_se",
+              "notes_full": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Chives even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:53.610Z | related=Chives,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:53.610Z | related=Chives,P1R2.31-42",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spring Onion - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "1fee66a0-1f62-4705-9085-cda44400f58b",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.31-42 — Spring Onion",
+              "notes": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=cla",
+              "notes_full": "Hollis full-row \"chives/spring onion\" 34, split 17/17; Spring Onion even-split across 4 (5/4/4/4). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:56.268Z | related=Spring Onion,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:56.268Z | related=Spring Onion,P1R2.31-42",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 2,
+          "notes": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Carrot - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "2b62f9a7-4104-4184-a1b9-546620e8095f",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.31-42 — Carrot",
+              "notes": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api |",
+              "notes_full": "Hollis full-row P1R2 10 carrots, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:58.987Z | related=Carrot,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:03:58.987Z | related=Carrot,P1R2.31-42",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 2,
+          "notes": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Kale (Nero di Toscana) - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "a15a2a74-772d-48d0-98f5-0a8072a2ef43",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.31-42 — Kale (Nero di Toscana)",
+              "notes": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ac",
+              "notes_full": "Hollis full-row P1R2 10 kale, even-split across 4 (3/3/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:01.728Z | related=Kale (Nero di Toscana),P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:01.728Z | related=Kale (Nero di Toscana),P1R2.31-42",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-28",
+          "asset_name": "28 MAY 2026 - Spinach - P1R2.31-42",
+          "logs": [
+            {
+              "uuid": "19c123f0-ca24-4a3c-b55a-cdb52982f7b5",
+              "type": "observation",
+              "date": "2026-05-27",
+              "name": "Inventory P1R2.31-42 — Spinach",
+              "notes": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | ",
+              "notes_full": "Hollis full-row P1R2 12 spinach, even-split across 4 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:04.437Z | related=Spinach,P1R2.31-42",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:04.437Z | related=Spinach,P1R2.31-42",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R4.0-7": {
+      "id": "P1R4.0-7",
+      "paddock": 1,
+      "row": 4,
+      "range": "0–7",
+      "length": "7m",
+      "has_trees": false,
+      "first_planted": "2026-05-25",
+      "inventory_date": "2026-06-11",
+      "plants": [
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 4,
+          "notes": "Winter transplant. Hollis full-row P1R4 20 mint (25 May); even-split across 5 (4 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "b4120745-d1ba-4a78-8035-98c5201eb75e",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R4.0-7 — Mint",
+              "notes": "Winter transplant. Hollis full-row P1R4 20 mint (25 May); even-split across 5 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session",
+              "notes_full": "Winter transplant. Hollis full-row P1R4 20 mint (25 May); even-split across 5 (4 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:39.554Z | related=Mint,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:39.554Z | related=Mint,P1R4.0-7",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 6,
+          "notes": "Winter transplant. Hollis full-row P1R4 26 capsicum (26 May); even-split across 5 (6/5/5/5/5). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Capsicum - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "d7a19d52-25e5-41ca-8c12-5d717fcda15b",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.0-7 — Capsicum",
+              "notes": "Winter transplant. Hollis full-row P1R4 26 capsicum (26 May); even-split across 5 (6/5/5/5/5). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_",
+              "notes_full": "Winter transplant. Hollis full-row P1R4 26 capsicum (26 May); even-split across 5 (6/5/5/5/5). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:42.208Z | related=Capsicum,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:42.208Z | related=Capsicum,P1R4.0-7",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Winter transplant. Hollis full-row P1R4 8 bird's-eye chilli (26 May); even-split across 5 (2/2/2/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "b726920f-5397-449a-924f-0cdf7134ee94",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.0-7 — Chilli (Bird Eye)",
+              "notes": "Winter transplant. Hollis full-row P1R4 8 bird's-eye chilli (26 May); even-split across 5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel",
+              "notes_full": "Winter transplant. Hollis full-row P1R4 8 bird's-eye chilli (26 May); even-split across 5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:44.865Z | related=Chilli (Bird Eye),P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:44.865Z | related=Chilli (Bird Eye),P1R4.0-7",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 4,
+          "notes": "Winter transplant. Hollis full-row P1R4 16 cayenne (26 May); even-split across 5 (4/3/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "e412b54b-0fe0-4e78-a1a8-0fa1b276bc98",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.0-7 — Chilli (Cayenne)",
+              "notes": "Winter transplant. Hollis full-row P1R4 16 cayenne (26 May); even-split across 5 (4/3/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_s",
+              "notes_full": "Winter transplant. Hollis full-row P1R4 16 cayenne (26 May); even-split across 5 (4/3/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:47.533Z | related=Chilli (Cayenne),P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:47.533Z | related=Chilli (Cayenne),P1R4.0-7",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 2,
+          "notes": "Per Luke's P1R4 handover (12 Jun), evenly spaced; 6 even-split across 5 (2/1/1/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lemon Balm - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "875ccc62-afb3-47ef-8cc4-9d4c80c7fcd1",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Lemon Balm",
+              "notes": "Per Luke's P1R4 handover (12 Jun), evenly spaced; 6 even-split across 5 (2/1/1/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | ",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun), evenly spaced; 6 even-split across 5 (2/1/1/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:50.157Z | related=Lemon Balm,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:50.157Z | related=Lemon Balm,P1R4.0-7",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun); 12 even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Sweet Potato - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "2facbaa9-be76-40a9-ba36-9dfc7e31dc29",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Sweet Potato",
+              "notes": "Per Luke's P1R4 handover (12 Jun); 12 even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun); 12 even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:52.763Z | related=Sweet Potato,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:52.763Z | related=Sweet Potato,P1R4.0-7",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Carrot - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "dcf22cec-86c5-4a5f-9748-c91e1f5ab4c0",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Carrot",
+              "notes": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_a",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:55.698Z | related=Carrot,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:55.698Z | related=Carrot,P1R4.0-7",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Beetroot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun); 12 even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Beetroot - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "1c4d868b-192f-4960-bda8-42f01095f53d",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Beetroot",
+              "notes": "Per Luke's P1R4 handover (12 Jun); 12 even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun); 12 even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:58.449Z | related=Beetroot,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:04:58.449Z | related=Beetroot,P1R4.0-7",
+              "species": "Beetroot"
+            }
+          ],
+          "photo_url": "photos/beetroot.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spinach - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "fd1b6cad-aa64-41b5-aaed-c99ddab54d5e",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Spinach",
+              "notes": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_a",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:01.072Z | related=Spinach,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:01.072Z | related=Spinach,P1R4.0-7",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Kale (Nero di Toscana) - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "e66d2b1d-0094-47fc-985b-3be51158be19",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Kale (Nero di Toscana)",
+              "notes": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_a",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:04.058Z | related=Kale (Nero di Toscana),P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:04.058Z | related=Kale (Nero di Toscana),P1R4.0-7",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Silverbeet",
+          "strata": "low",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun, \"silver beet\"); 15 even-split across 5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Silverbeet - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "c211775f-ee51-4656-a816-9e7ff85d0048",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Silverbeet",
+              "notes": "Per Luke's P1R4 handover (12 Jun, \"silver beet\"); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | ex",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun, \"silver beet\"); 15 even-split across 5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:06.780Z | related=Silverbeet,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:06.780Z | related=Silverbeet,P1R4.0-7",
+              "species": "Silverbeet"
+            }
+          ],
+          "photo_url": "photos/silverbeet.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 4,
+          "notes": "Per Luke's P1R4 handover (12 Jun, \"chives/spring onion\" 35); split 17 Chives/18 Spring Onion per Agnes; Chives even-split across 5 (4/4/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Chives - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "87da3200-3550-4f75-9157-e77094e13184",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Chives",
+              "notes": "Per Luke's P1R4 handover (12 Jun, \"chives/spring onion\" 35); split 17 Chives/18 Spring Onion per Agnes; Chives even-split across 5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initi",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun, \"chives/spring onion\" 35); split 17 Chives/18 Spring Onion per Agnes; Chives even-split across 5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:09.470Z | related=Chives,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:09.470Z | related=Chives,P1R4.0-7",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 4,
+          "notes": "Per Luke's P1R4 handover (12 Jun, \"chives/spring onion\" 35); split 17/18 per Agnes; Spring Onion even-split across 5 (4/4/4/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spring Onion - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "ef2c7b5f-32d4-4390-b2c6-2c219851621d",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Spring Onion",
+              "notes": "Per Luke's P1R4 handover (12 Jun, \"chives/spring onion\" 35); split 17/18 per Agnes; Spring Onion even-split across 5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_us",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun, \"chives/spring onion\" 35); split 17/18 per Agnes; Spring Onion even-split across 5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:12.128Z | related=Spring Onion,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:12.128Z | related=Spring Onion,P1R4.0-7",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Per Luke's P1R4 handover (12 Jun); 9 even-split across 5 (2/2/2/2/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lavender - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "f8cf7420-25e9-4b3e-b457-b6f0b2191182",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Lavender",
+              "notes": "Per Luke's P1R4 handover (12 Jun); 9 even-split across 5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun); 9 even-split across 5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:14.776Z | related=Lavender,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:14.776Z | related=Lavender,P1R4.0-7",
+              "species": "Lavender"
+            }
+          ],
+          "photo_url": "photos/lavender.jpg"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 3,
+          "notes": "Per Luke's P1R4 handover (12 Jun, 12 in-row banagrass — distinct from the 12 along the fence line); even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Banagrass - P1R4.0-7",
+          "logs": [
+            {
+              "uuid": "8b582a43-03b6-4e06-bc3f-47cc8a28cbc6",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.0-7 — Banagrass",
+              "notes": "Per Luke's P1R4 handover (12 Jun, 12 in-row banagrass — distinct from the 12 along the fence line); even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun, 12 in-row banagrass — distinct from the 12 along the fence line); even-split across 5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:17.387Z | related=Banagrass,P1R4.0-7",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:17.387Z | related=Banagrass,P1R4.0-7",
+              "species": "Banagrass"
+            }
+          ],
+          "photo_url": "photos/banagrass.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R4.7-14": {
+      "id": "P1R4.7-14",
+      "paddock": 1,
+      "row": 4,
+      "range": "7–14",
+      "length": "7m",
+      "has_trees": false,
+      "first_planted": "2026-05-25",
+      "inventory_date": "2026-06-11",
+      "plants": [
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "bd16fd31-64d9-4705-862b-c9742045489f",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R4.7-14 — Mint",
+              "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=cr",
+              "notes_full": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:32.205Z | related=Mint,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:32.205Z | related=Mint,P1R4.7-14",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 5,
+          "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5 (6/5/5/5/5). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Capsicum - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "3c456502-40c3-4095-b8cc-7e9e6d93d117",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.7-14 — Capsicum",
+              "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5 (6/5/5/5/5). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos",
+              "notes_full": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5 (6/5/5/5/5). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:34.962Z | related=Capsicum,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:34.962Z | related=Capsicum,P1R4.7-14",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "dfe4d282-f438-4afa-96cb-be4849664f1d",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.7-14 — Chilli (Bird Eye)",
+              "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:37.577Z | related=Chilli (Bird Eye),P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:37.577Z | related=Chilli (Bird Eye),P1R4.7-14",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5 (4/3/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "1173fbc7-8039-4175-95cd-775cc6a22e02",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.7-14 — Chilli (Cayenne)",
+              "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5 (4/3/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_",
+              "notes_full": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5 (4/3/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:40.160Z | related=Chilli (Cayenne),P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:40.160Z | related=Chilli (Cayenne),P1R4.7-14",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5 (2/1/1/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lemon Balm - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "2fd76cd5-770c-4b27-900f-f8910eb936ca",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Lemon Balm",
+              "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5 (2/1/1/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Luke P1R4 handover (12 Jun); 6 even-split /5 (2/1/1/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:42.941Z | related=Lemon Balm,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:42.941Z | related=Lemon Balm,P1R4.7-14",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Sweet Potato - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "d0314aea-9875-4384-a142-305610f250ca",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Sweet Potato",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:45.554Z | related=Sweet Potato,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:45.554Z | related=Sweet Potato,P1R4.7-14",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Carrot - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "71432f02-3c3f-482f-8052-6c9ce0da6d1b",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Carrot",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:48.198Z | related=Carrot,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:48.198Z | related=Carrot,P1R4.7-14",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Beetroot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Beetroot - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "474a6380-4c05-4235-97b2-6500ce9c430a",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Beetroot",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:50.823Z | related=Beetroot,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:50.823Z | related=Beetroot,P1R4.7-14",
+              "species": "Beetroot"
+            }
+          ],
+          "photo_url": "photos/beetroot.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spinach - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "58757bbe-cbff-4950-8af3-e62fcf198ff9",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Spinach",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:53.415Z | related=Spinach,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:53.415Z | related=Spinach,P1R4.7-14",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Kale (Nero di Toscana) - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "8bfa55ca-8700-48c0-b7c2-ce14d1eaebe4",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Kale (Nero di Toscana)",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:56.055Z | related=Kale (Nero di Toscana),P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:56.055Z | related=Kale (Nero di Toscana),P1R4.7-14",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Silverbeet",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Silverbeet - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "19c35ee7-0606-4779-88fb-4bba771e31e1",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Silverbeet",
+              "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:58.724Z | related=Silverbeet,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:05:58.724Z | related=Silverbeet,P1R4.7-14",
+              "species": "Silverbeet"
+            }
+          ],
+          "photo_url": "photos/silverbeet.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 4,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Chives - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "98c312d5-ffd6-4da8-8c70-125a29f8e8c8",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Chives",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_ses",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:01.293Z | related=Chives,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:01.293Z | related=Chives,P1R4.7-14",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 4,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spring Onion - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "6d89f01e-ecf7-4485-ab42-a32bfddf2d3f",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Spring Onion",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=clau",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:03.901Z | related=Spring Onion,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:03.901Z | related=Spring Onion,P1R4.7-14",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lavender - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "305fd4a6-140e-4ac7-a7c2-ae587c533e43",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Lavender",
+              "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:06.601Z | related=Lavender,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:06.601Z | related=Lavender,P1R4.7-14",
+              "species": "Lavender"
+            }
+          ],
+          "photo_url": "photos/lavender.jpg"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Banagrass - P1R4.7-14",
+          "logs": [
+            {
+              "uuid": "8aa98e51-05b3-4101-92e2-9dd419a0a95e",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.7-14 — Banagrass",
+              "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:09.272Z | related=Banagrass,P1R4.7-14",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:09.272Z | related=Banagrass,P1R4.7-14",
+              "species": "Banagrass"
+            }
+          ],
+          "photo_url": "photos/banagrass.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R4.14-24": {
+      "id": "P1R4.14-24",
+      "paddock": 1,
+      "row": 4,
+      "range": "14–24",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "2026-05-25",
+      "inventory_date": "2026-06-11",
+      "plants": [
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "005d4c5d-eaf2-4008-973f-20085c4b3f90",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R4.14-24 — Mint",
+              "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=cr",
+              "notes_full": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:23.244Z | related=Mint,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:23.244Z | related=Mint,P1R4.14-24",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 5,
+          "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Capsicum - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "edecef05-3ce9-4850-aeac-6232fd4704b0",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.14-24 — Capsicum",
+              "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:25.825Z | related=Capsicum,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:25.825Z | related=Capsicum,P1R4.14-24",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "d8b07438-08f4-437e-bb87-ee82a2f5c0a0",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.14-24 — Chilli (Bird Eye)",
+              "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:28.471Z | related=Chilli (Bird Eye),P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:28.471Z | related=Chilli (Bird Eye),P1R4.14-24",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "94c4a090-4f19-455e-91d9-0b8d6e4ef660",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.14-24 — Chilli (Cayenne)",
+              "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action",
+              "notes_full": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:31.336Z | related=Chilli (Cayenne),P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:31.336Z | related=Chilli (Cayenne),P1R4.14-24",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lemon Balm - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "a11d5961-8c62-4aef-885e-d547ac48c2a0",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Lemon Balm",
+              "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | ",
+              "notes_full": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:33.945Z | related=Lemon Balm,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:33.945Z | related=Lemon Balm,P1R4.14-24",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Sweet Potato - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "154ddd1a-00a2-4041-b952-d8871f6c7195",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Sweet Potato",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:36.570Z | related=Sweet Potato,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:36.570Z | related=Sweet Potato,P1R4.14-24",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Carrot - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "a627e635-fed9-4a28-bef0-925432552baf",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Carrot",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:39.266Z | related=Carrot,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:39.266Z | related=Carrot,P1R4.14-24",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Beetroot",
+          "strata": "low",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Beetroot - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "a899e32e-d75f-45d1-a409-e9bce3f0b4fb",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Beetroot",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:42.072Z | related=Beetroot,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:42.072Z | related=Beetroot,P1R4.14-24",
+              "species": "Beetroot"
+            }
+          ],
+          "photo_url": "photos/beetroot.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spinach - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "e1c88f92-bcd1-4bdb-9e6b-f98f671c6a15",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Spinach",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:44.727Z | related=Spinach,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:44.727Z | related=Spinach,P1R4.14-24",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Kale (Nero di Toscana) - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "7bd177b3-4e7c-43aa-83da-390943962c8c",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Kale (Nero di Toscana)",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:47.381Z | related=Kale (Nero di Toscana),P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:47.381Z | related=Kale (Nero di Toscana),P1R4.14-24",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Silverbeet",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Silverbeet - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "24ca7466-7b30-4104-8e10-2cfb7054e769",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Silverbeet",
+              "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:50.071Z | related=Silverbeet,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:50.071Z | related=Silverbeet,P1R4.14-24",
+              "species": "Silverbeet"
+            }
+          ],
+          "photo_url": "photos/silverbeet.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Chives - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "eba1b70f-b7b6-4696-8524-87b6d36ea40d",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Chives",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_ses",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:52.777Z | related=Chives,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:52.777Z | related=Chives,P1R4.14-24",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 4,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spring Onion - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "27fa5540-334c-420e-9363-5ccc63a3464b",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Spring Onion",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=clau",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:55.380Z | related=Spring Onion,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:55.380Z | related=Spring Onion,P1R4.14-24",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lavender - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "3017acdd-f31a-47b8-bbfc-2664bd22b8f1",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Lavender",
+              "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:58.029Z | related=Lavender,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:06:58.029Z | related=Lavender,P1R4.14-24",
+              "species": "Lavender"
+            }
+          ],
+          "photo_url": "photos/lavender.jpg"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Banagrass - P1R4.14-24",
+          "logs": [
+            {
+              "uuid": "fe1acfb3-fa58-4eda-be34-8b591810ce7e",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.14-24 — Banagrass",
+              "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:07:00.689Z | related=Banagrass,P1R4.14-24",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T08:07:00.689Z | related=Banagrass,P1R4.14-24",
+              "species": "Banagrass"
+            }
+          ],
+          "photo_url": "photos/banagrass.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R4.24-33": {
+      "id": "P1R4.24-33",
+      "paddock": 1,
+      "row": 4,
+      "range": "24–33",
+      "length": "9m",
+      "has_trees": false,
+      "first_planted": "2026-05-25",
+      "inventory_date": "2026-06-11",
+      "plants": [
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "63ffe8fd-a480-4650-80d9-a6755487ca23",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R4.24-33 — Mint",
+              "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=cr",
+              "notes_full": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:37.842Z | related=Mint,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:37.842Z | related=Mint,P1R4.24-33",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 5,
+          "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Capsicum - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "fa45dfaf-da3c-426f-b9bc-54aa963f8ba3",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.24-33 — Capsicum",
+              "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:40.552Z | related=Capsicum,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:40.552Z | related=Capsicum,P1R4.24-33",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "db8cd612-9dd9-4468-959a-b2bd4a0c5f4f",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.24-33 — Chilli (Bird Eye)",
+              "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:43.196Z | related=Chilli (Bird Eye),P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:43.196Z | related=Chilli (Bird Eye),P1R4.24-33",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "25b185c2-3130-48d1-ac1c-a087c62357db",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.24-33 — Chilli (Cayenne)",
+              "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action",
+              "notes_full": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:46.105Z | related=Chilli (Cayenne),P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:46.105Z | related=Chilli (Cayenne),P1R4.24-33",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lemon Balm - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "5a98ff17-3072-4b79-ab5c-0ac150e91e70",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Lemon Balm",
+              "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | ",
+              "notes_full": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:48.737Z | related=Lemon Balm,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:48.737Z | related=Lemon Balm,P1R4.24-33",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Sweet Potato - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "99f319d7-b4fc-4bb0-9db9-bb7ab6a8c31f",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Sweet Potato",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:51.369Z | related=Sweet Potato,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:51.369Z | related=Sweet Potato,P1R4.24-33",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Carrot - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "17249ec5-fa9a-4863-aea1-44e51e68aeb2",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Carrot",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:54.096Z | related=Carrot,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:54.096Z | related=Carrot,P1R4.24-33",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Beetroot",
+          "strata": "low",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Beetroot - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "74a9b047-1142-4989-8639-43082345f2c3",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Beetroot",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:56.853Z | related=Beetroot,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:27:56.853Z | related=Beetroot,P1R4.24-33",
+              "species": "Beetroot"
+            }
+          ],
+          "photo_url": "photos/beetroot.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spinach - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "5924e3cc-0c4b-4218-b128-3c0622718b65",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Spinach",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:14.091Z | related=Spinach,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:14.091Z | related=Spinach,P1R4.24-33",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Kale (Nero di Toscana) - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "0d7f0d7c-a91c-4637-8cf1-4ab7a5165b9c",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Kale (Nero di Toscana)",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:16.832Z | related=Kale (Nero di Toscana),P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:16.832Z | related=Kale (Nero di Toscana),P1R4.24-33",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Silverbeet",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Silverbeet - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "3385c2c9-4997-4457-8f45-25545d9d9da4",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Silverbeet",
+              "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:19.479Z | related=Silverbeet,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:19.479Z | related=Silverbeet,P1R4.24-33",
+              "species": "Silverbeet"
+            }
+          ],
+          "photo_url": "photos/silverbeet.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Chives - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "86a8c96e-d4cf-493f-babe-c5ff43bb4857",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Chives",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_ses",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:22.081Z | related=Chives,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:22.081Z | related=Chives,P1R4.24-33",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spring Onion - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "b8d2daf9-aa50-4660-82f2-e31a6a9de3ea",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Spring Onion",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=clau",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:24.693Z | related=Spring Onion,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:24.693Z | related=Spring Onion,P1R4.24-33",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lavender - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "f2ba7be4-f790-4e7a-bf2c-ef8e44dd5645",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Lavender",
+              "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:27.382Z | related=Lavender,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:27.382Z | related=Lavender,P1R4.24-33",
+              "species": "Lavender"
+            }
+          ],
+          "photo_url": "photos/lavender.jpg"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Banagrass - P1R4.24-33",
+          "logs": [
+            {
+              "uuid": "c7e48e55-f0cb-43c6-b81f-b0ef3027fd74",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.24-33 — Banagrass",
+              "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:29.976Z | related=Banagrass,P1R4.24-33",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:29.976Z | related=Banagrass,P1R4.24-33",
+              "species": "Banagrass"
+            }
+          ],
+          "photo_url": "photos/banagrass.jpg"
+        }
+      ],
+      "section_logs": []
+    },
+    "P1R4.33-43": {
+      "id": "P1R4.33-43",
+      "paddock": 1,
+      "row": 4,
+      "range": "33–43",
+      "length": "10m",
+      "has_trees": false,
+      "first_planted": "2026-05-25",
+      "inventory_date": "2026-06-11",
+      "plants": [
+        {
+          "species": "Mint",
+          "strata": "low",
+          "count": 4,
+          "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-25",
+          "asset_name": "25 MAY 2026 - Mint - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "a8d7b937-3600-4010-891e-90e2e5edd5fa",
+              "type": "observation",
+              "date": "2026-05-24",
+              "name": "Inventory P1R4.33-43 — Mint",
+              "notes": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=cr",
+              "notes_full": "Hollis full-row P1R4 20 mint (25 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:49.101Z | related=Mint,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:49.101Z | related=Mint,P1R4.33-43",
+              "species": "Mint"
+            }
+          ],
+          "photo_url": "photos/mint.jpg"
+        },
+        {
+          "species": "Capsicum",
+          "strata": "medium",
+          "count": 5,
+          "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Capsicum - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "93b2ba1b-966e-4485-88b6-0a2231e77b05",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.33-43 — Capsicum",
+              "notes": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Hollis full-row P1R4 26 capsicum (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:51.924Z | related=Capsicum,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:51.924Z | related=Capsicum,P1R4.33-43",
+              "species": "Capsicum"
+            }
+          ],
+          "photo_url": "photos/capsicum.jpg"
+        },
+        {
+          "species": "Chilli (Bird Eye)",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Bird Eye) - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "26882752-4380-47ea-a262-76e1546d5369",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.33-43 — Chilli (Bird Eye)",
+              "notes": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Hollis full-row P1R4 8 bird's-eye (26 May); even-split /5 (2/2/2/1/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:54.613Z | related=Chilli (Bird Eye),P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:54.613Z | related=Chilli (Bird Eye),P1R4.33-43",
+              "species": "Chilli (Bird Eye)"
+            }
+          ],
+          "photo_url": "photos/chilli-bird-eye.jpg"
+        },
+        {
+          "species": "Chilli (Cayenne)",
+          "strata": "medium",
+          "count": 3,
+          "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-05-26",
+          "asset_name": "26 MAY 2026 - Chilli (Cayenne) - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "044ecc65-ddb5-4a60-949b-3755684d42a0",
+              "type": "observation",
+              "date": "2026-05-25",
+              "name": "Inventory P1R4.33-43 — Chilli (Cayenne)",
+              "notes": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action",
+              "notes_full": "Hollis full-row P1R4 16 cayenne (26 May); even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:57.520Z | related=Chilli (Cayenne),P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:28:57.520Z | related=Chilli (Cayenne),P1R4.33-43",
+              "species": "Chilli (Cayenne)"
+            }
+          ],
+          "photo_url": "photos/chilli-cayenne.jpg"
+        },
+        {
+          "species": "Lemon Balm",
+          "strata": "low",
+          "count": 1,
+          "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lemon Balm - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "b10b9c34-adee-4f88-93cd-0a4b73a3c651",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Lemon Balm",
+              "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | ",
+              "notes_full": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:00.208Z | related=Lemon Balm,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:00.208Z | related=Lemon Balm,P1R4.33-43",
+              "species": "Lemon Balm"
+            }
+          ],
+          "photo_url": "photos/lemon-balm.jpg"
+        },
+        {
+          "species": "Sweet Potato",
+          "strata": "low",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Sweet Potato - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "987eceda-d665-4add-b439-a8d6099352e9",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Sweet Potato",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:02.929Z | related=Sweet Potato,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:02.929Z | related=Sweet Potato,P1R4.33-43",
+              "species": "Sweet Potato"
+            }
+          ],
+          "photo_url": "photos/sweet-potato.jpg"
+        },
+        {
+          "species": "Carrot",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Carrot - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "bd5e5756-0b69-43ea-a9c3-f1cb57ce8c20",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Carrot",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:05.564Z | related=Carrot,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:05.564Z | related=Carrot,P1R4.33-43",
+              "species": "Carrot"
+            }
+          ],
+          "photo_url": "photos/carrot.jpg"
+        },
+        {
+          "species": "Beetroot",
+          "strata": "low",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Beetroot - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "70bdd581-c138-45cd-a5dc-5649e7025f1c",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Beetroot",
+              "notes": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | acti",
+              "notes_full": "Luke P1R4 handover (12 Jun); 12 even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:08.253Z | related=Beetroot,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:08.253Z | related=Beetroot,P1R4.33-43",
+              "species": "Beetroot"
+            }
+          ],
+          "photo_url": "photos/beetroot.jpg"
+        },
+        {
+          "species": "Spinach",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spinach - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "e7694c4f-5666-4655-85c0-724b7ff70113",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Spinach",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:21.904Z | related=Spinach,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:21.904Z | related=Spinach,P1R4.33-43",
+              "species": "Spinach"
+            }
+          ],
+          "photo_url": "photos/spinach.jpg"
+        },
+        {
+          "species": "Kale (Nero di Toscana)",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Kale (Nero di Toscana) - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "6c3cad2f-2eb2-427d-a002-26884409849f",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Kale (Nero di Toscana)",
+              "notes": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=",
+              "notes_full": "Luke P1R4 handover (12 Jun); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:24.524Z | related=Kale (Nero di Toscana),P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:24.524Z | related=Kale (Nero di Toscana),P1R4.33-43",
+              "species": "Kale (Nero di Toscana)"
+            }
+          ],
+          "photo_url": "photos/kale-nero-di-toscana.jpg"
+        },
+        {
+          "species": "Silverbeet",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Silverbeet - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "123fb841-c1f0-4903-b824-f6f677fe8ec8",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Silverbeet",
+              "notes": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmo",
+              "notes_full": "Luke P1R4 handover (12 Jun, \"silver beet\"); 15 even-split /5 (3 each). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:27.182Z | related=Silverbeet,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:27.182Z | related=Silverbeet,P1R4.33-43",
+              "species": "Silverbeet"
+            }
+          ],
+          "photo_url": "photos/silverbeet.jpg"
+        },
+        {
+          "species": "Chives",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Chives - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "955eae53-45a9-4c11-89bb-43c683048192",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Chives",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_ses",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Chives even-split /5 (4/4/3/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:29.766Z | related=Chives,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:29.766Z | related=Chives,P1R4.33-43",
+              "species": "Chives"
+            }
+          ],
+          "photo_url": "photos/chives.jpg"
+        },
+        {
+          "species": "Spring Onion",
+          "strata": "low",
+          "count": 3,
+          "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Spring Onion - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "b35be92a-17bf-4dd5-ab38-61c096a1006a",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Spring Onion",
+              "notes": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=clau",
+              "notes_full": "Luke P1R4 handover; \"chives/spring onion\" 35 split 17/18; Spring Onion even-split /5 (4/4/4/3/3). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:32.373Z | related=Spring Onion,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:32.373Z | related=Spring Onion,P1R4.33-43",
+              "species": "Spring Onion"
+            }
+          ],
+          "photo_url": "photos/spring-onion.jpg"
+        },
+        {
+          "species": "Lavender",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lavender - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "cd307adb-9368-4b2c-9e53-6d95afa85552",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Lavender",
+              "notes": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | actio",
+              "notes_full": "Luke P1R4 handover (12 Jun); 9 even-split /5 (2/2/2/2/1). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:35.273Z | related=Lavender,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:35.273Z | related=Lavender,P1R4.33-43",
+              "species": "Lavender"
+            }
+          ],
+          "photo_url": "photos/lavender.jpg"
+        },
+        {
+          "species": "Banagrass",
+          "strata": "high",
+          "count": 2,
+          "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Banagrass - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "3a5c762a-86ee-4361-9681-c485a1a48090",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Banagrass",
+              "notes": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor",
+              "notes_full": "Luke P1R4 handover (12 Jun, in-row banagrass 12); even-split /5 (3/3/2/2/2). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:37.924Z | related=Banagrass,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:37.924Z | related=Banagrass,P1R4.33-43",
+              "species": "Banagrass"
+            }
+          ],
+          "photo_url": "photos/banagrass.jpg"
+        },
+        {
+          "species": "Lemon",
+          "strata": "medium",
+          "count": 1,
+          "notes": "Per Luke's P1R4 handover (12 Jun, \"1 lemon tree\"). Single tree placed in subsection 33-43 (Agnes to relocate if actual position differs). Backfilled 2026-06-14.",
+          "first_planted": "2026-06-12",
+          "asset_name": "12 JUN 2026 - Lemon - P1R4.33-43",
+          "logs": [
+            {
+              "uuid": "22d089ca-3fab-4fc8-ae7f-a908a5c614a1",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Lemon",
+              "notes": "Per Luke's P1R4 handover (12 Jun, \"1 lemon tree\"). Single tree placed in subsection 33-43 (Agnes to relocate if actual position differs). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=C",
+              "notes_full": "Per Luke's P1R4 handover (12 Jun, \"1 lemon tree\"). Single tree placed in subsection 33-43 (Agnes to relocate if actual position differs). Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:40.596Z | related=Lemon,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:40.596Z | related=Lemon,P1R4.33-43",
+              "species": "Lemon"
+            },
+            {
+              "uuid": "b10b9c34-adee-4f88-93cd-0a4b73a3c651",
+              "type": "observation",
+              "date": "2026-06-11",
+              "name": "Inventory P1R4.33-43 — Lemon Balm",
+              "notes": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | ",
+              "notes_full": "Luke P1R4 handover (12 Jun); 6 even-split /5. Backfilled 2026-06-14.\n[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:00.208Z | related=Lemon Balm,P1R4.33-43",
+              "interaction_stamp": "[ontology:InteractionStamp] initiator=Claude_user | role=manager | channel=claude_session | executor=farmos_api | action=created | target=plant | outcome=success | ts=2026-06-14T09:29:00.208Z | related=Lemon Balm,P1R4.33-43",
+              "species": "Lemon"
+            }
+          ],
+          "photo_url": "photos/lemon.jpg"
+        }
+      ],
+      "section_logs": []
     }
   },
   "rows": {
@@ -29917,6 +32585,33 @@
       ],
       "first_planted": "",
       "total_length": "5m"
+    },
+    "P1R2": {
+      "id": "P1R2",
+      "paddock": "Paddock 1",
+      "row": "Row 2",
+      "sections": [
+        "P1R2.0-12",
+        "P1R2.12-21",
+        "P1R2.21-31",
+        "P1R2.31-42"
+      ],
+      "first_planted": "",
+      "total_length": "42m"
+    },
+    "P1R4": {
+      "id": "P1R4",
+      "paddock": "Paddock 1",
+      "row": "Row 4",
+      "sections": [
+        "P1R4.0-7",
+        "P1R4.7-14",
+        "P1R4.14-24",
+        "P1R4.24-33",
+        "P1R4.33-43"
+      ],
+      "first_planted": "",
+      "total_length": "43m"
     }
   }
 }

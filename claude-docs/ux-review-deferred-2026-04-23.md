@@ -159,6 +159,22 @@ None of these fields exist in the current flat `observations[]` schema. Adding t
 
 ---
 
+## 11. WWOOFer field UX feedback — Hollis (May–June 2026)
+
+**Source:** Hollis's handover notes (`UX, recordings, etc.md`, "A.i.deas" section), recorded 2026-06-14. Raw first-use feedback from a full WWOOFer rotation — exactly the "every interface is first-time use" signal the guiding principle calls for. Also captured as KB feedback entry *"WWOOFer UX Feedback — Hollis (May–June 2026)"*.
+
+Five items, lightly grouped:
+
+1. **Per-plant images on the full section observation page.** Wants each plant's reference photo visible *while observing*, not only on the read-only view page. → ties to the photo pipeline (I5 tier classifier) and items #1/#3 above.
+2. **Search for plant locations "for cooking purposes."** A "where on the farm is X growing?" lookup — kitchen/chef use case (Olivier). New feature: reverse species→location index, visitor/cook-facing. (`farm_context` subject-mode already computes species distribution server-side; this asks for a public-facing surface on top of it.)
+3. **Row-section navigation graphic on the record-observation page too.** The inter-section row graphic currently on the view page should also appear on the observe page. → small `generate_site.py` change.
+4. **"Submit image with a ? for later ID" without leaving the flow.** When PlantNet's result isn't believable, let the observer attach the photo flagged *unidentified* and keep going, instead of backing out to the section page and re-taking. → plant-ID flow improvement; reduces friction and captures more photos (feeds the tier classifier).
+5. **[Validation, not an action]** QR section markers are useful as orientation / start-stop anchors even though she navigates the web page herself once scanned. Confirms the markers-as-anchors design is working — keep them.
+
+**Priority:** items 2 + 4 are net-new features (queue for product design); 1 + 3 are small surface tweaks that fold into the photo-pipeline / generator work; item 5 is positive signal, no action.
+
+---
+
 ## Prioritisation for first post-v4 UX session
 
 | # | Item | Priority | Effort |
@@ -173,5 +189,6 @@ None of these fields exist in the current flat `observations[]` schema. Adding t
 | 8 | Nursery comment mode | P2 — blocked by #2 or standalone | 30 min standalone |
 | 9 | Other-forms audit | **P0** — unknown silent failures | 2-3 hours |
 | 10 | Client-side pre-flight | P2 | 1 hour |
+| 11 | WWOOFer field feedback (Hollis): 2,4 new features · 1,3 tweaks · 5 validation | P2 (mixed) | 1,3: ~1hr · 2,4: design |
 
 **First post-v4 UX session order:** #9 (audit — find what's broken before investing in features) → #1 + #5 (P0 fixes) → remainder.
