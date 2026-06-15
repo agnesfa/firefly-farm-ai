@@ -207,6 +207,8 @@ QR code landing pages (live)
 - MCP tools are the only write path (bulk import scripts are deprecated).
 - Pages are generated from farmOS export, never hand-coded.
 - All scripts are idempotent.
+- **`export_farmos.py --sections-json` only *refreshes* section keys already present in `sections.json`** — it does NOT auto-discover new land assets. When new subsections/rows are created in farmOS, first hand-seed their metadata (`paddock`/`row`/`range`/`length`/`has_trees`) into `sections.json`, then export. (P1R2 + P1R4 subsections were added this way, 2026-06.)
+- **Nursery + seed-bank pages are a SEPARATE pipeline:** `generate_nursery_pages.py` reads a *static* CSV (`knowledge/nursery_inventory_sheet_march2026.csv`), NOT live farmOS — so farmOS nursery changes do not surface on those pages until that flow is modernised (tied to the parked seed-bank/nursery review).
 
 ---
 
