@@ -321,7 +321,7 @@ FARMOS_PASSWORD=...
 
 ---
 
-## 13. SESSION START — Dynamic Context
+## 13. SESSION START & END — Dynamic Context
 
 Run these at the beginning of each session to understand current state instead of relying on stale documentation:
 
@@ -348,6 +348,14 @@ For session history and past decisions, check:
 - `read_team_activity(days=30)` or `search_team_memory(query="...")`
 - `claude-docs/session-history.md` — full session log archive (March–April 2026)
 - `git log --oneline -20` — recent commit trajectory
+
+**At the END of substantive sessions, mirror the shared team ritual:** call
+`write_session_summary(user="Agnes", ...)` with topics, decisions, `farmos_changes`
+(JSON array of writes with IDs), questions, and a prose summary — so Agnes's work is
+shared context like everyone else's. This is the same protocol every farm Claude
+follows: read Team Memory at the start, write it at the end. Full protocol +
+role blocks: `claude-docs/team-claude-session-protocol.md` (also seeded in the KB as
+an `agent_skill` entry). Volunteers: `claude-docs/farmhand_project_instructions.md`.
 
 ---
 
