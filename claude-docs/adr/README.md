@@ -67,6 +67,8 @@ is obsolete, its number stays in the folder.
 | 0008 | Observation Record Invariant + Validator (incl. 2026-04-20 amendment I8–I12) | accepted — 2026-04-21 |
 | 0009 | farmOS v4 cutover via runtime version flag | accepted — 2026-04-21 |
 | 0010 | Framework auth handler migration + framework version bump | accepted — 2026-04-21 (design); implementation pending Lesley package |
+| 0011 | Read-side tool surface must cover the full data model | accepted — 2026-05-24 |
+| 0012 | Fix intermittent "Connection closed" via mcp-remote transport pin + session-lifecycle hardening | proposed — 2026-07-07 |
 
 New entries go at the bottom of the table. Supersedings keep the old
 row but mark it `superseded by ADR NNNN`.
