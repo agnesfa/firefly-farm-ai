@@ -42,6 +42,16 @@ out the obvious suspects:
   re-initialize, the client drops the in-flight call as `-32000` and can
   get wedged. `npx -y mcp-remote` also pulls **latest** on every launch
   (today: 0.1.38), so client behaviour is non-reproducible.
+- **Failure can also present as an indefinite hang, not just `-32000`.**
+  At this session's close, a `write_session_summary` over this path did
+  not error — it hung with no response for 20+ minutes until cancelled.
+  These MCP tool calls have **no fast client-side call timeout**, so a
+  degraded session/transport can spin forever instead of failing fast.
+  Compounding it: while a tool call is outstanding the agent is suspended
+  and cannot report the stall, so a hang is invisible until the human
+  cancels. Net effect — a known-degraded path should not be used for a
+  blocking step (e.g. the end-of-session summary); capture to ADR/git
+  instead and write to Team Memory once the path is healthy.
 
 ## Decision
 
@@ -156,6 +166,11 @@ session) → fully quit + reopen Claude Desktop.
 
 - **Does `http-only` actually stop the drops?** — Agnes, validate on the
   volunteer laptop; promote this ADR to accepted or pivot to `sse-only`.
+- **Fast-fail the hang.** A degraded session can make a call hang
+  indefinitely (observed 20+ min) because there's no client-side call
+  timeout. Need a per-call timeout — client-side and/or a server-side
+  response deadline — so calls fail fast with a clear error instead of
+  spinning. — Agnes / framework.
 - **`/admin/reload` path for credential changes** — needs an admin key +
   credentials on a volume file rather than the `CREDENTIALS_JSON` env var.
   Who owns configuring that? — Agnes.

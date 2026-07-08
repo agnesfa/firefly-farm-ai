@@ -357,6 +357,12 @@ follows: read Team Memory at the start, write it at the end. Full protocol +
 role blocks: `claude-docs/team-claude-session-protocol.md` (also seeded in the KB as
 an `agent_skill` entry). Volunteers: `claude-docs/farmhand_project_instructions.md`.
 
+**If the live MCP write path is degraded** (dropping `-32000` or hanging with no
+response), do NOT block the close on it — a hung tool call can spin indefinitely with
+no error and the agent is suspended while it waits, so it looks like a stall. Capture
+the summary/decisions in an ADR + commit instead, and write to Team Memory once the
+path is healthy. See ADR 0012.
+
 ---
 
 *This file was redesigned April 4, 2026. Previously 1602 lines; now ~200. Volatile data replaced with dynamic queries via MCP tools. Session log archived to claude-docs/session-history.md.*
